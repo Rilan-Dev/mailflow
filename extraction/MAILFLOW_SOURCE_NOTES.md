@@ -15,7 +15,7 @@ This directory contains MailFlow-specific data and evidence managed by the globa
 
 ## Recover and continue
 
-1. Start with the repository-level [source-library state](../project-control/source-library/SOURCE_LIBRARY_STATE.md) and [next action](../project-control/source-library/SOURCE_LIBRARY_NEXT_ACTION.md).
+1. Start with this repository's `extraction/project-control/CHAT_CONTINUITY.md`, `PROJECT_STATE.md`, and `NEXT_ACTION.md`.
 2. Read this source's `project-control/CHAT_CONTINUITY.md`, `CURRENT_PHASE.md`, `NEXT_ACTION.md`, and `VERIFICATION_STATE.md`.
 3. Use the canonical `source-extraction-agent` prompts and workflow; never infer permission from the source name or inventory completion.
 4. Inspect `source-pins/current.json` and `manifests/source-tree-2026-10-14.json`.
@@ -24,7 +24,7 @@ This directory contains MailFlow-specific data and evidence managed by the globa
 
 ## Update capture
 
-The generic registry-driven watcher uses `project-control/source-library/SOURCE_LIBRARY_CATALOG.json`. If MailFlow advances, it creates or updates a review issue and points to the global Prompt 11. It does not copy source or advance the pin. Watcher execution remains unverified until manually dispatched and inspected.
+Upstream update review is governed by the vendored `source-extraction-agent/prompts/11-upstream-update-review.md` and `source-extraction-agent/workflows/upstream-update-capture.md`. The cross-source watcher in the shared library is separate; this repository's local copy is not a live sync and does not copy source or advance the pin.
 
 ## Source-specific files
 
@@ -37,3 +37,7 @@ The generic registry-driven watcher uses `project-control/source-library/SOURCE_
 ## License/provenance
 
 MailFlow indicates AGPL-3.0 and a separate commercial licensing path, with a CLA. Review notices, path-level provenance, third-party assets and redistribution rights before any copy or publication. Legal uncertainty is a blocker, not a default permission.
+
+
+## Workspace location
+This file is retained as source-specific context inside `Rilan-Dev/mailflow/extraction/`. All active MailFlow extraction records are now intended to be maintained in this repository rather than a duplicate `mailflow-source-library/` folder in the reusable-library repository.
