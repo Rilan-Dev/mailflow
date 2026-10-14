@@ -36,3 +36,8 @@
 - Opened https://github.com/Rilan-Dev/mailflow/pull/1. The PR is open and unmerged at the time of this entry.
 - This is a documentation/control-workspace migration only. No MailFlow application source was copied, the proposed source pin was not promoted, and source-copy authorization remains false.
 - Next: update the central catalog and remove duplicate MailFlow working records from `ai-reusable-libraries` in a separate PR; keep monitoring disabled until the watcher supports external-repository pins.
+
+
+## 006 — 2026-10-14 — Remove duplicate MailFlow workstream from global library
+- Opened https://github.com/Rilan-Dev/ai-reusable-libraries/pull/6 to remove the migrated 21-file MailFlow workstream from the reusable-libraries repository, update the global catalog to point to this repository, and disable the watcher until external pin retrieval is supported.
+- PR #6 remains open and unmerged at the time of this note. The canonical generic framework and cross-source catalog remain in `ai-reusable-libraries`.
