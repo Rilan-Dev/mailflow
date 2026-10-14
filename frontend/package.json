@@ -27,8 +27,8 @@
     "url": "https://github.com/maathimself/mailflow/issues"
   },
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "dev": "node init && vite",
+    "build": "node init && vite build",
     "preview": "vite preview",
     "test": "node --test",
     "lint": "eslint src --max-warnings 0",
