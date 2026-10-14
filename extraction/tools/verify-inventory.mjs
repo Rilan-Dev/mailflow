@@ -1,13 +1,14 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const root = process.cwd();
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const readJson = (relative) => JSON.parse(fs.readFileSync(path.join(root, relative), 'utf8'));
-const pin = readJson('mailflow-source-library/source-pins/current.json');
-const tree = readJson('mailflow-source-library/manifests/source-tree-2026-10-14.json');
-const dispositions = readJson('mailflow-source-library/manifests/path-dispositions-2026-10-14.json');
-const candidates = readJson('mailflow-source-library/manifests/capability-candidates-2026-10-14.json');
-const architecture = readJson('mailflow-source-library/manifests/architecture-map-initial.json');
+const pin = readJson('source-pins/current.json');
+const tree = readJson('manifests/source-tree-2026-10-14.json');
+const dispositions = readJson('manifests/path-dispositions-2026-10-14.json');
+const candidates = readJson('manifests/capability-candidates-2026-10-14.json');
+const architecture = readJson('manifests/architecture-map-initial.json');
 
 const fail = (message) => {
   console.error(`FAIL: ${message}`);
