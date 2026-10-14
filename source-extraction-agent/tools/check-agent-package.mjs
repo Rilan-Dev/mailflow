@@ -19,14 +19,14 @@ const required = [
   "skills/host-boundary-classification/SKILL.md", "skills/extraction-verification/SKILL.md",
   "skills/gap-reconciliation/SKILL.md", "skills/session-continuity/SKILL.md",
   "tools/verify-extraction.mjs", "tools/check-agent-package.mjs",
-  "project-control/PROJECT_STATE.md", "project-control/CURRENT_PHASE.md",
-  "project-control/NEXT_ACTION.md", "project-control/CHAT_CONTINUITY.md",
-  "project-control/VERIFICATION_STATE.md", "project-control/DECISIONS.md",
-  "project-control/ISSUES.md", "project-control/RISKS.md", "project-control/ZAI_HANDOFF.md",
-  "project-control/WORKLOG.md"
+  "../extraction/project-control/PROJECT_STATE.md", "../extraction/project-control/CURRENT_PHASE.md",
+  "../extraction/project-control/NEXT_ACTION.md", "../extraction/project-control/CHAT_CONTINUITY.md",
+  "../extraction/project-control/VERIFICATION_STATE.md", "../extraction/project-control/DECISIONS.md",
+  "../extraction/project-control/ISSUES.md", "../extraction/project-control/RISKS.md",
+  "../extraction/project-control/WORKLOG.md", "../extraction/memory/AGENT_MEMORY.md"
 ];
 const errors = [];
-for (const rel of required) if (!fs.existsSync(path.join(root, rel))) errors.push(`Missing required file: ${rel}`);
+for (const rel of required) if (!fs.existsSync(path.resolve(root, rel))) errors.push(`Missing required file: ${rel}`);
 
 const schemaDir = path.join(root, "schemas");
 if (fs.existsSync(schemaDir)) {
