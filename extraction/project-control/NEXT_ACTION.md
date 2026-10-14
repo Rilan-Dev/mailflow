@@ -1,24 +1,17 @@
-# Next Action
+# Next Action — MailFlow Extraction
 
-1. Read source-extraction-agent/AGENTS.md, rules/spec and all MailFlow project-control files.
-2. Reconfirm live main commit/tree against source-pins/current.json; stop if either differs.
-3. Audit architecture and build/test surfaces from README, CLA, licenses, CI, package manifests, Docker/config, migrations, backend/frontend and platform packages.
-4. Produce all-path dispositions and capability/dependency manifests. Trace end-to-end flows and high-risk security/privacy/auth/data paths.
-5. Run closure scan and independent reconciliation; resolve unknown paths and missing dependency edges.
-6. Only after gate PASS, plan versioned immutable copy and exact blob/tree verification.
-7. Validate the source watcher safely and document update review.
-8. Append evidence and precise next action; never delete completed history.
+1. Recover the latest state from this directory, `../memory/AGENT_MEMORY.md`, and the newest session in `../sessions/`.
+2. Reconfirm canonical upstream `https://github.com/maathimself/mailflow` main commit/tree against `../source-pins/current.json`; stop and record changes if either differs.
+3. In a real checkout, run `node extraction/tools/verify-inventory.mjs` and `npm --prefix source-extraction-agent run check`; record actual output and exit codes in `VERIFICATION_STATE.md`.
+4. Continue architecture/capability tracing across backend entry/config, auth/OAuth/OIDC, IMAP synchronization/move semantics, message parsing/sanitization, image proxy/safe fetch, migrations, plugin boundaries, frontend, Electron/Android security, CI and tests.
+5. Expand capability closure through imports/callers, schemas/migrations, configuration, permissions, runtime dependencies and tests.
+6. Classify every source path for disposition, license and provenance; independently reconcile candidates and architecture maps.
+7. Only after evidence-backed gate PASS and explicit owner authorization, plan any immutable source copy. Copy authorization remains false.
 
+## Current blockers
+- 1,319 source blobs remain UNCLASSIFIED / license UNREVIEWED / closure UNMAPPED.
+- The updated Node verifier and framework checker have not been run in a real checkout.
+- License/provenance review, dependency closure and independent reconciliation remain incomplete.
+- No extraction PASS is claimed.
 
-## Update — 2026-10-14
-The complete tree inventory and preliminary candidate index are now present. All 1,319 file paths are explicitly registered but remain UNCLASSIFIED. The watcher workflow is authored but not yet verified on a default-branch run.
-
-Immediate next action: inspect high-risk and central architecture paths (backend entry/config, package manifests, IMAP manager, message service/parser, auth/OIDC/OAuth, image proxy/sanitizer, migrations, plugin boundary, frontend app, Electron/Android security and CI); map their callers and tests; update the per-path disposition register with evidence. Do not copy source until the closure and license gates pass.
-
-
-## Architecture map update
-The initial map now includes 16 candidate capability areas with pinned blob identities and test candidates. Immediate next step is to expand each candidate through actual imports/callers, schema/migrations, configuration, permissions, runtime and tests, then use evidence to classify paths. High-risk priority: auth/OAuth, safeFetch/image proxy/email sanitizer, IMAP move/sync, plugin isolation, migrations, native Electron/Android security and update watcher permissions.
-
-
-## Verification update
-Stored-manifest consistency was checked against the pinned tree and passed with zero mismatches. Next run tools/verify-inventory.mjs in a local checkout or through CI, then continue actual content/call-chain discovery and path classification. Do not confuse manifest consistency with extraction closure.
+Continue safe, independent discovery; do not fabricate verification, bypass license/closure gates or alter pinned upstream source.
