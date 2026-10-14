@@ -35,3 +35,9 @@ upstream watcher have not been validated end-to-end as part of this workspace mi
   in a separate PR, retaining the global catalog and reusable framework.
 - Run the inventory verifier in a real checkout; do not wait on unrelated CI/deploy
   gates to continue extraction analysis.
+
+
+## Cross-repository follow-up
+
+- Opened https://github.com/Rilan-Dev/ai-reusable-libraries/pull/6 to remove duplicate MailFlow-specific records from the global framework repository and update the central catalog. PR #6 is open and unmerged at the time of this note.
+- Both PRs are intentionally left open; neither has been merged by this migration workflow.
