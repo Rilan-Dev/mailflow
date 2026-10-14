@@ -702,3 +702,12 @@ If any accounts were configured with **Skip TLS verification** (e.g. for a self-
 - IMAP/SMTP credentials are stored at rest in the database (standard for webmail clients — protect access to your server and database volume accordingly)
 - Responses set a strict `Content-Security-Policy`, clickjacking protection via `X-Frame-Options`, and a restrictive `Referrer-Policy`
 - Email HTML is sanitized before rendering, including stripping external `url()` references from CSS style blocks to prevent tracking
+
+
+---
+
+## Source extraction workspace
+
+MailFlow-specific extraction plans, source pins, inventories, architecture/capability maps, licensing and provenance findings, session continuity, memory, verification evidence, and progress records are maintained in [`extraction/`](extraction/README.md). The self-contained reusable prompts, skills, schemas, templates, and verification workflows are under [`source-extraction-agent/`](source-extraction-agent/README.md).
+
+The framework is a versioned snapshot of [the canonical shared framework](https://github.com/Rilan-Dev/ai-reusable-libraries/tree/main/source-extraction-agent). MailFlow-specific evidence belongs in `extraction/`, not in the generic framework. See [the workspace boundary](source-extraction-agent/MAILFLOW_WORKSPACE_BOUNDARY.md) and [framework pin](extraction/FRAMEWORK_PIN.md). This workspace does not authorize copying upstream application source or promoting the proposed discovery pin.
