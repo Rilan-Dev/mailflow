@@ -107,3 +107,13 @@ This is baseline identity/inventory evidence only, not full extraction verificat
 - Aggregate: 15 test files, 379 tests passed, 0 failed. Machine-readable evidence: `extraction/manifests/security-test-results-2026-10-17-35067fc.json`.
 - The first attempt failed due to an incorrect snapshot working-directory path in the new workflow. The path was corrected; the successful run above is authoritative.
 - This closes only the selected test-execution task, not the five security capabilities. Caller/sink/redirect/DNS-rebinding/session/provider-state tracing, complete test coverage, dependency closure and UI behavior mapping remain open. License/provenance and overall extraction PASS remain open.
+
+
+## 2026-10-17 — Static trace continuation
+
+- Trace artifact: `extraction/manifests/security-transport-database-trace-2026-10-17.md`.
+- Reviewed immutable source for auth/session, OAuth/OIDC, hostValidation/safeFetch, email sanitizer/image proxy, accounts CRUD, IMAP manager, send/draft routes and migration runner.
+- New confirmed implementation observations: Redis-backed sessions and CSRF guard on mutating `/api` routes; session regeneration and MFA replay protection; OAuth/OIDC state and PKCE flow; safeFetch validates the network connection target on each redirect hop; IMAP/SMTP host validation during account creation/update; IMAP address pinning again at connect time; account secrets encrypted at persistence; backoff/concurrency controls; account delete cascades database rows before asynchronous live disconnect; and send/draft recovery paths.
+- Database tree contains 66 ordered SQL migrations (`0001`–`0066`) plus a runner with advisory lock and transaction-aware migration application. The detailed table/index/constraint/runtime-consumer map is still open.
+- This is static trace evidence only. OIDC/OAuth outbound callers, SMTP connect-time policy, all sanitizer/render sinks, full IMAP recovery graph, all 66 migration semantics, third-party provenance and redistribution clearance remain unverified.
+- Existing selected security test evidence remains 379 passed / 0 failed across 15 files. Full backend/frontend/native checks have not been established by this trace.
