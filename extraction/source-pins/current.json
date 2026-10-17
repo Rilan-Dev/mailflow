@@ -30,13 +30,29 @@
   "state": {
     "phase": "PHASE 2 - IMMUTABLE SOURCE SNAPSHOT AND VERIFICATION",
     "source_copy_authorized": true,
-    "verification_status": "EXACT BLOB SHA CHECKS PASSED DURING SNAPSHOT CAPTURE; CAPABILITY CLOSURE AND PER-PATH LICENSE CLASSIFICATION REMAIN OPEN",
+    "verification_status": "EXACT GIT TREE AND SNAPSHOT VERIFIED; 1,350 BLOBS AND 147 NESTED TREES MATCH; CAPABILITY CLOSURE AND PER-PATH LICENSE CLASSIFICATION REMAIN OPEN",
     "baseline_type": "IMMUTABLE_UPSTREAM_SNAPSHOT",
-    "status": "SNAPSHOT_CAPTURED; EXTRACTION CLOSURE AND LICENSE REVIEW PENDING"
+    "status": "SNAPSHOT_AND_TREE_VERIFICATION_PASS; EXTRACTION CLOSURE AND LICENSE REVIEW PENDING"
   },
   "manifest_paths": {
     "tree": "extraction/manifests/source-tree-2026-10-17-35067fc.json",
     "dispositions": "extraction/manifests/path-dispositions-2026-10-17-35067fc.json",
     "snapshot": "extraction/snapshots/35067fc2876d50980f1a8a3b8ea72b5467b69f60/source"
+  },
+  "verification": {
+    "workflow_url": "https://github.com/Rilan-Dev/mailflow/actions/runs/39030515872",
+    "workflow_result": "success",
+    "verified_at": "2026-10-17T11:55:22Z",
+    "source_blob_count": 1350,
+    "source_blob_sha_failures": 0,
+    "snapshot_file_set": "PASS",
+    "file_modes_and_symlinks": "PASS",
+    "reconstructed_root_tree_sha": "a2a82b50b8a1ac24a273e55dc0f9418aefdfed17",
+    "reconstructed_nested_tree_count": 147,
+    "gitlink_count": 0,
+    "git_lfs_pointer_count": 0,
+    "capability_closure": "PENDING",
+    "path_license_provenance": "PENDING",
+    "redistribution_clearance": "PENDING"
   }
 }
