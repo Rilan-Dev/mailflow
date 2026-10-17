@@ -6,15 +6,16 @@
     "tree": "a2a82b50b8a1ac24a273e55dc0f9418aefdfed17"
   },
   "created_at": "2026-10-17",
-  "status": "PARTIAL_STATIC_TRACE_BACKEND_FRONTEND_POSTGRES_PASS_SECURITY_AND_MAIL_TEST_SLICE_PASS_ANDROID_PENDING_LICENSE_OPEN",
+  "status": "PARTIAL_DELTA_REVIEW_IN_PROGRESS_SECURITY_MAIL_AND_SCHEMA_TRACES_PARTIAL_LICENSE_OPEN",
   "summary": {
     "capability_count": 16,
     "closed": 0,
     "partial_traces": 14,
     "not_started": 2,
     "source_blobs": 1350,
-    "unclassified_paths": 1167,
-    "initially_classified_paths": 183
+    "unclassified_paths": 1194,
+    "initially_classified_paths": 156,
+    "classification_note": "Current source paths are classified only after exact target blob review; changed/new delta paths not yet reviewed remain UNCLASSIFIED. All path licenses/provenance remain open."
   },
   "dimensions": [
     "first_party_imports_and_callers",
