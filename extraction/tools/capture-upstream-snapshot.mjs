@@ -2,7 +2,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 
-// Capture from Git objects rather than the working tree so Git LFS smudging or platform filters cannot silently change source bytes.\nconst repoRoot = process.cwd();
+// Capture from Git objects rather than the working tree so Git LFS smudging or platform filters cannot silently change source bytes.
+const repoRoot = process.cwd();
 const sourceRoot = path.resolve(process.argv[2] || process.env.UPSTREAM_SOURCE_PATH || '../upstream-source');
 const pinPath = path.join(repoRoot, 'extraction/source-pins/current.json');
 const pin = JSON.parse(fs.readFileSync(pinPath, 'utf8'));
