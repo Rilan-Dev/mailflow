@@ -89,11 +89,11 @@
       "android_web_build_and_capacitor_sync": "PASS",
       "android_gradle_unit_tests_and_debug_apk": "FAILED_BEFORE_GRADLE_START_PERMISSION_DENIED_EXIT_126"
     },
-    "failure_analysis": "The pinned source tracks frontend/packages/android/gradlew without executable mode. Snapshot file mode is preserved. Latest workflow file commit a34f8d32f579abb334b2dadb9d4234da0cbfd1db explicitly documents and invokes `bash ./gradlew`; run 39035662163 is pending and should be used to confirm the actual command.",
+    "failure_analysis": "Pinned frontend/packages/android/gradlew has mode 100644, preserved to maintain snapshot identity. A later workflow edit invoked bash ./gradlew but its run was cancelled before jobs started; Android Gradle unit tests/debug APK remain unverified. Do not describe the correction as passed.",
     "corrected_run": {
       "id": 39035662163,
       "url": "https://github.com/Rilan-Dev/mailflow/actions/runs/39035662163",
-      "status": "PENDING; this run was triggered by a commit containing the explicit bash ./gradlew command"
+      "status": "CANCELLED_BEFORE_JOBS_STARTED; no Android Gradle result was produced"
     },
     "previous_attempts": [
       {
@@ -144,6 +144,18 @@
       "tables": 32,
       "indexes": 97,
       "constraints": 282
+    },
+    "security_trace_update": {
+      "path": "extraction/manifests/security-transport-database-trace-2026-10-17.md",
+      "status": "PARTIAL_STATIC_TRACE",
+      "commit": "8e17efb4919f4df774fa76340c45ed43e45f9571",
+      "finding": "OIDC discovery/token use native fetch after validation rather than safeFetch's connection-pinned dispatcher; DNS rebinding/redirect target policy remains an open closure item."
+    },
+    "path_classification": {
+      "path": "extraction/manifests/path-dispositions-2026-10-17-35067fc.json",
+      "classified": 183,
+      "unclassified": 1167,
+      "status": "PARTIAL; all newly reviewed security paths remain license-unreviewed"
     }
   }
 }
