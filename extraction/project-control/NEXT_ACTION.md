@@ -179,3 +179,10 @@ The full pinned-snapshot run 39034971662 provides these verified results:
 - Added `extraction/manifests/postgresql-schema-runtime-map-2026-10-17.md` with all 66 ordered migrations, schema domains, major FK/index/backfill behavior and principal runtime consumers. All migration paths remain dependency-closure candidates, not license-cleared. The DB capability is still partial until each column/index/constraint and SQL caller is mapped and legacy upgrade/recovery paths are tested.
 - PostgreSQL 17 clean install and idempotent rerun passed in run 39034971662 (66 migrations, 32 tables, 97 indexes, 282 constraints). This does not prove representative legacy upgrades or every SQL runtime query plan.
 - Path register remains 183 classified / 1,167 unclassified. Capability manifest reconciled to these counts. Full verification run 39038119553 is pending for the latest manifest updates; no current-manifest verifier PASS is claimed yet.
+
+
+## Update — 2026-10-17 — Initial-to-current upstream delta reconciliation
+- GitHub compare from initial pin `e7a53760a7e4b15e0ee631533655d99dde657599` to current pin `35067fc2876d50980f1a8a3b8ea72b5467b69f60` returned 51 commits and 147 changed/new blobs: 116 modified + 31 added, 0 removed. Evidence is recorded in `extraction/manifests/upstream-delta-review-2026-10-17.json`, including base/target blob SHA and mode.
+- 17 high-priority paths received first-pass patch review (host validation, sanitizer, image proxy, IMAP pool/sync, AI redirect, mail/send, CardDAV merge, frontend image/frame/compose, Android OIDC bridge). The other 130 changed/new paths are reset to UNCLASSIFIED until their exact target blob/mode is reviewed.
+- Path disposition now reports 156 classified / 1,194 unclassified. These are role classifications only; license/provenance remains unreviewed. The earlier 183/1,167 count is superseded.
+- Full verifier run 39038119553 was pending before the latest manifest update; current manifests require a fresh verifier run. No current-manifest PASS is claimed.
