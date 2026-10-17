@@ -86,3 +86,10 @@ Immediate continuation:
 3. Continue the IMAP sync call graph and account deletion cleanup, including body/attachment storage, cache and plugin lifecycle.
 4. Finish OIDC/outbound fetch and HTML render sink tracing; do not treat safeFetch's guarded connector as proof that every outbound call site is safe.
 5. Continue path classifications and dependency license/provenance clearance. Full backend/frontend/native checks remain a later verification item, not a reason to pause independent trace work.
+
+
+## Update — 2026-10-17 — Transport regression suite queued
+
+Added `.github/workflows/mailflow-transport-closure.yml` to execute a broader pinned-snapshot test slice across IMAP manager sync/draft/snooze behavior, move fallback, SMTP transport, account settings, draft handling, mailbox mutations, unified inbox scope, attachment ZIPs, and send/reliability/undo paths. Run: https://github.com/Rilan-Dev/mailflow/actions/runs/39034389282 (queued at last check; no result claimed).
+
+Do not wait for that run before continuing independent trace work. When convenient, inspect its final result and update the evidence manifest with the actual test-file/test counts and failures. Full backend/frontend/native build checks remain a later gate.
