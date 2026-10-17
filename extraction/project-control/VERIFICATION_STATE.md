@@ -140,3 +140,12 @@ This is baseline identity/inventory evidence only, not full extraction verificat
 - Frontend HTML sinks mapped at a first-pass level: sandboxed iframe/CSP in `MessageBodyView`, `prepared.html` and plain-text linkifier sinks in `MessagePane`, DOMPurify/app-origin sanitization in `ComposeModal`/ `appEmailHtml`, and direct contentEditable innerHTML in `SignatureEditor`. End-to-end sanitizer and caller closure remains open.
 - Path register now has 124 role-classified source paths and 1,226 unclassified paths. All source license/provenance clearance remains separate and mostly open.
 - Frontend render-security tests were added to the security workflow; expanded transport tests are in run https://github.com/Rilan-Dev/mailflow/actions/runs/39034389282, queued at last check. No pending test result is treated as PASS.
+
+
+## 2026-10-17 — Expanded selected tests and verifier
+
+- Security/render workflow https://github.com/Rilan-Dev/mailflow/actions/runs/39034509010: backend 14 files / 375 passed; frontend image proxy 1 file / 4 passed; frontend HTML/render suite 6 files / 121 passed. Total: 21 files, 500 passed, zero failures.
+- IMAP/SMTP/account workflow https://github.com/Rilan-Dev/mailflow/actions/runs/39034548854: 42 files passed, one skipped; 777 tests passed, 10 skipped, zero failures.
+- Combined selected tests: 64 file-runs, 1,277 passed, 10 skipped, zero failures. Machine-readable evidence: `extraction/manifests/closure-test-results-2026-10-17-35067fc.json`.
+- Snapshot verifier run after the updated path/capability manifests: https://github.com/Rilan-Dev/mailflow/actions/runs/39034548818 — success.
+- Still open: full backend/frontend suites, native builds, column-level schema/SQL-consumer closure, all capability closure, third-party provenance/license clearance, redistribution clearance and extraction PASS.
