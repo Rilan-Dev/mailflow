@@ -1,0 +1,218 @@
+{
+  "schema_version": "1.0.0",
+  "source_pin": {
+    "repository": "maathimself/mailflow",
+    "commit": "35067fc2876d50980f1a8a3b8ea72b5467b69f60",
+    "tree": "a2a82b50b8a1ac24a273e55dc0f9418aefdfed17"
+  },
+  "created_at": "2026-10-17",
+  "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED",
+  "scope": "Initial security-sensitive static trace of authentication/session, OIDC/OAuth, outbound host validation, remote fetch, image proxy and email HTML sanitization. No tests were executed against the snapshot during this static trace.",
+  "evidence": [
+    {
+      "capability": "auth-and-identity",
+      "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED",
+      "source_files": [
+        {
+          "path": "backend/src/routes/auth.js",
+          "sha": "35e41f494440dfdc412ad47bb463f32039c69bb5",
+          "observed": "Express auth routes; bcrypt, crypto, TOTP/QRCode, DB transactions, encrypted credentials, host validation, SMTP, rate limiter, auth events, Redis sessions, session destruction and preference sanitizers."
+        },
+        {
+          "path": "backend/src/middleware/auth.js",
+          "sha": "e2e38cfbf8111705a04b0357d4b4be5b01f1bf09",
+          "observed": "requireAuth and requireAdmin; admin status is read from PostgreSQL at request time."
+        },
+        {
+          "path": "backend/src/services/authLimiter.js",
+          "sha": "3628ecd89ae0ec99b9baef33a1b684bdc8b33975",
+          "observed": "DB-backed auth limiter configuration with default 10 requests per 15-minute window."
+        },
+        {
+          "path": "backend/src/utils/sessionConfig.js",
+          "sha": "04fc0b519a465f7da5c648bfed12c18d254f5704",
+          "observed": "7-day session idle window; HttpOnly, SameSite=Lax and secure-auto cookie configuration."
+        }
+      ],
+      "tests": [
+        {
+          "path": "backend/src/middleware/auth.test.js",
+          "sha": "a30c27148c41b4da0fdeefe68fc56203c56165ca"
+        },
+        {
+          "path": "backend/src/routes/auth.forgotPassword.test.js",
+          "sha": "98cc4700698771ce98a94f9d3e0a4710a0824876"
+        },
+        {
+          "path": "backend/src/routes/auth.logout.test.js",
+          "sha": "da22d5fc7bf4b0ac53af779735fa8d7d26a2a152"
+        },
+        {
+          "path": "backend/src/routes/auth.me.test.js",
+          "sha": "8602220dce42528feb0fc4aad165bcec95bbaff2"
+        }
+      ],
+      "openQuestions": [
+        "Trace all auth endpoints and transitions, reset-token schema/consumption, MFA enrollment/recovery, session rotation and logout across WebSocket/Redis.",
+        "Map every environment/config dependency and negative test; static inspection is not a test pass."
+      ]
+    },
+    {
+      "capability": "oidc-oauth",
+      "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED",
+      "source_files": [
+        {
+          "path": "backend/src/routes/oauth.js",
+          "sha": "c8e6821501bbf622ca953ae2d1861753b4cc6bd5",
+          "observed": "Microsoft and Google OAuth/device flow, state nonce, token exchange/refresh and encrypted token persistence."
+        },
+        {
+          "path": "backend/src/routes/oidc.js",
+          "sha": "ef6ef1fd15cf5f6594f72a6e835f24be8cc236b7",
+          "observed": "OIDC discovery/JWKS/token validation, provider state/nonce/PKCE, private-issuer policy checks, bounded HTTP(S) calls and session regeneration."
+        }
+      ],
+      "tests": [
+        {
+          "path": "backend/src/routes/oauth.refresh.test.js",
+          "sha": "6e234619dea52d2460deb6a99ad7a2b5d7cdd509"
+        },
+        {
+          "path": "backend/src/routes/oidc.privateIssuer.test.js",
+          "sha": "402e39434ee23bc3950458498dfc3c5621f51cda"
+        },
+        {
+          "path": "backend/src/routes/oidc.endsession.test.js",
+          "sha": "1dd8e123d8c2d9100bf99006e6e344d69a0146ea"
+        },
+        {
+          "path": "backend/src/routes/oidc.match.test.js",
+          "sha": "a74240bfb39a713ca9c6c838a7da78db3c8a5448"
+        }
+      ],
+      "openQuestions": [
+        "Trace all OIDC metadata and JWKS fetch call sites, issuer/audience/nonce/PKCE enforcement and provider configuration persistence.",
+        "Confirm private-host opt-in behavior and execution-time policy rechecks across all discovery/token/end-session requests."
+      ]
+    },
+    {
+      "capability": "outbound-host-validation",
+      "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED",
+      "source_files": [
+        {
+          "path": "backend/src/services/hostValidation.js",
+          "sha": "e4b3aad016b81d10f72ea7f1e8dc3e00d0cd1bda",
+          "observed": "IPv4/IPv6 private/reserved range checks, IDNA ASCII normalization, DNS A/AAAA/system resolver checks and pinned lookup for connection targets."
+        },
+        {
+          "path": "backend/src/services/safeFetch.js",
+          "sha": "dd0f0973b515131c88ff9afab640d58f1720a8f1",
+          "observed": "Undici connector validates literal IPs and all resolved addresses, blocks private/reserved destinations by default and requires HTTPS unless explicitly configured otherwise."
+        }
+      ],
+      "tests": [
+        {
+          "path": "backend/src/services/hostValidation.test.js",
+          "sha": "dc0267bcbb2a07582953a4e5bb682f2d80963122"
+        },
+        {
+          "path": "backend/src/services/safeFetch.test.js",
+          "sha": "c6246ce813d846d7f1a3b029ad384e3b6388d1eb"
+        }
+      ],
+      "openQuestions": [
+        "Trace redirect behavior and confirm the connector is re-applied on every redirect hop for all safeFetch callers.",
+        "Map the policy that allows private hosts and prove it is rechecked at use time; review DNS rebinding/time-of-check behavior for every IMAP/SMTP/OIDC path."
+      ]
+    },
+    {
+      "capability": "remote-image-proxy",
+      "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED",
+      "source_files": [
+        {
+          "path": "backend/src/services/imageProxy.js",
+          "sha": "4570f9f03f7c5883c4e9f4843e4e63f501396b30",
+          "observed": "Uses safeFetch; 10 MiB max response, 15 s overall timeout, 8 s header timeout, per-user concurrency limit 6, image signature sniffing and private response caching."
+        },
+        {
+          "path": "backend/src/routes/mail.js",
+          "sha": "d20a0f293c155b54780967c047ed621a0c3af28d",
+          "observed": "Message/body/image/attachment routes call image proxy, safe fetch, cache, shrink/inline image helpers and sanitizer."
+        },
+        {
+          "path": "frontend/src/utils/imageProxy.js",
+          "sha": "933c3cb7ab2780d7fd5eaf530c67b8913697074e",
+          "observed": "Frontend URL rewrite and proxy routing helper."
+        }
+      ],
+      "tests": [
+        {
+          "path": "backend/src/services/imageProxy.test.js",
+          "sha": "cf7c3d90b09efa40ecb0911c15cddefc2074abec"
+        },
+        {
+          "path": "frontend/src/utils/imageProxy.test.js",
+          "sha": "9bb485616ebba234e4f3a100ea61d36cb8707bc4"
+        }
+      ],
+      "openQuestions": [
+        "Trace all callers and per-user cache key/isolation; confirm all redirects re-enter safeFetch guards.",
+        "Inspect body limiter implementation and content-type/disposition headers; verify user-facing error and cache behavior."
+      ]
+    },
+    {
+      "capability": "email-html-sanitization",
+      "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED",
+      "source_files": [
+        {
+          "path": "backend/src/services/emailSanitizer.js",
+          "sha": "846a6497643b1147863e9c2a8f4de94b1a03c27f",
+          "observed": "sanitize-html plus parse5; strips email head, sanitizes email/compose/signature HTML, rewrites anchors, blocks/proxies remote images and transforms CSS/style content."
+        },
+        {
+          "path": "backend/src/routes/mail.js",
+          "sha": "d20a0f293c155b54780967c047ed621a0c3af28d",
+          "observed": "Applies sanitization to mail body and integrates image proxy and CID handling."
+        }
+      ],
+      "tests": [
+        {
+          "path": "backend/src/services/emailSanitizer.test.js",
+          "sha": "79a9b1cadc816ca918b827838d1718e378347e77"
+        },
+        {
+          "path": "backend/src/services/emailSanitizer.trackers.test.js",
+          "sha": "e24a0dc0b3300f5d5b878a0d1b156ddd8f0b46bb"
+        },
+        {
+          "path": "backend/src/services/emailSanitizer.parse5Error.test.js",
+          "sha": "7b1df76bda07d3c814a7065ff4cadcdc69b20b00"
+        }
+      ],
+      "openQuestions": [
+        "Trace rendering sink and every email/compose/signature sanitizer caller; confirm no alternate unsafe HTML path.",
+        "Map all sanitization transforms to browser-visible behavior and negative tests."
+      ]
+    }
+  ],
+  "shared_closure_dependencies": [
+    "backend/src/index.js route mounting/session middleware",
+    "backend/src/services/db.js PostgreSQL and encryption boundary",
+    "backend/src/services/encryption.js",
+    "backend/src/services/connectionPolicy.js",
+    "backend/src/services/redis.js",
+    "backend/package.json dependency/runtime versions",
+    "backend/migrations/0001_baseline.sql through 0066_email_accounts_icon.sql",
+    "backend/src/services/senderFavicon.js readBodyLimited helper",
+    "frontend/src/components/MessagePane.jsx",
+    "frontend/src/App.jsx and frontend/src/main.jsx"
+  ],
+  "status_summary": {
+    "source_snapshot_integrity": "PASS",
+    "static_trace": "PARTIAL",
+    "tests_executed_in_this_trace": 0,
+    "capability_closure": "PENDING",
+    "license_provenance": "PENDING",
+    "host_integration": "NOT_CLEARED"
+  }
+}
