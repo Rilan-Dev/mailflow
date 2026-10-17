@@ -84,3 +84,10 @@ This is baseline identity/inventory evidence only, not full extraction verificat
 - Initial path classification started for LICENSE, LICENSE-COMMERCIAL, CLA.md, README.md, backend/package.json and frontend/package.json. Six paths classified; 1,344 remain UNCLASSIFIED. This is a small first slice, not complete path-level provenance.
 - Security static trace created at extraction/manifests/security-closure-2026-10-17-35067fc.json. It covers auth/session, OAuth/OIDC, host validation/safeFetch, image proxy and email sanitizer, with 15 test references identified. No tests were executed by the static trace; these capabilities remain PARTIAL_STATIC_TRACE_NOT_CLOSED.
 - The source snapshot remains integrity-verified; dependency closure, license/provenance clearance, independent second-pass review and host-integration readiness remain pending.
+
+## Dependency inventory checkpoint — 2026-10-17
+- Current snapshot package manifests and lockfiles were parsed without modifying snapshot content.
+- Backend: 23 direct dependencies, 4 direct dev dependencies, 445 locked package entries; manifest/lockfile blob SHAs recorded in extraction/manifests/dependency-inventory-2026-10-17-35067fc.json.
+- Frontend: 27 direct dependencies, 12 direct dev dependencies, 679 locked package entries.
+- Total: 1,124 lockfile package entries; 50 direct dependencies and 16 direct dev dependencies.
+- This is an inventory pass only. Zero third-party packages have been license/provenance-cleared; runtime/native import closure and package source provenance remain pending.
