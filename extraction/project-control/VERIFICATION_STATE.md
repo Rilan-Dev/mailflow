@@ -117,3 +117,11 @@ This is baseline identity/inventory evidence only, not full extraction verificat
 - Database tree contains 66 ordered SQL migrations (`0001`–`0066`) plus a runner with advisory lock and transaction-aware migration application. The detailed table/index/constraint/runtime-consumer map is still open.
 - This is static trace evidence only. OIDC/OAuth outbound callers, SMTP connect-time policy, all sanitizer/render sinks, full IMAP recovery graph, all 66 migration semantics, third-party provenance and redistribution clearance remain unverified.
 - Existing selected security test evidence remains 379 passed / 0 failed across 15 files. Full backend/frontend/native checks have not been established by this trace.
+
+
+## 2026-10-17 — PostgreSQL schema trace
+
+- Added `extraction/manifests/postgres-schema-runtime-map-2026-10-17.md`.
+- Enumerated migrations `0001_baseline.sql` through `0066_email_accounts_icon.sql` (66 files) and inspected DDL/data operations. The runner uses a session-level advisory lock, records applied versions in `schema_migrations`, runs normal migrations transactionally and handles `-- no-transaction` files statement-by-statement for concurrent index operations.
+- Initial FK/cascade map identifies core users/accounts/messages/folders/aliases/snooze relations and later plugin configuration, unfetchable UID and spam-training relations. Account deletion's DB cascades do not prove cleanup of in-memory connections, caches, files or plugin-owned external state.
+- Remaining: machine-readable column/index/constraint inventory, SQL-consumer mapping, real PostgreSQL migration tests from clean and upgrade states, and partial-failure/idempotency tests for no-transaction migrations. This is not a schema closure or extraction PASS.
