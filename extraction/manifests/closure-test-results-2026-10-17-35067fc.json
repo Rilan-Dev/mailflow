@@ -66,14 +66,34 @@
     "failures": 0
   },
   "verification_boundaries": {
-    "snapshot_integrity": "PASS; latest verifier run https://github.com/Rilan-Dev/mailflow/actions/runs/39034548818",
+    "snapshot_integrity": "PASS; latest completed full verifier run https://github.com/Rilan-Dev/mailflow/actions/runs/39034971662; a fresh run is pending after the workflow command correction",
     "selected_security_and_transport_tests": "PASS",
-    "full_backend_suite": "NOT_YET_CONFIRMED_BY_THIS_EVIDENCE",
-    "full_frontend_suite": "NOT_YET_CONFIRMED_BY_THIS_EVIDENCE",
-    "native_android_electron_builds": "NOT_RUN",
+    "full_backend_suite": "PASS: full backend lint, plugin-boundary lint, syntax check, npm test and production dependency audit passed in run 39034971662",
+    "full_frontend_suite": "PASS: full frontend lint, npm test (including Electron Node tests), production build and production dependency audit passed in run 39034971662",
+    "native_android_electron_builds": "PARTIAL: Electron Node tests passed as part of frontend npm test; Android web build/Capacitor sync passed, but Gradle did not start because gradlew was non-executable. Corrected run pending; Electron packaging not run.",
     "capability_closure": "NOT_CLOSED",
     "path_license_and_provenance": "IN_PROGRESS",
     "redistribution_clearance": "PENDING",
-    "extraction_pass": "NOT_CLAIMED"
+    "extraction_pass": "NOT_CLAIMED; Android build pending, capability closure and licensing/provenance remain open",
+    "postgres_migrations": "PASS: PostgreSQL 17 clean database, 66 migrations, idempotent second run and schema object sanity checks passed in run 39034971662"
+  },
+  "full_verification": {
+    "workflow_run": 39034971662,
+    "url": "https://github.com/Rilan-Dev/mailflow/actions/runs/39034971662",
+    "result": "PARTIAL",
+    "jobs": {
+      "snapshot_inventory_verifier": "PASS",
+      "backend_lint_plugin_boundary_syntax_tests_and_production_audit": "PASS",
+      "frontend_lint_tests_production_build_and_production_audit": "PASS",
+      "postgres17_clean_install_66_migrations_idempotent_rerun": "PASS",
+      "android_web_build_and_capacitor_sync": "PASS",
+      "android_gradle_unit_tests_and_debug_apk": "FAILED_BEFORE_GRADLE_START_PERMISSION_DENIED_EXIT_126"
+    },
+    "failure_analysis": "Pinned snapshot frontend/packages/android/gradlew is non-executable. The source snapshot mode was preserved. Workflow was corrected to invoke bash ./gradlew; corrected run 39035265386 is pending.",
+    "corrected_run": {
+      "id": 39035265386,
+      "url": "https://github.com/Rilan-Dev/mailflow/actions/runs/39035265386",
+      "status": "PENDING"
+    }
   }
 }
