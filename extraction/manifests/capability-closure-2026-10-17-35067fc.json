@@ -10,8 +10,8 @@
   "summary": {
     "capability_count": 16,
     "closed": 0,
-    "partial_traces": 3,
-    "not_started": 13,
+    "partial_traces": 5,
+    "not_started": 11,
     "source_blobs": 1350,
     "unclassified_paths": 1238,
     "initially_classified_paths": 112
@@ -32,7 +32,7 @@
       "id": "mail-transport-sync",
       "name": "IMAP/SMTP transport and account synchronization",
       "priority": 2,
-      "status": "CANDIDATE_NOT_CLOSED",
+      "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED",
       "source_paths": [
         {
           "path": "backend/src/services/imapManager.js",
@@ -63,6 +63,11 @@
           "path": "backend/package.json",
           "blob_sha": "7317eb730ec7d303067dffaf8b7f71ca75da5482",
           "exists": true
+        },
+        {
+          "path": "backend/src/services/smtpTransport.js",
+          "blob_sha": "83691125aa09b4d2dba84a7ae2f4c72307421ea7",
+          "exists": true
         }
       ],
       "test_paths": [
@@ -78,17 +83,17 @@
         }
       ],
       "dimensions": {
-        "first_party_imports_and_callers": "NOT_STARTED",
-        "data_schema_and_migrations": "NOT_STARTED",
-        "configuration_and_runtime": "NOT_STARTED",
-        "authorization_and_security": "NOT_STARTED",
-        "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
+        "first_party_imports_and_callers": "PARTIAL_STATIC_TRACE",
+        "data_schema_and_migrations": "PARTIAL_STATIC_TRACE",
+        "configuration_and_runtime": "PARTIAL_STATIC_TRACE",
+        "authorization_and_security": "PARTIAL_STATIC_TRACE",
+        "side_effects_retries_idempotency_and_recovery": "PARTIAL_STATIC_TRACE",
         "UI_routes_and_interaction_states": "NOT_STARTED",
-        "tests_and_negative_cases": "NOT_STARTED",
-        "external_dependency_and_native_tool_closure": "NOT_STARTED",
-        "path_level_license_and_provenance": "NOT_STARTED"
+        "tests_and_negative_cases": "SELECTED_SECURITY_TESTS_RUN; IMAP/SMTP FULL SUITE PENDING",
+        "external_dependency_and_native_tool_closure": "PARTIAL_MANIFEST_IDENTIFIED",
+        "path_level_license_and_provenance": "UNREVIEWED"
       },
-      "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
+      "next_action": "Trace complete syncMessages/backfill/reconcileDeletes caller graph, folder status and UIDVALIDITY/modseq recovery; map message body/attachment and plugin/rules/spam dependencies; review IMAP/SMTP tests and UI states; close account deletion external cleanup."
     },
     {
       "id": "message-ingestion-rendering",
@@ -265,7 +270,7 @@
       "id": "database-schema",
       "name": "PostgreSQL persistence and ordered migrations",
       "priority": 2,
-      "status": "CANDIDATE_NOT_CLOSED",
+      "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED",
       "source_paths": [
         {
           "path": "backend/src/services/db.js",
@@ -281,21 +286,26 @@
           "path": "backend/migrations/0066_email_accounts_icon.sql",
           "blob_sha": "281f462c7960225156cc01b1dc18d80f9194b21f",
           "exists": true
+        },
+        {
+          "path": "backend/src/services/migrations.js",
+          "blob_sha": "38fc9a20d9a239123fad1ee075255fd7658b6d5d",
+          "exists": true
         }
       ],
       "test_paths": [],
       "dimensions": {
-        "first_party_imports_and_callers": "NOT_STARTED",
-        "data_schema_and_migrations": "NOT_STARTED",
-        "configuration_and_runtime": "NOT_STARTED",
-        "authorization_and_security": "NOT_STARTED",
-        "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
+        "first_party_imports_and_callers": "PARTIAL_STATIC_TRACE",
+        "data_schema_and_migrations": "PARTIAL_STATIC_TRACE",
+        "configuration_and_runtime": "PARTIAL_STATIC_TRACE",
+        "authorization_and_security": "PARTIAL_STATIC_TRACE",
+        "side_effects_retries_idempotency_and_recovery": "PARTIAL_STATIC_TRACE",
         "UI_routes_and_interaction_states": "NOT_STARTED",
-        "tests_and_negative_cases": "NOT_STARTED",
+        "tests_and_negative_cases": "MIGRATION_TESTS_NOT_RUN",
         "external_dependency_and_native_tool_closure": "NOT_STARTED",
-        "path_level_license_and_provenance": "NOT_STARTED"
+        "path_level_license_and_provenance": "UNREVIEWED"
       },
-      "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
+      "next_action": "Generate column-level schema object inventory from all 66 migrations; map SQL consumers and indexes; run clean-install and upgrade/partial-failure migration tests against PostgreSQL; review seed/config and every FK cascade."
     },
     {
       "id": "plugin-boundary",
