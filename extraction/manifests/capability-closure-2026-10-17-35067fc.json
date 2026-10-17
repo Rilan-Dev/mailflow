@@ -6,12 +6,12 @@
     "tree": "a2a82b50b8a1ac24a273e55dc0f9418aefdfed17"
   },
   "created_at": "2026-10-17",
-  "status": "PARTIAL_STATIC_TRACE_AND_SELECTED_TESTS_PASS; CAPABILITY_LICENSE_AND_FULL_VERIFICATION_OPEN",
+  "status": "PARTIAL_TRACE_FULL_BACKEND_FRONTEND_AND_POSTGRES_PASS_ANDROID_PENDING_LICENSE_CLOSURE_OPEN",
   "summary": {
     "capability_count": 16,
     "closed": 0,
-    "partial_traces": 6,
-    "not_started": 10,
+    "partial_traces": 8,
+    "not_started": 8,
     "source_blobs": 1350,
     "unclassified_paths": 1219,
     "initially_classified_paths": 131
@@ -320,12 +320,12 @@
         "configuration_and_runtime": "PARTIAL_STATIC_TRACE",
         "authorization_and_security": "PARTIAL_STATIC_TRACE",
         "side_effects_retries_idempotency_and_recovery": "PARTIAL_STATIC_TRACE",
-        "tests_and_negative_cases": "MIGRATION_TESTS_NOT_RUN",
+        "tests_and_negative_cases": "PASS: PostgreSQL 17 clean install, all 66 migrations, idempotent rerun and table/index/constraint sanity counts; upgrade and partial-failure tests pending",
         "external_dependency_and_native_tool_closure": "NOT_STARTED",
         "path_level_license_and_provenance": "UNREVIEWED",
         "ui_routes_and_interaction_states": "NOT_STARTED"
       },
-      "next_action": "Generate column-level schema object inventory from all 66 migrations; map SQL consumers and indexes; run clean-install and upgrade/partial-failure migration tests against PostgreSQL; review seed/config and every FK cascade."
+      "next_action": "Map each table/index/constraint to runtime SQL callers; add prior-version upgrade fixtures and simulate partial failure for no-transaction migrations."
     },
     {
       "id": "plugin-boundary",
@@ -751,7 +751,7 @@
       "id": "electron-desktop",
       "name": "Electron desktop shell, notifications and navigation security",
       "priority": 4,
-      "status": "CANDIDATE_NOT_CLOSED",
+      "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED",
       "source_paths": [
         {
           "path": "frontend/packages/electron/main.cjs",
@@ -792,18 +792,18 @@
         "configuration_and_runtime": "NOT_STARTED",
         "authorization_and_security": "NOT_STARTED",
         "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
-        "tests_and_negative_cases": "NOT_STARTED",
+        "tests_and_negative_cases": "PASS: Electron Node test files executed as part of full frontend npm test; packaging/build and runtime smoke test pending",
         "external_dependency_and_native_tool_closure": "NOT_STARTED",
         "path_level_license_and_provenance": "NOT_STARTED",
         "ui_routes_and_interaction_states": "NOT_STARTED"
       },
-      "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
+      "next_action": "Trace main/preload/mailApi IPC allowlist, navigation/window-open policy, notification lifecycle and app packaging; run packaged Electron build/smoke test."
     },
     {
       "id": "android-mobile",
       "name": "Android background sync, native bridge and notification actions",
       "priority": 4,
-      "status": "CANDIDATE_NOT_CLOSED",
+      "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED",
       "source_paths": [
         {
           "path": "frontend/packages/android/app/src/main/java/sh/mailflow/app/MailFlowBackgroundSync.java",
@@ -841,15 +841,15 @@
       "dimensions": {
         "first_party_imports_and_callers": "NOT_STARTED",
         "data_schema_and_migrations": "NOT_STARTED",
-        "configuration_and_runtime": "NOT_STARTED",
+        "configuration_and_runtime": "PARTIAL: frontend production bundle and Capacitor Android sync passed; Gradle compile/test pending after wrapper invocation fix",
         "authorization_and_security": "NOT_STARTED",
         "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
-        "tests_and_negative_cases": "NOT_STARTED",
+        "tests_and_negative_cases": "PENDING: corrected Gradle wrapper run https://github.com/Rilan-Dev/mailflow/actions/runs/39035265386",
         "external_dependency_and_native_tool_closure": "NOT_STARTED",
         "path_level_license_and_provenance": "NOT_STARTED",
         "ui_routes_and_interaction_states": "NOT_STARTED"
       },
-      "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
+      "next_action": "Inspect corrected Gradle run; if it fails, classify actual dependency/SDK/build failure without altering pinned source modes; then trace native plugin/background sync permissions and notification actions."
     },
     {
       "id": "deployment-and-release",
@@ -923,6 +923,11 @@
       "kind": "frontend_html_sink_trace",
       "path": "extraction/manifests/security-transport-database-trace-2026-10-17.md",
       "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED"
+    },
+    {
+      "kind": "full_snapshot_verification",
+      "path": "extraction/manifests/closure-test-results-2026-10-17-35067fc.json",
+      "status": "BACKEND_FRONTEND_POSTGRES_PASS; ANDROID_GRADLE_CORRECTED_RUN_PENDING"
     }
   ]
 }
