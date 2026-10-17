@@ -186,3 +186,10 @@ The full pinned-snapshot run 39034971662 provides these verified results:
 - 17 high-priority paths received first-pass patch review (host validation, sanitizer, image proxy, IMAP pool/sync, AI redirect, mail/send, CardDAV merge, frontend image/frame/compose, Android OIDC bridge). The other 130 changed/new paths are reset to UNCLASSIFIED until their exact target blob/mode is reviewed.
 - Path disposition now reports 156 classified / 1,194 unclassified. These are role classifications only; license/provenance remains unreviewed. The earlier 183/1,167 count is superseded.
 - Full verifier run 39038119553 was pending before the latest manifest update; current manifests require a fresh verifier run. No current-manifest PASS is claimed.
+
+
+## Update — 2026-10-17 — Upstream delta review, backend batch
+- Reviewed 20 more current-pin diffs/test additions across account icon validation, reply draft image width, remote image caching, folder rename, Gmail Sent-copy behavior, CardDAV merge, /etc/hosts host validation, image cache/shrink/inline fitting, IMAP sync/snooze/pool recovery, snoozed SQL views, rule forwarding and AI provider redirect/error behavior.
+- Delta review now covers 53/147 changed/new blobs; 94 remain pending. Current path disposition: 192 classified / 1,158 unclassified. Every pending changed/new path remains UNCLASSIFIED; role review is not license clearance.
+- Two new PostgreSQL query tests are explicitly marked DB-env optional; do not count them as executed without MAILFLOW_TEST_DATABASE_URL evidence. The full PostgreSQL clean-install migration job is separate.
+- Found a workflow coverage gap: full verification did not trigger on path-disposition/source-tree/delta manifest changes. Adding those paths to the trigger so the verifier runs against the current register.
