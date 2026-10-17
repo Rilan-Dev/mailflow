@@ -162,3 +162,14 @@ This is baseline identity/inventory evidence only, not full extraction verificat
 - Added PostgreSQL 17 service job to the full snapshot verification workflow. It applies all 66 migrations, runs the migration runner a second time, checks the `schema_migrations` ledger count and sanity-checks table/index/constraint counts.
 - Workflow definition commit: `3aabe903e75196956c49e77b3499467496578c12`. A prior workflow run started before this job existed; only the run triggered by the updated workflow can verify this job.
 - Upgrade fixtures and partial-failure recovery for no-transaction migrations remain unverified.
+
+
+## 2026-10-17 — Full pinned snapshot verification result
+
+Run https://github.com/Rilan-Dev/mailflow/actions/runs/39034971662:
+- Exact source snapshot and path/closure manifest verifier: PASS.
+- Full backend lint, plugin boundary, syntax, tests and production audit: PASS.
+- Full frontend lint, tests, production build and production audit: PASS.
+- PostgreSQL 17 clean database migration install and idempotent second run: PASS; all 66 migrations recorded and schema sanity checks passed.
+- Android web bundle and Capacitor sync: PASS.
+- Android Gradle step: FAILED before Gradle execution with `./gradlew: Permission denied` (exit 126) because the immutable upstream wrapper file lacks executable mode. This is not an Android compile/test result. Preserved the source mode and changed workflow to `bash ./gradlew testDebugUnitTest assembleDebug --no-daemon` in commit `981a7fbaec746ca765424c9e24572101716cca96`. Corrected run pending.
