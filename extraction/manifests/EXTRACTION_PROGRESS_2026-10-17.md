@@ -68,3 +68,11 @@
 - Capability register now records 14 partial traces and 2 not-started capabilities (frontend shell and deployment/release); zero capabilities are closed. Path register: 182 role-classified / 1,168 unclassified. Role classification is not license clearance.
 - Full backend lint/plugin boundary/tests/production audit, full frontend lint/tests/build/production audit and PostgreSQL 17 clean install + 66 migrations + idempotent rerun passed in run https://github.com/Rilan-Dev/mailflow/actions/runs/39034971662. Android web build/Capacitor sync passed; Gradle did not start because the wrapper lacked executable mode. Workflow now explicitly invokes `bash ./gradlew`; run https://github.com/Rilan-Dev/mailflow/actions/runs/39035662163 is pending.
 - High-priority unresolved security item remains OIDC discovery/token native fetch without safeFetch connection pin/redirect policy, especially explicit insecure issuer mode. License/provenance and redistribution clearance remain open.
+
+
+## Update — 2026-10-17 — Full suite verification evidence
+- Backend full suite: 2,804 passed, 41 skipped, 0 failed (166 files passed, 6 skipped); lint, plugin boundary lint, syntax and production dependency audit passed.
+- Frontend full suite: 3,142 passed, 0 skipped, 0 failed; lint, production build and production dependency audit passed. Electron Node tests ran as part of the frontend suite.
+- PostgreSQL 17: 66 migrations applied, idempotent rerun, 32 tables, 97 indexes, 282 constraints. Snapshot verifier passed in run https://github.com/Rilan-Dev/mailflow/actions/runs/39034971662.
+- Android web build and Capacitor sync passed; Gradle has not yet started successfully due the immutable wrapper's non-executable mode. Workflow now explicitly uses `bash ./gradlew`; current run https://github.com/Rilan-Dev/mailflow/actions/runs/39035810908 is pending.
+- Reusable capability runtime trace: `extraction/manifests/reusable-capability-runtime-trace-2026-10-17.md`. Current path register: 182 classified, 1,168 unclassified. Capability closure: 14 partial, 2 not started, 0 closed. Licensing/provenance remains open.
