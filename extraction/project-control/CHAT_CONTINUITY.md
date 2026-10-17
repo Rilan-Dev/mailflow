@@ -75,3 +75,8 @@ Inspected the completed workflow jobs and logs. Security/render run 39034509010 
 ## Continuity update — 2026-10-17 — Full verification queued
 
 Added `.github/workflows/mailflow-full-snapshot-verification.yml` to run the exact pinned snapshot verifier, full backend lint/plugin boundary/tests/audit, full frontend lint/tests/build/audit, and Android sync/unit tests/debug APK build. Run 39034814909 was queued at last check; don't infer success until results arrive. Selected security/render/transport suites passed 1,277 tests with 10 skipped and zero failures. Continue independent closure work, with OIDC native-fetch redirect/DNS policy and div-render/linkifier/signature closure as high-priority security items.
+
+
+## Continuity update — 2026-10-17 — PostgreSQL migration test job
+
+Added a PostgreSQL 17 job to the full pinned snapshot verification workflow: apply all 66 migrations to a clean DB, rerun for idempotency, assert 66 ledger entries and inspect table/index/constraint counts. Commit `3aabe903e75196956c49e77b3499467496578c12`. The earlier queued workflow run predates this job; inspect the newer run before recording results. This still does not cover upgrades from old schemas or simulated partial failure of non-transactional migrations.
