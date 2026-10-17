@@ -82,3 +82,12 @@
 - Added extraction/manifests/extraction-progress-2026-10-17.json and EXTRACTION_PROGRESS_2026-10-17.md to consolidate snapshot verification, path counts, capability state, dependency inventory and open legal/reuse gates.
 - The dependency inventory records 1,124 locked packages, 50 direct dependencies and 16 direct dev dependencies. All third-party license/provenance review remains open.
 - Verifier hardening now fails on unexpected executable bits and any Git LFS pointer that would require uncaptured external objects. The latest successful run before this path-register expansion detected 0 LFS pointers; workflow reruns on current manifest updates.
+
+
+## 008 — 2026-10-17 — Security, transport and database trace advanced
+- Read the current project-control checkpoint, source pin, current-pin architecture/capability/security manifests and immutable snapshot source. Confirmed the pinned source identity remains commit `35067fc2876d50980f1a8a3b8ea72b5467b69f60` / tree `a2a82b50b8a1ac24a273e55dc0f9418aefdfed17`.
+- Added `extraction/manifests/security-transport-database-trace-2026-10-17.md` with source-grounded call-path evidence for authentication/session, OAuth/OIDC, host validation/safeFetch, sanitizer/image proxy, account CRUD, IMAP connection controls, send/draft handling, and migration-runner semantics.
+- Static observations include session regeneration and MFA replay controls; state/nonce/PKCE; redirect-hop connection validation in safeFetch; IMAP/SMTP host validation at account create/update and IMAP connect; encrypted account secrets; account delete followed by asynchronous disconnect; connection/auth cooldowns; send-hold and sent-metadata retries; and 66 ordered migrations.
+- Confirmed that `safeFetch` redirect-hop protections do not prove every OAuth/network caller uses that helper. Native fetch and explicit insecure-fetch branches remain caller-by-caller review targets. SMTP connect-time policy and all sanitizer/rendering sinks also remain open.
+- No immutable upstream source files changed. No extraction PASS or reuse clearance claimed. Snapshot integrity remains PASS; selected security tests remain 379/379 passing in run https://github.com/Rilan-Dev/mailflow/actions/runs/39031942550.
+- Next: finish security call-site/sink closure, produce a complete 66-migration schema/runtime-consumer map, trace IMAP sync/recovery and account-owned cleanup, then expand dependency/license classification and verification.
