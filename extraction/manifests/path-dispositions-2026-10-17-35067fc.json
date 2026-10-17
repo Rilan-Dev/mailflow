@@ -6,7 +6,7 @@
     "tree": "a2a82b50b8a1ac24a273e55dc0f9418aefdfed17"
   },
   "created_at": "2026-10-17T11:46:33.594Z",
-  "status": "PARTIAL_CLASSIFICATION_SECURITY_TRANSPORT_SCHEMA_FRONTEND_TRACE_NOT_CLOSED",
+  "status": "PARTIAL_CLASSIFICATION_SECURITY_TRANSPORT_SCHEMA_REUSABLE_CAPABILITY_TRACE_NOT_CLOSED",
   "files": [
     {
       "path": ".dockerignore",
@@ -1579,13 +1579,14 @@
       "size": 3404,
       "candidate_areas": [
         "backend-and-api",
-        "plugin-system"
+        "plugin-system",
+        "plugin-boundary"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Plugin hook registry, activation cache, capability facade and test boundaries inspected; all hook callers, timeout/isolation, delete lifecycle and bundled dependency provenance remain open."
     },
     {
       "path": "backend/src/plugins/activation.test.js",
@@ -1595,13 +1596,14 @@
       "candidate_areas": [
         "backend-and-api",
         "plugin-system",
-        "tests"
+        "tests",
+        "plugin-boundary"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Plugin hook registry, activation cache, capability facade and test boundaries inspected; all hook callers, timeout/isolation, delete lifecycle and bundled dependency provenance remain open."
     },
     {
       "path": "backend/src/plugins/api.js",
@@ -1610,13 +1612,14 @@
       "size": 8189,
       "candidate_areas": [
         "backend-and-api",
-        "plugin-system"
+        "plugin-system",
+        "plugin-boundary"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Plugin hook registry, activation cache, capability facade and test boundaries inspected; all hook callers, timeout/isolation, delete lifecycle and bundled dependency provenance remain open."
     },
     {
       "path": "backend/src/plugins/gtd/gtdConfig.js",
@@ -2015,13 +2018,14 @@
       "size": 7393,
       "candidate_areas": [
         "backend-and-api",
-        "plugin-system"
+        "plugin-system",
+        "plugin-boundary"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Plugin hook registry, activation cache, capability facade and test boundaries inspected; all hook callers, timeout/isolation, delete lifecycle and bundled dependency provenance remain open."
     },
     {
       "path": "backend/src/plugins/registry.test.js",
@@ -2031,13 +2035,14 @@
       "candidate_areas": [
         "backend-and-api",
         "plugin-system",
-        "tests"
+        "tests",
+        "plugin-boundary"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Plugin hook registry, activation cache, capability facade and test boundaries inspected; all hook callers, timeout/isolation, delete lifecycle and bundled dependency provenance remain open."
     },
     {
       "path": "backend/src/plugins/storage.js",
@@ -2245,11 +2250,11 @@
         "backend-and-api",
         "ai-assistant"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "AI routes/provider, config/secret handling, bounded HTTP helpers and frontend action consumers traced; per-provider SSRF/redirect and privacy closure remain open."
     },
     {
       "path": "backend/src/routes/ai.test.js",
@@ -2261,11 +2266,11 @@
         "ai-assistant",
         "tests"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "AI routes/provider, config/secret handling, bounded HTTP helpers and frontend action consumers traced; per-provider SSRF/redirect and privacy closure remain open."
     },
     {
       "path": "backend/src/routes/auth.forgotPassword.test.js",
@@ -2432,11 +2437,11 @@
         "contacts-carddav",
         "tests"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Contacts/CardDAV runtime, user-owned address books, safeFetch/host validation, sync merge/purge and vCard helpers traced; edge-case closure and licensing remain open."
     },
     {
       "path": "backend/src/routes/carddav.js",
@@ -2447,11 +2452,11 @@
         "backend-and-api",
         "contacts-carddav"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Contacts/CardDAV runtime, user-owned address books, safeFetch/host validation, sync merge/purge and vCard helpers traced; edge-case closure and licensing remain open."
     },
     {
       "path": "backend/src/routes/carddavAccount.js",
@@ -2491,11 +2496,11 @@
         "backend-and-api",
         "contacts-carddav"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Contacts/CardDAV runtime, user-owned address books, safeFetch/host validation, sync merge/purge and vCard helpers traced; edge-case closure and licensing remain open."
     },
     {
       "path": "backend/src/routes/contacts.photo.test.js",
@@ -2507,11 +2512,11 @@
         "contacts-carddav",
         "tests"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Contacts/CardDAV runtime, user-owned address books, safeFetch/host validation, sync merge/purge and vCard helpers traced; edge-case closure and licensing remain open."
     },
     {
       "path": "backend/src/routes/diagnostics.js",
@@ -3104,13 +3109,14 @@
       "mode": "100644",
       "size": 20063,
       "candidate_areas": [
-        "backend-and-api"
+        "backend-and-api",
+        "rules-categorization"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Rule CRUD/execution, category AI dependency and spam pipeline/IMAP moves traced; full retry/idempotency, data lifecycle and provider error closure remain open."
     },
     {
       "path": "backend/src/routes/rules.run.test.js",
@@ -3119,13 +3125,14 @@
       "size": 3806,
       "candidate_areas": [
         "backend-and-api",
-        "tests"
+        "tests",
+        "rules-categorization"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Rule CRUD/execution, category AI dependency and spam pipeline/IMAP moves traced; full retry/idempotency, data lifecycle and provider error closure remain open."
     },
     {
       "path": "backend/src/routes/rules.senderCategory.test.js",
@@ -3134,13 +3141,14 @@
       "size": 5216,
       "candidate_areas": [
         "backend-and-api",
-        "tests"
+        "tests",
+        "rules-categorization"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Rule CRUD/execution, category AI dependency and spam pipeline/IMAP moves traced; full retry/idempotency, data lifecycle and provider error closure remain open."
     },
     {
       "path": "backend/src/routes/rules.test.js",
@@ -3149,13 +3157,14 @@
       "size": 7106,
       "candidate_areas": [
         "backend-and-api",
-        "tests"
+        "tests",
+        "rules-categorization"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Rule CRUD/execution, category AI dependency and spam pipeline/IMAP moves traced; full retry/idempotency, data lifecycle and provider error closure remain open."
     },
     {
       "path": "backend/src/routes/search.js",
@@ -3163,13 +3172,14 @@
       "mode": "100644",
       "size": 14045,
       "candidate_areas": [
-        "backend-and-api"
+        "backend-and-api",
+        "search-and-unified-inbox"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Runtime caller and SQL/data dependencies traced in reusable-capability-runtime-trace-2026-10-17.md; per-endpoint scope, UI and edge closure remain open."
     },
     {
       "path": "backend/src/routes/search.test.js",
@@ -3178,13 +3188,14 @@
       "size": 6384,
       "candidate_areas": [
         "backend-and-api",
-        "tests"
+        "tests",
+        "search-and-unified-inbox"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Runtime caller and SQL/data dependencies traced in reusable-capability-runtime-trace-2026-10-17.md; per-endpoint scope, UI and edge closure remain open."
     },
     {
       "path": "backend/src/routes/search.unifiedInbox.test.js",
@@ -3193,13 +3204,14 @@
       "size": 1856,
       "candidate_areas": [
         "backend-and-api",
-        "tests"
+        "tests",
+        "search-and-unified-inbox"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Runtime caller and SQL/data dependencies traced in reusable-capability-runtime-trace-2026-10-17.md; per-endpoint scope, UI and edge closure remain open."
     },
     {
       "path": "backend/src/routes/send.bcc.test.js",
@@ -3455,13 +3467,14 @@
       "mode": "100644",
       "size": 3646,
       "candidate_areas": [
-        "backend-and-api"
+        "backend-and-api",
+        "ai-assistant"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "AI routes/provider, config/secret handling, bounded HTTP helpers and frontend action consumers traced; per-provider SSRF/redirect and privacy closure remain open."
     },
     {
       "path": "backend/src/services/aiProvider.js",
@@ -3469,13 +3482,14 @@
       "mode": "100644",
       "size": 16069,
       "candidate_areas": [
-        "backend-and-api"
+        "backend-and-api",
+        "ai-assistant"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "AI routes/provider, config/secret handling, bounded HTTP helpers and frontend action consumers traced; per-provider SSRF/redirect and privacy closure remain open."
     },
     {
       "path": "backend/src/services/aiProvider.test.js",
@@ -3603,11 +3617,11 @@
         "backend-and-api",
         "contacts-carddav"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Contacts/CardDAV runtime, user-owned address books, safeFetch/host validation, sync merge/purge and vCard helpers traced; edge-case closure and licensing remain open."
     },
     {
       "path": "backend/src/services/carddavClient.multiget.test.js",
@@ -3619,11 +3633,11 @@
         "contacts-carddav",
         "tests"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Contacts/CardDAV runtime, user-owned address books, safeFetch/host validation, sync merge/purge and vCard helpers traced; edge-case closure and licensing remain open."
     },
     {
       "path": "backend/src/services/carddavClient.test.js",
@@ -3635,11 +3649,11 @@
         "contacts-carddav",
         "tests"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Contacts/CardDAV runtime, user-owned address books, safeFetch/host validation, sync merge/purge and vCard helpers traced; edge-case closure and licensing remain open."
     },
     {
       "path": "backend/src/services/carddavSync.js",
@@ -3651,23 +3665,25 @@
         "mail-protocol-and-sync",
         "contacts-carddav"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Contacts/CardDAV runtime, user-owned address books, safeFetch/host validation, sync merge/purge and vCard helpers traced; edge-case closure and licensing remain open."
     },
     {
       "path": "backend/src/services/carddavSync.test.js",
       "sha": "65976e54ff9844a298a9d525be9cc127377dd5e6",
       "mode": "100644",
       "size": 18331,
-      "candidate_areas": [],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "candidate_areas": [
+        "contacts-carddav"
+      ],
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "New path at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; inspect content, provenance, license and dependency closure."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Contacts/CardDAV runtime, user-owned address books, safeFetch/host validation, sync merge/purge and vCard helpers traced; edge-case closure and licensing remain open."
     },
     {
       "path": "backend/src/services/categorizer.js",
@@ -3675,13 +3691,14 @@
       "mode": "100644",
       "size": 9646,
       "candidate_areas": [
-        "backend-and-api"
+        "backend-and-api",
+        "rules-categorization"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Rule CRUD/execution, category AI dependency and spam pipeline/IMAP moves traced; full retry/idempotency, data lifecycle and provider error closure remain open."
     },
     {
       "path": "backend/src/services/categorizer.test.js",
@@ -3690,13 +3707,14 @@
       "size": 6227,
       "candidate_areas": [
         "backend-and-api",
-        "tests"
+        "tests",
+        "rules-categorization"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Rule CRUD/execution, category AI dependency and spam pipeline/IMAP moves traced; full retry/idempotency, data lifecycle and provider error closure remain open."
     },
     {
       "path": "backend/src/services/connectionPolicy.js",
@@ -4251,13 +4269,14 @@
       "mode": "100644",
       "size": 28446,
       "candidate_areas": [
-        "backend-and-api"
+        "backend-and-api",
+        "rules-categorization"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Rule CRUD/execution, category AI dependency and spam pipeline/IMAP moves traced; full retry/idempotency, data lifecycle and provider error closure remain open."
     },
     {
       "path": "backend/src/services/inboxRules.test.js",
@@ -4266,13 +4285,14 @@
       "size": 38922,
       "candidate_areas": [
         "backend-and-api",
-        "tests"
+        "tests",
+        "rules-categorization"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Rule CRUD/execution, category AI dependency and spam pipeline/IMAP moves traced; full retry/idempotency, data lifecycle and provider error closure remain open."
     },
     {
       "path": "backend/src/services/inlineImageFit.js",
@@ -4617,13 +4637,14 @@
       "size": 13640,
       "candidate_areas": [
         "backend-and-api",
-        "mail-protocol-and-sync"
+        "mail-protocol-and-sync",
+        "search-and-unified-inbox"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Runtime caller and SQL/data dependencies traced in reusable-capability-runtime-trace-2026-10-17.md; per-endpoint scope, UI and edge closure remain open."
     },
     {
       "path": "backend/src/services/messageService.snoozedView.postgres.test.js",
@@ -4645,13 +4666,14 @@
       "candidate_areas": [
         "backend-and-api",
         "mail-protocol-and-sync",
-        "tests"
+        "tests",
+        "search-and-unified-inbox"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Runtime caller and SQL/data dependencies traced in reusable-capability-runtime-trace-2026-10-17.md; per-endpoint scope, UI and edge closure remain open."
     },
     {
       "path": "backend/src/services/messageService.threadCount.postgres.test.js",
@@ -4784,13 +4806,14 @@
       "size": 2348,
       "candidate_areas": [
         "backend-and-api",
-        "notifications"
+        "notifications",
+        "notifications-realtime"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Session-backed WebSocket entry point, user-scoped push subscriptions and frontend reconnect/notification hooks traced; established-socket revocation, payload privacy and native action closure remain open."
     },
     {
       "path": "backend/src/services/rateLimiter.js",
@@ -5138,13 +5161,14 @@
       "mode": "100644",
       "size": 10533,
       "candidate_areas": [
-        "backend-and-api"
+        "backend-and-api",
+        "rules-categorization"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Rule CRUD/execution, category AI dependency and spam pipeline/IMAP moves traced; full retry/idempotency, data lifecycle and provider error closure remain open."
     },
     {
       "path": "backend/src/services/spamPipeline.test.js",
@@ -5153,13 +5177,14 @@
       "size": 18950,
       "candidate_areas": [
         "backend-and-api",
-        "tests"
+        "tests",
+        "rules-categorization"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Rule CRUD/execution, category AI dependency and spam pipeline/IMAP moves traced; full retry/idempotency, data lifecycle and provider error closure remain open."
     },
     {
       "path": "backend/src/services/spamRules.js",
@@ -5182,13 +5207,14 @@
       "size": 13069,
       "candidate_areas": [
         "backend-and-api",
-        "tests"
+        "tests",
+        "rules-categorization"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Rule CRUD/execution, category AI dependency and spam pipeline/IMAP moves traced; full retry/idempotency, data lifecycle and provider error closure remain open."
     },
     {
       "path": "backend/src/services/spamScheduler.js",
@@ -5341,13 +5367,14 @@
       "mode": "100644",
       "size": 490,
       "candidate_areas": [
-        "backend-and-api"
+        "backend-and-api",
+        "search-and-unified-inbox"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Runtime caller and SQL/data dependencies traced in reusable-capability-runtime-trace-2026-10-17.md; per-endpoint scope, UI and edge closure remain open."
     },
     {
       "path": "backend/src/services/unifiedInbox.test.js",
@@ -5356,13 +5383,14 @@
       "size": 990,
       "candidate_areas": [
         "backend-and-api",
-        "tests"
+        "tests",
+        "search-and-unified-inbox"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Runtime caller and SQL/data dependencies traced in reusable-capability-runtime-trace-2026-10-17.md; per-endpoint scope, UI and edge closure remain open."
     },
     {
       "path": "backend/src/services/updateCheck.js",
@@ -5416,13 +5444,14 @@
       "size": 3875,
       "candidate_areas": [
         "backend-and-api",
-        "notifications"
+        "notifications",
+        "notifications-realtime"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Session-backed WebSocket entry point, user-scoped push subscriptions and frontend reconnect/notification hooks traced; established-socket revocation, payload privacy and native action closure remain open."
     },
     {
       "path": "backend/src/services/websocket.test.js",
@@ -5432,13 +5461,14 @@
       "candidate_areas": [
         "backend-and-api",
         "notifications",
-        "tests"
+        "tests",
+        "notifications-realtime"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Session-backed WebSocket entry point, user-scoped push subscriptions and frontend reconnect/notification hooks traced; established-socket revocation, payload privacy and native action closure remain open."
     },
     {
       "path": "backend/src/utils/addressList.js",
@@ -5784,11 +5814,11 @@
         "backend-and-api",
         "contacts-carddav"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Contacts/CardDAV runtime, user-owned address books, safeFetch/host validation, sync merge/purge and vCard helpers traced; edge-case closure and licensing remain open."
     },
     {
       "path": "backend/src/utils/vcard.test.js",
@@ -5800,11 +5830,11 @@
         "contacts-carddav",
         "tests"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Contacts/CardDAV runtime, user-owned address books, safeFetch/host validation, sync merge/purge and vCard helpers traced; edge-case closure and licensing remain open."
     },
     {
       "path": "contrib/mailflow.service",
@@ -14360,11 +14390,11 @@
         "frontend-web",
         "ai-assistant"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "AI routes/provider, config/secret handling, bounded HTTP helpers and frontend action consumers traced; per-provider SSRF/redirect and privacy closure remain open."
     },
     {
       "path": "frontend/src/aiActions.test.js",
@@ -14376,11 +14406,11 @@
         "ai-assistant",
         "tests"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "AI routes/provider, config/secret handling, bounded HTTP helpers and frontend action consumers traced; per-provider SSRF/redirect and privacy closure remain open."
     },
     {
       "path": "frontend/src/aiResults.js",
@@ -14391,11 +14421,11 @@
         "frontend-web",
         "ai-assistant"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "AI routes/provider, config/secret handling, bounded HTTP helpers and frontend action consumers traced; per-provider SSRF/redirect and privacy closure remain open."
     },
     {
       "path": "frontend/src/aiResults.test.js",
@@ -15602,23 +15632,25 @@
         "frontend-web",
         "ai-assistant"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "AI routes/provider, config/secret handling, bounded HTTP helpers and frontend action consumers traced; per-provider SSRF/redirect and privacy closure remain open."
     },
     {
       "path": "frontend/src/hooks/useAiActions.test.js",
       "sha": "a124eb0547be1327f3590623b2482163feb0fec0",
       "mode": "100644",
       "size": 4260,
-      "candidate_areas": [],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "candidate_areas": [
+        "ai-assistant"
+      ],
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "New path at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; inspect content, provenance, license and dependency closure."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "AI routes/provider, config/secret handling, bounded HTTP helpers and frontend action consumers traced; per-provider SSRF/redirect and privacy closure remain open."
     },
     {
       "path": "frontend/src/hooks/useGtdTriage.js",
@@ -15655,13 +15687,14 @@
       "size": 5304,
       "candidate_areas": [
         "frontend-web",
-        "notifications"
+        "notifications",
+        "notifications-realtime"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Session-backed WebSocket entry point, user-scoped push subscriptions and frontend reconnect/notification hooks traced; established-socket revocation, payload privacy and native action closure remain open."
     },
     {
       "path": "frontend/src/hooks/useSwipeBack.js",
@@ -15740,12 +15773,14 @@
       "sha": "e836a91014cce552534b98731ab1e73c902ae169",
       "mode": "100644",
       "size": 2489,
-      "candidate_areas": [],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "candidate_areas": [
+        "notifications-realtime"
+      ],
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "New path at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; inspect content, provenance, license and dependency closure."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Session-backed WebSocket entry point, user-scoped push subscriptions and frontend reconnect/notification hooks traced; established-socket revocation, payload privacy and native action closure remain open."
     },
     {
       "path": "frontend/src/hooks/useWebSocket.counts.test.js",
@@ -15755,13 +15790,14 @@
       "candidate_areas": [
         "frontend-web",
         "notifications",
-        "tests"
+        "tests",
+        "notifications-realtime"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Session-backed WebSocket entry point, user-scoped push subscriptions and frontend reconnect/notification hooks traced; established-socket revocation, payload privacy and native action closure remain open."
     },
     {
       "path": "frontend/src/hooks/useWebSocket.js",
@@ -15770,13 +15806,14 @@
       "size": 18170,
       "candidate_areas": [
         "frontend-web",
-        "notifications"
+        "notifications",
+        "notifications-realtime"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Session-backed WebSocket entry point, user-scoped push subscriptions and frontend reconnect/notification hooks traced; established-socket revocation, payload privacy and native action closure remain open."
     },
     {
       "path": "frontend/src/hooks/useWebSocket.notify.test.js",
@@ -15786,13 +15823,14 @@
       "candidate_areas": [
         "frontend-web",
         "notifications",
-        "tests"
+        "tests",
+        "notifications-realtime"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Session-backed WebSocket entry point, user-scoped push subscriptions and frontend reconnect/notification hooks traced; established-socket revocation, payload privacy and native action closure remain open."
     },
     {
       "path": "frontend/src/i18n.js",
@@ -19470,10 +19508,10 @@
     }
   ],
   "removed_since_previous_pin": [],
-  "review_checkpoint": "2026-10-17: 131 role-level partial classifications include security, IMAP/SMTP, 66 migrations, and frontend email HTML/image/style dependencies; closure and licensing remain open.",
+  "review_checkpoint": "2026-10-17: role-level partial classifications include search/unified inbox, contacts/CardDAV, rules/spam, plugin runtime, AI and notifications/realtime. Capability closure and license/provenance remain open.",
   "summary": {
-    "unclassified_paths": 1219,
-    "classified_paths": 131,
-    "classification_note": "Classification describes observed role only; it is not license clearance or proof of capability closure."
+    "unclassified_paths": 1168,
+    "classified_paths": 182,
+    "classification_note": "Role and test status are grounded in source/test evidence; this is not license clearance or proof of capability closure."
   }
 }
