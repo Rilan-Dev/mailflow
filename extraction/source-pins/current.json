@@ -40,9 +40,9 @@
     "snapshot": "extraction/snapshots/35067fc2876d50980f1a8a3b8ea72b5467b69f60/source"
   },
   "verification": {
-    "workflow_url": "https://github.com/Rilan-Dev/mailflow/actions/runs/39030515872",
+    "workflow_url": "https://github.com/Rilan-Dev/mailflow/actions/runs/39030794029",
     "workflow_result": "success",
-    "verified_at": "2026-10-17T11:55:22Z",
+    "verified_at": "2026-10-17T12:00:05Z",
     "source_blob_count": 1350,
     "source_blob_sha_failures": 0,
     "snapshot_file_set": "PASS",
@@ -53,6 +53,12 @@
     "git_lfs_pointer_count": 0,
     "capability_closure": "PENDING",
     "path_license_provenance": "PENDING",
-    "redistribution_clearance": "PENDING"
+    "redistribution_clearance": "PENDING",
+    "path_disposition_summary": {
+      "total_blobs": 1350,
+      "initially_classified": 6,
+      "unclassified": 1344
+    },
+    "security_static_trace": "PARTIAL_NOT_CLOSED"
   }
 }
