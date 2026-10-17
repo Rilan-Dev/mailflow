@@ -60,3 +60,11 @@
 - Compared initial discovery inventory to current upstream: 31 added blobs, 116 changed blobs, 1,203 unchanged blobs, 0 removed blobs. All 1,350 current paths remain UNCLASSIFIED / license UNREVIEWED / closure UNMAPPED.
 - Added current-pin architecture map, upstream delta report, capability closure tracker and direct import/route scan across 16 files (78 first-party import lines and 57 route signatures). These are partial evidence only, not transitive closure.
 - Next: security closure (auth/OAuth/OIDC, host validation, safeFetch/image proxy, sanitizer), then IMAP/account lifecycle, DB/migrations, and remaining capability families. Licensing/provenance review remains mandatory.
+
+## 007 — 2026-10-17 — Begin security and licensing closure
+- Added machine-readable current-pin capability closure tracker, partial direct import/route scan, and a five-capability security closure slice with source blob SHAs and 15 test references.
+- Reviewed current snapshot's LICENSE, LICENSE-COMMERCIAL, CLA.md, README.md, backend/package.json and frontend/package.json. Updated six path dispositions with narrow evidence-backed classifications. License and redistribution clearance remains pending; package manifests are only partially mapped.
+- Updated closure tracker: three capabilities now marked PARTIAL_STATIC_TRACE_NOT_CLOSED (auth/identity, image proxy/privacy, message ingestion/rendering). All other capability areas remain candidates/not started; no capability is closed.
+- Enhanced verifier to scan Git LFS pointer files; the successful run found 0 LFS pointers and 0 gitlinks. Root tree and all 147 nested tree SHA checks passed.
+- Current counts: 1,350 source blobs; six initial path records classified; 1,344 remain UNCLASSIFIED. License/provenance and transitive dependency closure remain open.
+- Next: continue detailed auth/OAuth/OIDC, hostValidation/safeFetch/imageProxy/emailSanitizer caller and policy tracing, then IMAP/account lifecycle and DB migrations. Run listed tests in a real checkout; do not represent static code inspection as test PASS.
