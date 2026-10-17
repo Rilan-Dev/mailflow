@@ -2196,13 +2196,14 @@
       "candidate_areas": [
         "backend-and-api",
         "tests",
-        "assets-and-fonts"
+        "assets-and-fonts",
+        "auth-and-identity"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
+      "closure_status": "PARTIAL_FIRST_PASS_DIFF_REVIEW",
+      "notes": "Tests expanded for emoji grapheme edge cases and invalid tag/combining sequences. Tests ran in full backend suite 39034971662; test evidence is not license clearance. Exact target SHA/mode matches source-tree manifest; license/provenance remains unreviewed."
     },
     {
       "path": "backend/src/routes/accounts.js",
@@ -2211,13 +2212,14 @@
       "size": 25604,
       "candidate_areas": [
         "backend-and-api",
-        "account-lifecycle"
+        "account-lifecycle",
+        "auth-and-identity"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
+      "closure_status": "PARTIAL_FIRST_PASS_DIFF_REVIEW",
+      "notes": "The changed icon validator now requires exactly one emoji sequence rather than any grapheme containing an emoji marker; it rejects combining-mark abuse, text keycaps, invisible tags, lone regional indicators and text presentation symbols. Account API host validation/credentials remain broader closure. Exact target SHA/mode matches source-tree manifest; license/provenance remains unreviewed."
     },
     {
       "path": "backend/src/routes/accounts.signature.test.js",
@@ -2334,11 +2336,11 @@
         "ai-assistant",
         "tests"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
+      "closure_status": "PARTIAL_FIRST_PASS_DIFF_REVIEW",
+      "notes": "Adds regression test that AI-provider auth 401 becomes 409 instead of signing out the MailFlow user; included in full backend suite. Exact target SHA/mode matches source-tree manifest; license/provenance remains unreviewed."
     },
     {
       "path": "backend/src/routes/auth.forgotPassword.test.js",
@@ -2611,13 +2613,14 @@
       "size": 27690,
       "candidate_areas": [
         "backend-and-api",
-        "mail-send-drafts"
+        "mail-send-drafts",
+        "compose-and-send"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
+      "closure_status": "PARTIAL_FIRST_PASS_DIFF_REVIEW",
+      "notes": "Reply-draft image proxy now passes the displayed width through imageProxyPath so fitted image variants are consistent. Draft provider persistence, body cache and original-image forwarding remain open. Exact target SHA/mode matches source-tree manifest; license/provenance remains unreviewed."
     },
     {
       "path": "backend/src/routes/draft.lookup.postgres.test.js",
@@ -2924,25 +2927,28 @@
       "size": 15107,
       "candidate_areas": [
         "backend-and-api",
-        "tests"
+        "tests",
+        "image-proxy-privacy"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
+      "closure_status": "PARTIAL_FIRST_PASS_DIFF_REVIEW",
+      "notes": "Tests use a real isolated image cache and cover remote-image route/cache behavior. Included in lifecycle test run 39037515886 (18 tests passed). Exact target SHA/mode matches source-tree manifest; license/provenance remains unreviewed."
     },
     {
       "path": "backend/src/routes/mail.renameFolder.test.js",
       "sha": "7e0983f01137708a2948d49442c595ecfc264053",
       "mode": "100644",
       "size": 4609,
-      "candidate_areas": [],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "candidate_areas": [
+        "search-and-unified-inbox"
+      ],
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
+      "closure_status": "PARTIAL_FIRST_PASS_DIFF_REVIEW",
+      "notes": "New route test models folder subtree renames in messages and snoozed_messages; verifies persisted folder paths. Included in full backend run 39034971662. Exact target SHA/mode matches source-tree manifest; license/provenance remains unreviewed."
     },
     {
       "path": "backend/src/routes/mail.resolve.test.js",
@@ -3342,12 +3348,14 @@
       "sha": "37570937f240774354490cb1cc200c7d295e8fd7",
       "mode": "100644",
       "size": 5070,
-      "candidate_areas": [],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "candidate_areas": [
+        "compose-and-send"
+      ],
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
+      "closure_status": "PARTIAL_FIRST_PASS_DIFF_REVIEW",
+      "notes": "New tests cover Gmail auto-saves-Sent heuristic for OAuth/app-password/mismatched SMTP identities; included in lifecycle run 39037515886. Exact target SHA/mode matches source-tree manifest; license/provenance remains unreviewed."
     },
     {
       "path": "backend/src/routes/send.js",
@@ -3577,13 +3585,14 @@
       "size": 23688,
       "candidate_areas": [
         "backend-and-api",
-        "tests"
+        "tests",
+        "ai-assistant"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
+      "closure_status": "PARTIAL_FIRST_PASS_DIFF_REVIEW",
+      "notes": "Adds regression coverage that API-key provider redirects are not followed, including 307 to a private address; confirms manual redirect and safe 502 error; included in full backend suite. Exact target SHA/mode matches source-tree manifest; license/provenance remains unreviewed."
     },
     {
       "path": "backend/src/services/archiveInbox.js",
@@ -3759,11 +3768,11 @@
       "candidate_areas": [
         "contacts-carddav"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
+      "closure_status": "PARTIAL_FIRST_PASS_DIFF_REVIEW",
+      "notes": "New tests exercise merge mode preserving user-entered fields, filling gaps and stable vCard output; included in full backend run 39034971662. Exact target SHA/mode matches source-tree manifest; license/provenance remains unreviewed."
     },
     {
       "path": "backend/src/services/categorizer.js",
@@ -4047,11 +4056,11 @@
         "tests",
         "outbound-host-validation"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
+      "closure_status": "PARTIAL_FIRST_PASS_DIFF_REVIEW",
+      "notes": "Adds system resolver fallback tests for /etc/hosts-only hostnames resolving to loopback/private addresses; included in selected security run 39031942550. Exact target SHA/mode matches source-tree manifest; license/provenance remains unreviewed."
     },
     {
       "path": "backend/src/services/imageCache.js",
@@ -4072,12 +4081,14 @@
       "sha": "93230b83d1d082e690c3eb5dd4fcfd7b3dde9da2",
       "mode": "100644",
       "size": 4011,
-      "candidate_areas": [],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "candidate_areas": [
+        "image-proxy-privacy"
+      ],
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
+      "closure_status": "PARTIAL_FIRST_PASS_DIFF_REVIEW",
+      "notes": "New tests cover hashed per-user/per-width keys, LRU/age eviction, short-lived failure caching, coalesced concurrent fetches and unwritable disk fallback; included in full backend suite. Exact target SHA/mode matches source-tree manifest; license/provenance remains unreviewed."
     },
     {
       "path": "backend/src/services/imageProxy.js",
@@ -4134,13 +4145,14 @@
       "size": 5975,
       "candidate_areas": [
         "backend-and-api",
-        "tests"
+        "tests",
+        "image-proxy-privacy"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
+      "closure_status": "PARTIAL_FIRST_PASS_DIFF_REVIEW",
+      "notes": "Tests now assert width-aware target sizing while retaining WebP/savings and animated/small-image pass-through behavior; included in full backend suite. Exact target SHA/mode matches source-tree manifest; license/provenance remains unreviewed."
     },
     {
       "path": "backend/src/services/imapAuthBackoff.test.js",
@@ -4227,12 +4239,14 @@
       "sha": "f1132f5935dbd1a9f57f012bfd7dd3d398264e11",
       "mode": "100644",
       "size": 4502,
-      "candidate_areas": [],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "candidate_areas": [
+        "mail-transport-sync"
+      ],
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
+      "closure_status": "PARTIAL_FIRST_PASS_DIFF_REVIEW",
+      "notes": "New test simulates untagged EXISTS during active sync and asserts a follow-up sync after current sync finishes; included in lifecycle run 39037515886. Exact target SHA/mode matches source-tree manifest; license/provenance remains unreviewed."
     },
     {
       "path": "backend/src/services/imapManager.sentBcc.postgres.test.js",
@@ -4255,12 +4269,14 @@
       "sha": "eeb1d0c985c40a4048457825cd61199a00638157",
       "mode": "100644",
       "size": 7061,
-      "candidate_areas": [],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "candidate_areas": [
+        "mail-transport-sync"
+      ],
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
+      "closure_status": "PARTIAL_FIRST_PASS_DIFF_REVIEW",
+      "notes": "New tests cover due-snooze sweep races when a message is manually unsnoozed or rescheduled before wake; included in lifecycle run 39037515886. Exact target SHA/mode matches source-tree manifest; license/provenance remains unreviewed."
     },
     {
       "path": "backend/src/services/imapManager.test.js",
@@ -4315,12 +4331,14 @@
       "sha": "15c86773dcefaa2cf644f1e3b915267dda054d10",
       "mode": "100644",
       "size": 12272,
-      "candidate_areas": [],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "candidate_areas": [
+        "mail-transport-sync"
+      ],
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
+      "closure_status": "PARTIAL_FIRST_PASS_DIFF_REVIEW",
+      "notes": "New local fake-server tests exercise a real ImapFlow client and stall timeout/lease recovery, not a live provider; included in lifecycle run 39037515886. Exact target SHA/mode matches source-tree manifest; license/provenance remains unreviewed."
     },
     {
       "path": "backend/src/services/imapRenameFolder.test.js",
@@ -4404,12 +4422,14 @@
       "sha": "3712f39593c40702df3e9cce218991933e1e6c26",
       "mode": "100644",
       "size": 2136,
-      "candidate_areas": [],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "candidate_areas": [
+        "image-proxy-privacy"
+      ],
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
+      "closure_status": "PARTIAL_FIRST_PASS_DIFF_REVIEW",
+      "notes": "New tests fit large inline data images once and preserve original data for forwarding; included in full backend suite. Exact target SHA/mode matches source-tree manifest; license/provenance remains unreviewed."
     },
     {
       "path": "backend/src/services/integrityFlagScan.test.js",
@@ -4716,12 +4736,14 @@
       "sha": "1aea4d591e00c768fa0e659161037d6e7516cbb3",
       "mode": "100644",
       "size": 4354,
-      "candidate_areas": [],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "candidate_areas": [
+        "search-and-unified-inbox"
+      ],
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
+      "closure_status": "TEST_REVIEWED_DB_ENV_OPTIONAL",
+      "notes": "New PostgreSQL integration test is guarded by MAILFLOW_TEST_DATABASE_URL and uses temporary tables to verify category-filter totals; do not count as executed unless that env var was set. Exact target SHA/mode matches source-tree manifest; license/provenance remains unreviewed."
     },
     {
       "path": "backend/src/services/messageService.js",
@@ -4733,23 +4755,25 @@
         "mail-protocol-and-sync",
         "search-and-unified-inbox"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
+      "closure_status": "PARTIAL_FIRST_PASS_DIFF_REVIEW",
+      "notes": "Snoozed view now follows per-message snoozed_folder paths under namespace prefixes and uses snooze records to avoid listing unrelated messages in same folder; query/index/tenant closure remains open. Exact target SHA/mode matches source-tree manifest; license/provenance remains unreviewed."
     },
     {
       "path": "backend/src/services/messageService.snoozedView.postgres.test.js",
       "sha": "ead537a895ecaaae7fc7c6bc04de607c97a87e0b",
       "mode": "100644",
       "size": 5800,
-      "candidate_areas": [],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "candidate_areas": [
+        "search-and-unified-inbox"
+      ],
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
+      "closure_status": "TEST_REVIEWED_DB_ENV_OPTIONAL",
+      "notes": "New PostgreSQL integration test is guarded by MAILFLOW_TEST_DATABASE_URL and verifies all-accounts Snoozed view across prefixed folders; do not count as executed unless that env var was set. Exact target SHA/mode matches source-tree manifest; license/provenance remains unreviewed."
     },
     {
       "path": "backend/src/services/messageService.test.js",
@@ -5002,13 +5026,14 @@
       "size": 27746,
       "candidate_areas": [
         "backend-and-api",
-        "tests"
+        "tests",
+        "rules-categorization"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
+      "closure_status": "PARTIAL_FIRST_PASS_DIFF_REVIEW",
+      "notes": "Adds regression test for preserving sender dark-mode CSS disabled when forwarding a stored sanitized body; included in full backend suite. Exact target SHA/mode matches source-tree manifest; license/provenance remains unreviewed."
     },
     {
       "path": "backend/src/services/safeFetch.js",
@@ -19621,10 +19646,10 @@
     }
   ],
   "removed_since_previous_pin": [],
-  "review_checkpoint": "2026-10-17: initial-to-current diff has 147 changed/new paths. 33 high-priority paths received first-pass review; 114 remain UNCLASSIFIED pending exact blob review.",
+  "review_checkpoint": "2026-10-17: initial-to-current diff has 147 changed/new paths. 53 paths received first-pass review; 94 remain UNCLASSIFIED pending exact blob review.",
   "summary": {
-    "unclassified_paths": 1178,
-    "classified_paths": 172,
+    "unclassified_paths": 1158,
+    "classified_paths": 192,
     "classification_note": "Only reviewed exact target SHA/mode paths receive a non-UNCLASSIFIED disposition; all remaining changed/new blobs are UNCLASSIFIED. Role classification is not license clearance."
   }
 }
