@@ -6,7 +6,7 @@
     "tree": "a2a82b50b8a1ac24a273e55dc0f9418aefdfed17"
   },
   "created_at": "2026-10-17",
-  "status": "PARTIAL_STATIC_TRACE_FULL_BACKEND_FRONTEND_AND_POSTGRES_PASS_ANDROID_PENDING_LICENSE_CLOSURE_OPEN",
+  "status": "PARTIAL_STATIC_TRACE_BACKEND_FRONTEND_POSTGRES_PASS_SECURITY_AND_MAIL_TEST_SLICE_PASS_ANDROID_PENDING_LICENSE_OPEN",
   "summary": {
     "capability_count": 16,
     "closed": 0,
@@ -32,7 +32,7 @@
       "id": "mail-transport-sync",
       "name": "IMAP/SMTP transport and account synchronization",
       "priority": 2,
-      "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED",
+      "status": "PARTIAL_STATIC_TRACE_TEST_SLICE_PASS_NOT_CLOSED",
       "source_paths": [
         {
           "path": "backend/src/services/imapManager.js",
@@ -68,6 +68,31 @@
           "path": "backend/src/services/smtpTransport.js",
           "blob_sha": "83691125aa09b4d2dba84a7ae2f4c72307421ea7",
           "exists": true
+        },
+        {
+          "path": "backend/src/services/connectionPolicy.js",
+          "blob_sha": "bf7a4b54efbbc518c9fa4b583c01e7acc8ef1475",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/encryption.js",
+          "blob_sha": "6bd260832f82fbdaffde4e545ef2fa834877a7ec",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/db.js",
+          "blob_sha": "a3527cf3d0252efb831cffadf0860ac74247bb2e",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/userSessions.js",
+          "blob_sha": "01caeac68cadba55fa638aef52fe3a36bb081438",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/mail.js",
+          "blob_sha": "d20a0f293c155b54780967c047ed621a0c3af28d",
+          "exists": true
         }
       ],
       "test_paths": [
@@ -80,6 +105,36 @@
           "path": "backend/src/services/imapMoveFallback.test.js",
           "blob_sha": "6aecc2bfbc3546b3d27463e67912f119b99dffda",
           "exists": true
+        },
+        {
+          "path": "backend/src/services/smtpTransport.test.js",
+          "blob_sha": "a1497b616a65bd9058daffdc88900519daa80eb8",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/accounts.aliases.test.js",
+          "blob_sha": "6b62a612f093ddd25b90be51e8b54ab93509c1ce",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/accounts.columns.test.js",
+          "blob_sha": "86d430af3a27816dc83354c28a54297cf12a572a",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/accounts.unifiedInbox.test.js",
+          "blob_sha": "b36bc787c5ea0f405a79a03d4f531db5edbf2e02",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/imapManager.newMailDuringSync.test.js",
+          "blob_sha": "f1132f5935dbd1a9f57f012bfd7dd3d398264e11",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/imapManager.snoozeWake.test.js",
+          "blob_sha": "eeb1d0c985c40a4048457825cd61199a00638157",
+          "exists": true
         }
       ],
       "dimensions": {
@@ -88,18 +143,18 @@
         "configuration_and_runtime": "PARTIAL_STATIC_TRACE",
         "authorization_and_security": "PARTIAL_STATIC_TRACE",
         "side_effects_retries_idempotency_and_recovery": "PARTIAL_STATIC_TRACE",
-        "tests_and_negative_cases": "TARGETED IMAP/SMTP/ACCOUNT SUITE PASSED (777 PASS; 10 SKIPPED); FULL CAPABILITY SUITE PENDING",
+        "tests_and_negative_cases": "PASS: 42 test files / 777 tests passed; 1 file / 10 tests skipped in run 39037515886. Full backend suite also passed in 39034971662. No real IMAP/SMTP server integration proven.",
         "external_dependency_and_native_tool_closure": "PARTIAL_MANIFEST_IDENTIFIED",
         "path_level_license_and_provenance": "UNREVIEWED",
         "ui_routes_and_interaction_states": "NOT_STARTED"
       },
-      "next_action": "Trace complete syncMessages/backfill/reconcileDeletes caller graph, folder status and UIDVALIDITY/modseq recovery; map message body/attachment and plugin/rules/spam dependencies; review IMAP/SMTP tests and UI states; close account deletion external cleanup."
+      "next_action": "Trace all account fields/credential encryption and migration constraints, execution-time host resolution for IMAP and SMTP, connect/sync state transitions, concurrency and exponential backoff, UIDVALIDITY/checkpoint/reconciliation, account disable/delete cleanup and UI reconnect/error states. Selected test run 39037515886 passed 777 tests (10 skipped); no live mail-server integration was exercised."
     },
     {
       "id": "message-ingestion-rendering",
       "name": "Message parsing, sanitization, body storage and rendering",
       "priority": 3,
-      "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED",
+      "status": "PARTIAL_STATIC_TRACE_TEST_SLICE_PASS_NOT_CLOSED",
       "source_paths": [
         {
           "path": "backend/src/services/messageParser.js",
@@ -135,6 +190,11 @@
           "path": "frontend/src/utils/emailStyleRegistry.js",
           "blob_sha": "3587abbaebbfe864472fe05fcc7baecb883c659d",
           "exists": true
+        },
+        {
+          "path": "backend/src/services/imapManager.js",
+          "blob_sha": "dd0633bf265ca3cafe9f216948a65ef5d6f72754",
+          "exists": true
         }
       ],
       "test_paths": [
@@ -152,6 +212,31 @@
           "path": "backend/src/services/emailSanitizer.trackers.test.js",
           "blob_sha": "e24a0dc0b3300f5d5b878a0d1b156ddd8f0b46bb",
           "exists": true
+        },
+        {
+          "path": "backend/src/routes/mail.remoteImages.test.js",
+          "blob_sha": "f08612977d64c483b80d25ab30076b00ce13e305",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/mail.cidCache.test.js",
+          "blob_sha": "e11fcd7fd9d425e40084f33729c106989e2f37ad",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/mail.rawEml.test.js",
+          "blob_sha": "e007e06801f126b7fe411e464cb2891609d19412",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/mail.attachmentsZip.test.js",
+          "blob_sha": "9a67dbf028ceb5d1a7c387309b2b4da45e394619",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/mail.bodyRefusal.test.js",
+          "blob_sha": "fafddaa9646ce1ee4fcd02153bfcc888a150d07e",
+          "exists": true
         }
       ],
       "dimensions": {
@@ -160,12 +245,12 @@
         "configuration_and_runtime": "NOT_STARTED",
         "authorization_and_security": "PARTIAL_STATIC_TRACE",
         "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
-        "tests_and_negative_cases": "SELECTED BACKEND AND FRONTEND SECURITY/RENDER TESTS PASSED; FULL FRONTEND SUITE PENDING",
+        "tests_and_negative_cases": "PASS: selected IMAP/SMTP/account lifecycle suite run 39037515886 includes message/draft/send tests; 777 passed, 10 skipped; full backend/frontend suites have separate passing evidence. Real provider/server integration remains unverified.",
         "external_dependency_and_native_tool_closure": "NOT_STARTED",
-        "path_level_license_and_provenance": "NOT_STARTED",
+        "path_level_license_and_provenance": "UNREVIEWED",
         "ui_routes_and_interaction_states": "PARTIAL_STATIC_TRACE"
       },
-      "next_action": "Verify both iframe and VITE_EMAIL_DIV_RENDER paths; prove sanitizeEmailForApp and CSS scoping remain in force; add explicit hostile plain-text linkifier and signature source/read/write tests; close CID/attachment/body-store call graph."
+      "next_action": "Close MIME parsing edge cases, body cache consistency, CID refetch/recovery, attachments metadata versus fetched content, inline images, sanitization/rendering sinks and sync reconciliation against a real mail server."
     },
     {
       "id": "image-proxy-privacy",
@@ -445,7 +530,7 @@
       "id": "compose-and-send",
       "name": "Compose, reply, forward, drafts, attachments and SMTP routing",
       "priority": 4,
-      "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED",
+      "status": "PARTIAL_STATIC_TRACE_TEST_SLICE_PASS_NOT_CLOSED",
       "source_paths": [
         {
           "path": "frontend/src/components/ComposeModal.jsx",
@@ -481,6 +566,16 @@
           "path": "frontend/src/utils/appEmailHtml.js",
           "blob_sha": "9a87890c4e55bb5d60494558a1945dad3e4b256a",
           "exists": true
+        },
+        {
+          "path": "backend/src/services/smtpTransport.js",
+          "blob_sha": "83691125aa09b4d2dba84a7ae2f4c72307421ea7",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/emailSanitizer.js",
+          "blob_sha": "846a6497643b1147863e9c2a8f4de94b1a03c27f",
+          "exists": true
         }
       ],
       "test_paths": [
@@ -498,6 +593,41 @@
           "path": "frontend/src/components/ComposeModal.signatureToggle.test.js",
           "blob_sha": "e04dd739759c16a1c9c4397c789fddfe78916460",
           "exists": true
+        },
+        {
+          "path": "backend/src/routes/draft.lookup.test.js",
+          "blob_sha": "1ffa89897e8cab7f0300ed3d014fb29631def9ad",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/send.undo.test.js",
+          "blob_sha": "31b3cbbde742ad2882620eeea26824f0bb4aea68",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/send.reliability.test.js",
+          "blob_sha": "1996c04c14b28cf9820f33ba5849dc809e9437ea",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/send.forwardedMessages.test.js",
+          "blob_sha": "fd43dbffb8d48284e018ab71945a071edd1f71c7",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/send.forwarded.test.js",
+          "blob_sha": "28450e0e9547d7ec2bf3e26c22d13317f9736e54",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/send.textPart.test.js",
+          "blob_sha": "94744564bbbf4efc607d2c68bee51976c2c2ee93",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/send.gmailSent.test.js",
+          "blob_sha": "37570937f240774354490cb1cc200c7d295e8fd7",
+          "exists": true
         }
       ],
       "dimensions": {
@@ -506,12 +636,12 @@
         "configuration_and_runtime": "NOT_STARTED",
         "authorization_and_security": "PARTIAL_STATIC_TRACE",
         "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
-        "tests_and_negative_cases": "TARGETED TRANSPORT/COMPOSE SUITE PASSED (777 PASS; 10 SKIPPED) AND FRONTEND RENDER TESTS PASSED; FULL CAPABILITY SUITE PENDING",
+        "tests_and_negative_cases": "PASS: selected IMAP/SMTP/account lifecycle suite run 39037515886 includes message/draft/send tests; 777 passed, 10 skipped; full backend/frontend suites have separate passing evidence. Real provider/server integration remains unverified.",
         "external_dependency_and_native_tool_closure": "NOT_STARTED",
         "path_level_license_and_provenance": "UNREVIEWED",
         "ui_routes_and_interaction_states": "PARTIAL_STATIC_TRACE"
       },
-      "next_action": "Trace compose autosave/reopen/restore, draft replacement and reply graph, attachments/inline images, signatures, aliases and account switching; run queued transport and frontend security suites."
+      "next_action": "Close draft/attachment/inline-image closure, SMTP transport live behavior, provider-specific draft semantics, delivery idempotency and post-delivery failure recovery, retry boundaries, compose loading/empty/error states and native-client flows."
     },
     {
       "id": "search-and-unified-inbox",
@@ -1054,6 +1184,17 @@
       "kind": "full_snapshot_verification",
       "path": "extraction/manifests/closure-test-results-2026-10-17-35067fc.json",
       "status": "BACKEND_FRONTEND_POSTGRES_PASS; ANDROID_GRADLE_CORRECTED_RUN_PENDING"
+    },
+    {
+      "kind": "imap_smtp_account_lifecycle_tests",
+      "run": 39037515886,
+      "url": "https://github.com/Rilan-Dev/mailflow/actions/runs/39037515886",
+      "result": "PASS",
+      "files_passed": 42,
+      "files_skipped": 1,
+      "tests_passed": 777,
+      "tests_skipped": 10,
+      "failures": 0
     }
   ]
 }
