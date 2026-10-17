@@ -98,3 +98,8 @@
 - Compared the original pin e7a53760a7e4b15e0ee631533655d99dde657599 with current pin 35067fc2876d50980f1a8a3b8ea72b5467b69f60: 51 commits, 116 modified blobs and 31 new blobs.
 - First-pass review completed for 17 high-priority security/mail/native paths. Remaining 130 changed/new paths are reset to UNCLASSIFIED pending exact SHA/mode review.
 - Current path disposition count: 156 classified / 1,194 unclassified. License/provenance clearance remains 0/1,124 third-party package entries reviewed and no capability closed.
+
+
+## Update — 2026-10-17 — Backend delta review batch
+- First-pass diff review now covers 53/147 changed/new paths; 94 remain pending. Current register: 192 classified / 1,158 unclassified.
+- Verification workflow trigger coverage is being fixed to run when path-disposition, source-tree or delta-review manifests change.
