@@ -76,3 +76,11 @@ This is baseline identity/inventory evidence only, not full extraction verificat
 - Updated verifier to check exact Git blob hashes, snapshot file-set equality, symlink status and executable bits when a snapshot exists.
 - NOT YET VERIFIED: workflow execution, generated snapshot PR, current live upstream inventory, local verifier output, snapshot exactness in a real checkout, per-path license/provenance, dependency closure, independent reconciliation, LFS/submodule completeness, or extraction PASS.
 - Licensing notice: upstream declares AGPL-3.0 and a separate commercial license route; preserve notices and do not assume arbitrary reuse/redistribution rights.
+
+## 2026-10-17 — Post-snapshot classification and security trace checkpoint
+- Latest verifier run: https://github.com/Rilan-Dev/mailflow/actions/runs/39030515872 (success).
+- Exact log: inventory consistency PASS; 1,497 entries, 1,350 blobs, 147 trees; reconstructed root tree SHA a2a82b50b8a1ac24a273e55dc0f9418aefdfed17; 147 nested tree SHA checks passed; 0 Git LFS pointer files detected; 0 gitlinks.
+- Machine-readable report: extraction/manifests/source-verification-2026-10-17-35067fc.json.
+- Initial path classification started for LICENSE, LICENSE-COMMERCIAL, CLA.md, README.md, backend/package.json and frontend/package.json. Six paths classified; 1,344 remain UNCLASSIFIED. This is a small first slice, not complete path-level provenance.
+- Security static trace created at extraction/manifests/security-closure-2026-10-17-35067fc.json. It covers auth/session, OAuth/OIDC, host validation/safeFetch, image proxy and email sanitizer, with 15 test references identified. No tests were executed by the static trace; these capabilities remain PARTIAL_STATIC_TRACE_NOT_CLOSED.
+- The source snapshot remains integrity-verified; dependency closure, license/provenance clearance, independent second-pass review and host-integration readiness remain pending.
