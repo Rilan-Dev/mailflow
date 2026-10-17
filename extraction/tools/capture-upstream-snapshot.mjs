@@ -17,6 +17,12 @@ if (!/^[0-9a-f]{40}$/.test(commit) || !/^[0-9a-f]{40}$/.test(treeSha)) {
   throw new Error('Could not resolve a full upstream commit and root tree SHA.');
 }
 
+const existingSnapshotSource = path.join(repoRoot, 'extraction/snapshots', commit, 'source');
+if (pin.source.commit === commit && fs.existsSync(existingSnapshotSource)) {
+  console.log('Upstream commit ' + commit + ' is already the current pinned snapshot; no update needed.');
+  process.exit(0);
+}
+
 const capturedAt = new Date().toISOString();
 const capturedDate = capturedAt.slice(0, 10);
 const rawTree = git(['ls-tree', '-r', '-t', '-z', '--full-tree', commit], { encoding: null });
