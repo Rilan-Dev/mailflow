@@ -15692,8 +15692,8 @@
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "PARTIAL_TRACE",
-      "notes": "Uses contentEditable innerHTML for initial value/source mode; caller-side sanitization and saved-signature API path need end-to-end closure."
+      "closure_status": "PARTIAL_STATIC_TRACE",
+      "notes": "Signature editor writes value/sourceVal into contentEditable innerHTML. ComposeModal currently DOMPurify-sanitizes signatures before injection, but every parent/caller and saved-draft hydration path must preserve that invariant."
     },
     {
       "path": "frontend/src/components/SpamBadge.jsx",
@@ -18707,13 +18707,14 @@
       "size": 4231,
       "candidate_areas": [
         "frontend-web",
-        "mail-protocol-and-sync"
+        "mail-protocol-and-sync",
+        "email-html-sanitization"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_STATIC_TRACE",
+      "notes": "Print document sanitizes message HTML with DOMPurify before opening the print window; confirm styles/CSP, URL handling, and print window isolation for remote images."
     },
     {
       "path": "frontend/src/utils/printMessage.test.js",
@@ -18796,13 +18797,14 @@
       "mode": "100644",
       "size": 1851,
       "candidate_areas": [
-        "frontend-web"
+        "frontend-web",
+        "ai-assistant"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_STATIC_TRACE",
+      "notes": "AI markdown output is parsed by marked then sanitized by DOMPurify with temporary link-hardening hook before AiResultBox's dangerouslySetInnerHTML sink; ensure hook cleanup and allowlist remain tested."
     },
     {
       "path": "frontend/src/utils/replyAlias.js",
@@ -19744,10 +19746,10 @@
     }
   ],
   "removed_since_previous_pin": [],
-  "review_checkpoint": "2026-10-17: 146/147 changed/new blobs reviewed at source/diff level; 1 PKCS#12 test fixture remains unclassified because its bytes and certificate provenance were not inspected. Package/lockfile version mismatch found.",
+  "review_checkpoint": "2026-10-17: mapped the main frontend HTML sinks: AI markdown, prepared email HTML, plain-text linkification, compose quoted HTML/signatures, and print documents. All still require caller/sink closure and license review.",
   "summary": {
-    "unclassified_paths": 1065,
-    "classified_paths": 285,
+    "unclassified_paths": 1063,
+    "classified_paths": 287,
     "classification_note": "Only reviewed exact target SHA/mode paths receive a non-UNCLASSIFIED disposition; all remaining changed/new blobs are UNCLASSIFIED. Role classification is not license clearance."
   }
 }
