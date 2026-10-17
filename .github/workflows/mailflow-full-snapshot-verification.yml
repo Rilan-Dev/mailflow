@@ -8,6 +8,9 @@ on:
       - ".github/workflows/mailflow-full-snapshot-verification.yml"
       - "extraction/manifests/closure-test-results-2026-10-17-35067fc.json"
       - "extraction/manifests/capability-closure-2026-10-17-35067fc.json"
+      - "extraction/manifests/path-dispositions-2026-10-17-35067fc.json"
+      - "extraction/manifests/source-tree-2026-10-17-35067fc.json"
+      - "extraction/manifests/upstream-delta-review-2026-10-17.json"
       - "extraction/source-pins/current.json"
       - "extraction/tools/verify-inventory.mjs"
 
