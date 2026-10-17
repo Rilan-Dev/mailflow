@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.0.0",
+  "recorded_at": "2026-10-17",
+  "source_pin": {
+    "repository": "maathimself/mailflow",
+    "commit": "35067fc2876d50980f1a8a3b8ea72b5467b69f60",
+    "tree": "a2a82b50b8a1ac24a273e55dc0f9418aefdfed17",
+    "snapshot": "extraction/snapshots/35067fc2876d50980f1a8a3b8ea72b5467b69f60/source"
+  },
+  "suites": [
+    {
+      "name": "Backend auth, OAuth/OIDC, host validation, safe fetch, image proxy and email sanitizer",
+      "workflow_run": 39034509010,
+      "url": "https://github.com/Rilan-Dev/mailflow/actions/runs/39034509010",
+      "result": "SUCCESS",
+      "files_passed": 14,
+      "files_skipped": 0,
+      "tests_passed": 375,
+      "tests_skipped": 0,
+      "failures": 0
+    },
+    {
+      "name": "Frontend image proxy",
+      "workflow_run": 39034509010,
+      "url": "https://github.com/Rilan-Dev/mailflow/actions/runs/39034509010",
+      "result": "SUCCESS",
+      "files_passed": 1,
+      "files_skipped": 0,
+      "tests_passed": 4,
+      "tests_skipped": 0,
+      "failures": 0
+    },
+    {
+      "name": "Frontend email HTML sinks, sandbox CSP and app-origin image policy",
+      "workflow_run": 39034509010,
+      "url": "https://github.com/Rilan-Dev/mailflow/actions/runs/39034509010",
+      "result": "SUCCESS",
+      "files_passed": 6,
+      "files_skipped": 0,
+      "tests_passed": 121,
+      "tests_skipped": 0,
+      "failures": 0
+    },
+    {
+      "name": "IMAP/SMTP, account lifecycle, drafts, mailbox mutations, attachments and send reliability",
+      "workflow_run": 39034548854,
+      "url": "https://github.com/Rilan-Dev/mailflow/actions/runs/39034548854",
+      "result": "SUCCESS",
+      "files_passed": 42,
+      "files_skipped": 1,
+      "tests_passed": 777,
+      "tests_skipped": 10,
+      "failures": 0,
+      "notes": [
+        "One Vitest file was skipped; 10 tests skipped.",
+        "Expected failure-path logs appeared in tests, including mocked provider/database failures. All executed assertions passed."
+      ]
+    }
+  ],
+  "aggregate": {
+    "file_runs": 64,
+    "files_passed": 63,
+    "files_skipped": 1,
+    "tests_passed": 1277,
+    "tests_skipped": 10,
+    "failures": 0
+  },
+  "verification_boundaries": {
+    "snapshot_integrity": "PASS; latest verifier run https://github.com/Rilan-Dev/mailflow/actions/runs/39034548818",
+    "selected_security_and_transport_tests": "PASS",
+    "full_backend_suite": "NOT_YET_CONFIRMED_BY_THIS_EVIDENCE",
+    "full_frontend_suite": "NOT_YET_CONFIRMED_BY_THIS_EVIDENCE",
+    "native_android_electron_builds": "NOT_RUN",
+    "capability_closure": "NOT_CLOSED",
+    "path_license_and_provenance": "IN_PROGRESS",
+    "redistribution_clearance": "PENDING",
+    "extraction_pass": "NOT_CLAIMED"
+  }
+}
