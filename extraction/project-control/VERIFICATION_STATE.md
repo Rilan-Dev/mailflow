@@ -155,3 +155,10 @@ This is baseline identity/inventory evidence only, not full extraction verificat
 
 - Added `.github/workflows/mailflow-full-snapshot-verification.yml`: exact pinned snapshot verifier; full backend lint/plugin boundary/syntax/tests/audit; full frontend lint/tests/build/audit; Android sync, unit tests and debug APK build. Run: https://github.com/Rilan-Dev/mailflow/actions/runs/39034814909, queued at last check.
 - Pending run does not establish full verification. Existing selected tests passed (1,277 passed, 10 skipped across 64 file-runs) and snapshot verifier run 39034692855 succeeded. The full suite/native job must finish before marking those dimensions PASS.
+
+
+## 2026-10-17 — PostgreSQL clean-install migration job
+
+- Added PostgreSQL 17 service job to the full snapshot verification workflow. It applies all 66 migrations, runs the migration runner a second time, checks the `schema_migrations` ledger count and sanity-checks table/index/constraint counts.
+- Workflow definition commit: `3aabe903e75196956c49e77b3499467496578c12`. A prior workflow run started before this job existed; only the run triggered by the updated workflow can verify this job.
+- Upgrade fixtures and partial-failure recovery for no-transaction migrations remain unverified.
