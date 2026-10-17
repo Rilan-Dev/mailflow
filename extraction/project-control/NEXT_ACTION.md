@@ -160,3 +160,9 @@ The full pinned-snapshot run 39034971662 provides these verified results:
 - Path dispositions now record 183 classified / 1,167 unclassified. Security path classifications remain dependency-closure candidates and license-unreviewed.
 - Selected security tests remain PASS (run 39031942550: 379 tests). Full backend/frontend/PostgreSQL evidence remains PASS in run 39034971662. Android Gradle remains unverified: run 39035662163 was cancelled before jobs started despite the corrected bash wrapper command. Do not claim native Android build PASS.
 - Next: inspect every outbound OAuth/OIDC fetch and every HTML render sink, then trace account lifecycle/IMAP/SMTP and all 66 migration consumers. Re-run the exact inventory verifier after manifest changes; keep license/redistribution gates open.
+
+
+## Update — 2026-10-17 — IMAP/SMTP account lifecycle test slice
+- Run https://github.com/Rilan-Dev/mailflow/actions/runs/39037515886 passed 42 test files / 777 tests, with 1 file / 10 tests skipped. It covers account routes, SMTP transport, IMAP sync/recovery, inbox mutations, draft lookup, send idempotency/reliability, attachments, remote images and related paths. The IMAP draft-ingest suite was skipped and no live IMAP/SMTP server was exercised.
+- Extended capability closure for mail-transport-sync, message-ingestion-rendering and compose-and-send with source/caller/test references. All remain PARTIAL; provider interoperability, account deletion cleanup, UIDVALIDITY/checkpoint recovery, and end-to-end error/retry closure remain open.
+- The previous exact inventory verifier passed in run 39037551680, before the latest capability manifest update. A fresh full verification is queued as run 39037683681. Do not treat that prior pass as verification of the newer manifest.
