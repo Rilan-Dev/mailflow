@@ -88,10 +88,10 @@
         "configuration_and_runtime": "PARTIAL_STATIC_TRACE",
         "authorization_and_security": "PARTIAL_STATIC_TRACE",
         "side_effects_retries_idempotency_and_recovery": "PARTIAL_STATIC_TRACE",
-        "UI_routes_and_interaction_states": "NOT_STARTED",
         "tests_and_negative_cases": "TARGETED IMAP/SMTP/ACCOUNT SUITE PASSED (777 PASS; 10 SKIPPED); FULL CAPABILITY SUITE PENDING",
         "external_dependency_and_native_tool_closure": "PARTIAL_MANIFEST_IDENTIFIED",
-        "path_level_license_and_provenance": "UNREVIEWED"
+        "path_level_license_and_provenance": "UNREVIEWED",
+        "ui_routes_and_interaction_states": "NOT_STARTED"
       },
       "next_action": "Trace complete syncMessages/backfill/reconcileDeletes caller graph, folder status and UIDVALIDITY/modseq recovery; map message body/attachment and plugin/rules/spam dependencies; review IMAP/SMTP tests and UI states; close account deletion external cleanup."
     },
@@ -160,7 +160,6 @@
         "configuration_and_runtime": "NOT_STARTED",
         "authorization_and_security": "PARTIAL_STATIC_TRACE",
         "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
-        "UI_routes_and_interaction_states": "NOT_STARTED",
         "tests_and_negative_cases": "SELECTED BACKEND AND FRONTEND SECURITY/RENDER TESTS PASSED; FULL FRONTEND SUITE PENDING",
         "external_dependency_and_native_tool_closure": "NOT_STARTED",
         "path_level_license_and_provenance": "NOT_STARTED",
@@ -223,7 +222,6 @@
         "configuration_and_runtime": "NOT_STARTED",
         "authorization_and_security": "PARTIAL_STATIC_TRACE",
         "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
-        "UI_routes_and_interaction_states": "NOT_STARTED",
         "tests_and_negative_cases": "SELECTED BACKEND AND FRONTEND IMAGE POLICY TESTS PASSED; FULL CALLER COVERAGE PENDING",
         "external_dependency_and_native_tool_closure": "NOT_STARTED",
         "path_level_license_and_provenance": "NOT_STARTED",
@@ -281,10 +279,10 @@
         "configuration_and_runtime": "NOT_STARTED",
         "authorization_and_security": "PARTIAL_STATIC_TRACE",
         "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
-        "UI_routes_and_interaction_states": "NOT_STARTED",
         "tests_and_negative_cases": "SELECTED AUTH/OAUTH/OIDC/SSRF/SANITIZER SUITE PASSED (375 TESTS); FULL SECURITY CLOSURE PENDING",
         "external_dependency_and_native_tool_closure": "NOT_STARTED",
-        "path_level_license_and_provenance": "NOT_STARTED"
+        "path_level_license_and_provenance": "NOT_STARTED",
+        "ui_routes_and_interaction_states": "NOT_STARTED"
       },
       "next_action": "Trace all auth endpoints, session/Redis/WebSocket invalidation, reset-token consumption, MFA lifecycle and migrations; execute auth/OAuth/OIDC tests in a checkout."
     },
@@ -322,10 +320,10 @@
         "configuration_and_runtime": "PARTIAL_STATIC_TRACE",
         "authorization_and_security": "PARTIAL_STATIC_TRACE",
         "side_effects_retries_idempotency_and_recovery": "PARTIAL_STATIC_TRACE",
-        "UI_routes_and_interaction_states": "NOT_STARTED",
         "tests_and_negative_cases": "MIGRATION_TESTS_NOT_RUN",
         "external_dependency_and_native_tool_closure": "NOT_STARTED",
-        "path_level_license_and_provenance": "UNREVIEWED"
+        "path_level_license_and_provenance": "UNREVIEWED",
+        "ui_routes_and_interaction_states": "NOT_STARTED"
       },
       "next_action": "Generate column-level schema object inventory from all 66 migrations; map SQL consumers and indexes; run clean-install and upgrade/partial-failure migration tests against PostgreSQL; review seed/config and every FK cascade."
     },
@@ -379,10 +377,10 @@
         "configuration_and_runtime": "NOT_STARTED",
         "authorization_and_security": "NOT_STARTED",
         "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
-        "UI_routes_and_interaction_states": "NOT_STARTED",
         "tests_and_negative_cases": "NOT_STARTED",
         "external_dependency_and_native_tool_closure": "NOT_STARTED",
-        "path_level_license_and_provenance": "NOT_STARTED"
+        "path_level_license_and_provenance": "NOT_STARTED",
+        "ui_routes_and_interaction_states": "NOT_STARTED"
       },
       "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
     },
@@ -426,10 +424,10 @@
         "configuration_and_runtime": "NOT_STARTED",
         "authorization_and_security": "NOT_STARTED",
         "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
-        "UI_routes_and_interaction_states": "NOT_STARTED",
         "tests_and_negative_cases": "NOT_STARTED",
         "external_dependency_and_native_tool_closure": "NOT_STARTED",
-        "path_level_license_and_provenance": "NOT_STARTED"
+        "path_level_license_and_provenance": "NOT_STARTED",
+        "ui_routes_and_interaction_states": "NOT_STARTED"
       },
       "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
     },
@@ -498,7 +496,6 @@
         "configuration_and_runtime": "NOT_STARTED",
         "authorization_and_security": "PARTIAL_STATIC_TRACE",
         "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
-        "UI_routes_and_interaction_states": "NOT_STARTED",
         "tests_and_negative_cases": "TARGETED TRANSPORT/COMPOSE SUITE PASSED (777 PASS; 10 SKIPPED) AND FRONTEND RENDER TESTS PASSED; FULL CAPABILITY SUITE PENDING",
         "external_dependency_and_native_tool_closure": "NOT_STARTED",
         "path_level_license_and_provenance": "UNREVIEWED",
@@ -541,10 +538,10 @@
         "configuration_and_runtime": "NOT_STARTED",
         "authorization_and_security": "NOT_STARTED",
         "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
-        "UI_routes_and_interaction_states": "NOT_STARTED",
         "tests_and_negative_cases": "NOT_STARTED",
         "external_dependency_and_native_tool_closure": "NOT_STARTED",
-        "path_level_license_and_provenance": "NOT_STARTED"
+        "path_level_license_and_provenance": "NOT_STARTED",
+        "ui_routes_and_interaction_states": "NOT_STARTED"
       },
       "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
     },
@@ -603,10 +600,10 @@
         "configuration_and_runtime": "NOT_STARTED",
         "authorization_and_security": "NOT_STARTED",
         "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
-        "UI_routes_and_interaction_states": "NOT_STARTED",
         "tests_and_negative_cases": "NOT_STARTED",
         "external_dependency_and_native_tool_closure": "NOT_STARTED",
-        "path_level_license_and_provenance": "NOT_STARTED"
+        "path_level_license_and_provenance": "NOT_STARTED",
+        "ui_routes_and_interaction_states": "NOT_STARTED"
       },
       "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
     },
@@ -639,10 +636,10 @@
         "configuration_and_runtime": "NOT_STARTED",
         "authorization_and_security": "NOT_STARTED",
         "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
-        "UI_routes_and_interaction_states": "NOT_STARTED",
         "tests_and_negative_cases": "NOT_STARTED",
         "external_dependency_and_native_tool_closure": "NOT_STARTED",
-        "path_level_license_and_provenance": "NOT_STARTED"
+        "path_level_license_and_provenance": "NOT_STARTED",
+        "ui_routes_and_interaction_states": "NOT_STARTED"
       },
       "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
     },
@@ -696,10 +693,10 @@
         "configuration_and_runtime": "NOT_STARTED",
         "authorization_and_security": "NOT_STARTED",
         "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
-        "UI_routes_and_interaction_states": "NOT_STARTED",
         "tests_and_negative_cases": "NOT_STARTED",
         "external_dependency_and_native_tool_closure": "NOT_STARTED",
-        "path_level_license_and_provenance": "NOT_STARTED"
+        "path_level_license_and_provenance": "NOT_STARTED",
+        "ui_routes_and_interaction_states": "NOT_STARTED"
       },
       "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
     },
@@ -743,10 +740,10 @@
         "configuration_and_runtime": "NOT_STARTED",
         "authorization_and_security": "NOT_STARTED",
         "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
-        "UI_routes_and_interaction_states": "NOT_STARTED",
         "tests_and_negative_cases": "NOT_STARTED",
         "external_dependency_and_native_tool_closure": "NOT_STARTED",
-        "path_level_license_and_provenance": "NOT_STARTED"
+        "path_level_license_and_provenance": "NOT_STARTED",
+        "ui_routes_and_interaction_states": "NOT_STARTED"
       },
       "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
     },
@@ -795,10 +792,10 @@
         "configuration_and_runtime": "NOT_STARTED",
         "authorization_and_security": "NOT_STARTED",
         "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
-        "UI_routes_and_interaction_states": "NOT_STARTED",
         "tests_and_negative_cases": "NOT_STARTED",
         "external_dependency_and_native_tool_closure": "NOT_STARTED",
-        "path_level_license_and_provenance": "NOT_STARTED"
+        "path_level_license_and_provenance": "NOT_STARTED",
+        "ui_routes_and_interaction_states": "NOT_STARTED"
       },
       "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
     },
@@ -847,10 +844,10 @@
         "configuration_and_runtime": "NOT_STARTED",
         "authorization_and_security": "NOT_STARTED",
         "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
-        "UI_routes_and_interaction_states": "NOT_STARTED",
         "tests_and_negative_cases": "NOT_STARTED",
         "external_dependency_and_native_tool_closure": "NOT_STARTED",
-        "path_level_license_and_provenance": "NOT_STARTED"
+        "path_level_license_and_provenance": "NOT_STARTED",
+        "ui_routes_and_interaction_states": "NOT_STARTED"
       },
       "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
     },
@@ -898,10 +895,10 @@
         "configuration_and_runtime": "NOT_STARTED",
         "authorization_and_security": "NOT_STARTED",
         "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
-        "UI_routes_and_interaction_states": "NOT_STARTED",
         "tests_and_negative_cases": "NOT_STARTED",
         "external_dependency_and_native_tool_closure": "NOT_STARTED",
-        "path_level_license_and_provenance": "NOT_STARTED"
+        "path_level_license_and_provenance": "NOT_STARTED",
+        "ui_routes_and_interaction_states": "NOT_STARTED"
       },
       "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
     }
