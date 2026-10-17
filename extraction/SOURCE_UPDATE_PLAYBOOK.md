@@ -13,3 +13,10 @@ MailFlow-specific checks:
 - Re-evaluate notices, icons, fonts, third-party assets and per-path provenance.
 - Reconcile all changes against the current path-disposition register and capability/dependency evidence.
 - An update issue is only a review trigger; it does not authorize source copying or PASS.
+
+## Current automation policy (2026-10-17)
+- The user authorized full source snapshot capture and ongoing updates.
+- .github/workflows/mailflow-source-snapshot.yml runs on manual dispatch and every six hours. When upstream main changes, it captures the new Git commit into a new immutable extraction/snapshots/<commit>/source path, regenerates pin/tree/disposition manifests, verifies the copied blob IDs and reconstructed Git tree, and commits the source-library snapshot to this repository's main branch.
+- This direct main update is raw source-library capture only. It is not a capability PASS, license clearance, or host-application integration approval.
+- The snapshot is never overwritten. Changed/new paths reset to UNCLASSIFIED; unchanged assessments carry forward only if blob SHA and mode match exactly.
+- If the capture or exact verifier fails, do not use the snapshot. Inspect the Actions logs and preserve the failure evidence in project-control.
