@@ -6,7 +6,7 @@
     "tree": "a2a82b50b8a1ac24a273e55dc0f9418aefdfed17"
   },
   "created_at": "2026-10-17T11:46:33.594Z",
-  "status": "PARTIAL_SECURITY_TRANSPORT_SCHEMA_AND_FRONTEND_SINK_TRACE_NOT_CLOSED",
+  "status": "PARTIAL_CLASSIFICATION_SECURITY_TRANSPORT_SCHEMA_FRONTEND_TRACE_NOT_CLOSED",
   "files": [
     {
       "path": ".dockerignore",
@@ -14712,13 +14712,14 @@
       "candidate_areas": [
         "frontend-web",
         "tests",
-        "build-and-release"
+        "build-and-release",
+        "compose-and-send"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "TESTS_IDENTIFIED_NOT_RUN",
+      "notes": "Reply-draft/signature/account-switch tests identified; full frontend test workflow pending."
     },
     {
       "path": "frontend/src/components/ComposeModal.signatureToggle.test.js",
@@ -14728,13 +14729,14 @@
       "candidate_areas": [
         "frontend-web",
         "tests",
-        "build-and-release"
+        "build-and-release",
+        "compose-and-send"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "TESTS_IDENTIFIED_NOT_RUN",
+      "notes": "Signature toggle/save/reopen tests identified; full frontend test workflow pending."
     },
     {
       "path": "frontend/src/components/ContactsPage.jsx",
@@ -17484,13 +17486,14 @@
       "mode": "100644",
       "size": 808,
       "candidate_areas": [
-        "frontend-web"
+        "frontend-web",
+        "message-ingestion-rendering"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Div-render scoped email style injection/removal dependency identified; verify cleanup, @font-face/keyframes boundary and concurrent panes."
     },
     {
       "path": "frontend/src/utils/folderDisplay.js",
@@ -17644,12 +17647,14 @@
       "sha": "aab965475440601c522aa82163476ec03df13d24",
       "mode": "100644",
       "size": 5936,
-      "candidate_areas": [],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "candidate_areas": [
+        "image-proxy-privacy"
+      ],
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "New path at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; inspect content, provenance, license and dependency closure."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Lazy image proxy rewriting used by sandboxed email frame identified; URL and lifecycle edge closure pending."
     },
     {
       "path": "frontend/src/utils/frameLazyImages.test.js",
@@ -18081,13 +18086,14 @@
       "candidate_areas": [
         "frontend-web",
         "mail-protocol-and-sync",
-        "tests"
+        "tests",
+        "message-ingestion-rendering"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "TESTS_IDENTIFIED_NOT_RUN",
+      "notes": "Message body utility tests identified; full frontend test workflow pending."
     },
     {
       "path": "frontend/src/utils/messageHotkeys.js",
@@ -18494,13 +18500,14 @@
       "mode": "100644",
       "size": 1729,
       "candidate_areas": [
-        "frontend-web"
+        "frontend-web",
+        "image-proxy-privacy"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Sandboxed frame remote image CSP policy dependency identified; complete call graph and policy tests pending."
     },
     {
       "path": "frontend/src/utils/remoteImagePolicy.test.js",
@@ -18653,13 +18660,14 @@
       "mode": "100644",
       "size": 4713,
       "candidate_areas": [
-        "frontend-web"
+        "frontend-web",
+        "message-ingestion-rendering"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Div renderer sanitizer/CSS scoping pipeline inspected; complete feature-flag and hostile-CSS closure pending."
     },
     {
       "path": "frontend/src/utils/senderAvatar.js",
@@ -19462,10 +19470,10 @@
     }
   ],
   "removed_since_previous_pin": [],
-  "review_checkpoint": "2026-10-17: role-level partial classifications include auth/security, transport, all 66 migrations, and frontend email render/sanitization sinks. All remain license-unreviewed and closure partial; no reuse clearance.",
+  "review_checkpoint": "2026-10-17: 131 role-level partial classifications include security, IMAP/SMTP, 66 migrations, and frontend email HTML/image/style dependencies; closure and licensing remain open.",
   "summary": {
-    "unclassified_paths": 1226,
-    "classified_paths": 124,
-    "classification_note": "Role classification is evidence-backed but does not imply license/provenance clearance or capability closure."
+    "unclassified_paths": 1219,
+    "classified_paths": 131,
+    "classification_note": "Classification describes observed role only; it is not license clearance or proof of capability closure."
   }
 }
