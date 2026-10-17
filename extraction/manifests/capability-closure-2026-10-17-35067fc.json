@@ -13,8 +13,8 @@
     "partial_traces": 14,
     "not_started": 2,
     "source_blobs": 1350,
-    "unclassified_paths": 1168,
-    "initially_classified_paths": 182
+    "unclassified_paths": 1167,
+    "initially_classified_paths": 183
   },
   "dimensions": [
     "first_party_imports_and_callers",
