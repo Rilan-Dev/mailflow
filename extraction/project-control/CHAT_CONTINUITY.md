@@ -39,3 +39,9 @@ The snapshot is verified (1,350 blobs, 147 nested trees, root tree SHA matches, 
 
 ## Current path/dependency checkpoint — 2026-10-17
 The current progress report is extraction/manifests/EXTRACTION_PROGRESS_2026-10-17.md. The full snapshot is exact and verified. Current register has 39 initially classified paths and 1,311 unclassified paths. A partial security trace covers auth/session, OAuth/OIDC, host validation, safeFetch, image proxy and email sanitization; tests were identified but not executed. Dependency inventory contains 1,124 locked package entries and no third-party licenses cleared. Continue security caller/redirect/policy tracing, run the listed tests in a real checkout, then map IMAP/account lifecycle and migrations. Do not call this extraction PASS or reuse-cleared.
+
+## Security test execution update — 2026-10-17
+
+A dedicated selected-security test workflow was added on main: `.github/workflows/mailflow-security-closure.yml`. Successful run: https://github.com/Rilan-Dev/mailflow/actions/runs/39031942550. It ran against the pinned source snapshot and passed 14 backend test files / 375 tests plus 1 frontend test file / 4 tests (15 files, 379 tests, zero failures). Exact machine-readable results: `extraction/manifests/security-test-results-2026-10-17-35067fc.json`. The initial workflow run failed due to a mistyped working-directory path; it was corrected and the subsequent run passed.
+
+Continue capability closure, starting with deeper auth/OAuth/OIDC and outbound-fetch threat-model tracing, then IMAP/account lifecycle and migrations. No capability closure or overall extraction PASS is implied. The 1,311 unclassified source blobs and all third-party license/provenance review remain open.
