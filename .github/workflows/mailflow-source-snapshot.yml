@@ -11,6 +11,10 @@ on:
       - "extraction/tools/capture-upstream-snapshot.mjs"
       - "extraction/tools/verify-inventory.mjs"
       - "extraction/source-pins/current.json"
+      - "extraction/manifests/path-dispositions-*.json"
+      - "extraction/manifests/source-tree-*.json"
+      - "extraction/manifests/capability-closure-*.json"
+      - "extraction/manifests/architecture-map-*.json"
 
 permissions:
   contents: write
