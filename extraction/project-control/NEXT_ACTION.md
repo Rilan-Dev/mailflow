@@ -41,3 +41,17 @@ The following is retained for continuity. The current authoritative state is des
 - PR #1 (self-contained workspace) is merged. PRs #2 and #3 were closed as superseded after PR #1; their useful memory/source-identity changes are being retained on main.
 - Source snapshot capture is authorized by the user, but license clearance, capability closure, host-integration readiness and extraction PASS are not established.
 - The reusable framework remains in source-extraction-agent/; MailFlow-specific evidence stays under extraction/.
+
+## Update — 2026-10-17 — Security test execution
+
+The new workflow `.github/workflows/mailflow-security-closure.yml` now executes the selected tests against the immutable snapshot at `extraction/snapshots/35067fc2876d50980f1a8a3b8ea72b5467b69f60/source`. Successful run: https://github.com/Rilan-Dev/mailflow/actions/runs/39031942550. Backend selected security suite: 14 files / 375 tests passed; frontend image proxy: 1 file / 4 tests passed; total 15 files / 379 tests passed, 0 failures. Exact evidence is in `extraction/manifests/security-test-results-2026-10-17-35067fc.json`.
+
+### Next work, in order
+1. Continue security caller/sink tracing and record what tests actually cover, especially OAuth/OIDC state/nonce/PKCE and redirect matching, session/Redis invalidation, DNS rebinding/private-host restrictions on every redirect, image-proxy response limits/headers, and sanitizer coverage at every render sink.
+2. Trace IMAP/SMTP and account lifecycle from routes through providers, sync jobs, persistence, secrets/encryption, retries/recovery and UI states; map every first-party dependency.
+3. Trace PostgreSQL schema and migrations 0001–0066, foreign keys/indexes/triggers/data backfills and runtime consumers.
+4. Continue classifying all 1,350 source blobs and review third-party provenance/licenses; keep AGPL-3.0/commercial path/CLA review explicit. The 39 classified paths are not reuse clearance.
+5. Expand the selected test workflow capability-by-capability, then run complete backend/frontend suites and native build/runtime checks when the relevant closure is mapped.
+6. Keep snapshots immutable and use a new commit-addressed directory for every upstream change. Current snapshot automation must remain reviewable and must never imply that newly captured source is automatically cleared for reuse.
+
+Guardrail: selected security tests PASS does not mean capability closure, licensing, redistribution clearance, host-integration readiness or overall extraction PASS.
