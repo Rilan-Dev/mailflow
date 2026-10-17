@@ -23,10 +23,10 @@
     "old_tree_entries": 1462,
     "old_tree_truncated": false
   },
-  "status": "PARTIAL_REVIEW_33_HIGH_PRIORITY_PATHS_REVIEWED_114_PATHS_PENDING",
+  "status": "PARTIAL_REVIEW_53_PATHS_REVIEWED_94_PATHS_PENDING",
   "guardrail": "Review classification is not license clearance. Do not change or overwrite either immutable snapshot. Every changed/new path must be re-evaluated against exact blob SHA and mode.",
-  "reviewed_high_priority_count": 33,
-  "pending_count": 114,
+  "reviewed_high_priority_count": 53,
+  "pending_count": 94,
   "entries": [
     {
       "path": ".env.example",
@@ -104,14 +104,14 @@
       "additions": 5,
       "deletions": 2,
       "changes": 7,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "HIGH",
+      "first_pass_notes": "Tests expanded for emoji grapheme edge cases and invalid tag/combining sequences. Tests ran in full backend suite 39034971662; test evidence is not license clearance.",
       "base_blob_sha": "5c6cc7d174408ff11e4a1742075b50f7d3f6ab17",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "backend/src/routes/accounts.js",
@@ -121,14 +121,14 @@
       "additions": 5,
       "deletions": 1,
       "changes": 6,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "HIGH",
+      "first_pass_notes": "The changed icon validator now requires exactly one emoji sequence rather than any grapheme containing an emoji marker; it rejects combining-mark abuse, text keycaps, invisible tags, lone regional indicators and text presentation symbols. Account API host validation/credentials remain broader closure.",
       "base_blob_sha": "0e286f0f81b7a49e85a36c1bea1770822cd3efa5",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "backend/src/routes/ai.js",
@@ -155,14 +155,14 @@
       "additions": 10,
       "deletions": 0,
       "changes": 10,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "HIGH",
+      "first_pass_notes": "Adds regression test that AI-provider auth 401 becomes 409 instead of signing out the MailFlow user; included in full backend suite.",
       "base_blob_sha": "a05bc733f584172d0bc1f0e21d7130301ee873c5",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "backend/src/routes/draft.js",
@@ -172,14 +172,14 @@
       "additions": 1,
       "deletions": 1,
       "changes": 2,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "HIGH",
+      "first_pass_notes": "Reply-draft image proxy now passes the displayed width through imageProxyPath so fitted image variants are consistent. Draft provider persistence, body cache and original-image forwarding remain open.",
       "base_blob_sha": "7ae5e4d69e988a417aa53573f9513b1f2e98ad29",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "backend/src/routes/mail.js",
@@ -206,14 +206,14 @@
       "additions": 79,
       "deletions": 5,
       "changes": 84,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "HIGH",
+      "first_pass_notes": "Tests use a real isolated image cache and cover remote-image route/cache behavior. Included in lifecycle test run 39037515886 (18 tests passed).",
       "base_blob_sha": "bd38f59c9a625f20d0b4f9c3985e57e8224d5a8f",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "backend/src/routes/mail.renameFolder.test.js",
@@ -224,13 +224,13 @@
       "additions": 102,
       "deletions": 0,
       "changes": 102,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "HIGH",
+      "first_pass_notes": "New route test models folder subtree renames in messages and snoozed_messages; verifies persisted folder paths. Included in full backend run 39034971662.",
       "base_mode": null,
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "backend/src/routes/mail.snooze.test.js",
@@ -275,13 +275,13 @@
       "additions": 103,
       "deletions": 0,
       "changes": 103,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "HIGH",
+      "first_pass_notes": "New tests cover Gmail auto-saves-Sent heuristic for OAuth/app-password/mismatched SMTP identities; included in lifecycle run 39037515886.",
       "base_mode": null,
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "backend/src/routes/send.js",
@@ -359,14 +359,14 @@
       "additions": 39,
       "deletions": 0,
       "changes": 39,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "HIGH",
+      "first_pass_notes": "Adds regression coverage that API-key provider redirects are not followed, including 307 to a private address; confirms manual redirect and safe 502 error; included in full backend suite.",
       "base_blob_sha": "dd752c03743fef00e9d2ee8cac9a04876aed364d",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "backend/src/services/carddavSync.js",
@@ -394,13 +394,13 @@
       "additions": 388,
       "deletions": 0,
       "changes": 388,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "HIGH",
+      "first_pass_notes": "New tests exercise merge mode preserving user-entered fields, filling gaps and stable vCard output; included in full backend run 39034971662.",
       "base_mode": null,
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "backend/src/services/emailSanitizer.js",
@@ -478,14 +478,14 @@
       "additions": 24,
       "deletions": 0,
       "changes": 24,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "HIGH",
+      "first_pass_notes": "Adds system resolver fallback tests for /etc/hosts-only hostnames resolving to loopback/private addresses; included in selected security run 39031942550.",
       "base_blob_sha": "6de11e1b57525a1fc166af71963fc6a18cb1c6ec",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "backend/src/services/imageCache.js",
@@ -513,13 +513,13 @@
       "additions": 91,
       "deletions": 0,
       "changes": 91,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "HIGH",
+      "first_pass_notes": "New tests cover hashed per-user/per-width keys, LRU/age eviction, short-lived failure caching, coalesced concurrent fetches and unwritable disk fallback; included in full backend suite.",
       "base_mode": null,
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "backend/src/services/imageProxy.js",
@@ -563,14 +563,14 @@
       "additions": 30,
       "deletions": 5,
       "changes": 35,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "HIGH",
+      "first_pass_notes": "Tests now assert width-aware target sizing while retaining WebP/savings and animated/small-image pass-through behavior; included in full backend suite.",
       "base_blob_sha": "3294a396de546ddbb11b9e7a3f94fe1a9c7357c5",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "backend/src/services/imapManager.js",
@@ -598,13 +598,13 @@
       "additions": 93,
       "deletions": 0,
       "changes": 93,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "HIGH",
+      "first_pass_notes": "New test simulates untagged EXISTS during active sync and asserts a follow-up sync after current sync finishes; included in lifecycle run 39037515886.",
       "base_mode": null,
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "backend/src/services/imapManager.snoozeWake.test.js",
@@ -615,13 +615,13 @@
       "additions": 137,
       "deletions": 0,
       "changes": 137,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "HIGH",
+      "first_pass_notes": "New tests cover due-snooze sweep races when a message is manually unsnoozed or rescheduled before wake; included in lifecycle run 39037515886.",
       "base_mode": null,
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "backend/src/services/imapManager.test.js",
@@ -649,13 +649,13 @@
       "additions": 254,
       "deletions": 0,
       "changes": 254,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "HIGH",
+      "first_pass_notes": "New local fake-server tests exercise a real ImapFlow client and stall timeout/lease recovery, not a live provider; included in lifecycle run 39037515886.",
       "base_mode": null,
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "backend/src/services/inlineImageFit.js",
@@ -683,13 +683,13 @@
       "additions": 40,
       "deletions": 0,
       "changes": 40,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "HIGH",
+      "first_pass_notes": "New tests fit large inline data images once and preserve original data for forwarding; included in full backend suite.",
       "base_mode": null,
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "backend/src/services/messageService.filteredTotal.postgres.test.js",
@@ -700,13 +700,13 @@
       "additions": 83,
       "deletions": 0,
       "changes": 83,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "HIGH",
+      "first_pass_notes": "New PostgreSQL integration test is guarded by MAILFLOW_TEST_DATABASE_URL and uses temporary tables to verify category-filter totals; do not count as executed unless that env var was set.",
       "base_mode": null,
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "backend/src/services/messageService.js",
@@ -716,14 +716,14 @@
       "additions": 35,
       "deletions": 9,
       "changes": 44,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "HIGH",
+      "first_pass_notes": "Snoozed view now follows per-message snoozed_folder paths under namespace prefixes and uses snooze records to avoid listing unrelated messages in same folder; query/index/tenant closure remains open.",
       "base_blob_sha": "62651047305aba9b88309ba39545e88069130be3",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "backend/src/services/messageService.snoozedView.postgres.test.js",
@@ -734,13 +734,13 @@
       "additions": 105,
       "deletions": 0,
       "changes": 105,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "HIGH",
+      "first_pass_notes": "New PostgreSQL integration test is guarded by MAILFLOW_TEST_DATABASE_URL and verifies all-accounts Snoozed view across prefixed folders; do not count as executed unless that env var was set.",
       "base_mode": null,
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "backend/src/services/messageService.test.js",
@@ -784,14 +784,14 @@
       "additions": 29,
       "deletions": 0,
       "changes": 29,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "HIGH",
+      "first_pass_notes": "Adds regression test for preserving sender dark-mode CSS disabled when forwarding a stored sanitized body; included in full backend suite.",
       "base_blob_sha": "38483e69c5d0a4994aa118fb12caaf5fd855389c",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "contrib/nginx.conf",
