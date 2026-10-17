@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "verified_at": "2026-10-17T11:55:22Z",
-  "workflow_url": "https://github.com/Rilan-Dev/mailflow/actions/runs/39030515872",
+  "verified_at": "2026-10-17T12:00:05Z",
+  "workflow_url": "https://github.com/Rilan-Dev/mailflow/actions/runs/39030794029",
   "result": "PASS",
   "source": {
     "repository": "https://github.com/maathimself/mailflow",
@@ -56,12 +56,15 @@
     "removed_blobs": 0
   },
   "still_open": {
-    "unclassified_paths": 1350,
+    "unclassified_paths": 1344,
     "license_provenance": "UNREVIEWED",
     "dependency_closure": "UNMAPPED",
     "capability_closure": "NOT_CLOSED",
     "redistribution_clearance": "PENDING",
-    "host_integration": "NOT_CLEARED"
+    "host_integration": "NOT_CLEARED",
+    "initially_classified_paths": 6,
+    "security_static_trace": "PARTIAL_NOT_CLOSED",
+    "note": "Six initial license-notice/dependency-manifest paths have since been classified. The exact snapshot verification remains valid; see current disposition manifest."
   },
   "note": "This PASS proves exact Git tree snapshot identity only. It does not prove capability completeness, legal clearance, runtime correctness, or extraction PASS."
 }
