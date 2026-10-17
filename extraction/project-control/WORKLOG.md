@@ -116,3 +116,13 @@
 - Classified 12 frontend source/test paths by role in the path-disposition register. Current total: 124 role-classified paths, 1,226 unclassified. Newly classified paths remain license-unreviewed and are not cleared for reuse.
 - Expanded `.github/workflows/mailflow-security-closure.yml` with frontend HTML/render/image-policy tests; added broader transport tests in `.github/workflows/mailflow-transport-closure.yml`. Transport run https://github.com/Rilan-Dev/mailflow/actions/runs/39034389282 was queued at the last check. No test result is claimed yet for either newly expanded suite.
 - Next: trace and test OIDC redirects/private-host policy; inspect div-render preparation and linkifier escaping; close signatures/attachments; finish SQL consumer and migration test mapping; continue provenance/licensing.
+
+
+## 012 — 2026-10-17 — Selected security/render and IMAP/SMTP test suites passed
+- Inspected completed Actions jobs and logs rather than inferring results from workflow configuration.
+- Security workflow https://github.com/Rilan-Dev/mailflow/actions/runs/39034509010: backend 14 files / 375 passed; frontend image proxy 1 file / 4 passed; frontend email HTML/render suite 6 files / 121 passed. Total 21 files, 500 tests passed, zero failures.
+- Transport workflow https://github.com/Rilan-Dev/mailflow/actions/runs/39034548854: 42 test files passed, one skipped; 777 tests passed, 10 skipped, zero failures. The logs include mocked failure-path warnings but the workflow/job concluded success.
+- Aggregate selected test evidence: 64 file-runs, 1,277 passed, 10 skipped, zero failures. Machine-readable artifact: `extraction/manifests/closure-test-results-2026-10-17-35067fc.json`.
+- Exact snapshot/inventory verifier after manifest changes: https://github.com/Rilan-Dev/mailflow/actions/runs/39034548818 — success. Source identity remains commit `35067fc2876d50980f1a8a3b8ea72b5467b69f60` / tree `a2a82b50b8a1ac24a273e55dc0f9418aefdfed17`.
+- No full backend/frontend suite, native Android/Electron build, capability closure, license/provenance clearance or extraction PASS is inferred from the selected suites.
+- Continue OIDC network policy, div-render/linkifier sink proof, full migration object/runtime map, IMAP account-cleanup graph and third-party license/provenance review.
