@@ -43,3 +43,76 @@
 4. Test migration from representative pre-0017 contact schema, pre-plugin GTD data, older spam-training shape and older thread layout; the clean install/idempotent run does not cover these upgrade states.
 5. Reconcile account/user deletion with non-FK caches, Redis sessions, IMAP connections, plugin data, OAuth/device flows, push subscriptions, CardDAV credentials and external vector/cache state.
 6. Keep database capability `PARTIAL_STATIC_TRACE_NOT_CLOSED`; do not treat migration CI as complete SQL/runtime closure.
+
+## Migration-by-migration index (66/66 files inspected for DDL/data-change signatures)
+
+| Migration | Observed change / primary domain |
+|---|---|
+| 0001_baseline.sql | Core users, email_accounts, messages, folders, integrations, settings, invites, aliases, OIDC identities/providers, push subscriptions, snoozes and baseline indexes/FKs |
+| 0002_subject_threading.sql | Thread columns and normalized-subject generated column/index |
+| 0003_sender_name.sql | Account sender-name field |
+| 0004_internal_auth_setting.sql | Internal auth-related system setting |
+| 0005_auth_events.sql | Auth audit event table/index and initial settings |
+| 0006_threaded_query_indexes.sql | Concurrent thread dedup/count indexes; non-transactional migration requirement |
+| 0007_thread_paging_index.sql | Concurrent thread/date paging index |
+| 0008_search_indexes.sql | Search vector plus concurrent full-text/trigram indexes |
+| 0009_thread_key_column.sql | Thread-key column and rebuild of thread indexes |
+| 0010_inbox_rules.sql | User/account-scoped inbox rules and indexes |
+| 0011_message_id_dedup_index.sql | Account/message-ID dedup index |
+| 0012_oidc_allow_insecure.sql | OIDC provider insecure-mode flag |
+| 0013_block_list.sql | User-owned block list and index |
+| 0014_account_allow_private_host.sql | Global private-host, insecure-TLS and nonstandard-port policy defaults |
+| 0015_contacts.sql | Initial user-owned contacts table |
+| 0016_is_bulk.sql | Message bulk classification field |
+| 0017_contacts_v2.sql | Migrates legacy contacts into address_books/new contacts schema, backfills ETags, then drops legacy table |
+| 0018_contacts_search_indexes.sql | Contact display-name/email/organization trigram indexes |
+| 0019_user_integrations.sql | User-scoped external integration credentials/config table |
+| 0020_mfa_device_trust.sql | Recovery email, trusted-device hashes, email OTP tokens and auth settings |
+| 0021_spam_training.sql | Message spam verdict/override checks and spam training log/indexes |
+| 0022_password_reset_tokens.sql | User-owned hashed password-reset tokens and indexes |
+| 0023_message_categories.sql | Message category, category index, account antispam/category settings and user category sources |
+| 0024_category_improvements.sql | List-Unsubscribe and List-Unsubscribe-Post message fields |
+| 0025_unsubscribe_state.sql | Message unsubscribe timestamp |
+| 0026_oidc_admin_group_claim.sql | OIDC admin group claim/value configuration |
+| 0027_carddav_client.sql | Address-book external/CardDAV source fields and revised per-book email uniqueness/indexes |
+| 0028_folder_highestmodseq.sql | IMAP folder highest MODSEQ checkpoint |
+| 0029_oauth_public_client.sql | OAuth public-client account field |
+| 0030_gtd.sql | Legacy GTD account fields |
+| 0031_gtd_gist.sql | Legacy GTD message gist field |
+| 0032_gtd_pets.sql | Legacy GTD task/pet lookup table |
+| 0033_gtd_pets_custom.sql | GTD custom-item flag and data backfill |
+| 0034_lock_pin.sql | User screen-lock PIN hash |
+| 0035_oidc_rp_initiated_logout.sql | OIDC RP-initiated logout setting |
+| 0036_unified_inbox_accounts.sql | Account unified-inbox participation flag |
+| 0037_message_delivery_addresses.sql | Message delivery-address fields |
+| 0038_ai_codex_oauth.sql | Codex credentials and device-flow state/expiry tables/indexes |
+| 0039_inbox_rule_forwards.sql | Rule forward-child table with cascading rule FK and status index |
+| 0040_smtp_separate_auth.sql | Separate SMTP auth username/password fields |
+| 0041_plugin_data.sql | Plugin-owned data/blob/MIME/visibility table plus legacy data migration |
+| 0042_grandfather_gtd_plugin.sql | Moves GTD activation to users.preferences.enabledPlugins |
+| 0043_drop_gtd_pets.sql | Drops legacy GTD pets table after migration |
+| 0044_message_plugin_annotations.sql | Message plugin annotation JSONB and drops legacy GTD gist |
+| 0045_plugin_account_config.sql | Per-account plugin configuration and legacy config migration |
+| 0046_drop_legacy_gtd_columns.sql | Drops legacy GTD account columns after migration |
+| 0047_folder_no_select.sql | IMAP folder no-select flag |
+| 0048_snippet_attempted_at.sql | Snippet attempt timestamp for recovery/backoff |
+| 0049_oidc_login_match_claim.sql | OIDC login identity matching claim configuration |
+| 0050_message_sender.sql | Message sender email/name fields |
+| 0051_folder_server_status.sql | Server-reported folder status/checkpoint fields |
+| 0052_spam_training_features.sql | Spam training feature schema and user/time index |
+| 0053_spam_models.sql | Per-user spam model/training record table and indexes |
+| 0054_email_accounts_antispam_enabled.sql | Per-account antispam toggle and index |
+| 0055_spam_training_deletions.sql | Spam training deletion tombstones; account FK SET NULL for retained records |
+| 0056_email_accounts_trusted_authserv_id.sql | Trusted Authentication-Results authority per account |
+| 0057_split_subject_merged_threads.sql | Data backfill splitting legacy subject-merged threads where explicit references exist |
+| 0058_unfetchable_uids.sql | Account-owned unfetchable UID records and lookup index |
+| 0059_message_forwarded_from.sql | Forwarded-from email/name/via metadata |
+| 0060_thread_id_index_covers_deleted.sql | Concurrent rebuild of account/thread index to cover deleted rows and replace old indexes |
+| 0061_message_bcc_addresses.sql | Message Bcc address metadata |
+| 0062_email_accounts_auto_recipients.sql | Per-account auto-recipient collection setting |
+| 0063_user_last_seen.sql | User last-seen timestamp |
+| 0064_auth_events_actor.sql | Actor username in auth audit records |
+| 0065_email_accounts_signature_enabled.sql | Per-account signature enablement flag |
+| 0066_email_accounts_icon.sql | Per-account icon/branding metadata |
+
+Index caveat: this is a first-pass migration-level change map. It does not yet enumerate every column definition, index expression/predicate, constraint name, trigger/sequence or every SQL caller. Exact source SHA/mode remains in source-tree manifest; all 66 migration paths are dependency-closure candidates and license-unreviewed.
