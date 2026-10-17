@@ -6,15 +6,15 @@
     "tree": "a2a82b50b8a1ac24a273e55dc0f9418aefdfed17"
   },
   "created_at": "2026-10-17",
-  "status": "PARTIAL_TRACE_FULL_BACKEND_FRONTEND_AND_POSTGRES_PASS_ANDROID_PENDING_LICENSE_CLOSURE_OPEN",
+  "status": "PARTIAL_STATIC_TRACE_FULL_BACKEND_FRONTEND_AND_POSTGRES_PASS_ANDROID_PENDING_LICENSE_CLOSURE_OPEN",
   "summary": {
     "capability_count": 16,
     "closed": 0,
-    "partial_traces": 8,
-    "not_started": 8,
+    "partial_traces": 14,
+    "not_started": 2,
     "source_blobs": 1350,
-    "unclassified_paths": 1219,
-    "initially_classified_paths": 131
+    "unclassified_paths": 1168,
+    "initially_classified_paths": 182
   },
   "dimensions": [
     "first_party_imports_and_callers",
@@ -22,7 +22,7 @@
     "configuration_and_runtime",
     "authorization_and_security",
     "side_effects_retries_idempotency_and_recovery",
-    "UI_routes_and_interaction_states",
+    "ui_routes_and_interaction_states",
     "tests_and_negative_cases",
     "external_dependency_and_native_tool_closure",
     "path_level_license_and_provenance"
@@ -331,7 +331,7 @@
       "id": "plugin-boundary",
       "name": "Plugin API, activation, registry and storage boundary",
       "priority": 3,
-      "status": "CANDIDATE_NOT_CLOSED",
+      "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED",
       "source_paths": [
         {
           "path": "backend/src/plugins/README.md",
@@ -357,6 +357,16 @@
           "path": "backend/eslint.plugins-boundary.js",
           "blob_sha": "037c159b84a5d6f0b8556ef1647f511be28d8364",
           "exists": true
+        },
+        {
+          "path": "backend/src/services/inboxRules.js",
+          "blob_sha": "e995df298ba502c2b8db5cc8baa79086f80bce96",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/spamPipeline.js",
+          "blob_sha": "35e24b0162610b0e6af1203995c4a5a7a16e1f28",
+          "exists": true
         }
       ],
       "test_paths": [
@@ -372,17 +382,17 @@
         }
       ],
       "dimensions": {
-        "first_party_imports_and_callers": "NOT_STARTED",
-        "data_schema_and_migrations": "NOT_STARTED",
-        "configuration_and_runtime": "NOT_STARTED",
-        "authorization_and_security": "NOT_STARTED",
-        "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
-        "tests_and_negative_cases": "NOT_STARTED",
-        "external_dependency_and_native_tool_closure": "NOT_STARTED",
-        "path_level_license_and_provenance": "NOT_STARTED",
-        "ui_routes_and_interaction_states": "NOT_STARTED"
+        "first_party_imports_and_callers": "PARTIAL_STATIC_TRACE",
+        "data_schema_and_migrations": "PARTIAL_STATIC_TRACE",
+        "configuration_and_runtime": "PARTIAL_STATIC_TRACE",
+        "authorization_and_security": "PARTIAL_STATIC_TRACE",
+        "side_effects_retries_idempotency_and_recovery": "PARTIAL_STATIC_TRACE",
+        "tests_and_negative_cases": "PASS: FULL BACKEND/FRONTEND TEST SUITES IN RUN 39034971662; DB-SPECIFIC OPTIONAL TESTS MAY REQUIRE A DB",
+        "external_dependency_and_native_tool_closure": "PARTIAL_MANIFEST_IDENTIFIED; BUNDLED PLUGIN DEPENDENCIES/PROVENANCE OPEN",
+        "path_level_license_and_provenance": "UNREVIEWED",
+        "ui_routes_and_interaction_states": "PARTIAL_STATIC_TRACE"
       },
-      "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
+      "next_action": "Enumerate all registry hook call sites and hook context, timeout/error isolation, plugin activation cache invalidation, account/user deletion, plugin-owned data migration and bundled dependency license/provenance."
     },
     {
       "id": "frontend-app",
@@ -507,7 +517,7 @@
       "id": "search-and-unified-inbox",
       "name": "Cross-account search and unified inbox scope",
       "priority": 4,
-      "status": "CANDIDATE_NOT_CLOSED",
+      "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED",
       "source_paths": [
         {
           "path": "backend/src/routes/search.js",
@@ -530,26 +540,41 @@
           "path": "backend/src/services/messageService.test.js",
           "blob_sha": "3b3dae3217452cd6023c14e90915e8d937bcea52",
           "exists": true
+        },
+        {
+          "path": "backend/src/routes/search.test.js",
+          "blob_sha": "3ef54c764c68fe3e3facdb0a6d40d7c84da8e240",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/search.unifiedInbox.test.js",
+          "blob_sha": "256a81c6618965ee1d801ad0b5a780eca829932a",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/unifiedInbox.test.js",
+          "blob_sha": "8eebf4d076b863d061dba0b59493aa69dea26b75",
+          "exists": true
         }
       ],
       "dimensions": {
-        "first_party_imports_and_callers": "NOT_STARTED",
-        "data_schema_and_migrations": "NOT_STARTED",
-        "configuration_and_runtime": "NOT_STARTED",
-        "authorization_and_security": "NOT_STARTED",
-        "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
-        "tests_and_negative_cases": "NOT_STARTED",
-        "external_dependency_and_native_tool_closure": "NOT_STARTED",
-        "path_level_license_and_provenance": "NOT_STARTED",
-        "ui_routes_and_interaction_states": "NOT_STARTED"
+        "first_party_imports_and_callers": "PARTIAL_STATIC_TRACE",
+        "data_schema_and_migrations": "PARTIAL_STATIC_TRACE; MESSAGE/ACCOUNT/FOLDER/CONTACT/SNOOZE QUERY MAP INITIAL",
+        "configuration_and_runtime": "PARTIAL_STATIC_TRACE",
+        "authorization_and_security": "PARTIAL_STATIC_TRACE",
+        "side_effects_retries_idempotency_and_recovery": "PARTIAL_STATIC_TRACE",
+        "tests_and_negative_cases": "PASS: FULL BACKEND SUITE; POSTGRESQL-SPECIFIC MESSAGE SERVICE TESTS MAY REQUIRE A CONFIGURED DB",
+        "external_dependency_and_native_tool_closure": "FIRST-PARTY SQL CAPABILITY; DATABASE/POSTGRESQL RUNTIME CLOSURE OPEN",
+        "path_level_license_and_provenance": "UNREVIEWED",
+        "ui_routes_and_interaction_states": "PARTIAL_STATIC_TRACE"
       },
-      "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
+      "next_action": "Prove all search/list/count/autocomplete callers use authenticated enabled-account scope; check Trash, snoozed, disabled/unified flags; map search/thread indexes to query plans and run PostgreSQL-only message-service tests with DB enabled."
     },
     {
       "id": "contacts-carddav",
       "name": "Contacts, CardDAV and vCard synchronization",
       "priority": 4,
-      "status": "CANDIDATE_NOT_CLOSED",
+      "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED",
       "source_paths": [
         {
           "path": "backend/src/routes/contacts.js",
@@ -592,26 +617,46 @@
           "path": "backend/src/utils/vcard.test.js",
           "blob_sha": "6e61586cc776ad0c6ae682093d9f291c07e1b75c",
           "exists": true
+        },
+        {
+          "path": "backend/src/routes/contacts.photo.test.js",
+          "blob_sha": "759f84bb53aa39fc023043d3bfb1d435b7bb119d",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/carddav.auth.test.js",
+          "blob_sha": "3b49b5c3ce5af3a29170c1533581f7e27dad96fb",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/carddavClient.multiget.test.js",
+          "blob_sha": "5a93314d4e5ffd1a701273cf7bbb2c608780298c",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/carddavSync.test.js",
+          "blob_sha": "65976e54ff9844a298a9d525be9cc127377dd5e6",
+          "exists": true
         }
       ],
       "dimensions": {
-        "first_party_imports_and_callers": "NOT_STARTED",
-        "data_schema_and_migrations": "NOT_STARTED",
-        "configuration_and_runtime": "NOT_STARTED",
-        "authorization_and_security": "NOT_STARTED",
-        "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
-        "tests_and_negative_cases": "NOT_STARTED",
-        "external_dependency_and_native_tool_closure": "NOT_STARTED",
-        "path_level_license_and_provenance": "NOT_STARTED",
-        "ui_routes_and_interaction_states": "NOT_STARTED"
+        "first_party_imports_and_callers": "PARTIAL_STATIC_TRACE",
+        "data_schema_and_migrations": "PARTIAL_STATIC_TRACE: ADDRESS_BOOKS/CONTACTS/USER_INTEGRATIONS AND MIGRATIONS 0015-0018/0027",
+        "configuration_and_runtime": "PARTIAL_STATIC_TRACE",
+        "authorization_and_security": "PARTIAL_STATIC_TRACE",
+        "side_effects_retries_idempotency_and_recovery": "PARTIAL_STATIC_TRACE",
+        "tests_and_negative_cases": "PASS: FULL BACKEND/FRONTEND TEST SUITES IN RUN 39034971662; DB-SPECIFIC OPTIONAL TESTS MAY REQUIRE A DB",
+        "external_dependency_and_native_tool_closure": "PARTIAL: REMOTE CARDDAV SERVER, SAFE FETCH/HOST POLICY AND VCard INTEROP",
+        "path_level_license_and_provenance": "UNREVIEWED",
+        "ui_routes_and_interaction_states": "PARTIAL_STATIC_TRACE"
       },
-      "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
+      "next_action": "Close DAV redirects/credential forwarding, ETag/sync-token semantics, scheduler overlap/cancellation, duplicate/conflict merge modes, vCard/photo size/MIME limits, private-host policy at every request and user-delete cleanup."
     },
     {
       "id": "rules-categorization",
       "name": "Inbox rules, sender blocks, categories and spam training",
       "priority": 4,
-      "status": "CANDIDATE_NOT_CLOSED",
+      "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED",
       "source_paths": [
         {
           "path": "backend/src/routes/rules.js",
@@ -627,27 +672,68 @@
           "path": "backend/src/services/spamPipeline.js",
           "blob_sha": "35e24b0162610b0e6af1203995c4a5a7a16e1f28",
           "exists": true
+        },
+        {
+          "path": "backend/src/services/inboxRules.js",
+          "blob_sha": "e995df298ba502c2b8db5cc8baa79086f80bce96",
+          "exists": true
         }
       ],
-      "test_paths": [],
+      "test_paths": [
+        {
+          "path": "backend/src/routes/rules.test.js",
+          "blob_sha": "3cbd3c658a26fe949c7f93cd2991204ed3916cea",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/rules.run.test.js",
+          "blob_sha": "c9c3fe0588e91f6a380df4e83008b21272c46680",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/rules.senderCategory.test.js",
+          "blob_sha": "3e06c64728eb1c45774db85f17d6ae613686c4e0",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/inboxRules.test.js",
+          "blob_sha": "8c4672da452895a6812d69fbc79f8f323c07b8d1",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/categorizer.test.js",
+          "blob_sha": "3cb77770adb0f267d46f1e4a53496c819b3931dd",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/spamPipeline.test.js",
+          "blob_sha": "7734904077b0b72a5ca43128feff5dfa3f7ead9c",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/spamRules.test.js",
+          "blob_sha": "84bc95facafb6103f1b47eb97c6bc83c28a75f9c",
+          "exists": true
+        }
+      ],
       "dimensions": {
-        "first_party_imports_and_callers": "NOT_STARTED",
-        "data_schema_and_migrations": "NOT_STARTED",
-        "configuration_and_runtime": "NOT_STARTED",
-        "authorization_and_security": "NOT_STARTED",
-        "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
-        "tests_and_negative_cases": "NOT_STARTED",
-        "external_dependency_and_native_tool_closure": "NOT_STARTED",
-        "path_level_license_and_provenance": "NOT_STARTED",
-        "ui_routes_and_interaction_states": "NOT_STARTED"
+        "first_party_imports_and_callers": "PARTIAL_STATIC_TRACE",
+        "data_schema_and_migrations": "PARTIAL_STATIC_TRACE: INBOX_RULES, RULE_FORWARDS, CATEGORY SOURCES, SPAM TRAINING/MODELS",
+        "configuration_and_runtime": "PARTIAL_STATIC_TRACE",
+        "authorization_and_security": "PARTIAL_STATIC_TRACE",
+        "side_effects_retries_idempotency_and_recovery": "PARTIAL_STATIC_TRACE",
+        "tests_and_negative_cases": "PASS: FULL BACKEND/FRONTEND TEST SUITES IN RUN 39034971662; DB-SPECIFIC OPTIONAL TESTS MAY REQUIRE A DB",
+        "external_dependency_and_native_tool_closure": "PARTIAL: IMAP ACTIONS, AI PROVIDER, SPAM MODEL DEPENDENCIES",
+        "path_level_license_and_provenance": "UNREVIEWED",
+        "ui_routes_and_interaction_states": "PARTIAL_STATIC_TRACE"
       },
-      "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
+      "next_action": "Trace rule sweeps across live sync/backfill, regex worst-case bounds, action retry/idempotency, IMAP move failures, AI categorization outage behavior, spam model/training deletion semantics and per-account cleanup."
     },
     {
       "id": "ai-assistant",
       "name": "AI provider configuration, thread summarization and draft assistance",
       "priority": 4,
-      "status": "CANDIDATE_NOT_CLOSED",
+      "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED",
       "source_paths": [
         {
           "path": "backend/src/routes/ai.js",
@@ -673,6 +759,16 @@
           "path": "frontend/src/aiResults.js",
           "blob_sha": "f22e744333d916de7b06618735652ba71f017b42",
           "exists": true
+        },
+        {
+          "path": "backend/src/services/aiHttp.js",
+          "blob_sha": "29404fdeb01962fe4b85182c45e22fbe89502687",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/hooks/useAiActions.js",
+          "blob_sha": "b322f52dedd4cebf7b169cf43c50dfc06c06df80",
+          "exists": true
         }
       ],
       "test_paths": [
@@ -685,26 +781,31 @@
           "path": "frontend/src/aiActions.test.js",
           "blob_sha": "f6e5b900ae26e88dd596bfa5aaea156edf1a7288",
           "exists": true
+        },
+        {
+          "path": "frontend/src/hooks/useAiActions.test.js",
+          "blob_sha": "a124eb0547be1327f3590623b2482163feb0fec0",
+          "exists": true
         }
       ],
       "dimensions": {
-        "first_party_imports_and_callers": "NOT_STARTED",
-        "data_schema_and_migrations": "NOT_STARTED",
-        "configuration_and_runtime": "NOT_STARTED",
-        "authorization_and_security": "NOT_STARTED",
-        "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
-        "tests_and_negative_cases": "NOT_STARTED",
-        "external_dependency_and_native_tool_closure": "NOT_STARTED",
-        "path_level_license_and_provenance": "NOT_STARTED",
-        "ui_routes_and_interaction_states": "NOT_STARTED"
+        "first_party_imports_and_callers": "PARTIAL_STATIC_TRACE",
+        "data_schema_and_migrations": "PARTIAL_STATIC_TRACE",
+        "configuration_and_runtime": "PARTIAL_STATIC_TRACE",
+        "authorization_and_security": "PARTIAL_STATIC_TRACE",
+        "side_effects_retries_idempotency_and_recovery": "PARTIAL_STATIC_TRACE",
+        "tests_and_negative_cases": "PASS: FULL BACKEND/FRONTEND TEST SUITES IN RUN 39034971662; DB-SPECIFIC OPTIONAL TESTS MAY REQUIRE A DB",
+        "external_dependency_and_native_tool_closure": "PARTIAL: PROVIDER-SPECIFIC HTTP/OAUTH/CODEX AUTH; NETWORK/REDIRECT POLICY REVIEW OPEN",
+        "path_level_license_and_provenance": "UNREVIEWED",
+        "ui_routes_and_interaction_states": "PARTIAL_STATIC_TRACE"
       },
-      "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
+      "next_action": "Audit each provider's URL validation, redirects, response bounds, abort/cancel semantics, secret redaction, credential storage/rotation, prompt/data exposure and AI usage/errors from both routes and categorizer."
     },
     {
       "id": "notifications-realtime",
       "name": "WebSocket, push and notification actions",
       "priority": 4,
-      "status": "CANDIDATE_NOT_CLOSED",
+      "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED",
       "source_paths": [
         {
           "path": "backend/src/services/websocket.js",
@@ -732,20 +833,35 @@
           "path": "backend/src/services/websocket.test.js",
           "blob_sha": "8c9d27af76913b3904e9215b5f3b0b9334c3a173",
           "exists": true
+        },
+        {
+          "path": "frontend/src/hooks/useWebSocket.backoff.test.js",
+          "blob_sha": "e836a91014cce552534b98731ab1e73c902ae169",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/hooks/useWebSocket.counts.test.js",
+          "blob_sha": "506fce1d24b0f1ee94744798467a3dab30cec33a",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/hooks/useWebSocket.notify.test.js",
+          "blob_sha": "d19a6ce1708ef48289b3c3d9abee121c84d5882c",
+          "exists": true
         }
       ],
       "dimensions": {
-        "first_party_imports_and_callers": "NOT_STARTED",
-        "data_schema_and_migrations": "NOT_STARTED",
-        "configuration_and_runtime": "NOT_STARTED",
-        "authorization_and_security": "NOT_STARTED",
-        "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
-        "tests_and_negative_cases": "NOT_STARTED",
-        "external_dependency_and_native_tool_closure": "NOT_STARTED",
-        "path_level_license_and_provenance": "NOT_STARTED",
-        "ui_routes_and_interaction_states": "NOT_STARTED"
+        "first_party_imports_and_callers": "PARTIAL_STATIC_TRACE",
+        "data_schema_and_migrations": "PARTIAL_STATIC_TRACE",
+        "configuration_and_runtime": "PARTIAL_STATIC_TRACE",
+        "authorization_and_security": "PARTIAL_STATIC_TRACE",
+        "side_effects_retries_idempotency_and_recovery": "PARTIAL_STATIC_TRACE",
+        "tests_and_negative_cases": "PASS: FULL BACKEND/FRONTEND TEST SUITES IN RUN 39034971662; DB-SPECIFIC OPTIONAL TESTS MAY REQUIRE A DB",
+        "external_dependency_and_native_tool_closure": "PARTIAL: REDIS SESSION, WEBSOCKET TRANSPORT, WEB-PUSH/VAPID AND NATIVE NOTIFICATION ACTIONS",
+        "path_level_license_and_provenance": "UNREVIEWED",
+        "ui_routes_and_interaction_states": "PARTIAL_STATIC_TRACE"
       },
-      "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
+      "next_action": "Verify established socket auth revocation on logout/lock/session expiry, cross-user event isolation, reconnect storms, push payload privacy, VAPID key rotation, stale endpoint races and native notification action lifecycle."
     },
     {
       "id": "electron-desktop",
@@ -922,6 +1038,16 @@
     {
       "kind": "frontend_html_sink_trace",
       "path": "extraction/manifests/security-transport-database-trace-2026-10-17.md",
+      "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED"
+    },
+    {
+      "kind": "full_snapshot_verification",
+      "path": "extraction/manifests/closure-test-results-2026-10-17-35067fc.json",
+      "status": "BACKEND_FRONTEND_POSTGRES_PASS; ANDROID_GRADLE_CORRECTED_RUN_PENDING"
+    },
+    {
+      "kind": "reusable_capability_runtime_trace",
+      "path": "extraction/manifests/reusable-capability-runtime-trace-2026-10-17.md",
       "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED"
     },
     {
