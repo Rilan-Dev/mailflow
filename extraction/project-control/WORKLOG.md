@@ -133,3 +133,9 @@
 - Run https://github.com/Rilan-Dev/mailflow/actions/runs/39034814909 was queued at the last check; no result is claimed. It runs against the pinned immutable snapshot, unlike root CI.
 - Existing targeted suites passed: security/render 500 tests; transport/account 777 passed and 10 skipped; aggregate 1,277 passed, 10 skipped, zero failures.
 - Open security item remains OIDC discovery/token native fetch without safeFetch connection pin/redirect policy, especially explicit insecure issuer mode. HTML div-render/linkifier/signature paths need end-to-end proof. Path classifications are 124/1,350, with 1,226 unclassified; license/provenance remains open.
+
+
+## 014 — 2026-10-17 — Clean PostgreSQL migration verification added
+- Extended `.github/workflows/mailflow-full-snapshot-verification.yml` with PostgreSQL 17 service job. It runs the pinned migration runner twice against a clean database, asserts all 66 migration versions were recorded, and sanity-checks public table/index/constraint counts.
+- This covers clean-install and idempotent second-run behavior only. Upgrade fixtures from prior versions and crash/partial-failure simulation for no-transaction migrations remain open.
+- Workflow commit: `3aabe903e75196956c49e77b3499467496578c12`; wait for the new run's actual result before recording a database migration PASS.
