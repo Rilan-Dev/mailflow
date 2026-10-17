@@ -1,0 +1,80 @@
+name: MailFlow IMAP SMTP account lifecycle tests
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/mailflow-transport-closure.yml"
+      - "extraction/snapshots/35067fc2876d50980f1a8a3b8ea72b5467b69f60/source/backend/**"
+      - "extraction/manifests/capability-closure-2026-10-17-35067fc.json"
+      - "extraction/manifests/path-dispositions-2026-10-17-35067fc.json"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mailflow-transport-closure-tests
+  cancel-in-progress: false
+
+jobs:
+  transport-and-account-tests:
+    name: IMAP SMTP account lifecycle, inbox mutations, drafts and attachments
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: extraction/snapshots/35067fc2876d50980f1a8a3b8ea72b5467b69f60/source/backend/package-lock.json
+      - name: Install pinned backend dependencies
+        working-directory: extraction/snapshots/35067fc2876d50980f1a8a3b8ea72b5467b69f60/source/backend
+        run: npm ci
+      - name: Run IMAP, SMTP, account, draft and mailbox mutation tests
+        working-directory: extraction/snapshots/35067fc2876d50980f1a8a3b8ea72b5467b69f60/source/backend
+        run: >-
+          npx vitest run
+          src/services/imapManager.test.js
+          src/services/imapManager.draftIngest.test.js
+          src/services/imapManager.newMailDuringSync.test.js
+          src/services/imapManager.snoozeWake.test.js
+          src/services/imapMoveFallback.test.js
+          src/services/smtpTransport.test.js
+          src/routes/accounts.aliases.test.js
+          src/routes/accounts.autoRecipients.test.js
+          src/routes/accounts.columns.test.js
+          src/routes/accounts.icon.test.js
+          src/routes/accounts.signature.test.js
+          src/routes/accounts.unifiedInbox.test.js
+          src/routes/draft.lookup.test.js
+          src/routes/draft.test.js
+          src/routes/mail.attachmentsZip.test.js
+          src/routes/mail.bodyRefusal.test.js
+          src/routes/mail.bulkStar.test.js
+          src/routes/mail.cidCache.test.js
+          src/routes/mail.copy.test.js
+          src/routes/mail.createFolder.test.js
+          src/routes/mail.darkScheme.test.js
+          src/routes/mail.delete.test.js
+          src/routes/mail.draftBcc.test.js
+          src/routes/mail.emptyFolder.test.js
+          src/routes/mail.headers.test.js
+          src/routes/mail.rawEml.test.js
+          src/routes/mail.relocate.test.js
+          src/routes/mail.remoteImages.test.js
+          src/routes/mail.renameFolder.test.js
+          src/routes/mail.resolve.test.js
+          src/routes/mail.snooze.test.js
+          src/routes/mail.snoozeView.test.js
+          src/routes/mail.spam.test.js
+          src/routes/mail.threadAccountScope.test.js
+          src/routes/mail.unifiedInbox.test.js
+          src/routes/send.bcc.test.js
+          src/routes/send.forwarded.test.js
+          src/routes/send.forwardedMessages.test.js
+          src/routes/send.gmailSent.test.js
+          src/routes/send.reliability.test.js
+          src/routes/send.textPart.test.js
+          src/routes/send.undo.test.js
+          src/routes/send.view.test.js
