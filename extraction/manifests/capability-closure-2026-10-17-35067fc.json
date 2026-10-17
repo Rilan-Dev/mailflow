@@ -6,16 +6,16 @@
     "tree": "a2a82b50b8a1ac24a273e55dc0f9418aefdfed17"
   },
   "created_at": "2026-10-17",
-  "status": "PARTIAL_DELTA_REVIEW_IN_PROGRESS_SECURITY_MAIL_AND_SCHEMA_TRACES_PARTIAL_LICENSE_OPEN",
+  "status": "PARTIAL_DELTA_REVIEW_IN_PROGRESS_SECURITY_MAIL_SCHEMA_PARTIAL_LICENSE_OPEN",
   "summary": {
     "capability_count": 16,
     "closed": 0,
     "partial_traces": 14,
     "not_started": 2,
     "source_blobs": 1350,
-    "unclassified_paths": 1194,
-    "initially_classified_paths": 156,
-    "classification_note": "Current source paths are classified only after exact target blob review; changed/new delta paths not yet reviewed remain UNCLASSIFIED. All path licenses/provenance remain open."
+    "unclassified_paths": 1158,
+    "initially_classified_paths": 192,
+    "classification_note": "192 paths have current-pin role/evidence classifications; 94 changed/new upstream paths remain UNCLASSIFIED pending exact blob review. License/provenance is open for all candidates."
   },
   "dimensions": [
     "first_party_imports_and_callers",
