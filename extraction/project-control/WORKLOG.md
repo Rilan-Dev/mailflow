@@ -68,3 +68,10 @@
 - Enhanced verifier to scan Git LFS pointer files; the successful run found 0 LFS pointers and 0 gitlinks. Root tree and all 147 nested tree SHA checks passed.
 - Current counts: 1,350 source blobs; six initial path records classified; 1,344 remain UNCLASSIFIED. License/provenance and transitive dependency closure remain open.
 - Next: continue detailed auth/OAuth/OIDC, hostValidation/safeFetch/imageProxy/emailSanitizer caller and policy tracing, then IMAP/account lifecycle and DB migrations. Run listed tests in a real checkout; do not represent static code inspection as test PASS.
+
+## 008 — 2026-10-17 — Inventory external dependency closure
+- Parsed the current pinned backend/frontend package manifests and lockfiles from the immutable snapshot.
+- Added extraction/manifests/dependency-inventory-2026-10-17-35067fc.json with 445 backend and 679 frontend lockfile package entries (1,124 total), including resolved versions, lockfile integrity/resolution metadata, direct/transitive status, dev/optional/peer flags and any license metadata present.
+- Added extraction/manifests/DEPENDENCY_CLOSURE_2026-10-17.md. Current direct dependencies: 50; direct dev dependencies: 16. No external package license or provenance is cleared by this inventory; dependencies are inventoried, not vendored.
+- Confirmed live upstream main still resolves to 35067fc2876d50980f1a8a3b8ea72b5467b69f60 / a2a82b50b8a1ac24a273e55dc0f9418aefdfed17 at the latest check.
+- Next: map imported packages and runtime/native build usage, audit package licenses/provenance, and continue security + IMAP/account/database closure. Snapshot integrity remains PASS; full extraction remains open.
