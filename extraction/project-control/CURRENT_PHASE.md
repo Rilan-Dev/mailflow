@@ -11,3 +11,6 @@ Exact-copy Phase 2 is BLOCKED until discovery/closure has evidence-backed PASS a
 
 ## Evidence update — 2026-10-14
 A preliminary path-based candidate map and complete file register now exist. This does not close discovery: all file dispositions, licenses and dependency edges remain pending. The change watcher is authored but unverified. Phase remains 1 and exact copy remains blocked.
+
+## Phase update — 2026-10-17
+Current phase: PHASE 2 — IMMUTABLE SOURCE SNAPSHOT AND VERIFICATION (automation authored; capture execution pending). The user has authorized beginning the full upstream snapshot and ongoing upstream change capture. Phase completion requires a real snapshot run, matching root tree/manifest, exact blob verification, complete file-set verification, and explicit handling of gitlinks/LFS. Capability closure and per-path licensing/provenance remain subsequent open work; no extraction PASS is claimed.
