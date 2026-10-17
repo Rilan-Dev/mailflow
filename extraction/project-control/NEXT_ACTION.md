@@ -74,3 +74,15 @@ Detailed static trace recorded at `extraction/manifests/security-transport-datab
 3. Continue IMAP method call graph: sync entry points, folder status/modseq/UIDVALIDITY, message body/attachment storage, retry/recovery, flags/moves/delete, sent/draft operations and UI state.
 4. Expand path dispositions and third-party license/provenance review; do not treat static trace as permission to reuse.
 5. Run full backend/frontend and native build checks after the capability dependency graph is mapped, and run the exact verifier again after manifest changes.
+
+
+## Update — 2026-10-17 — PostgreSQL migration inventory advanced
+
+Added `extraction/manifests/postgres-schema-runtime-map-2026-10-17.md`. It covers the baseline table relationships, migration runner semantics and the intent/runtime linkage of all 66 migrations (0001–0066). This is a migration-level map, not yet a complete machine-readable column/constraint map or exhaustive runtime SQL-consumer closure.
+
+Immediate continuation:
+1. Generate the full DDL/object inventory from all migration SQL (columns, types, defaults, unique/FK/check constraints, indexes, backfills, dropped/renamed objects), then verify it against a real PostgreSQL migration run.
+2. Map runtime SQL callers to each table and key index; focus on accounts/messages/folders, auth/OIDC/MFA, contacts/CardDAV, plugins, spam, rules and AI.
+3. Continue the IMAP sync call graph and account deletion cleanup, including body/attachment storage, cache and plugin lifecycle.
+4. Finish OIDC/outbound fetch and HTML render sink tracing; do not treat safeFetch's guarded connector as proof that every outbound call site is safe.
+5. Continue path classifications and dependency license/provenance clearance. Full backend/frontend/native checks remain a later verification item, not a reason to pause independent trace work.
