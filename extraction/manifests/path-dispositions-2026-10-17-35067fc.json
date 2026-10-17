@@ -14946,13 +14946,14 @@
       "size": 19848,
       "candidate_areas": [
         "frontend-web",
-        "mail-protocol-and-sync"
+        "mail-protocol-and-sync",
+        "message-ingestion-rendering"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
+      "closure_status": "PARTIAL_FIRST_PASS_DIFF_REVIEW",
+      "notes": "Conversation cards now share cached body fetch and the shared attachment strip; verify cache invalidation, loading/error state and attachment ownership. Exact target SHA/mode matches current source-tree manifest; license/provenance remains open."
     },
     {
       "path": "frontend/src/components/ConversationPane.jsx",
@@ -14960,13 +14961,14 @@
       "mode": "100644",
       "size": 18690,
       "candidate_areas": [
-        "frontend-web"
+        "frontend-web",
+        "search-and-unified-inbox"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
+      "closure_status": "PARTIAL_FIRST_PASS_DIFF_REVIEW",
+      "notes": "Conversation actions now account-scope thread copies, preserve drafts/Trash/Spam semantics, prefetch bodies and provide empty-action feedback; server authorization and UI edge states remain open. Exact target SHA/mode matches current source-tree manifest; license/provenance remains open."
     },
     {
       "path": "frontend/src/components/ConversationPane.render.test.js",
@@ -15342,13 +15344,14 @@
       "size": 254162,
       "candidate_areas": [
         "frontend-web",
-        "mail-protocol-and-sync"
+        "mail-protocol-and-sync",
+        "search-and-unified-inbox"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
+      "closure_status": "PARTIAL_FIRST_PASS_DIFF_REVIEW",
+      "notes": "List selection now uses shared conversation-selection helpers; thread selection and account-scoped actions require tests across search/category/unified-inbox. Exact target SHA/mode matches current source-tree manifest; license/provenance remains open."
     },
     {
       "path": "frontend/src/components/MessageList.render.test.js",
@@ -15407,13 +15410,14 @@
       "candidate_areas": [
         "frontend-web",
         "mail-protocol-and-sync",
-        "message-ingestion-rendering"
+        "message-ingestion-rendering",
+        "search-and-unified-inbox"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
+      "closure_status": "PARTIAL_FIRST_PASS_DIFF_REVIEW",
+      "notes": "Large refactor separates conversation selection/body cache/prefetch from the message pane; inspect action semantics across list, parked/deep-link and unified-inbox states. Exact target SHA/mode matches current source-tree manifest; license/provenance remains open."
     },
     {
       "path": "frontend/src/components/MessagePane.render.test.js",
@@ -15528,13 +15532,14 @@
       "mode": "100644",
       "size": 3975,
       "candidate_areas": [
-        "frontend-web"
+        "frontend-web",
+        "search-and-unified-inbox"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
+      "closure_status": "PARTIAL_FIRST_PASS_DIFF_REVIEW",
+      "notes": "Propagates listed/parked selection and selected account into conversation actions so deep links and unified inbox differ correctly; caller and fallback behavior remain open. Exact target SHA/mode matches current source-tree manifest; license/provenance remains open."
     },
     {
       "path": "frontend/src/components/ReplyDraftIndicator.jsx",
@@ -15965,13 +15970,14 @@
       "mode": "100644",
       "size": 2443,
       "candidate_areas": [
-        "frontend-web"
+        "frontend-web",
+        "frontend-app"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
+      "closure_status": "PARTIAL_FIRST_PASS_DIFF_REVIEW",
+      "notes": "Loads English first and dynamically imports only the active locale instead of bundling all locale JSON at startup; fallback and locale chunk-load error states remain open. Exact target SHA/mode matches current source-tree manifest; license/provenance remains open."
     },
     {
       "path": "frontend/src/index.css",
@@ -16756,13 +16762,14 @@
       "mode": "100644",
       "size": 3109,
       "candidate_areas": [
-        "message-ingestion-rendering"
+        "message-ingestion-rendering",
+        "email-html-sanitization"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
+      "closure_status": "PARTIAL_FIRST_PASS_DIFF_REVIEW",
+      "notes": "New jsdom tests cover app-page HTML sanitizer and sender-controlled image URLs/srcset/CSS URL filtering; full frontend suite includes Node tests, while browser-engine CSS parsing remains an explicit validation caveat. Exact target SHA/mode matches current source-tree manifest; license/provenance remains open."
     },
     {
       "path": "frontend/src/utils/attachmentExtensions.js",
@@ -16898,12 +16905,14 @@
       "sha": "4a233a0abde4c34e3612f0f97fe062d0cddd7ce2",
       "mode": "100644",
       "size": 3104,
-      "candidate_areas": [],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "candidate_areas": [
+        "message-ingestion-rendering"
+      ],
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
+      "closure_status": "PARTIAL_FIRST_PASS_DIFF_REVIEW",
+      "notes": "New Node tests exercise shared body cache, prefetch, cache eviction and clearing on signed-in user change; stale async fetch/session transition race remains open. Exact target SHA/mode matches current source-tree manifest; license/provenance remains open."
     },
     {
       "path": "frontend/src/utils/browserLanguage.js",
@@ -16997,13 +17006,14 @@
       "candidate_areas": [
         "frontend-web",
         "mail-protocol-and-sync",
-        "build-and-release"
+        "build-and-release",
+        "compose-and-send"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
+      "closure_status": "PARTIAL_FIRST_PASS_DIFF_REVIEW",
+      "notes": "Forward path fetches original body when reading body used fitted inline images; failure falls back to cached fitted content, so original-preservation fallback is a known quality risk. Exact target SHA/mode matches current source-tree manifest; license/provenance remains open."
     },
     {
       "path": "frontend/src/utils/composeFromMessage.test.js",
@@ -17119,13 +17129,14 @@
       "mode": "100644",
       "size": 6145,
       "candidate_areas": [
-        "frontend-web"
+        "frontend-web",
+        "search-and-unified-inbox"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
+      "closure_status": "PARTIAL_FIRST_PASS_DIFF_REVIEW",
+      "notes": "Separates listed vs parked/deep-link message selection and selects listed row consistently; downstream list selection/action scoping needs closure. Exact target SHA/mode matches current source-tree manifest; license/provenance remains open."
     },
     {
       "path": "frontend/src/utils/conversation.test.js",
@@ -17672,13 +17683,14 @@
       "mode": "100644",
       "size": 5916,
       "candidate_areas": [
-        "frontend-web"
+        "frontend-web",
+        "search-and-unified-inbox"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
+      "closure_status": "PARTIAL_FIRST_PASS_DIFF_REVIEW",
+      "notes": "Folder labels avoid duplicate Trash/Sent role names when server special-use flags conflict with user-visible folder names; folder mapping behavior depends on account folder list. Exact target SHA/mode matches current source-tree manifest; license/provenance remains open."
     },
     {
       "path": "frontend/src/utils/folderDisplay.test.js",
@@ -17687,13 +17699,14 @@
       "size": 10299,
       "candidate_areas": [
         "frontend-web",
-        "tests"
+        "tests",
+        "search-and-unified-inbox"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
+      "closure_status": "PARTIAL_FIRST_PASS_DIFF_REVIEW",
+      "notes": "Adds regressions for duplicate role labels; included in full frontend suite. Exact target SHA/mode matches current source-tree manifest; license/provenance remains open."
     },
     {
       "path": "frontend/src/utils/folderSync.js",
@@ -17761,13 +17774,14 @@
       "mode": "100644",
       "size": 5724,
       "candidate_areas": [
-        "frontend-web"
+        "frontend-web",
+        "email-html-sanitization"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
+      "closure_status": "PARTIAL_FIRST_PASS_DIFF_REVIEW",
+      "notes": "Frame focus return now coordinates multiple iframe watchers when moving between expanded messages and avoids returning keyboard focus to text inputs; cleanup on unmount/navigation needs closure. Exact target SHA/mode matches current source-tree manifest; license/provenance remains open."
     },
     {
       "path": "frontend/src/utils/frameFocus.test.js",
@@ -17776,13 +17790,14 @@
       "size": 4182,
       "candidate_areas": [
         "frontend-web",
-        "tests"
+        "tests",
+        "email-html-sanitization"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
+      "closure_status": "PARTIAL_FIRST_PASS_DIFF_REVIEW",
+      "notes": "Adds tests for focus return from text input and frame-to-frame focus transfer; included in full frontend suite. Exact target SHA/mode matches current source-tree manifest; license/provenance remains open."
     },
     {
       "path": "frontend/src/utils/frameGeometry.js",
@@ -17833,12 +17848,14 @@
       "sha": "0f5b255e9203d4a6f0454853e20009fcff9af9a4",
       "mode": "100644",
       "size": 2017,
-      "candidate_areas": [],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "candidate_areas": [
+        "email-html-sanitization"
+      ],
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
+      "closure_status": "PARTIAL_FIRST_PASS_DIFF_REVIEW",
+      "notes": "New tests verify proxy-only image deferral after first eager images and restoration near view; viewport layout behavior is described as browser-engine-sensitive and not fully proven by jsdom. Exact target SHA/mode matches current source-tree manifest; license/provenance remains open."
     },
     {
       "path": "frontend/src/utils/gtd.js",
@@ -18425,13 +18442,14 @@
       "size": 1236,
       "candidate_areas": [
         "frontend-web",
-        "mail-protocol-and-sync"
+        "mail-protocol-and-sync",
+        "compose-and-send"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
+      "closure_status": "PARTIAL_FIRST_PASS_DIFF_REVIEW",
+      "notes": "Sent-copy detection uses shared selectListedMessage helper, ensuring selected row reflects the visible list and selection state; account/folder race remains open. Exact target SHA/mode matches current source-tree manifest; license/provenance remains open."
     },
     {
       "path": "frontend/src/utils/openSentMessage.test.js",
@@ -19010,13 +19028,14 @@
       "size": 4906,
       "candidate_areas": [
         "frontend-web",
-        "tests"
+        "tests",
+        "auth-and-identity"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
+      "closure_status": "PARTIAL_FIRST_PASS_DIFF_REVIEW",
+      "notes": "Adds assertions clearing previous-user folder/sender shortcuts and Android provider logout handoff after local state clear; native integration build still pending. Exact target SHA/mode matches current source-tree manifest; license/provenance remains open."
     },
     {
       "path": "frontend/src/utils/snoozeActions.js",
@@ -19024,13 +19043,14 @@
       "mode": "100644",
       "size": 2695,
       "candidate_areas": [
-        "frontend-web"
+        "frontend-web",
+        "search-and-unified-inbox"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
+      "closure_status": "PARTIAL_FIRST_PASS_DIFF_REVIEW",
+      "notes": "Snooze detection now recognizes the server-reported snoozed_folder (e.g. INBOX.Snoozed namespace) rather than only literal Snoozed; backend record must remain authoritative. Exact target SHA/mode matches current source-tree manifest; license/provenance remains open."
     },
     {
       "path": "frontend/src/utils/snoozeActions.test.js",
@@ -19039,13 +19059,14 @@
       "size": 3805,
       "candidate_areas": [
         "frontend-web",
-        "tests"
+        "tests",
+        "search-and-unified-inbox"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
+      "closure_status": "PARTIAL_FIRST_PASS_DIFF_REVIEW",
+      "notes": "Adds namespaced snooze-folder classification tests; included in full frontend suite. Exact target SHA/mode matches current source-tree manifest; license/provenance remains open."
     },
     {
       "path": "frontend/src/utils/spamApi.js",
@@ -19646,10 +19667,10 @@
     }
   ],
   "removed_since_previous_pin": [],
-  "review_checkpoint": "2026-10-17: initial-to-current diff has 147 changed/new paths. 53 paths received first-pass review; 94 remain UNCLASSIFIED pending exact blob review.",
+  "review_checkpoint": "2026-10-17: initial-to-current diff has 147 changed/new paths. 72 paths received first-pass review; 75 remain UNCLASSIFIED pending exact blob review.",
   "summary": {
-    "unclassified_paths": 1158,
-    "classified_paths": 192,
+    "unclassified_paths": 1139,
+    "classified_paths": 211,
     "classification_note": "Only reviewed exact target SHA/mode paths receive a non-UNCLASSIFIED disposition; all remaining changed/new blobs are UNCLASSIFIED. Role classification is not license clearance."
   }
 }
