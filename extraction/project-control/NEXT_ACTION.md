@@ -55,3 +55,22 @@ The new workflow `.github/workflows/mailflow-security-closure.yml` now executes 
 6. Keep snapshots immutable and use a new commit-addressed directory for every upstream change. Current snapshot automation must remain reviewable and must never imply that newly captured source is automatically cleared for reuse.
 
 Guardrail: selected security tests PASS does not mean capability closure, licensing, redistribution clearance, host-integration readiness or overall extraction PASS.
+
+
+## Update — 2026-10-17 — Security/transport/schema trace advanced
+
+Detailed static trace recorded at `extraction/manifests/security-transport-database-trace-2026-10-17.md`.
+
+- Authentication: traced Express route mounts, Redis-backed session setup, CSRF boundary, session regeneration, MFA/TOTP replay protection, trusted-device token hashing, and account-scoped authorization. OAuth/OIDC state/nonce/PKCE and token refresh paths are partially traced; all provider network callers, logout/session/WebSocket paths and UI states remain open.
+- SSRF: confirmed `safeFetch` uses an Undici connector for each connection/redirect hop, validates IPs, and pins host connections; account create/update validates IMAP/SMTP hosts and `imapManager` resolves/pins again at connect time. Every caller/policy combination and SMTP execution path still needs closure.
+- Sanitizer: traced `emailSanitizer`, `imageProxy` and `mail.js` as major paths. Enumerating every rendering sink, CID/attachment and compose/signature path remains open.
+- IMAP/account lifecycle: traced authenticated account list/create/update/delete/reconnect, secret encryption, ownership checks, asynchronous disconnect after database delete, and manager backoff/concurrency behavior. Full sync/checkpoint/recovery call graph and all account-owned cleanup paths remain open.
+- Database: identified 66 ordered SQL migrations (`0001`–`0066`) and the migration runner's advisory lock, transaction/no-transaction handling and schema_migrations ledger. Per-object schema/runtime-consumer map is not yet complete.
+- Selected tests remain 379/379 passed from run 39031942550. No full suite/native build or capability PASS is implied.
+
+### Next execution slice
+1. Trace OIDC discovery/JWKS/token/end-session fetches and all private-host opt-in branches; enumerate every sanitizer sink and frontend iframe/srcdoc use.
+2. Read and reconcile all 66 migrations into a table/column/index/constraint/backfill inventory and connect those objects to runtime SQL.
+3. Continue IMAP method call graph: sync entry points, folder status/modseq/UIDVALIDITY, message body/attachment storage, retry/recovery, flags/moves/delete, sent/draft operations and UI state.
+4. Expand path dispositions and third-party license/provenance review; do not treat static trace as permission to reuse.
+5. Run full backend/frontend and native build checks after the capability dependency graph is mapped, and run the exact verifier again after manifest changes.
