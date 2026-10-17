@@ -132,3 +132,11 @@ This is baseline identity/inventory evidence only, not full extraction verificat
 - Added `.github/workflows/mailflow-transport-closure.yml` to execute targeted IMAP manager, sync/draft/snooze, move fallback, SMTP transport, account CRUD/settings, mailbox mutation, attachment, unified-inbox and send reliability tests against the immutable snapshot.
 - Workflow run: https://github.com/Rilan-Dev/mailflow/actions/runs/39034389282 — queued at last check. Result pending; not a test PASS yet.
 - Source snapshot/inventory verifier after the current path and closure manifest updates: https://github.com/Rilan-Dev/mailflow/actions/runs/39034359461 — success. This verifies snapshot/manifests consistency and exact source identity, not capability closure.
+
+
+## 2026-10-17 — OIDC and frontend sink findings
+
+- Static trace identifies an unresolved OIDC outbound-request boundary: native fetch is used after host validation, but the validated IP is not pinned to the subsequent socket and redirect hops are not checked by the guarded safeFetch connector. Explicit `allow_insecure` disables TLS certificate validation and bypasses host validation. This remains an open security closure item.
+- Frontend HTML sinks mapped at a first-pass level: sandboxed iframe/CSP in `MessageBodyView`, `prepared.html` and plain-text linkifier sinks in `MessagePane`, DOMPurify/app-origin sanitization in `ComposeModal`/ `appEmailHtml`, and direct contentEditable innerHTML in `SignatureEditor`. End-to-end sanitizer and caller closure remains open.
+- Path register now has 124 role-classified source paths and 1,226 unclassified paths. All source license/provenance clearance remains separate and mostly open.
+- Frontend render-security tests were added to the security workflow; expanded transport tests are in run https://github.com/Rilan-Dev/mailflow/actions/runs/39034389282, queued at last check. No pending test result is treated as PASS.
