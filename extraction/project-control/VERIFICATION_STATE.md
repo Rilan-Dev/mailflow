@@ -91,3 +91,9 @@ This is baseline identity/inventory evidence only, not full extraction verificat
 - Frontend: 27 direct dependencies, 12 direct dev dependencies, 679 locked package entries.
 - Total: 1,124 lockfile package entries; 50 direct dependencies and 16 direct dev dependencies.
 - This is an inventory pass only. Zero third-party packages have been license/provenance-cleared; runtime/native import closure and package source provenance remain pending.
+
+## 2026-10-17 — Current classification and dependency inventory
+- Progress report: extraction/manifests/EXTRACTION_PROGRESS_2026-10-17.md and extraction/manifests/extraction-progress-2026-10-17.json.
+- Current disposition register: 39 paths initially classified; 1,311 remain UNCLASSIFIED. Security-source roles are marked DEPENDENCY_CLOSURE / CANDIDATE_REQUIRES_CLOSURE; test candidates are identified but not run.
+- Dependency inventory: 1,124 package-lock entries (445 backend, 679 frontend), 50 direct dependencies and 16 direct dev dependencies. No third-party licenses are cleared.
+- The exact snapshot/tree verification remains PASS; path classification, transitive closure, runtime/test execution, license/provenance and redistribution remain pending.
