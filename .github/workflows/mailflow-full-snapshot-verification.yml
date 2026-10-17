@@ -110,7 +110,7 @@ jobs:
         run: npm run android:sync
       - name: Run Android unit tests and assemble debug APK
         working-directory: ${{ env.SNAPSHOT }}/frontend/packages/android
-        run: ./gradlew testDebugUnitTest assembleDebug --no-daemon
+        run: bash ./gradlew testDebugUnitTest assembleDebug --no-daemon
 
   postgres-migrations:
     name: Clean PostgreSQL install, 66 migrations and idempotent rerun
