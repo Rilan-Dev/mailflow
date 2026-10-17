@@ -13,9 +13,9 @@
     "partial_traces": 14,
     "not_started": 2,
     "source_blobs": 1350,
-    "unclassified_paths": 1065,
-    "initially_classified_paths": 285,
-    "classification_note": "285 paths have current-pin role/evidence classifications; 1 binary test fixture remains UNCLASSIFIED from the 147-path delta, and 1,064 other paths remain UNCLASSIFIED. License/provenance remains open."
+    "unclassified_paths": 1063,
+    "initially_classified_paths": 287,
+    "classification_note": "287 paths have current-pin role/evidence classifications; 1 changed/new binary fixture and 1,062 other source paths remain UNCLASSIFIED. License/provenance remains open."
   },
   "dimensions": [
     "first_party_imports_and_callers",
