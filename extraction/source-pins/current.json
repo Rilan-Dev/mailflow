@@ -51,14 +51,20 @@
     "reconstructed_nested_tree_count": 147,
     "gitlink_count": 0,
     "git_lfs_pointer_count": 0,
-    "capability_closure": "PENDING",
+    "capability_closure": "PARTIAL_STATIC_TRACE_NOT_CLOSED",
     "path_license_provenance": "PENDING",
     "redistribution_clearance": "PENDING",
     "path_disposition_summary": {
       "total_blobs": 1350,
-      "initially_classified": 39,
-      "unclassified": 1311
+      "classified": 183,
+      "unclassified": 1167,
+      "note": "Latest path-level classification snapshot; license/provenance review remains open."
     },
-    "security_static_trace": "PARTIAL_NOT_CLOSED"
+    "security_static_trace": "PARTIAL_NOT_CLOSED",
+    "latest_manifest_verifier": {
+      "workflow_url": "https://github.com/Rilan-Dev/mailflow/actions/runs/39037683681",
+      "workflow_result": "queued_at_recording",
+      "note": "Triggered after capability/path manifest updates; prior verifier run is not evidence for these latest manifests."
+    }
   }
 }
