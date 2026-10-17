@@ -126,3 +126,10 @@
 - Exact snapshot/inventory verifier after manifest changes: https://github.com/Rilan-Dev/mailflow/actions/runs/39034548818 — success. Source identity remains commit `35067fc2876d50980f1a8a3b8ea72b5467b69f60` / tree `a2a82b50b8a1ac24a273e55dc0f9418aefdfed17`.
 - No full backend/frontend suite, native Android/Electron build, capability closure, license/provenance clearance or extraction PASS is inferred from the selected suites.
 - Continue OIDC network policy, div-render/linkifier sink proof, full migration object/runtime map, IMAP account-cleanup graph and third-party license/provenance review.
+
+
+## 013 — 2026-10-17 — Full pinned-snapshot verification workflow launched
+- Added `.github/workflows/mailflow-full-snapshot-verification.yml` to run exact snapshot inventory verification, full backend lint/plugin boundary/syntax/test/audit, full frontend lint/test/build/audit, and Android sync/unit-test/debug APK build. Frontend's Node test suite includes Electron test files.
+- Run https://github.com/Rilan-Dev/mailflow/actions/runs/39034814909 was queued at the last check; no result is claimed. It runs against the pinned immutable snapshot, unlike root CI.
+- Existing targeted suites passed: security/render 500 tests; transport/account 777 passed and 10 skipped; aggregate 1,277 passed, 10 skipped, zero failures.
+- Open security item remains OIDC discovery/token native fetch without safeFetch connection pin/redirect policy, especially explicit insecure issuer mode. HTML div-render/linkifier/signature paths need end-to-end proof. Path classifications are 124/1,350, with 1,226 unclassified; license/provenance remains open.
