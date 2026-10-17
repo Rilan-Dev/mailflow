@@ -110,3 +110,8 @@
 - Current path register 285 classified / 1,065 unclassified. License/provenance remains open.
 - Found package/lockfile version drift (backend 4.0.1 vs 3.9.0, frontend 4.0.1 vs 3.8.2); snapshot left unchanged pending upstream resolution.
 - Latest full verifier run 39038991437 pending; Android Gradle remains unverified.
+
+
+## Update — 2026-10-17 — HTML sink inventory
+- Mapped React HTML sinks and compose/signature/print/iframe paths in security trace. OIDC native fetch remains a network-policy closure blocker.
+- Current path register 287 classified / 1,063 unclassified; delta review 146/147, one binary fixture pending.
