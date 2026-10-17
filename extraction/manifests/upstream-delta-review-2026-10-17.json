@@ -23,10 +23,10 @@
     "old_tree_entries": 1462,
     "old_tree_truncated": false
   },
-  "status": "PARTIAL_REVIEW_72_PATHS_REVIEWED_75_PATHS_PENDING",
+  "status": "PARTIAL_REVIEW_93_PATHS_REVIEWED_54_PATHS_PENDING",
   "guardrail": "Review classification is not license clearance. Do not change or overwrite either immutable snapshot. Every changed/new path must be re-evaluated against exact blob SHA and mode.",
-  "reviewed_high_priority_count": 72,
-  "pending_count": 75,
+  "reviewed_high_priority_count": 93,
+  "pending_count": 54,
   "entries": [
     {
       "path": ".env.example",
@@ -887,13 +887,13 @@
       "additions": 248,
       "deletions": 0,
       "changes": 248,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "HIGH",
+      "first_pass_notes": "New instrumentation tests exercise login/logout cookie sharing while withholding native bridge from provider, blocked redirects and untrusted certificate handling. Test execution is not yet proven because Gradle job did not start.",
       "base_mode": null,
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/packages/android/app/src/main/java/sh/mailflow/app/MailFlowNativePlugin.java",
@@ -903,14 +903,14 @@
       "additions": 48,
       "deletions": 8,
       "changes": 56,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "HIGH",
+      "first_pass_notes": "Native setup now uses Capacitor local server, persists host and reports navigating, and adds OIDC logout in a separate unprivileged WebView. Host URL validation and the dialog for plaintext private hosts remain security-sensitive; Android Gradle run still pending.",
       "base_blob_sha": "5136f0f2ded04ffece0641b1981dd58da6c7bf6a",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/packages/android/app/src/main/java/sh/mailflow/app/MailFlowOidcLogin.java",
@@ -972,13 +972,13 @@
       "additions": 101,
       "deletions": 0,
       "changes": 101,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "HIGH",
+      "first_pass_notes": "New JVM tests cover exact same-origin OIDC start/callback/logout routes, host suffix attacks, query parsing and HTTPS-only provider navigation; Gradle execution pending.",
       "base_mode": null,
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/packages/native-shell/index.html",
@@ -988,14 +988,14 @@
       "additions": 6,
       "deletions": 3,
       "changes": 9,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "HIGH",
+      "first_pass_notes": "Setup host save now handles Android's {host,navigating} response without duplicate navigation while preserving desktop's host response; native shell runtime test/build remains open.",
       "base_blob_sha": "340befb2be4c22735a3e0f70fc7205968f954e9a",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/aiActions.js",
@@ -1056,14 +1056,14 @@
       "additions": 1,
       "deletions": 1,
       "changes": 2,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Account edit form now includes mailbox icon field, completing the account icon API surface; UI validation/loading/error states and host policy remain open.",
       "base_blob_sha": "34377aaa1e661cb0899d23ca9bf4a8b6cc5d13db",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/components/AdminPanel.render.test.js",
@@ -1090,14 +1090,14 @@
       "additions": 7,
       "deletions": 1,
       "changes": 8,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "AI result UI avoids duplicate 'Generating' label and displays truncation disclosure; rendered HTML sink and sanitizer contract still require full sink inventory.",
       "base_blob_sha": "e0018f82ad0c9a3bbe861006dbb9097c742aa33f",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/components/AiResultBox.render.test.js",
@@ -1108,13 +1108,13 @@
       "additions": 91,
       "deletions": 0,
       "changes": 91,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "New render test covers generation label and truncation presentation; included in full frontend suite.",
       "base_mode": null,
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/components/AttachmentStrip.jsx",
@@ -1142,13 +1142,13 @@
       "additions": 103,
       "deletions": 0,
       "changes": 103,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "New render tests verify long drafts are rejected for destructive whole-draft AI actions and shorter drafts are sent whole; included in full frontend suite.",
       "base_mode": null,
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/components/ComposeModal.jsx",
@@ -1243,14 +1243,14 @@
       "additions": 627,
       "deletions": 2,
       "changes": 629,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Expanded render test now covers conversation account-scope, attachment strip and action states; included in full frontend suite.",
       "base_blob_sha": "ef5ebfafeb1696856c51fe067424ea0411fcfc24",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/components/MessageBodyView.jsx",
@@ -1277,14 +1277,14 @@
       "additions": 83,
       "deletions": 0,
       "changes": 83,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Adds regression for iframe setup not being torn down on callback identity change; test does not by itself prove every iframe/srcdoc sink or CSP behavior.",
       "base_blob_sha": "9057919ab1eabf55e30b1e62a1e40732c3e7c17f",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/components/MessageList.jsx",
@@ -1311,14 +1311,14 @@
       "additions": 310,
       "deletions": 4,
       "changes": 314,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Render test captures API method/body and adds assertions for account-aware thread selection/action payloads; included in full frontend suite.",
       "base_blob_sha": "46074d37294a07f6b083f83bd519ae92572af078",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/components/MessageList.search.test.js",
@@ -1907,13 +1907,13 @@
       "additions": 39,
       "deletions": 0,
       "changes": 39,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "HIGH",
+      "first_pass_notes": "New Node test verifies optional OIDC logout not implemented by older native plugin does not disable other native bridge methods; native build still pending.",
       "base_mode": null,
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/utils/composeFromMessage.js",
@@ -2025,14 +2025,14 @@
       "additions": 11,
       "deletions": 2,
       "changes": 13,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Avoids decoding large photos on the main thread for dark backing decisions and accounts for deferred proxy images; image load/error and iframe lifecycle closure remain open.",
       "base_blob_sha": "620e0fbb852672335aa38264c23f5e1ec15e63b7",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/utils/darkImages.test.js",
@@ -2042,14 +2042,14 @@
       "additions": 37,
       "deletions": 1,
       "changes": 38,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Adds regression that only small images are drawn to canvas for dark backing; included in full frontend suite.",
       "base_blob_sha": "537adbe265bb983b4c653f38953ae8169bc3d8da",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/utils/darkRecolor.js",
@@ -2059,14 +2059,14 @@
       "additions": 8,
       "deletions": 0,
       "changes": 8,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Preserves a light background behind partial/no-repeat images during dark recoloring so text remains readable; browser visual/audit coverage still needs closure.",
       "base_blob_sha": "8449e01c2292adb4039674d10e5101f3dfdf434b",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/utils/darkScheme.js",
@@ -2076,14 +2076,14 @@
       "additions": 6,
       "deletions": 4,
       "changes": 10,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Now recolors emails marked only-light as well, with reader override still possible; verify accessibility/readability and dark CSS interactions.",
       "base_blob_sha": "74b39671d7184d7dbb0e9a4e1fd0444fb79c619e",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/utils/darkScheme.test.js",
@@ -2093,14 +2093,14 @@
       "additions": 6,
       "deletions": 4,
       "changes": 10,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Updates lightOnly behavior expectations and dark rendering tests; included in full frontend suite.",
       "base_blob_sha": "bb0787097b2428ee740e9c1ee66f52b3671fbd24",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/utils/emailFrameDoc.js",
@@ -2127,14 +2127,14 @@
       "additions": 12,
       "deletions": 4,
       "changes": 16,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Caches scroll-container candidates for subsequent image-load passes to avoid repeated full DOM style scans; stale DOM/layout and cleanup behavior need browser tests.",
       "base_blob_sha": "0b739df96e6360825d2163b75dc0e445fa843858",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/utils/emailFrameHeight.test.js",
@@ -2144,14 +2144,14 @@
       "additions": 26,
       "deletions": 1,
       "changes": 27,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Adds regression for repeated scroll-box expansion while only reading computed styles once; included in full frontend suite.",
       "base_blob_sha": "b583e766b405786568df9eb3d6f300a010162ade",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/utils/folderDisplay.js",
@@ -2263,14 +2263,14 @@
       "additions": 24,
       "deletions": 6,
       "changes": 30,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Thread message lookup can prefer the specified account's copy and parks the selected message; this ties GTD deep links to account-scoped conversation actions.",
       "base_blob_sha": "f1e235a5dddf5422d9fe8322fce4858e95f5c272",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/utils/gtd.test.js",
@@ -2280,14 +2280,14 @@
       "additions": 57,
       "deletions": 0,
       "changes": 57,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Adds tests for account-preferred thread copy and fallback when that account has no copy; included in full frontend suite.",
       "base_blob_sha": "d46f9705feccacbaf895416cf70b189f79a5e2bc",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/utils/imageProxy.js",
