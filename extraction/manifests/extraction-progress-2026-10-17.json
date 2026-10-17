@@ -72,7 +72,7 @@
     "closure_test_results": "extraction/manifests/closure-test-results-2026-10-17-35067fc.json",
     "latest_snapshot_verification": "https://github.com/Rilan-Dev/mailflow/actions/runs/39034692855",
     "reusable_capability_runtime_trace": "extraction/manifests/reusable-capability-runtime-trace-2026-10-17.md",
-    "latest_full_verification": "https://github.com/Rilan-Dev/mailflow/actions/runs/39035662163"
+    "latest_full_verification": "https://github.com/Rilan-Dev/mailflow/actions/runs/39035810908"
   },
   "status": "SOURCE_SNAPSHOT_COMPLETE_AND_VERIFIED; APPLICATION_CAPABILITY_EXTRACTION_IN_PROGRESS; NOT_EXTRACTION_PASS"
 }
