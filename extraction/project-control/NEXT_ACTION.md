@@ -100,3 +100,12 @@ Do not wait for that run before continuing independent trace work. When convenie
 - Frontend sink inventory now includes the sandboxed iframe/CSP, optional div-render `prepared.html`, `linkifyText(body.text)`, DOMPurify/app-origin quoted HTML, and signature-editor innerHTML. Trace source preparation, CSS scoping, text escaping and saved signature read/write boundaries.
 - New frontend render-security tests are included in `.github/workflows/mailflow-security-closure.yml`; transport suite is queued at https://github.com/Rilan-Dev/mailflow/actions/runs/39034389282. Continue independently; don't claim tests passed until actual outputs arrive.
 - Current path role classification: 124/1,350; 1,226 remain unclassified. Newly classified files remain license-unreviewed and closure partial.
+
+
+## Update — 2026-10-17 — Expanded targeted test evidence is green
+
+- Security workflow https://github.com/Rilan-Dev/mailflow/actions/runs/39034509010 succeeded: 14 backend files / 375 tests; frontend image proxy 1 file / 4 tests; frontend email HTML/render security 6 files / 121 tests. Aggregate security/render slice: 21 files, 500 tests passed, 0 failures.
+- Transport workflow https://github.com/Rilan-Dev/mailflow/actions/runs/39034548854 succeeded: 42 test files passed, 1 skipped; 777 tests passed, 10 skipped, 0 failures.
+- Combined targeted evidence: 64 file-runs, 1,277 passed tests, 10 skipped tests, 0 failures. Machine-readable record: `extraction/manifests/closure-test-results-2026-10-17-35067fc.json`.
+- Snapshot/inventory verifier succeeded after path and capability manifest updates: https://github.com/Rilan-Dev/mailflow/actions/runs/39034548818. This is exact-copy/manifests integrity only; it is not overall extraction PASS.
+- Keep proceeding without waiting on root CI. Next: close the OIDC native-fetch/redirect/DNS pinning risk, complete sanitizer sink proof (div renderer and linkifier), generate column-level schema object inventory and SQL-consumer mapping, and continue dependency/license/provenance review. Full backend/frontend suites and native builds are still not established by these selected runs.
