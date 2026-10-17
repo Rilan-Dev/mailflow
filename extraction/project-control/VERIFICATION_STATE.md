@@ -173,3 +173,14 @@ Run https://github.com/Rilan-Dev/mailflow/actions/runs/39034971662:
 - PostgreSQL 17 clean database migration install and idempotent second run: PASS; all 66 migrations recorded and schema sanity checks passed.
 - Android web bundle and Capacitor sync: PASS.
 - Android Gradle step: FAILED before Gradle execution with `./gradlew: Permission denied` (exit 126) because the immutable upstream wrapper file lacks executable mode. This is not an Android compile/test result. Preserved the source mode and changed workflow to `bash ./gradlew testDebugUnitTest assembleDebug --no-daemon` in commit `981a7fbaec746ca765424c9e24572101716cca96`. Corrected run pending.
+
+
+## 2026-10-17 — Full backend/frontend/PostgreSQL evidence
+
+From run https://github.com/Rilan-Dev/mailflow/actions/runs/39034971662:
+- Backend full suite: 166 files passed, 6 skipped; 2,804 passed tests, 41 skipped, zero failures. Backend lint, plugin boundary lint, syntax and production dependency audit passed.
+- Frontend full suite: 3,142 tests passed, zero skipped/failures; frontend lint, production build and production dependency audit passed. Electron Node tests are part of frontend npm test.
+- PostgreSQL 17 clean migration job: 66 migrations applied, idempotent rerun, 32 tables, 97 indexes, 282 constraints.
+- Snapshot verifier passed in the same full-verification run.
+- Android web build/Capacitor sync passed. Gradle has not yet been verified because old runs either invoked the non-executable wrapper directly or were cancelled before job start. Current run https://github.com/Rilan-Dev/mailflow/actions/runs/39035810908 is pending with the explicit `bash ./gradlew` invocation.
+- Classification 182/1,350, 1,168 unclassified; capability register 14 partial, 2 not started, 0 closed. No reuse/redistribution clearance implied.
