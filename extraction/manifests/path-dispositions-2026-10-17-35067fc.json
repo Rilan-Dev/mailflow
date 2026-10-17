@@ -6,7 +6,7 @@
     "tree": "a2a82b50b8a1ac24a273e55dc0f9418aefdfed17"
   },
   "created_at": "2026-10-17T11:46:33.594Z",
-  "status": "PARTIAL_CLASSIFICATION_SECURITY_TRANSPORT_SCHEMA_REUSABLE_CAPABILITY_TRACE_NOT_CLOSED",
+  "status": "PARTIAL_CLASSIFICATION_DELTA_REVIEW_IN_PROGRESS_SECURITY_AND_MAIL_HOT_PATHS_PARTIAL",
   "files": [
     {
       "path": ".dockerignore",
@@ -32,7 +32,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": ".github/CODEOWNERS",
@@ -260,7 +260,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "LICENSE",
@@ -330,7 +330,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "backend/eslint.config.js",
@@ -1486,11 +1486,11 @@
       "candidate_areas": [
         "build-and-release"
       ],
-      "disposition": "DEPENDENCY_CLOSURE",
-      "reuse_status": "DEPENDENCY_INVENTORY_REQUIRED",
+      "disposition": "UNCLASSIFIED",
+      "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
-      "closure_status": "PARTIAL_MANIFEST_IDENTIFIED",
-      "notes": "Backend runtime and direct dependencies identified from package manifest; transitive dependency, license and runtime closure not yet reviewed."
+      "closure_status": "UNMAPPED",
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "backend/scripts/verify-count-integrity.mjs",
@@ -2202,7 +2202,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "backend/src/routes/accounts.js",
@@ -2213,11 +2213,11 @@
         "backend-and-api",
         "account-lifecycle"
       ],
-      "disposition": "DEPENDENCY_CLOSURE",
-      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
+      "disposition": "UNCLASSIFIED",
+      "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
-      "closure_status": "PARTIAL_TRACE",
-      "notes": "Account list/create/update/delete/reconnect, user ownership checks, credential encryption, connection policy and asynchronous disconnect traced; full cleanup/closure pending."
+      "closure_status": "UNMAPPED",
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "backend/src/routes/accounts.signature.test.js",
@@ -2318,11 +2318,11 @@
         "backend-and-api",
         "ai-assistant"
       ],
-      "disposition": "DEPENDENCY_CLOSURE",
-      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
+      "disposition": "UNCLASSIFIED",
+      "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
-      "closure_status": "PARTIAL_TRACE",
-      "notes": "AI routes/provider, config/secret handling, bounded HTTP helpers and frontend action consumers traced; per-provider SSRF/redirect and privacy closure remain open."
+      "closure_status": "UNMAPPED",
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "backend/src/routes/ai.test.js",
@@ -2334,11 +2334,11 @@
         "ai-assistant",
         "tests"
       ],
-      "disposition": "DEPENDENCY_CLOSURE",
-      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
+      "disposition": "UNCLASSIFIED",
+      "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
-      "closure_status": "PARTIAL_TRACE",
-      "notes": "AI routes/provider, config/secret handling, bounded HTTP helpers and frontend action consumers traced; per-provider SSRF/redirect and privacy closure remain open."
+      "closure_status": "UNMAPPED",
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "backend/src/routes/auth.forgotPassword.test.js",
@@ -2613,11 +2613,11 @@
         "backend-and-api",
         "mail-send-drafts"
       ],
-      "disposition": "DEPENDENCY_CLOSURE",
-      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
+      "disposition": "UNCLASSIFIED",
+      "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
-      "closure_status": "PARTIAL_TRACE",
-      "notes": "Authenticated draft/reply route and local/server draft replacement flow traced; attachment, folder/provider and UI dependency closure pending."
+      "closure_status": "UNMAPPED",
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "backend/src/routes/draft.lookup.postgres.test.js",
@@ -2930,7 +2930,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "backend/src/routes/mail.renameFolder.test.js",
@@ -2942,7 +2942,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "New path at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; inspect content, provenance, license and dependency closure."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "backend/src/routes/mail.resolve.test.js",
@@ -2972,7 +2972,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "backend/src/routes/mail.snoozeView.test.js",
@@ -2987,7 +2987,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "backend/src/routes/mail.spam.test.js",
@@ -3347,7 +3347,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "New path at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; inspect content, provenance, license and dependency closure."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "backend/src/routes/send.js",
@@ -3496,7 +3496,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "backend/src/routes/todoist.test.js",
@@ -3508,7 +3508,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "New path at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; inspect content, provenance, license and dependency closure."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "backend/src/routes/totp.js",
@@ -3582,7 +3582,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "backend/src/services/archiveInbox.js",
@@ -3758,11 +3758,11 @@
       "candidate_areas": [
         "contacts-carddav"
       ],
-      "disposition": "DEPENDENCY_CLOSURE",
-      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
+      "disposition": "UNCLASSIFIED",
+      "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
-      "closure_status": "PARTIAL_TRACE",
-      "notes": "Contacts/CardDAV runtime, user-owned address books, safeFetch/host validation, sync merge/purge and vCard helpers traced; edge-case closure and licensing remain open."
+      "closure_status": "UNMAPPED",
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "backend/src/services/categorizer.js",
@@ -3940,11 +3940,11 @@
         "tests",
         "email-html-sanitization"
       ],
-      "disposition": "DEPENDENCY_CLOSURE",
-      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
+      "disposition": "UNCLASSIFIED",
+      "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
-      "closure_status": "TESTS_EXECUTED_IN_PINNED_SNAPSHOT",
-      "notes": "Included in selected security run 39031942550 and/or full backend/frontend run 39034971662; test evidence does not close all callers, sinks or capability behavior."
+      "closure_status": "UNMAPPED",
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "backend/src/services/emailSanitizer.trackers.test.js",
@@ -3957,11 +3957,11 @@
         "tests",
         "email-html-sanitization"
       ],
-      "disposition": "DEPENDENCY_CLOSURE",
-      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
+      "disposition": "UNCLASSIFIED",
+      "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
-      "closure_status": "TESTS_EXECUTED_IN_PINNED_SNAPSHOT",
-      "notes": "Included in selected security run 39031942550 and/or full backend/frontend run 39034971662; test evidence does not close all callers, sinks or capability behavior."
+      "closure_status": "UNMAPPED",
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "backend/src/services/encryption.js",
@@ -4046,11 +4046,11 @@
         "tests",
         "outbound-host-validation"
       ],
-      "disposition": "DEPENDENCY_CLOSURE",
-      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
+      "disposition": "UNCLASSIFIED",
+      "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
-      "closure_status": "TESTS_EXECUTED_IN_PINNED_SNAPSHOT",
-      "notes": "Included in selected security run 39031942550 and/or full backend/frontend run 39034971662; test evidence does not close all callers, sinks or capability behavior."
+      "closure_status": "UNMAPPED",
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "backend/src/services/imageCache.js",
@@ -4062,7 +4062,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "New path at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; inspect content, provenance, license and dependency closure."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "backend/src/services/imageCache.test.js",
@@ -4074,7 +4074,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "New path at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; inspect content, provenance, license and dependency closure."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "backend/src/services/imageProxy.js",
@@ -4121,7 +4121,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "backend/src/services/imageShrink.test.js",
@@ -4136,7 +4136,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "backend/src/services/imapAuthBackoff.test.js",
@@ -4228,7 +4228,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "New path at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; inspect content, provenance, license and dependency closure."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "backend/src/services/imapManager.sentBcc.postgres.test.js",
@@ -4256,7 +4256,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "New path at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; inspect content, provenance, license and dependency closure."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "backend/src/services/imapManager.test.js",
@@ -4272,7 +4272,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "backend/src/services/imapMoveFallback.test.js",
@@ -4316,7 +4316,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "New path at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; inspect content, provenance, license and dependency closure."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "backend/src/services/imapRenameFolder.test.js",
@@ -4391,7 +4391,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "New path at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; inspect content, provenance, license and dependency closure."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "backend/src/services/inlineImageFit.test.js",
@@ -4403,7 +4403,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "New path at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; inspect content, provenance, license and dependency closure."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "backend/src/services/integrityFlagScan.test.js",
@@ -4715,7 +4715,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "New path at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; inspect content, provenance, license and dependency closure."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "backend/src/services/messageService.js",
@@ -4727,11 +4727,11 @@
         "mail-protocol-and-sync",
         "search-and-unified-inbox"
       ],
-      "disposition": "DEPENDENCY_CLOSURE",
-      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
+      "disposition": "UNCLASSIFIED",
+      "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
-      "closure_status": "PARTIAL_TRACE",
-      "notes": "Runtime caller and SQL/data dependencies traced in reusable-capability-runtime-trace-2026-10-17.md; per-endpoint scope, UI and edge closure remain open."
+      "closure_status": "UNMAPPED",
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "backend/src/services/messageService.snoozedView.postgres.test.js",
@@ -4743,7 +4743,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "New path at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; inspect content, provenance, license and dependency closure."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "backend/src/services/messageService.test.js",
@@ -4756,11 +4756,11 @@
         "tests",
         "search-and-unified-inbox"
       ],
-      "disposition": "DEPENDENCY_CLOSURE",
-      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
+      "disposition": "UNCLASSIFIED",
+      "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
-      "closure_status": "PARTIAL_TRACE",
-      "notes": "Runtime caller and SQL/data dependencies traced in reusable-capability-runtime-trace-2026-10-17.md; per-endpoint scope, UI and edge closure remain open."
+      "closure_status": "UNMAPPED",
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "backend/src/services/messageService.threadCount.postgres.test.js",
@@ -4986,7 +4986,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "backend/src/services/ruleForwarder.test.js",
@@ -5001,7 +5001,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "backend/src/services/safeFetch.js",
@@ -5949,7 +5949,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "docker-compose.ghcr.yml",
@@ -5991,7 +5991,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/.dockerignore",
@@ -6081,7 +6081,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/package-lock.json",
@@ -6105,11 +6105,11 @@
       "candidate_areas": [
         "build-and-release"
       ],
-      "disposition": "DEPENDENCY_CLOSURE",
-      "reuse_status": "DEPENDENCY_INVENTORY_REQUIRED",
+      "disposition": "UNCLASSIFIED",
+      "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
-      "closure_status": "PARTIAL_MANIFEST_IDENTIFIED",
-      "notes": "Frontend/web/Electron build and direct dependencies identified from package manifest; transitive dependency, license and native runtime closure not yet reviewed."
+      "closure_status": "UNMAPPED",
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/packages/android/.gitignore",
@@ -6191,7 +6191,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "New path at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; inspect content, provenance, license and dependency closure."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/packages/android/app/src/androidTest/java/com/getcapacitor/myapp/ExampleInstrumentedTest.java",
@@ -6218,7 +6218,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "New path at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; inspect content, provenance, license and dependency closure."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/packages/android/app/src/main/AndroidManifest.xml",
@@ -6291,7 +6291,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/packages/android/app/src/main/java/sh/mailflow/app/MailFlowNotificationActionReceiver.java",
@@ -6966,7 +6966,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "New path at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; inspect content, provenance, license and dependency closure."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/packages/android/app/src/test/java/sh/mailflow/app/NativeSecurityTest.java",
@@ -7457,7 +7457,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/packages/package.json",
@@ -14481,11 +14481,11 @@
         "frontend-web",
         "ai-assistant"
       ],
-      "disposition": "DEPENDENCY_CLOSURE",
-      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
+      "disposition": "UNCLASSIFIED",
+      "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
-      "closure_status": "PARTIAL_TRACE",
-      "notes": "AI routes/provider, config/secret handling, bounded HTTP helpers and frontend action consumers traced; per-provider SSRF/redirect and privacy closure remain open."
+      "closure_status": "UNMAPPED",
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/aiActions.test.js",
@@ -14497,11 +14497,11 @@
         "ai-assistant",
         "tests"
       ],
-      "disposition": "DEPENDENCY_CLOSURE",
-      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
+      "disposition": "UNCLASSIFIED",
+      "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
-      "closure_status": "PARTIAL_TRACE",
-      "notes": "AI routes/provider, config/secret handling, bounded HTTP helpers and frontend action consumers traced; per-provider SSRF/redirect and privacy closure remain open."
+      "closure_status": "UNMAPPED",
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/aiResults.js",
@@ -14512,11 +14512,11 @@
         "frontend-web",
         "ai-assistant"
       ],
-      "disposition": "DEPENDENCY_CLOSURE",
-      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
+      "disposition": "UNCLASSIFIED",
+      "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
-      "closure_status": "PARTIAL_TRACE",
-      "notes": "AI routes/provider, config/secret handling, bounded HTTP helpers and frontend action consumers traced; per-provider SSRF/redirect and privacy closure remain open."
+      "closure_status": "UNMAPPED",
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/aiResults.test.js",
@@ -14590,7 +14590,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/components/AdminPanel.render.test.js",
@@ -14605,7 +14605,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/components/AdminUserEditor.jsx",
@@ -14648,7 +14648,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/components/AiResultBox.render.test.js",
@@ -14660,7 +14660,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "New path at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; inspect content, provenance, license and dependency closure."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/components/AttachmentStrip.jsx",
@@ -14672,7 +14672,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "New path at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; inspect content, provenance, license and dependency closure."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/components/AttachmentViewer.jsx",
@@ -14756,7 +14756,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "New path at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; inspect content, provenance, license and dependency closure."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/components/ComposeModal.discard.test.js",
@@ -14888,7 +14888,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/components/ContextMenu.render.test.js",
@@ -14903,7 +14903,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/components/ConversationMessageCard.jsx",
@@ -14918,7 +14918,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/components/ConversationPane.jsx",
@@ -14932,7 +14932,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/components/ConversationPane.render.test.js",
@@ -14947,7 +14947,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/components/DiagnosticsReportModal.jsx",
@@ -15280,11 +15280,11 @@
         "tests",
         "message-ingestion-rendering"
       ],
-      "disposition": "DEPENDENCY_CLOSURE",
-      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
+      "disposition": "UNCLASSIFIED",
+      "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
-      "closure_status": "TESTS_IDENTIFIED_NOT_RUN",
-      "notes": "Email frame render regression test identified; new frontend render-security workflow will execute it."
+      "closure_status": "UNMAPPED",
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/components/MessageHeaderModal.jsx",
@@ -15314,7 +15314,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/components/MessageList.render.test.js",
@@ -15330,7 +15330,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/components/MessageList.search.test.js",
@@ -15346,7 +15346,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/components/MessagePane.compose.test.js",
@@ -15375,11 +15375,11 @@
         "mail-protocol-and-sync",
         "message-ingestion-rendering"
       ],
-      "disposition": "DEPENDENCY_CLOSURE",
-      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
+      "disposition": "UNCLASSIFIED",
+      "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
-      "closure_status": "PARTIAL_TRACE",
-      "notes": "HTML body sinks include prepared.html div renderer and linkifyText plain-text fallback; preparation/scoping and linkifier escaping must be closed."
+      "closure_status": "UNMAPPED",
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/components/MessagePane.render.test.js",
@@ -15392,11 +15392,11 @@
         "tests",
         "message-ingestion-rendering"
       ],
-      "disposition": "DEPENDENCY_CLOSURE",
-      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
+      "disposition": "UNCLASSIFIED",
+      "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
-      "closure_status": "TESTS_IDENTIFIED_NOT_RUN",
-      "notes": "Message pane render test identified; new frontend render-security workflow will execute it."
+      "closure_status": "UNMAPPED",
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/components/MessageWindow.jsx",
@@ -15500,7 +15500,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/components/ReplyDraftIndicator.jsx",
@@ -15514,7 +15514,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/components/ReplyDraftIndicator.render.test.js",
@@ -15585,7 +15585,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/components/Sidebar.render.test.js",
@@ -15725,11 +15725,11 @@
         "frontend-web",
         "ai-assistant"
       ],
-      "disposition": "DEPENDENCY_CLOSURE",
-      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
+      "disposition": "UNCLASSIFIED",
+      "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
-      "closure_status": "PARTIAL_TRACE",
-      "notes": "AI routes/provider, config/secret handling, bounded HTTP helpers and frontend action consumers traced; per-provider SSRF/redirect and privacy closure remain open."
+      "closure_status": "UNMAPPED",
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/hooks/useAiActions.test.js",
@@ -15739,11 +15739,11 @@
       "candidate_areas": [
         "ai-assistant"
       ],
-      "disposition": "DEPENDENCY_CLOSURE",
-      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
+      "disposition": "UNCLASSIFIED",
+      "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
-      "closure_status": "PARTIAL_TRACE",
-      "notes": "AI routes/provider, config/secret handling, bounded HTTP helpers and frontend action consumers traced; per-provider SSRF/redirect and privacy closure remain open."
+      "closure_status": "UNMAPPED",
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/hooks/useGtdTriage.js",
@@ -15757,7 +15757,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/hooks/useMobile.js",
@@ -15869,11 +15869,11 @@
       "candidate_areas": [
         "notifications-realtime"
       ],
-      "disposition": "DEPENDENCY_CLOSURE",
-      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
+      "disposition": "UNCLASSIFIED",
+      "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
-      "closure_status": "PARTIAL_TRACE",
-      "notes": "Session-backed WebSocket entry point, user-scoped push subscriptions and frontend reconnect/notification hooks traced; established-socket revocation, payload privacy and native action closure remain open."
+      "closure_status": "UNMAPPED",
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/hooks/useWebSocket.counts.test.js",
@@ -15902,11 +15902,11 @@
         "notifications",
         "notifications-realtime"
       ],
-      "disposition": "DEPENDENCY_CLOSURE",
-      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
+      "disposition": "UNCLASSIFIED",
+      "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
-      "closure_status": "PARTIAL_TRACE",
-      "notes": "Session-backed WebSocket entry point, user-scoped push subscriptions and frontend reconnect/notification hooks traced; established-socket revocation, payload privacy and native action closure remain open."
+      "closure_status": "UNMAPPED",
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/hooks/useWebSocket.notify.test.js",
@@ -15937,7 +15937,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/index.css",
@@ -15994,7 +15994,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/locales/de.json",
@@ -16008,7 +16008,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/locales/en.json",
@@ -16022,7 +16022,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/locales/es.json",
@@ -16036,7 +16036,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/locales/fr.json",
@@ -16050,7 +16050,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/locales/i18n.test.js",
@@ -16079,7 +16079,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/locales/ko.json",
@@ -16093,7 +16093,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/locales/pl.json",
@@ -16107,7 +16107,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/locales/ptBR.json",
@@ -16121,7 +16121,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/locales/ru.json",
@@ -16135,7 +16135,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/locales/zhCN.json",
@@ -16149,7 +16149,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/main.jsx",
@@ -16163,7 +16163,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/nginxConfig.test.js",
@@ -16448,7 +16448,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/store/messageWindows.test.js",
@@ -16495,7 +16495,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/store/threadRowUnread.test.js",
@@ -16507,7 +16507,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "New path at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; inspect content, provenance, license and dependency closure."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/themes.js",
@@ -16709,11 +16709,11 @@
       "candidate_areas": [
         "message-ingestion-rendering"
       ],
-      "disposition": "DEPENDENCY_CLOSURE",
-      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
+      "disposition": "UNCLASSIFIED",
+      "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
-      "closure_status": "PARTIAL_TRACE",
-      "notes": "DOMPurify plus browser URL/CSS policy restricts app-origin email image loads; edge-case tests and all callers pending."
+      "closure_status": "UNMAPPED",
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/utils/appEmailHtml.test.js",
@@ -16723,11 +16723,11 @@
       "candidate_areas": [
         "message-ingestion-rendering"
       ],
-      "disposition": "DEPENDENCY_CLOSURE",
-      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
+      "disposition": "UNCLASSIFIED",
+      "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
-      "closure_status": "TESTS_IDENTIFIED_NOT_RUN",
-      "notes": "App-origin email HTML sanitization test identified; new frontend render-security workflow will execute it."
+      "closure_status": "UNMAPPED",
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/utils/attachmentExtensions.js",
@@ -16811,7 +16811,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "New path at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; inspect content, provenance, license and dependency closure."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/utils/autoRecipients.js",
@@ -16852,7 +16852,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "New path at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; inspect content, provenance, license and dependency closure."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/utils/bodyCache.test.js",
@@ -16864,7 +16864,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "New path at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; inspect content, provenance, license and dependency closure."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/utils/browserLanguage.js",
@@ -16919,7 +16919,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "New path at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; inspect content, provenance, license and dependency closure."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/utils/clipboard.js",
@@ -16964,7 +16964,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/utils/composeFromMessage.test.js",
@@ -16981,7 +16981,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/utils/composeSignature.js",
@@ -17086,7 +17086,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/utils/conversation.test.js",
@@ -17101,7 +17101,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/utils/conversationActions.js",
@@ -17115,7 +17115,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/utils/conversationActions.test.js",
@@ -17130,7 +17130,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/utils/conversationMode.js",
@@ -17216,7 +17216,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/utils/darkImages.test.js",
@@ -17231,7 +17231,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/utils/darkRecolor.js",
@@ -17245,7 +17245,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/utils/darkRecolor.test.js",
@@ -17274,7 +17274,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/utils/darkScheme.test.js",
@@ -17289,7 +17289,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/utils/defaultSender.js",
@@ -17594,7 +17594,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/utils/emailFrameHeight.test.js",
@@ -17609,7 +17609,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/utils/emailStyleRegistry.js",
@@ -17638,7 +17638,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/utils/folderDisplay.test.js",
@@ -17653,7 +17653,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/utils/folderSync.js",
@@ -17727,7 +17727,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/utils/frameFocus.test.js",
@@ -17742,7 +17742,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/utils/frameGeometry.js",
@@ -17781,11 +17781,11 @@
       "candidate_areas": [
         "image-proxy-privacy"
       ],
-      "disposition": "DEPENDENCY_CLOSURE",
-      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
+      "disposition": "UNCLASSIFIED",
+      "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
-      "closure_status": "PARTIAL_TRACE",
-      "notes": "Lazy image proxy rewriting used by sandboxed email frame identified; URL and lifecycle edge closure pending."
+      "closure_status": "UNMAPPED",
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/utils/frameLazyImages.test.js",
@@ -17797,7 +17797,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "New path at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; inspect content, provenance, license and dependency closure."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/utils/gtd.js",
@@ -17811,7 +17811,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/utils/gtd.test.js",
@@ -17826,7 +17826,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/utils/gtdClassification.js",
@@ -18074,11 +18074,11 @@
         "tests",
         "remote-image-proxy"
       ],
-      "disposition": "DEPENDENCY_CLOSURE",
-      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
+      "disposition": "UNCLASSIFIED",
+      "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
-      "closure_status": "TESTS_EXECUTED_IN_PINNED_SNAPSHOT",
-      "notes": "Included in selected security run 39031942550 and/or full backend/frontend run 39034971662; test evidence does not close all callers, sinks or capability behavior."
+      "closure_status": "UNMAPPED",
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/utils/labelPicker.js",
@@ -18150,7 +18150,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/utils/listSelection.test.js",
@@ -18165,7 +18165,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/utils/markRead.js",
@@ -18390,7 +18390,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/utils/openSentMessage.test.js",
@@ -18406,7 +18406,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/utils/pdfDocument.js",
@@ -18796,11 +18796,11 @@
         "frontend-web",
         "message-ingestion-rendering"
       ],
-      "disposition": "DEPENDENCY_CLOSURE",
-      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
+      "disposition": "UNCLASSIFIED",
+      "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
-      "closure_status": "PARTIAL_TRACE",
-      "notes": "Div renderer sanitizer/CSS scoping pipeline inspected; complete feature-flag and hostile-CSS closure pending."
+      "closure_status": "UNMAPPED",
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/utils/senderAvatar.js",
@@ -18959,7 +18959,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/utils/signOut.test.js",
@@ -18974,7 +18974,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/utils/snoozeActions.js",
@@ -18988,7 +18988,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/utils/snoozeActions.test.js",
@@ -19003,7 +19003,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/utils/spamApi.js",
@@ -19060,7 +19060,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/utils/threadActions.test.js",
@@ -19075,7 +19075,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "frontend/src/utils/threadedArchive.js",
@@ -19533,7 +19533,7 @@
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
       "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
     },
     {
       "path": "scripts/fonts.manifest",
@@ -19603,10 +19603,10 @@
     }
   ],
   "removed_since_previous_pin": [],
-  "review_checkpoint": "2026-10-17: all 66 ordered PostgreSQL migration paths classified as dependency-closure candidates; license remains unreviewed and runtime SQL closure partial.",
+  "review_checkpoint": "2026-10-17: compare against initial pin e7a53760a7e4b15e0ee631533655d99dde657599 found 116 modified + 31 added paths. 17 high-priority paths received first-pass diff review; all other changed/new paths reset to UNCLASSIFIED pending review.",
   "summary": {
-    "unclassified_paths": 1167,
-    "classified_paths": 183,
-    "classification_note": "Role and test status are grounded in source/test evidence; this is not license clearance or proof of capability closure."
+    "unclassified_paths": 1194,
+    "classified_paths": 156,
+    "classification_note": "Changed/new upstream blobs are UNCLASSIFIED until exact target SHA/mode has been reviewed; role classification is not license clearance."
   }
 }
