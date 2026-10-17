@@ -6,15 +6,15 @@
     "tree": "a2a82b50b8a1ac24a273e55dc0f9418aefdfed17"
   },
   "created_at": "2026-10-17",
-  "status": "PARTIAL_SECURITY_TRANSPORT_SCHEMA_TRACE_AND_LICENSE_REVIEW_IN_PROGRESS_NOT_CLOSED",
+  "status": "PARTIAL_SECURITY_TRANSPORT_SCHEMA_FRONTEND_TRACE_AND_LICENSE_REVIEW_NOT_CLOSED",
   "summary": {
     "capability_count": 16,
     "closed": 0,
-    "partial_traces": 5,
-    "not_started": 11,
+    "partial_traces": 6,
+    "not_started": 10,
     "source_blobs": 1350,
-    "unclassified_paths": 1238,
-    "initially_classified_paths": 112
+    "unclassified_paths": 1226,
+    "initially_classified_paths": 124
   },
   "dimensions": [
     "first_party_imports_and_callers",
@@ -151,11 +151,12 @@
         "authorization_and_security": "PARTIAL_STATIC_TRACE",
         "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
         "UI_routes_and_interaction_states": "NOT_STARTED",
-        "tests_and_negative_cases": "TESTS_IDENTIFIED_NOT_RUN",
+        "tests_and_negative_cases": "SELECTED_BACKEND_TESTS_PASSED; FRONTEND_RENDER_SECURITY_TESTS_QUEUED",
         "external_dependency_and_native_tool_closure": "NOT_STARTED",
-        "path_level_license_and_provenance": "NOT_STARTED"
+        "path_level_license_and_provenance": "NOT_STARTED",
+        "ui_routes_and_interaction_states": "PARTIAL_STATIC_TRACE"
       },
-      "next_action": "Trace parser/sanitizer callers, every HTML rendering sink, CID handling, attachments and compose sanitization; execute parser/sanitizer negative tests."
+      "next_action": "Trace prepared.html through CSS scoping, prove linkifyText escaping, test both renderer modes, enumerate every sanitizer/render sink and close CID/attachment/body-store paths."
     },
     {
       "id": "image-proxy-privacy",
@@ -415,7 +416,7 @@
       "id": "compose-and-send",
       "name": "Compose, reply, forward, drafts, attachments and SMTP routing",
       "priority": 4,
-      "status": "CANDIDATE_NOT_CLOSED",
+      "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED",
       "source_paths": [
         {
           "path": "frontend/src/components/ComposeModal.jsx",
@@ -436,6 +437,21 @@
           "path": "backend/src/routes/draft.js",
           "blob_sha": "49a4cabe76208ac330a270084e14ebe185a0bf7a",
           "exists": true
+        },
+        {
+          "path": "frontend/src/components/ComposeModal.jsx",
+          "blob_sha": "5303edc5d83f7b7690efdc605fc58b5961004cf8",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/components/SignatureEditor.jsx",
+          "blob_sha": "504c4acccd64464bf83636cdec6ca1467edf150c",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/utils/appEmailHtml.js",
+          "blob_sha": "9a87890c4e55bb5d60494558a1945dad3e4b256a",
+          "exists": true
         }
       ],
       "test_paths": [
@@ -451,17 +467,18 @@
         }
       ],
       "dimensions": {
-        "first_party_imports_and_callers": "NOT_STARTED",
+        "first_party_imports_and_callers": "PARTIAL_STATIC_TRACE",
         "data_schema_and_migrations": "NOT_STARTED",
         "configuration_and_runtime": "NOT_STARTED",
-        "authorization_and_security": "NOT_STARTED",
+        "authorization_and_security": "PARTIAL_STATIC_TRACE",
         "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
         "UI_routes_and_interaction_states": "NOT_STARTED",
-        "tests_and_negative_cases": "NOT_STARTED",
+        "tests_and_negative_cases": "TARGETED BACKEND TESTS QUEUED; FRONTEND RENDER TESTS QUEUED",
         "external_dependency_and_native_tool_closure": "NOT_STARTED",
-        "path_level_license_and_provenance": "NOT_STARTED"
+        "path_level_license_and_provenance": "UNREVIEWED",
+        "ui_routes_and_interaction_states": "PARTIAL_STATIC_TRACE"
       },
-      "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
+      "next_action": "Trace compose autosave/reopen/restore, draft replacement and reply graph, attachments/inline images, signatures, aliases and account switching; run queued transport and frontend security suites."
     },
     {
       "id": "search-and-unified-inbox",
@@ -873,6 +890,11 @@
       "kind": "postgres_schema_runtime_map",
       "path": "extraction/manifests/postgres-schema-runtime-map-2026-10-17.md",
       "status": "INITIAL_SCHEMA_MAP_NOT_CLOSED"
+    },
+    {
+      "kind": "frontend_html_sink_trace",
+      "path": "extraction/manifests/security-transport-database-trace-2026-10-17.md",
+      "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED"
     }
   ]
 }
