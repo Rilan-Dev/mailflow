@@ -9,6 +9,7 @@ on:
     paths:
       - ".github/workflows/mailflow-source-snapshot.yml"
       - "extraction/tools/capture-upstream-snapshot.mjs"
+      - "extraction/tools/verify-inventory.mjs"
 
 permissions:
   contents: write
