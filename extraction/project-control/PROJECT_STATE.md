@@ -10,10 +10,11 @@
 - Current inventory: 1,497 entries; 1,350 blobs; 147 tree entries; zero gitlinks and zero detected Git LFS pointer files.
 - Snapshot integrity: exact 1,350 blob hashes checked; verifier PASS; reconstructed root and all 147 nested tree SHA values match the upstream tree.
 - Current delta from initial discovery baseline: 31 added blobs, 116 changed blobs, 1,203 unchanged blobs, 0 removed blobs.
-- Path dispositions: six initial notice/dependency-manifest paths classified; 1,344 paths remain UNCLASSIFIED. Most path licenses remain UNREVIEWED and transitive closure remains UNMAPPED.
+- Path dispositions: 39 source paths have initial classifications; 1,311 remain UNCLASSIFIED. Most path licenses remain UNREVIEWED and transitive closure remains UNMAPPED. Most path licenses remain UNREVIEWED and transitive closure remains UNMAPPED.
 - Dependency inventory: 1,124 lockfile package entries (445 backend, 679 frontend), 50 direct dependencies and 16 direct dev dependencies; 0 third-party packages license-cleared.
-- Capability map: 16 candidates rebased to current pin; no capability closed. Partial static trace started for auth/OAuth/OIDC, outbound host validation, safe fetch, image proxy and email sanitization; no tests were executed by that trace.
+- Capability map: 16 candidates rebased to current pin; no capability closed. Partial static trace started for auth/OAuth/OIDC, outbound host validation, safe fetch, image proxy and email sanitization; 15 test references identified, but no tests were executed by that trace.
 - Automation: .github/workflows/mailflow-source-snapshot.yml; scheduled every six hours and manually dispatchable. New upstream commits are captured as new immutable snapshots and verified before direct commit to main. The workflow does not integrate source into host applications.
+- Dependency inventory: 1,124 locked package entries (445 backend, 679 frontend), 50 direct dependencies and 16 direct dev dependencies; zero third-party package licenses cleared.
 - License signals: AGPL-3.0, separate commercial-license path and CLA. Per-path third-party provenance and redistribution review remain open.
 - Phase: capability closure and license/provenance review.
 - Extraction PASS: not claimed. Host integration: not cleared.
