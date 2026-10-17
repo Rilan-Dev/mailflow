@@ -28,8 +28,8 @@
   },
   "path_classification": {
     "total": 1350,
-    "classified": 124,
-    "unclassified": 1226,
+    "classified": 131,
+    "unclassified": 1219,
     "license_unreviewed": 1346,
     "closure_unmapped": 1311
   },
