@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "framework": "source-extraction-agent",
+  "canonical_repository": "https://github.com/Rilan-Dev/ai-reusable-libraries",
+  "canonical_ref": "main",
+  "canonical_commit": "1e6ba9588e715e698722949e1c592b08f4ea7a00",
+  "canonical_tree": "c04df3e47bf0ec8a8c85f6177eefc0b907de19ab",
+  "copied_into_repository": "https://github.com/Rilan-Dev/mailflow",
+  "copy_path": "source-extraction-agent/",
+  "copy_mode": "versioned-snapshot",
+  "automatic_sync": false,
+  "note": "Update this local copy only through an explicit reviewed framework refresh; keep MailFlow-specific records under extraction/."
+}
