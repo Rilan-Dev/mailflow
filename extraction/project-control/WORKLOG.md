@@ -75,3 +75,10 @@
 - Added extraction/manifests/DEPENDENCY_CLOSURE_2026-10-17.md. Current direct dependencies: 50; direct dev dependencies: 16. No external package license or provenance is cleared by this inventory; dependencies are inventoried, not vendored.
 - Confirmed live upstream main still resolves to 35067fc2876d50980f1a8a3b8ea72b5467b69f60 / a2a82b50b8a1ac24a273e55dc0f9418aefdfed17 at the latest check.
 - Next: map imported packages and runtime/native build usage, audit package licenses/provenance, and continue security + IMAP/account/database closure. Snapshot integrity remains PASS; full extraction remains open.
+
+## 009 — 2026-10-17 — Expand path classification and security closure evidence
+- Classified 33 additional security source/test paths as DEPENDENCY_CLOSURE candidates based on the static trace. Source modules remain CANDIDATE_REQUIRES_CLOSURE; test files are TEST_EVIDENCE_CANDIDATE / TESTS_IDENTIFIED_NOT_RUN. None are license-cleared or reusable-approved.
+- Current path register: 39 paths have initial classifications; 1,311 remain UNCLASSIFIED. The 1,350-blob inventory is still complete and unchanged.
+- Added extraction/manifests/extraction-progress-2026-10-17.json and EXTRACTION_PROGRESS_2026-10-17.md to consolidate snapshot verification, path counts, capability state, dependency inventory and open legal/reuse gates.
+- The dependency inventory records 1,124 locked packages, 50 direct dependencies and 16 direct dev dependencies. All third-party license/provenance review remains open.
+- Verifier hardening now fails on unexpected executable bits and any Git LFS pointer that would require uncaptured external objects. The latest successful run before this path-register expansion detected 0 LFS pointers; workflow reruns on current manifest updates.
