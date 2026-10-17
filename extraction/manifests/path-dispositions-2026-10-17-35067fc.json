@@ -6,7 +6,7 @@
     "tree": "a2a82b50b8a1ac24a273e55dc0f9418aefdfed17"
   },
   "created_at": "2026-10-17T11:46:33.594Z",
-  "status": "PARTIAL_CLASSIFICATION_AND_SCHEMA_TRACE_NOT_CLOSED",
+  "status": "PARTIAL_SECURITY_TRANSPORT_SCHEMA_AND_FRONTEND_SINK_TRACE_NOT_CLOSED",
   "files": [
     {
       "path": ".dockerignore",
@@ -14662,13 +14662,14 @@
         "frontend-web",
         "security-and-privacy",
         "tests",
-        "build-and-release"
+        "build-and-release",
+        "compose-and-send"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "TESTS_IDENTIFIED_NOT_RUN",
+      "notes": "Composer image proxy render regression test identified; new frontend render-security workflow will execute it."
     },
     {
       "path": "frontend/src/components/ComposeModal.jsx",
@@ -14677,13 +14678,14 @@
       "size": 192859,
       "candidate_areas": [
         "frontend-web",
-        "build-and-release"
+        "build-and-release",
+        "compose-and-send"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "DOMPurify signature handling and app-origin quoted HTML sanitization traced; compose save/restore/attachment/UI closure pending."
     },
     {
       "path": "frontend/src/components/ComposeModal.render.test.js",
@@ -14693,13 +14695,14 @@
       "candidate_areas": [
         "frontend-web",
         "tests",
-        "build-and-release"
+        "build-and-release",
+        "compose-and-send"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "TESTS_IDENTIFIED_NOT_RUN",
+      "notes": "Composer render test identified; new frontend render-security workflow will execute it."
     },
     {
       "path": "frontend/src/components/ComposeModal.replyDraft.test.js",
@@ -15116,13 +15119,14 @@
       "candidate_areas": [
         "frontend-web",
         "mail-protocol-and-sync",
-        "tests"
+        "tests",
+        "message-ingestion-rendering"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "TESTS_IDENTIFIED_NOT_RUN",
+      "notes": "CSP/sandbox regression test identified; new frontend render-security workflow will execute it."
     },
     {
       "path": "frontend/src/components/MessageBodyView.jsx",
@@ -15131,13 +15135,14 @@
       "size": 22447,
       "candidate_areas": [
         "frontend-web",
-        "mail-protocol-and-sync"
+        "mail-protocol-and-sync",
+        "message-ingestion-rendering"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Sandboxed srcDoc iframe, CSP, image policy and frame lifecycle traced; security/render test coverage and complete sanitizer-to-sink closure pending."
     },
     {
       "path": "frontend/src/components/MessageBodyView.render.test.js",
@@ -15147,13 +15152,14 @@
       "candidate_areas": [
         "frontend-web",
         "mail-protocol-and-sync",
-        "tests"
+        "tests",
+        "message-ingestion-rendering"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "closure_status": "TESTS_IDENTIFIED_NOT_RUN",
+      "notes": "Email frame render regression test identified; new frontend render-security workflow will execute it."
     },
     {
       "path": "frontend/src/components/MessageHeaderModal.jsx",
@@ -15241,13 +15247,14 @@
       "size": 136150,
       "candidate_areas": [
         "frontend-web",
-        "mail-protocol-and-sync"
+        "mail-protocol-and-sync",
+        "message-ingestion-rendering"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "HTML body sinks include prepared.html div renderer and linkifyText plain-text fallback; preparation/scoping and linkifier escaping must be closed."
     },
     {
       "path": "frontend/src/components/MessagePane.render.test.js",
@@ -15257,13 +15264,14 @@
       "candidate_areas": [
         "frontend-web",
         "mail-protocol-and-sync",
-        "tests"
+        "tests",
+        "message-ingestion-rendering"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "closure_status": "TESTS_IDENTIFIED_NOT_RUN",
+      "notes": "Message pane render test identified; new frontend render-security workflow will execute it."
     },
     {
       "path": "frontend/src/components/MessageWindow.jsx",
@@ -15475,13 +15483,14 @@
       "mode": "100644",
       "size": 8195,
       "candidate_areas": [
-        "frontend-web"
+        "frontend-web",
+        "compose-and-send"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Uses contentEditable innerHTML for initial value/source mode; caller-side sanitization and saved-signature API path need end-to-end closure."
     },
     {
       "path": "frontend/src/components/SpamBadge.jsx",
@@ -16564,24 +16573,28 @@
       "sha": "9a87890c4e55bb5d60494558a1945dad3e4b256a",
       "mode": "100644",
       "size": 3790,
-      "candidate_areas": [],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "candidate_areas": [
+        "message-ingestion-rendering"
+      ],
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "New path at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; inspect content, provenance, license and dependency closure."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "DOMPurify plus browser URL/CSS policy restricts app-origin email image loads; edge-case tests and all callers pending."
     },
     {
       "path": "frontend/src/utils/appEmailHtml.test.js",
       "sha": "99235be791780c4723e97d743e45d705287abcbd",
       "mode": "100644",
       "size": 3109,
-      "candidate_areas": [],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "candidate_areas": [
+        "message-ingestion-rendering"
+      ],
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "New path at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; inspect content, provenance, license and dependency closure."
+      "closure_status": "TESTS_IDENTIFIED_NOT_RUN",
+      "notes": "App-origin email HTML sanitization test identified; new frontend render-security workflow will execute it."
     },
     {
       "path": "frontend/src/utils/attachmentExtensions.js",
@@ -17427,13 +17440,14 @@
       "mode": "100644",
       "size": 5510,
       "candidate_areas": [
-        "frontend-web"
+        "frontend-web",
+        "message-ingestion-rendering"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Builds sandboxed email srcDoc with CSP, controlled remote images, link rel protection and guarded dark CSS; frame policy and tests pending."
     },
     {
       "path": "frontend/src/utils/emailFrameHeight.js",
@@ -19448,10 +19462,10 @@
     }
   ],
   "removed_since_previous_pin": [],
-  "review_checkpoint": "2026-10-17: source identity pinned; 39 prior classifications preserved. Added role-level partial classifications for account/IMAP/SMTP/send/draft/body/migration runner and 66 SQL migration paths after static inspection. All new classifications remain license-unreviewed and closure partial; no reuse clearance.",
+  "review_checkpoint": "2026-10-17: role-level partial classifications include auth/security, transport, all 66 migrations, and frontend email render/sanitization sinks. All remain license-unreviewed and closure partial; no reuse clearance.",
   "summary": {
-    "unclassified_paths": 1238,
-    "classified_paths": 112,
-    "classification_note": "Classified by observed role only; license/provenance and capability closure remain separate gates."
+    "unclassified_paths": 1226,
+    "classified_paths": 124,
+    "classification_note": "Role classification is evidence-backed but does not imply license/provenance clearance or capability closure."
   }
 }
