@@ -36,6 +36,9 @@ jobs:
       - name: Capture immutable source snapshot and regenerate inventories
         run: node extraction/tools/capture-upstream-snapshot.mjs "$RUNNER_TEMP/upstream-source"
 
+      - name: Verify inventory and exact copied source blobs
+        run: node extraction/tools/verify-inventory.mjs
+
       - name: Commit the source-library update on main
         env:
           UPSTREAM_COMMIT: ${{ steps.upstream.outputs.upstream_commit }}
