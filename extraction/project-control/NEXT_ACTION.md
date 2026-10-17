@@ -93,3 +93,10 @@ Immediate continuation:
 Added `.github/workflows/mailflow-transport-closure.yml` to execute a broader pinned-snapshot test slice across IMAP manager sync/draft/snooze behavior, move fallback, SMTP transport, account settings, draft handling, mailbox mutations, unified inbox scope, attachment ZIPs, and send/reliability/undo paths. Run: https://github.com/Rilan-Dev/mailflow/actions/runs/39034389282 (queued at last check; no result claimed).
 
 Do not wait for that run before continuing independent trace work. When convenient, inspect its final result and update the evidence manifest with the actual test-file/test counts and failures. Full backend/frontend/native build checks remain a later gate.
+
+
+## Update — 2026-10-17 — OIDC and frontend sink follow-up
+- High-priority open item: OIDC discovery/token network requests use native fetch after host validation rather than safeFetch's per-hop pinned connector; the explicit allow-insecure path bypasses host validation and disables TLS certificate checks. Trace redirects, DNS rebinding, admin-only control, response bounds and every JWKS/token/end-session call before closure.
+- Frontend sink inventory now includes the sandboxed iframe/CSP, optional div-render `prepared.html`, `linkifyText(body.text)`, DOMPurify/app-origin quoted HTML, and signature-editor innerHTML. Trace source preparation, CSS scoping, text escaping and saved signature read/write boundaries.
+- New frontend render-security tests are included in `.github/workflows/mailflow-security-closure.yml`; transport suite is queued at https://github.com/Rilan-Dev/mailflow/actions/runs/39034389282. Continue independently; don't claim tests passed until actual outputs arrive.
+- Current path role classification: 124/1,350; 1,226 remain unclassified. Newly classified files remain license-unreviewed and closure partial.
