@@ -91,3 +91,12 @@
 - Confirmed that `safeFetch` redirect-hop protections do not prove every OAuth/network caller uses that helper. Native fetch and explicit insecure-fetch branches remain caller-by-caller review targets. SMTP connect-time policy and all sanitizer/rendering sinks also remain open.
 - No immutable upstream source files changed. No extraction PASS or reuse clearance claimed. Snapshot integrity remains PASS; selected security tests remain 379/379 passing in run https://github.com/Rilan-Dev/mailflow/actions/runs/39031942550.
 - Next: finish security call-site/sink closure, produce a complete 66-migration schema/runtime-consumer map, trace IMAP sync/recovery and account-owned cleanup, then expand dependency/license classification and verification.
+
+
+## 009 — 2026-10-17 — PostgreSQL migration inventory and consumer map
+- Enumerated the immutable snapshot's 66 ordered SQL migrations (0001–0066) and inspected all migration files for table/column/index/constraint changes, data backfills, drops/renames and no-transaction index operations.
+- Read `backend/src/services/migrations.js` and recorded its lexical ordering, session-level advisory lock, schema_migrations ledger, statement-timeout behavior, transactional migrations and individual-statement execution for `-- no-transaction` migrations.
+- Added `extraction/manifests/postgres-schema-runtime-map-2026-10-17.md`: baseline core table relationships, migration-by-migration capability linkage, account/user cascade observations and high-risk data migrations (contacts v2 and plugin data/config moves).
+- Cross-checked account API and runtime entry points: account secrets are encrypted; ownership checks scope list/update/delete; account delete removes DB state before async live disconnect; IMAP manager has pinned connection resolution and backoff/concurrency controls.
+- The schema artifact is intentionally marked INITIAL / NOT CLOSED: it is a human-readable migration index, not yet a full machine-readable column/constraint inventory, a live database migration test, or exhaustive SQL-consumer map. No extraction PASS or license clearance claimed.
+- Next: generate column-level DDL inventory, map runtime consumers and verify migration upgrades in PostgreSQL; continue IMAP sync/recovery, security caller/sink closure and third-party license/provenance review.
