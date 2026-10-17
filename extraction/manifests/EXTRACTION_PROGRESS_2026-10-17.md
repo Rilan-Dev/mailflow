@@ -92,3 +92,9 @@
 ## Update — 2026-10-17 — PostgreSQL migration map
 - Documented migration-by-migration purpose and major runtime domains for all 66 SQL migrations. All migration files remain license-unreviewed and SQL consumer/index/query-plan closure remains partial.
 - Full verification run 39038119553 is pending after the latest manifest updates.
+
+
+## Update — 2026-10-17 — Delta review
+- Compared the original pin e7a53760a7e4b15e0ee631533655d99dde657599 with current pin 35067fc2876d50980f1a8a3b8ea72b5467b69f60: 51 commits, 116 modified blobs and 31 new blobs.
+- First-pass review completed for 17 high-priority security/mail/native paths. Remaining 130 changed/new paths are reset to UNCLASSIFIED pending exact SHA/mode review.
+- Current path disposition count: 156 classified / 1,194 unclassified. License/provenance clearance remains 0/1,124 third-party package entries reviewed and no capability closed.
