@@ -6,7 +6,7 @@
     "tree": "a2a82b50b8a1ac24a273e55dc0f9418aefdfed17"
   },
   "created_at": "2026-10-17T11:46:33.594Z",
-  "status": "DISCOVERY_IN_PROGRESS",
+  "status": "PARTIAL_CLASSIFICATION_IN_PROGRESS",
   "files": [
     {
       "path": ".dockerignore",
@@ -216,11 +216,11 @@
       "candidate_areas": [
         "docs-and-licenses"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
-      "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "disposition": "NOT_APPLICABLE",
+      "reuse_status": "PRESERVE_PROVENANCE_NOTICE_ONLY",
+      "license_status": "CLA_PRESENT_REVIEW_REQUIRED",
+      "closure_status": "NOT_APPLICABLE",
+      "notes": "Inspected current snapshot CLA text; retain verbatim. Does not independently clear third-party provenance or reuse rights."
     },
     {
       "path": "CLAUDE.md",
@@ -270,11 +270,11 @@
       "candidate_areas": [
         "docs-and-licenses"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
-      "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "disposition": "NOT_APPLICABLE",
+      "reuse_status": "PRESERVE_LICENSE_NOTICE_ONLY",
+      "license_status": "AGPL3_NOTICE_REVIEWED_NOT_CLEARED",
+      "closure_status": "NOT_APPLICABLE",
+      "notes": "Inspected current snapshot license text; retain verbatim. Per-path and redistribution clearance remains open."
     },
     {
       "path": "LICENSE-COMMERCIAL",
@@ -284,11 +284,11 @@
       "candidate_areas": [
         "docs-and-licenses"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
-      "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "disposition": "NOT_APPLICABLE",
+      "reuse_status": "PRESERVE_LICENSE_NOTICE_ONLY",
+      "license_status": "COMMERCIAL_LICENSE_NOTICE_PRESENT_REVIEW_REQUIRED",
+      "closure_status": "NOT_APPLICABLE",
+      "notes": "Inspected current snapshot commercial license notice; it contains separate use and redistribution conditions. No commercial-license clearance inferred."
     },
     {
       "path": "README.md",
@@ -298,11 +298,11 @@
       "candidate_areas": [
         "docs-and-licenses"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
-      "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "disposition": "UI_REFERENCE",
+      "reuse_status": "REFERENCE_ONLY",
+      "license_status": "UPSTREAM_NOTICE_PRESENT_REVIEW_REQUIRED",
+      "closure_status": "NOT_APPLICABLE",
+      "notes": "Inspected feature, architecture, install and license overview. Use as reference; preserve attribution and verify behavior against code."
     },
     {
       "path": "ROADMAP.md",
@@ -1354,11 +1354,11 @@
       "candidate_areas": [
         "build-and-release"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "DEPENDENCY_INVENTORY_REQUIRED",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "closure_status": "PARTIAL_MANIFEST_IDENTIFIED",
+      "notes": "Backend runtime and direct dependencies identified from package manifest; transitive dependency, license and runtime closure not yet reviewed."
     },
     {
       "path": "backend/scripts/verify-count-integrity.mjs",
@@ -5911,11 +5911,11 @@
       "candidate_areas": [
         "build-and-release"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "DEPENDENCY_INVENTORY_REQUIRED",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "closure_status": "PARTIAL_MANIFEST_IDENTIFIED",
+      "notes": "Frontend/web/Electron build and direct dependencies identified from package manifest; transitive dependency, license and native runtime closure not yet reviewed."
     },
     {
       "path": "frontend/packages/android/.gitignore",
@@ -19374,5 +19374,6 @@
       "notes": "Initial inventory only; agent must inspect content and provenance."
     }
   ],
-  "removed_since_previous_pin": []
+  "removed_since_previous_pin": [],
+  "review_checkpoint": "2026-10-17: reviewed notice files and direct dependency manifests only; all other paths remain unclassified."
 }
