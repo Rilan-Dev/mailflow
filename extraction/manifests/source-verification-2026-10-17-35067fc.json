@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0.0",
+  "verified_at": "2026-10-17T11:55:22Z",
+  "workflow_url": "https://github.com/Rilan-Dev/mailflow/actions/runs/39030515872",
+  "result": "PASS",
+  "source": {
+    "repository": "https://github.com/maathimself/mailflow",
+    "ref": "main",
+    "commit": "35067fc2876d50980f1a8a3b8ea72b5467b69f60",
+    "root_tree": "a2a82b50b8a1ac24a273e55dc0f9418aefdfed17"
+  },
+  "snapshot_path": "extraction/snapshots/35067fc2876d50980f1a8a3b8ea72b5467b69f60/source",
+  "inventory": {
+    "entries": 1497,
+    "blobs": 1350,
+    "nested_trees": 147,
+    "gitlinks": 0
+  },
+  "checks": {
+    "copied_blob_sha": {
+      "status": "PASS",
+      "checked": 1350,
+      "failures": 0
+    },
+    "exact_file_set": {
+      "status": "PASS",
+      "unexpected": 0,
+      "missing": 0
+    },
+    "file_modes_and_symlinks": {
+      "status": "PASS"
+    },
+    "reconstructed_root_tree": {
+      "status": "PASS",
+      "expected": "a2a82b50b8a1ac24a273e55dc0f9418aefdfed17",
+      "actual": "a2a82b50b8a1ac24a273e55dc0f9418aefdfed17"
+    },
+    "nested_tree_sha": {
+      "status": "PASS",
+      "checked": 147,
+      "failures": 0
+    },
+    "gitlinks": {
+      "status": "PASS",
+      "count": 0
+    },
+    "git_lfs_pointer_scan": {
+      "status": "PASS",
+      "pointer_files": 0
+    }
+  },
+  "delta_from_discovery_pin": {
+    "added_blobs": 31,
+    "changed_blobs": 116,
+    "unchanged_blobs": 1203,
+    "removed_blobs": 0
+  },
+  "still_open": {
+    "unclassified_paths": 1350,
+    "license_provenance": "UNREVIEWED",
+    "dependency_closure": "UNMAPPED",
+    "capability_closure": "NOT_CLOSED",
+    "redistribution_clearance": "PENDING",
+    "host_integration": "NOT_CLEARED"
+  },
+  "note": "This PASS proves exact Git tree snapshot identity only. It does not prove capability completeness, legal clearance, runtime correctness, or extraction PASS."
+}
