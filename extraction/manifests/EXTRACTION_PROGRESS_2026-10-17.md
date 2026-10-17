@@ -9,7 +9,7 @@
 - Snapshot evidence: https://github.com/Rilan-Dev/mailflow/actions/runs/39030794029
 
 ## Work started after snapshot capture
-- **Path dispositions:** 131 of 1,350 paths classified by role; 1,219 remain UNCLASSIFIED. Newly classified transport and migration paths still have UNREVIEWED licenses and partial closure. Classification of a path does not mean it is license-cleared or reusable.
+- **Path dispositions:** 182 of 1,350 paths classified by role; 1,168 remain UNCLASSIFIED. Newly classified transport and migration paths still have UNREVIEWED licenses and partial closure. Classification of a path does not mean it is license-cleared or reusable.
 - **Capability map:** 16 capability candidates; 3 have partial static security traces; 0 are closed.
 - **Security slice:** auth/session, OAuth/OIDC, host validation, safe fetch, image proxy and email sanitization. Selected test execution now PASS: 15 files / 379 tests, 0 failures; see `extraction/manifests/security-test-results-2026-10-17-35067fc.json`. Static caller/threat-model closure remains partial.
 - **Dependencies:** 1,124 locked package entries (445 backend, 679 frontend), 50 direct dependencies and 16 direct dev dependencies. 0 third-party package licenses have been cleared.
@@ -61,3 +61,10 @@
 - Added role-level classifications for CSS scoping/style registry, remote-image CSP/lazy-loading helpers, message body tests, and compose signature/reply-draft tests. Current register: 131 classified, 1,219 unclassified.
 - Capability closure references now include the new renderer and image-policy dependencies. These are partial role classifications only; licensing remains unreviewed.
 - Latest security/render suite passed 500 tests and transport suite passed 777 with 10 skipped; full pinned-snapshot workflow (including PostgreSQL migration clean install/rerun and Android debug build) remains pending at https://github.com/Rilan-Dev/mailflow/actions/runs/39034971662. That run predates the newest closure-manifest edit; the run triggered by the latest closure update should be used for final verifier result.
+
+
+## Update — 2026-10-17 — Reusable capability runtime trace
+- Added `extraction/manifests/reusable-capability-runtime-trace-2026-10-17.md` covering search/unified inbox, contacts/CardDAV, rules/categorization/spam, plugin registry/activation/API, AI provider/HTTP, and WebSocket/push notifications.
+- Capability register now records 14 partial traces and 2 not-started capabilities (frontend shell and deployment/release); zero capabilities are closed. Path register: 182 role-classified / 1,168 unclassified. Role classification is not license clearance.
+- Full backend lint/plugin boundary/tests/production audit, full frontend lint/tests/build/production audit and PostgreSQL 17 clean install + 66 migrations + idempotent rerun passed in run https://github.com/Rilan-Dev/mailflow/actions/runs/39034971662. Android web build/Capacitor sync passed; Gradle did not start because the wrapper lacked executable mode. Workflow now explicitly invokes `bash ./gradlew`; run https://github.com/Rilan-Dev/mailflow/actions/runs/39035662163 is pending.
+- High-priority unresolved security item remains OIDC discovery/token native fetch without safeFetch connection pin/redirect policy, especially explicit insecure issuer mode. License/provenance and redistribution clearance remain open.
