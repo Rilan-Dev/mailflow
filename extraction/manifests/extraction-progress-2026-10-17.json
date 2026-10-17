@@ -68,7 +68,9 @@
     "current_closure_tracker": "extraction/manifests/capability-closure-2026-10-17-35067fc.json",
     "security_transport_database_trace": "extraction/manifests/security-transport-database-trace-2026-10-17.md",
     "postgres_schema_runtime_map": "extraction/manifests/postgres-schema-runtime-map-2026-10-17.md",
-    "frontend_html_sink_trace": "extraction/manifests/security-transport-database-trace-2026-10-17.md"
+    "frontend_html_sink_trace": "extraction/manifests/security-transport-database-trace-2026-10-17.md",
+    "closure_test_results": "extraction/manifests/closure-test-results-2026-10-17-35067fc.json",
+    "latest_snapshot_verification": "https://github.com/Rilan-Dev/mailflow/actions/runs/39034692855"
   },
   "status": "SOURCE_SNAPSHOT_COMPLETE_AND_VERIFIED; APPLICATION_CAPABILITY_EXTRACTION_IN_PROGRESS; NOT_EXTRACTION_PASS"
 }
