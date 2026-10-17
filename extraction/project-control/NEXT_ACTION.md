@@ -119,3 +119,7 @@ Added `.github/workflows/mailflow-full-snapshot-verification.yml` with three ind
 - full frontend lint/tests/build/production audit plus Android sync, Android unit tests and debug APK build (Electron Node tests run through frontend `npm test`).
 
 Run: https://github.com/Rilan-Dev/mailflow/actions/runs/39034814909 — queued at last check. Do not report it as passed until completed. This verification workflow is independent of the ongoing static tracing and should not block further work.
+
+
+### Database verification add-on — 2026-10-17
+The full pinned-snapshot workflow now includes a PostgreSQL 17 service job that applies all 66 migrations to a clean database, reruns the migration runner to test idempotency, and checks the resulting migration ledger/table/index/constraint counts. Latest workflow definition commit: `3aabe903e75196956c49e77b3499467496578c12`. The prior workflow run was queued before this job was added; use the run triggered by this commit for the database result. Clean install plus rerun is not an upgrade-from-old-version or partial-failure test.
