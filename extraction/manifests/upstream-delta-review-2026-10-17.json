@@ -23,10 +23,10 @@
     "old_tree_entries": 1462,
     "old_tree_truncated": false
   },
-  "status": "PARTIAL_REVIEW_93_PATHS_REVIEWED_54_PATHS_PENDING",
+  "status": "PARTIAL_REVIEW_146_PATHS_REVIEWED_1_PATHS_PENDING",
   "guardrail": "Review classification is not license clearance. Do not change or overwrite either immutable snapshot. Every changed/new path must be re-evaluated against exact blob SHA and mode.",
-  "reviewed_high_priority_count": 93,
-  "pending_count": 54,
+  "reviewed_high_priority_count": 146,
+  "pending_count": 1,
   "entries": [
     {
       "path": ".env.example",
@@ -36,14 +36,14 @@
       "additions": 5,
       "deletions": 0,
       "changes": 5,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Documents IMAGE_CACHE_MAX_MB disk budget and per-user image cache intent; environment defaults/secrets policy and deployment documentation still need closure.",
       "base_blob_sha": "17a48fc90022d9521a7ba3631bcbd12146408b24",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "Caddyfile",
@@ -53,14 +53,14 @@
       "additions": 1,
       "deletions": 0,
       "changes": 1,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Adds zstd/gzip compression in public reverse proxy; validate response compression behavior and deployment TLS/proxy settings.",
       "base_blob_sha": "a4a66c2321060311d6e630be08913f190556d4a0",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "backend/Dockerfile",
@@ -70,14 +70,14 @@
       "additions": 2,
       "deletions": 1,
       "changes": 3,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Creates /var/cache/mailflow/images and grants node user ownership; check image cache mount, runtime UID, read-only root and disk-pressure behavior.",
       "base_blob_sha": "4e1a6aca68037d714015f4959af9cc01f6edaa1d",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "backend/package.json",
@@ -87,14 +87,14 @@
       "additions": 1,
       "deletions": 1,
       "changes": 2,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Bumps backend version 3.9.0 to 4.0.1. Lockfile root package version should be checked for alignment; package provenance/license remains open.",
       "base_blob_sha": "0b5558b852a1e56ade2ec943838e20952f8c4f42",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "backend/src/routes/accounts.icon.test.js",
@@ -240,14 +240,14 @@
       "additions": 184,
       "deletions": 4,
       "changes": 188,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Adds route-level snooze/unsnooze tests with mocked DB and IMAP side effects, including stale wake/manual unsnooze races; full backend test suite passed.",
       "base_blob_sha": "d2ebfce6a508e018158e06e330b9184c5deaf2a7",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "backend/src/routes/mail.snoozeView.test.js",
@@ -257,14 +257,14 @@
       "additions": 36,
       "deletions": 3,
       "changes": 39,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Adds tests for isWakingSnooze handling and snooze view response; full backend test suite passed.",
       "base_blob_sha": "1b6e8724e3296572663a5625cca3a5393f8a4d2f",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "backend/src/routes/send.gmailSent.test.js",
@@ -326,13 +326,13 @@
       "additions": 75,
       "deletions": 0,
       "changes": 75,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "New tests ensure Todoist token 401 becomes 409 rather than triggering global session sign-out; external token/refresh lifecycle remains open.",
       "base_mode": null,
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "backend/src/services/aiProvider.js",
@@ -427,14 +427,14 @@
       "additions": 64,
       "deletions": 0,
       "changes": 64,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Adds CSS style-sealing and srcset comma/URL regressions to sanitizer suite; full backend test suite passed.",
       "base_blob_sha": "176521e4983516dc9b480868cdcb48f193d7e2f7",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "backend/src/services/emailSanitizer.trackers.test.js",
@@ -444,14 +444,14 @@
       "additions": 3,
       "deletions": 0,
       "changes": 3,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Adds known image/CDN URLs to negative tracking classification to avoid false-positive blocking; full backend test suite passed.",
       "base_blob_sha": "5b9e033584a48752aa9fcb223bf4f51b347eaeb6",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "backend/src/services/hostValidation.js",
@@ -631,14 +631,14 @@
       "additions": 12,
       "deletions": 3,
       "changes": 15,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Updates folder casing test for resolvePath semantics and real server path lookup; full backend test suite passed, live provider interoperability remains open.",
       "base_blob_sha": "cb7ca309d31f374688f01290d9d99eada2b77484",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "backend/src/services/imapPoolStall.test.js",
@@ -750,14 +750,14 @@
       "additions": 31,
       "deletions": 0,
       "changes": 31,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Adds snoozed folder count/list assertions for namespace-prefixed folder paths; unit suite passed, separate PostgreSQL integration tests are env-gated.",
       "base_blob_sha": "a92e515e8d60fd864c2180c3529d2351f4f9a01e",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "backend/src/services/ruleForwarder.js",
@@ -801,14 +801,14 @@
       "additions": 9,
       "deletions": 0,
       "changes": 9,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Adds gzip for JSON/JS/CSS/plain/SVG and HTTP/2 example; validate proxy header, cache and compression behavior in supported deployment profiles.",
       "base_blob_sha": "66b7facc678145950bab9aacf07bc738459c0e68",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "docker-compose.yml",
@@ -818,14 +818,14 @@
       "additions": 6,
       "deletions": 0,
       "changes": 6,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Adds persistent image_cache volume and IMAGE_CACHE_DIR/MAX_MB runtime variables; cache disk growth/permissions/backup semantics need ops review.",
       "base_blob_sha": "0798667032ea6ba22f2ab188be29f8f49fcc5470",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/nginx.conf",
@@ -835,14 +835,14 @@
       "additions": 13,
       "deletions": 0,
       "changes": 13,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Adds compression and HTTP/2 settings while excluding event-stream; test both TLS and TLS-off template transformations.",
       "base_blob_sha": "56c68c99420d76b8b9eb9a0f329c061e6cf76c6a",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/package.json",
@@ -852,14 +852,14 @@
       "additions": 1,
       "deletions": 1,
       "changes": 2,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Bumps frontend version 3.9.0 to 4.0.1. Lockfile root package version should be checked; no dependency-license clearance inferred.",
       "base_blob_sha": "be6584aa8392ef1857d3892f225042e1239b2f03",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/packages/android/app/src/androidTest/assets/untrusted-provider.p12",
@@ -1022,14 +1022,14 @@
       "additions": 54,
       "deletions": 1,
       "changes": 55,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Tests max prompt/body size, natural-boundary truncation and explicit partial-content marker; full frontend test suite passed.",
       "base_blob_sha": "c4ecde7e8af605bb8c62abd0875612bda9ca7a81",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/aiResults.js",
@@ -1039,14 +1039,14 @@
       "additions": 5,
       "deletions": 4,
       "changes": 9,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Persists truncation metadata with AI results in bounded local storage; verify old cache schema migration and user-change clearing.",
       "base_blob_sha": "65eddd887038f035059a170da3db1d459d09d40c",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/components/AdminPanel.jsx",
@@ -1073,14 +1073,14 @@
       "additions": 51,
       "deletions": 0,
       "changes": 51,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Adds account icon save regression proving icon is sent in account update; full frontend suite passed.",
       "base_blob_sha": "99565c9990f6f4ce37637dec3aa69df11b0889dd",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/components/AiResultBox.jsx",
@@ -1175,14 +1175,14 @@
       "additions": 4,
       "deletions": 3,
       "changes": 7,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Uses shared isSnoozed helper so context-menu actions match namespace-prefixed snooze view; folder/action policy closure remains open.",
       "base_blob_sha": "cf975af8edbecba200816e3088fea8f680ee3788",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/components/ContextMenu.render.test.js",
@@ -1192,14 +1192,14 @@
       "additions": 15,
       "deletions": 0,
       "changes": 15,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Updates render tests for snoozed-folder context-menu state; full frontend suite passed.",
       "base_blob_sha": "ac34e325e984dc1a885b06a5091539ab92818ec8",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/components/ConversationMessageCard.jsx",
@@ -1328,14 +1328,14 @@
       "additions": 156,
       "deletions": 2,
       "changes": 158,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Adds controllable pending search rejection and response ordering cases; confirms stale/error search behavior under test harness, not browser/network integration.",
       "base_blob_sha": "4af0176f44b85f1f2bbbbaed62394f61df41e88c",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/components/MessagePane.jsx",
@@ -1362,14 +1362,14 @@
       "additions": 120,
       "deletions": 2,
       "changes": 122,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Updates dark-body toggle expectations for lightOnly emails; included in full frontend suite; visual readability still needs browser audit.",
       "base_blob_sha": "ff75455f72025ec71f21ee809932f505cba9f922",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/components/ReadingPane.jsx",
@@ -1396,14 +1396,14 @@
       "additions": 7,
       "deletions": 2,
       "changes": 9,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Changes reply-draft indicator for account/thread semantics; provider draft lifecycle and loading/error states remain open.",
       "base_blob_sha": "f0d97579cfaeac88efd7ab81e019b3d8c493e299",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/components/Sidebar.jsx",
@@ -1413,14 +1413,14 @@
       "additions": 2,
       "deletions": 2,
       "changes": 4,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Uses updated folder display labels to avoid duplicate Trash/Sent names; menu/account mapping behavior remains open.",
       "base_blob_sha": "d72ddd9c72c164f82fb5c4304454ddc123efd9b8",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/hooks/useAiActions.js",
@@ -1430,14 +1430,14 @@
       "additions": 9,
       "deletions": 10,
       "changes": 19,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Builds bounded AI prompt content and stores truncated metadata instead of silently sending partial email as complete; provider cancellation/error lifecycle remains open.",
       "base_blob_sha": "434b6c4924b5e12c3964e17fb13d8117690d11ba",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/hooks/useAiActions.test.js",
@@ -1448,13 +1448,13 @@
       "additions": 83,
       "deletions": 0,
       "changes": 83,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "New hook test verifies request content and truncation state; full frontend suite passed.",
       "base_mode": null,
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/hooks/useGtdTriage.js",
@@ -1464,14 +1464,14 @@
       "additions": 1,
       "deletions": 0,
       "changes": 1,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Passes single-account view context into GTD thread triage to avoid acting on another account's duplicate copy; server remains authoritative.",
       "base_blob_sha": "9275a652172ed14ed05af47d8ed69e7b744e3b33",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/hooks/useWebSocket.backoff.test.js",
@@ -1482,13 +1482,13 @@
       "additions": 59,
       "deletions": 0,
       "changes": 59,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "New test checks reconnect backoff reset only after stable socket duration; full frontend suite passed, server auth revocation remains open.",
       "base_mode": null,
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/hooks/useWebSocket.js",
@@ -1532,14 +1532,14 @@
       "additions": 18,
       "deletions": 6,
       "changes": 24,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Adds/updates AI truncation/reconnect-related translation keys; translation correctness and fallback consistency require locale QA.",
       "base_blob_sha": "c2196cc75d9cc739db6b752df532405847eeddf8",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/locales/de.json",
@@ -1549,14 +1549,14 @@
       "additions": 18,
       "deletions": 6,
       "changes": 24,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Adds/updates AI truncation/reconnect-related translation keys; translation correctness and fallback consistency require locale QA.",
       "base_blob_sha": "35972273a125594f521fc7cb49119bf5aa6563f7",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/locales/en.json",
@@ -1566,14 +1566,14 @@
       "additions": 18,
       "deletions": 6,
       "changes": 24,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Updates source-language strings for AI truncation/reconnect messaging; ensure every locale has matching keys.",
       "base_blob_sha": "3ac129ee25fc0d6c6b7313e9c9b3acc913fab2de",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/locales/es.json",
@@ -1583,14 +1583,14 @@
       "additions": 18,
       "deletions": 6,
       "changes": 24,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Adds/updates AI truncation/reconnect-related translation keys; translation correctness and fallback consistency require locale QA.",
       "base_blob_sha": "e6e208501ec6f4adfa70b33f937debbac0fddd18",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/locales/fr.json",
@@ -1600,14 +1600,14 @@
       "additions": 18,
       "deletions": 6,
       "changes": 24,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Adds/updates AI truncation/reconnect-related translation keys; translation correctness and fallback consistency require locale QA.",
       "base_blob_sha": "b1fd54e29deab41b57a0851e40c93f04566a49f2",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/locales/it.json",
@@ -1617,14 +1617,14 @@
       "additions": 18,
       "deletions": 6,
       "changes": 24,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Adds/updates AI truncation/reconnect-related translation keys; translation correctness and fallback consistency require locale QA.",
       "base_blob_sha": "f25cf4a5074ae9b1aea4cee38c31317eb0705f65",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/locales/ko.json",
@@ -1634,14 +1634,14 @@
       "additions": 13,
       "deletions": 1,
       "changes": 14,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Adds/updates AI truncation/reconnect-related translation keys; translation correctness and fallback consistency require locale QA.",
       "base_blob_sha": "5ff40396eff6160e688905213ca203a2ad13c3fb",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/locales/pl.json",
@@ -1651,14 +1651,14 @@
       "additions": 18,
       "deletions": 6,
       "changes": 24,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Adds/updates AI truncation/reconnect-related translation keys; translation correctness and fallback consistency require locale QA.",
       "base_blob_sha": "5509fa6853a3f89a4150eafdd7bf5a7b18c5c99a",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/locales/ptBR.json",
@@ -1668,14 +1668,14 @@
       "additions": 18,
       "deletions": 6,
       "changes": 24,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Adds/updates AI truncation/reconnect-related translation keys; translation correctness and fallback consistency require locale QA.",
       "base_blob_sha": "616bd2eafb50e24fd17e6b55b495fd5b0ace89e0",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/locales/ru.json",
@@ -1685,14 +1685,14 @@
       "additions": 18,
       "deletions": 6,
       "changes": 24,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Adds/updates AI truncation/reconnect-related translation keys; translation correctness and fallback consistency require locale QA.",
       "base_blob_sha": "1dc3c6647fbef8da7b8712693492a1b3c0abe773",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/locales/zhCN.json",
@@ -1702,14 +1702,14 @@
       "additions": 18,
       "deletions": 6,
       "changes": 24,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Adds/updates AI truncation/reconnect-related translation keys; translation correctness and fallback consistency require locale QA.",
       "base_blob_sha": "44319172e677b88b050f5cfb569ecfbd500cc6a6",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/main.jsx",
@@ -1719,14 +1719,14 @@
       "additions": 13,
       "deletions": 10,
       "changes": 23,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Waits for lazy locale initialization before rendering React root, avoiding initial untranslated flash; locale chunk rejection/error state remains open.",
       "base_blob_sha": "481414c0c465afed550f88a246bd415ba13db26a",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/store/index.js",
@@ -1736,14 +1736,14 @@
       "additions": 9,
       "deletions": 1,
       "changes": 10,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Resets favorite/recent folders/default sender/collapsed-folder/account UI state when user changes to avoid cross-user preference leakage.",
       "base_blob_sha": "1309780bb7cd01891a325d76151e2bf36f7d354d",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/store/signOutState.test.js",
@@ -1753,14 +1753,14 @@
       "additions": 2,
       "deletions": 0,
       "changes": 2,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Adds store state reset assertions for per-user account/folder state; full frontend suite passed.",
       "base_blob_sha": "dc6bf7ac20db204ce95e2de4807291755a83a128",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/store/threadRowUnread.test.js",
@@ -1771,13 +1771,13 @@
       "additions": 40,
       "deletions": 0,
       "changes": 40,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "New test covers thread row unread state after changes in conversation selection; full frontend suite passed.",
       "base_mode": null,
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/utils/api.js",
@@ -1940,14 +1940,14 @@
       "additions": 25,
       "deletions": 0,
       "changes": 25,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Adds tests for forwarding fitted inline images and requesting original body; fallback still risks forwarding fitted copy if original fetch fails.",
       "base_blob_sha": "0411a5176b62687d7c7d9a85798086523dcf992b",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/utils/conversation.js",
@@ -1974,14 +1974,14 @@
       "additions": 19,
       "deletions": 0,
       "changes": 19,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Tests listed vs parked/deep-link conversation selection; full frontend suite passed.",
       "base_blob_sha": "6bdc4b63b2d329dbbd868474bc40cc487c44d182",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/utils/conversationActions.js",
@@ -2008,14 +2008,14 @@
       "additions": 51,
       "deletions": 2,
       "changes": 53,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Adds thread action tests preserving drafts/Trash/Spam copies based on action origin; full frontend suite passed.",
       "base_blob_sha": "451554a987e8562b019895e2a7fd5b6895e0af3a",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/utils/darkImages.js",
@@ -2314,14 +2314,14 @@
       "additions": 10,
       "deletions": 0,
       "changes": 10,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Adds width-aware and absolute proxy URL reverse-mapping tests; full frontend suite passed.",
       "base_blob_sha": "a78bb3c7521da9a04878b94c5b1d7dade96aa03f",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/utils/listSelection.js",
@@ -2331,14 +2331,14 @@
       "additions": 4,
       "deletions": 2,
       "changes": 6,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Selection helpers account for listed and parked messages; verify focus/keyboard/navigation across filtered lists.",
       "base_blob_sha": "be93e5f6cfc2ba250b29f2266b407a6ae11e45a7",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/utils/listSelection.test.js",
@@ -2348,14 +2348,14 @@
       "additions": 20,
       "deletions": 0,
       "changes": 20,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Adds regression tests for list selection and next-row behavior; full frontend suite passed.",
       "base_blob_sha": "f6dd2bc829f6071acbc6dca1d63c636e7158f7ed",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/utils/openSentMessage.js",
@@ -2382,14 +2382,14 @@
       "additions": 18,
       "deletions": 1,
       "changes": 19,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Adds sent-copy selection regression with visible list helper; full frontend suite passed.",
       "base_blob_sha": "0bd7db3036be883299800dfee4abf1e44323af34",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/utils/scopeEmailCss.js",
@@ -2399,14 +2399,14 @@
       "additions": 2,
       "deletions": 2,
       "changes": 4,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "CSS-scoping second pass now uses appEmailHtml sanitizer rather than standalone DOMPurify, so browser-parsed CSS/URL policy is shared; test stylesheet/SVG/cascade interactions.",
       "base_blob_sha": "11a8bd69f87344194adf27a1a0103aa780d825f3",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/utils/signOut.js",
@@ -2501,14 +2501,14 @@
       "additions": 233,
       "deletions": 1,
       "changes": 234,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Adds extensive multi-account thread action tests for archive/delete/spam/move/snooze account scoping; full frontend suite passed.",
       "base_blob_sha": "d7779346c2c85b0aa2193ed03f3bad2bf6920c60",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "scripts/dark-audit/selftest.mjs",
@@ -2518,14 +2518,14 @@
       "additions": 5,
       "deletions": 0,
       "changes": 5,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Adds a partial background-image/table-text dark recoloring fixture to catch contrast regression; this fixture is not a completed cross-browser audit.",
       "base_blob_sha": "b94ae1c7cdfa842bb1929ab9451574e01fecdfe7",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     }
   ]
 }
