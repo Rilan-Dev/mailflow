@@ -55,6 +55,18 @@
         "One Vitest file was skipped; 10 tests skipped.",
         "Expected failure-path logs appeared in tests, including mocked provider/database failures. All executed assertions passed."
       ]
+    },
+    {
+      "id": "imap-smtp-account-lifecycle",
+      "run": 39037515886,
+      "url": "https://github.com/Rilan-Dev/mailflow/actions/runs/39037515886",
+      "result": "PASS",
+      "test_files_passed": 42,
+      "test_files_skipped": 1,
+      "tests_passed": 777,
+      "tests_skipped": 10,
+      "failures": 0,
+      "scope": "Pinned snapshot; account API, IMAP/SMTP transport, inbox mutations, drafts, send reliability, attachments, remote images and sync/recovery. IMAP draft-ingest tests skipped; no live provider integration."
     }
   ],
   "aggregate": {
@@ -63,7 +75,15 @@
     "files_skipped": 1,
     "tests_passed": 1277,
     "tests_skipped": 10,
-    "failures": 0
+    "failures": 0,
+    "imap_smtp_account_lifecycle": {
+      "run": 39037515886,
+      "passed": 777,
+      "skipped": 10,
+      "failed": 0,
+      "files_passed": 42,
+      "files_skipped": 1
+    }
   },
   "verification_boundaries": {
     "snapshot_integrity": "PASS; latest completed full verifier run https://github.com/Rilan-Dev/mailflow/actions/runs/39034971662; a fresh run is pending after the workflow command correction",
@@ -156,6 +176,13 @@
       "classified": 183,
       "unclassified": 1167,
       "status": "PARTIAL; all newly reviewed security paths remain license-unreviewed"
+    },
+    "latest_inventory_verifier": {
+      "run": 39037551680,
+      "url": "https://github.com/Rilan-Dev/mailflow/actions/runs/39037551680",
+      "result": "PASS",
+      "job": "Exact pinned snapshot and manifest verifier",
+      "note": "This verifier pass preceded the newest capability-manifest update; run 39037683681 is queued to reverify the latest manifests."
     }
   }
 }
