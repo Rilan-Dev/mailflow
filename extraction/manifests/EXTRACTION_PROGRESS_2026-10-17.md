@@ -87,3 +87,8 @@
 ## Update — 2026-10-17 — Dependency triage
 - Direct dependency runtime map added at `extraction/manifests/dependency-runtime-license-triage-2026-10-17.md`. Package license/provenance review remains 0/1,124 cleared; lockfile metadata is not proof of license compliance.
 - The source pin's current path summary is refreshed to 183 classified / 1,167 unclassified; a new verifier run is queued after manifest changes.
+
+
+## Update — 2026-10-17 — PostgreSQL migration map
+- Documented migration-by-migration purpose and major runtime domains for all 66 SQL migrations. All migration files remain license-unreviewed and SQL consumer/index/query-plan closure remains partial.
+- Full verification run 39038119553 is pending after the latest manifest updates.
