@@ -70,3 +70,8 @@ OIDC inspection found a closure gap: `getDiscovery` validates issuer/advertised 
 ## Continuity update — 2026-10-17 — Targeted test results confirmed
 
 Inspected the completed workflow jobs and logs. Security/render run 39034509010 passed 500 tests across 21 file-runs (backend auth/OAuth/OIDC/SSRF/sanitizer 375, frontend image proxy 4, frontend email HTML/render 121). Transport run 39034548854 passed 777 tests with 10 skipped across 43 file-runs (42 files passed, one skipped); zero failures. Combined: 1,277 passed, 10 skipped. Machine evidence: `extraction/manifests/closure-test-results-2026-10-17-35067fc.json`. Snapshot verifier run 39034548818 also succeeded after the current path/capability manifest changes. Full backend/frontend suites and native Android/Electron builds remain unverified; capability closure and license/provenance clearance remain open. Highest priority security gap is OIDC native fetch without safeFetch connection pin/redirect policy, plus verifying div-render preparation and linkifier escaping.
+
+
+## Continuity update — 2026-10-17 — Full verification queued
+
+Added `.github/workflows/mailflow-full-snapshot-verification.yml` to run the exact pinned snapshot verifier, full backend lint/plugin boundary/tests/audit, full frontend lint/tests/build/audit, and Android sync/unit tests/debug APK build. Run 39034814909 was queued at last check; don't infer success until results arrive. Selected security/render/transport suites passed 1,277 tests with 10 skipped and zero failures. Continue independent closure work, with OIDC native-fetch redirect/DNS policy and div-render/linkifier/signature closure as high-priority security items.
