@@ -28,7 +28,7 @@
     ]
   },
   "state": {
-    "phase": "PHASE 2 - IMMUTABLE SOURCE SNAPSHOT AND VERIFICATION",
+    "phase": "PHASE 3 - CAPABILITY CLOSURE AND LICENSE/PROVENANCE REVIEW",
     "source_copy_authorized": true,
     "verification_status": "EXACT GIT TREE AND SNAPSHOT VERIFIED; 1,350 BLOBS AND 147 NESTED TREES MATCH; CAPABILITY CLOSURE AND PER-PATH LICENSE CLASSIFICATION REMAIN OPEN",
     "baseline_type": "IMMUTABLE_UPSTREAM_SNAPSHOT",
@@ -40,9 +40,9 @@
     "snapshot": "extraction/snapshots/35067fc2876d50980f1a8a3b8ea72b5467b69f60/source"
   },
   "verification": {
-    "workflow_url": "https://github.com/Rilan-Dev/mailflow/actions/runs/39030794029",
+    "workflow_url": "https://github.com/Rilan-Dev/mailflow/actions/runs/39031182967",
     "workflow_result": "success",
-    "verified_at": "2026-10-17T12:00:05Z",
+    "verified_at": "2026-10-17T12:06:01Z",
     "source_blob_count": 1350,
     "source_blob_sha_failures": 0,
     "snapshot_file_set": "PASS",
@@ -56,8 +56,8 @@
     "redistribution_clearance": "PENDING",
     "path_disposition_summary": {
       "total_blobs": 1350,
-      "initially_classified": 6,
-      "unclassified": 1344
+      "initially_classified": 39,
+      "unclassified": 1311
     },
     "security_static_trace": "PARTIAL_NOT_CLOSED"
   }
