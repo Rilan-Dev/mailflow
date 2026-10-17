@@ -9,7 +9,7 @@
 - Snapshot evidence: https://github.com/Rilan-Dev/mailflow/actions/runs/39030794029
 
 ## Work started after snapshot capture
-- **Path dispositions:** 112 of 1,350 paths classified by role; 1,238 remain UNCLASSIFIED. Newly classified transport and migration paths still have UNREVIEWED licenses and partial closure. Classification of a path does not mean it is license-cleared or reusable.
+- **Path dispositions:** 124 of 1,350 paths classified by role; 1,226 remain UNCLASSIFIED. Newly classified transport and migration paths still have UNREVIEWED licenses and partial closure. Classification of a path does not mean it is license-cleared or reusable.
 - **Capability map:** 16 capability candidates; 3 have partial static security traces; 0 are closed.
 - **Security slice:** auth/session, OAuth/OIDC, host validation, safe fetch, image proxy and email sanitization. Selected test execution now PASS: 15 files / 379 tests, 0 failures; see `extraction/manifests/security-test-results-2026-10-17-35067fc.json`. Static caller/threat-model closure remains partial.
 - **Dependencies:** 1,124 locked package entries (445 backend, 679 frontend), 50 direct dependencies and 16 direct dev dependencies. 0 third-party package licenses have been cleared.
@@ -40,3 +40,10 @@
 - Path register: 112 paths classified by role; 1,238 remain unclassified. Classification is not reuse permission; new paths remain license-unreviewed.
 - Account/API trace covers encrypted credentials, user ownership checks, connection policy, asynchronous disconnect after delete, IMAP cooldown/concurrency, SMTP connect-time DNS pinning/TLS policy, and send/draft recovery paths.
 - Remaining gates: complete security caller/sink closure, full migration object/runtime map and PostgreSQL upgrade tests, all capability closures, third-party license/provenance and redistribution clearance, and full backend/frontend/native verification.
+
+
+## Update — 2026-10-17 — OIDC and frontend HTML sink trace
+- Added explicit OIDC network-boundary finding: discovery validates issuer/endpoints but uses native fetch rather than the pinned safeFetch connector; DNS rebinding and redirect-to-private behavior remain unclosed. The allow-insecure provider branch bypasses host validation and disables TLS verification and must remain a high-risk opt-in pending authorization/policy review.
+- Traced frontend body rendering through sandboxed email iframe/CSP, optional div-render `prepared.html`, plain-text `linkifyText` sink, composer DOMPurify/app-origin image policy and signature editor innerHTML paths. Preparation/escaping/caller closure remains pending.
+- Role classification advanced to 124 paths; 1,226 remain unclassified. License/provenance remains unreviewed for these paths.
+- Transport workflow: https://github.com/Rilan-Dev/mailflow/actions/runs/39034389282 (queued at last check). Frontend email-render security job added to security workflow; results pending.
