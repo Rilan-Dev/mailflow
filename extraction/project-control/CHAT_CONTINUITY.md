@@ -131,3 +131,10 @@ Full verification run 39034971662 passed backend (166 files passed, 6 skipped; 2
 - Delta review now covers 53/147 changed/new blobs; 94 remain pending. Current path disposition: 192 classified / 1,158 unclassified. Every pending changed/new path remains UNCLASSIFIED; role review is not license clearance.
 - Two new PostgreSQL query tests are explicitly marked DB-env optional; do not count them as executed without MAILFLOW_TEST_DATABASE_URL evidence. The full PostgreSQL clean-install migration job is separate.
 - Found a workflow coverage gap: full verification did not trigger on path-disposition/source-tree/delta manifest changes. Adding those paths to the trigger so the verifier runs against the current register.
+
+
+## Update — 2026-10-17 — Delta review nearly complete
+- First-pass diff review now covers 146 of 147 changed/new blobs; only the added Android PKCS#12 untrusted-provider test fixture remains unclassified because the binary bytes/certificate fingerprint/validity and generation provenance could not be inspected through the text file reader. Do not reuse it until inspected.
+- Current path register: 285 classified / 1,065 unclassified (1,350 source blobs total). Classification does not imply license clearance.
+- Packaging drift found: backend package.json=4.0.1 vs lockfile root=3.9.0; frontend package.json=4.0.1 vs lockfile root=3.8.2. Snapshot remains immutable; record for upstream resolution, don't silently patch source.
+- The full verifier run 39038991437 is pending for the latest manifests. Existing passing full backend/frontend/PostgreSQL evidence remains from 39034971662; Android Gradle is still unverified.
