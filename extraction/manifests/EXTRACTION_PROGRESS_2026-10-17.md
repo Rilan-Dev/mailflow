@@ -103,3 +103,10 @@
 ## Update — 2026-10-17 — Backend delta review batch
 - First-pass diff review now covers 53/147 changed/new paths; 94 remain pending. Current register: 192 classified / 1,158 unclassified.
 - Verification workflow trigger coverage is being fixed to run when path-disposition, source-tree or delta-review manifests change.
+
+
+## Update — 2026-10-17 — Delta review nearly complete
+- Reviewed 146/147 changed/new blobs; one binary PKCS#12 test fixture remains unclassified pending certificate metadata/provenance inspection.
+- Current path register 285 classified / 1,065 unclassified. License/provenance remains open.
+- Found package/lockfile version drift (backend 4.0.1 vs 3.9.0, frontend 4.0.1 vs 3.8.2); snapshot left unchanged pending upstream resolution.
+- Latest full verifier run 39038991437 pending; Android Gradle remains unverified.
