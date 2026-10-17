@@ -1,0 +1,62 @@
+{
+  "schema_version": "1.0.0",
+  "run_at": "2026-10-17T12:17:30Z",
+  "workflow": {
+    "name": "MailFlow security closure tests",
+    "url": "https://github.com/Rilan-Dev/mailflow/actions/runs/39031942550",
+    "commit": "2bef3b7da9635ad67a9d25e54365c411fa36a709",
+    "conclusion": "success"
+  },
+  "source_pin": {
+    "repository": "maathimself/mailflow",
+    "commit": "35067fc2876d50980f1a8a3b8ea72b5467b69f60",
+    "tree": "a2a82b50b8a1ac24a273e55dc0f9418aefdfed17",
+    "snapshot_root": "extraction/snapshots/35067fc2876d50980f1a8a3b8ea72b5467b69f60/source"
+  },
+  "environment": {
+    "runner": "ubuntu-latest",
+    "node": "22.23.3",
+    "backend_install": "npm ci",
+    "frontend_install": "npm ci"
+  },
+  "results": [
+    {
+      "area": "backend auth/OAuth/OIDC/host validation/safe fetch/image proxy/email sanitizer",
+      "command": "npx vitest run src/middleware/auth.test.js src/routes/auth.forgotPassword.test.js src/routes/auth.logout.test.js src/routes/auth.me.test.js src/routes/oauth.refresh.test.js src/routes/oidc.privateIssuer.test.js src/routes/oidc.endsession.test.js src/routes/oidc.match.test.js src/services/hostValidation.test.js src/services/safeFetch.test.js src/services/imageProxy.test.js src/services/emailSanitizer.test.js src/services/emailSanitizer.trackers.test.js src/services/emailSanitizer.parse5Error.test.js",
+      "test_files_passed": 14,
+      "test_files_failed": 0,
+      "tests_passed": 375,
+      "tests_failed": 0,
+      "conclusion": "PASS"
+    },
+    {
+      "area": "frontend image proxy",
+      "command": "node --test src/utils/imageProxy.test.js",
+      "test_files_passed": 1,
+      "test_files_failed": 0,
+      "tests_passed": 4,
+      "tests_failed": 0,
+      "conclusion": "PASS"
+    }
+  ],
+  "aggregate": {
+    "test_files_passed": 15,
+    "test_files_failed": 0,
+    "tests_passed": 379,
+    "tests_failed": 0,
+    "conclusion": "PASS"
+  },
+  "limitations": [
+    "This run covers the selected security-sensitive test slice only, not all upstream tests or all 16 capability candidates.",
+    "Passing tests do not prove transitive capability closure, complete threat-model coverage, license/provenance clearance, redistribution rights, or host integration readiness.",
+    "The first workflow attempt failed because of a typo in the snapshot working directory; paths were corrected and this successful run is the authoritative test evidence."
+  ],
+  "status": {
+    "selected_security_tests": "PASS",
+    "capability_closure": "PENDING",
+    "path_license_provenance": "PENDING",
+    "third_party_license_clearance": "PENDING",
+    "independent_reconciliation": "PENDING",
+    "overall_extraction": "NOT_PASS"
+  }
+}
