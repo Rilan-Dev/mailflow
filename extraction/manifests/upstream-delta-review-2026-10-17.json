@@ -23,10 +23,10 @@
     "old_tree_entries": 1462,
     "old_tree_truncated": false
   },
-  "status": "PARTIAL_REVIEW_53_PATHS_REVIEWED_94_PATHS_PENDING",
+  "status": "PARTIAL_REVIEW_72_PATHS_REVIEWED_75_PATHS_PENDING",
   "guardrail": "Review classification is not license clearance. Do not change or overwrite either immutable snapshot. Every changed/new path must be re-evaluated against exact blob SHA and mode.",
-  "reviewed_high_priority_count": 53,
-  "pending_count": 94,
+  "reviewed_high_priority_count": 72,
+  "pending_count": 75,
   "entries": [
     {
       "path": ".env.example",
@@ -1209,14 +1209,14 @@
       "additions": 26,
       "deletions": 3,
       "changes": 29,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Conversation cards now share cached body fetch and the shared attachment strip; verify cache invalidation, loading/error state and attachment ownership.",
       "base_blob_sha": "8b0a6d9c20dc8c21d9b51e7d306cdd5111d91fc9",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/components/ConversationPane.jsx",
@@ -1226,14 +1226,14 @@
       "additions": 100,
       "deletions": 27,
       "changes": 127,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Conversation actions now account-scope thread copies, preserve drafts/Trash/Spam semantics, prefetch bodies and provide empty-action feedback; server authorization and UI edge states remain open.",
       "base_blob_sha": "e9f7bc2eb31f659769c8168119838467656d09cb",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/components/ConversationPane.render.test.js",
@@ -1294,14 +1294,14 @@
       "additions": 65,
       "deletions": 21,
       "changes": 86,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "List selection now uses shared conversation-selection helpers; thread selection and account-scoped actions require tests across search/category/unified-inbox.",
       "base_blob_sha": "f8198549d4fa82c2f033534705786e7e5f3807fd",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/components/MessageList.render.test.js",
@@ -1345,14 +1345,14 @@
       "additions": 51,
       "deletions": 256,
       "changes": 307,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Large refactor separates conversation selection/body cache/prefetch from the message pane; inspect action semantics across list, parked/deep-link and unified-inbox states.",
       "base_blob_sha": "801d03744e603022b068d894eb6697a59aecef25",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/components/MessagePane.render.test.js",
@@ -1379,14 +1379,14 @@
       "additions": 11,
       "deletions": 1,
       "changes": 12,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Propagates listed/parked selection and selected account into conversation actions so deep links and unified inbox differ correctly; caller and fallback behavior remain open.",
       "base_blob_sha": "bd268b9c0f6671459c8595d0813c64f6336ac098",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/components/ReplyDraftIndicator.jsx",
@@ -1515,14 +1515,14 @@
       "additions": 35,
       "deletions": 25,
       "changes": 60,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Loads English first and dynamically imports only the active locale instead of bundling all locale JSON at startup; fallback and locale chunk-load error states remain open.",
       "base_blob_sha": "f60afd71348b428deebc9c4257fe00027d81fd88",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/locales/cs.json",
@@ -1822,13 +1822,13 @@
       "additions": 49,
       "deletions": 0,
       "changes": 49,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "New jsdom tests cover app-page HTML sanitizer and sender-controlled image URLs/srcset/CSS URL filtering; full frontend suite includes Node tests, while browser-engine CSS parsing remains an explicit validation caveat.",
       "base_mode": null,
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/utils/attachmentUi.jsx",
@@ -1873,13 +1873,13 @@
       "additions": 68,
       "deletions": 0,
       "changes": 68,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "New Node tests exercise shared body cache, prefetch, cache eviction and clearing on signed-in user change; stale async fetch/session transition race remains open.",
       "base_mode": null,
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/utils/capacitorNativeBridge.js",
@@ -1923,14 +1923,14 @@
       "additions": 6,
       "deletions": 1,
       "changes": 7,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Forward path fetches original body when reading body used fitted inline images; failure falls back to cached fitted content, so original-preservation fallback is a known quality risk.",
       "base_blob_sha": "3c01e3467b3ee1a5571d4796d09513284f0f10b2",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/utils/composeFromMessage.test.js",
@@ -1957,14 +1957,14 @@
       "additions": 19,
       "deletions": 1,
       "changes": 20,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Separates listed vs parked/deep-link message selection and selects listed row consistently; downstream list selection/action scoping needs closure.",
       "base_blob_sha": "fe1abfe87cfd313d43b1f1b12e8b5dbeb47fd994",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/utils/conversation.test.js",
@@ -2161,14 +2161,14 @@
       "additions": 11,
       "deletions": 2,
       "changes": 13,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Folder labels avoid duplicate Trash/Sent role names when server special-use flags conflict with user-visible folder names; folder mapping behavior depends on account folder list.",
       "base_blob_sha": "2f08797b1ce21cf1ed49004162c6044d88c2f827",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/utils/folderDisplay.test.js",
@@ -2178,14 +2178,14 @@
       "additions": 23,
       "deletions": 0,
       "changes": 23,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Adds regressions for duplicate role labels; included in full frontend suite.",
       "base_blob_sha": "1ed314d3571a5a68994c6b1dad983aa1eb1c23ec",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/utils/frameFocus.js",
@@ -2195,14 +2195,14 @@
       "additions": 21,
       "deletions": 4,
       "changes": 25,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Frame focus return now coordinates multiple iframe watchers when moving between expanded messages and avoids returning keyboard focus to text inputs; cleanup on unmount/navigation needs closure.",
       "base_blob_sha": "3d69ff3a4eed7da4e789e7a30ce2f99f4e90fb1a",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/utils/frameFocus.test.js",
@@ -2212,14 +2212,14 @@
       "additions": 31,
       "deletions": 0,
       "changes": 31,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Adds tests for focus return from text input and frame-to-frame focus transfer; included in full frontend suite.",
       "base_blob_sha": "c2ef6b4f1aace5fff86bcc5839d2015e984c59c5",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/utils/frameLazyImages.js",
@@ -2247,13 +2247,13 @@
       "additions": 36,
       "deletions": 0,
       "changes": 36,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "New tests verify proxy-only image deferral after first eager images and restoration near view; viewport layout behavior is described as browser-engine-sensitive and not fully proven by jsdom.",
       "base_mode": null,
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/utils/gtd.js",
@@ -2365,14 +2365,14 @@
       "additions": 3,
       "deletions": 1,
       "changes": 4,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Sent-copy detection uses shared selectListedMessage helper, ensuring selected row reflects the visible list and selection state; account/folder race remains open.",
       "base_blob_sha": "f69dcf82598e4441d075c2e64aa28e9dde832b5b",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/utils/openSentMessage.test.js",
@@ -2433,14 +2433,14 @@
       "additions": 43,
       "deletions": 0,
       "changes": 43,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Adds assertions clearing previous-user folder/sender shortcuts and Android provider logout handoff after local state clear; native integration build still pending.",
       "base_blob_sha": "bc1f7d8b7094d5d2a23c0a579c03b383dc95719d",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/utils/snoozeActions.js",
@@ -2450,14 +2450,14 @@
       "additions": 4,
       "deletions": 2,
       "changes": 6,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Snooze detection now recognizes the server-reported snoozed_folder (e.g. INBOX.Snoozed namespace) rather than only literal Snoozed; backend record must remain authoritative.",
       "base_blob_sha": "2d51ec6a7b0d7c27b1b3b2a3171d420e931624ef",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/utils/snoozeActions.test.js",
@@ -2467,14 +2467,14 @@
       "additions": 11,
       "deletions": 0,
       "changes": 11,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "MEDIUM",
+      "first_pass_notes": "Adds namespaced snooze-folder classification tests; included in full frontend suite.",
       "base_blob_sha": "dba25417fb254f576d1c2e13143f5f4f754b035c",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/utils/threadActions.js",
