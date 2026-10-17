@@ -10,7 +10,7 @@ Phase 2 source snapshot capture and exact tree verification are complete for the
 - Snapshot: extraction/snapshots/35067fc2876d50980f1a8a3b8ea72b5467b69f60/source
 - Inventory: 1,497 entries; 1,350 blobs; 147 nested trees; 0 gitlinks; 0 Git LFS pointer files detected.
 - Verification: exact 1,350 blob hashes checked; verifier PASS; reconstructed root tree SHA and all 147 nested tree SHAs match the upstream tree.
-- Initial classification: six notice/dependency-manifest paths classified with evidence; 1,344 source blobs remain UNCLASSIFIED.
+- Initial classification: 39 paths classified by role; 1,311 source blobs remain UNCLASSIFIED. Most licenses/provenance remain unreviewed; classifications are not reuse clearance.
 - Security static trace: started for auth/OAuth/OIDC, outbound host validation, safe fetch, image proxy and email sanitizer. Three capabilities have PARTIAL_STATIC_TRACE_NOT_CLOSED; tests were identified but not run in this static trace.
 
 The extraction is NOT complete. License/provenance, dependency closure, and host-integration readiness remain open. AGPL-3.0, separate commercial-license terms, CLA and third-party provenance require review. No host integration or extraction PASS is claimed.
