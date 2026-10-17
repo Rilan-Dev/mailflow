@@ -141,3 +141,14 @@ Do not change the immutable snapshot mode. Corrected the verification workflow t
 Added `extraction/manifests/reusable-capability-runtime-trace-2026-10-17.md`. Initial runtime call graphs now cover search/unified inbox, contacts/CardDAV, rules/categories/spam, plugin registry/activation/API, AI provider HTTP, and WebSocket/push notifications. The capability manifest records 14 partial traces, 2 not started, and 0 closed; path classification is 182/1,350 (1,168 unclassified). All new classifications remain license-unreviewed.
 
 Full backend and frontend suites, lint/build and production dependency audits passed, and the PostgreSQL 17 job applied all 66 migrations twice successfully in run 39034971662. Android web build/Capacitor sync passed, but the Gradle step failed before starting because the snapshot wrapper is non-executable. Workflow now explicitly uses `bash ./gradlew`; run 39035662163 is pending. Next: close OIDC network policy, account/user deletion cleanup and per-capability error/recovery/UI dependencies; map SQL consumers/index plans; continue provenance/license clearance. Do not report overall extraction PASS.
+
+
+## Update — 2026-10-17 — Full suite counts and current native run
+
+The full pinned-snapshot run 39034971662 provides these verified results:
+- Backend: 166 test files passed, 6 skipped; 2,804 tests passed, 41 skipped, zero failures. Backend lint, plugin-boundary lint, syntax check and production dependency audit passed.
+- Frontend: 3,142 tests passed, zero skipped/failures; frontend lint, production build and production dependency audit passed. Electron Node tests are included in this frontend suite.
+- PostgreSQL 17: all 66 migrations applied to a clean DB and second run was idempotent; resulting public schema has 32 tables, 97 indexes and 282 constraints.
+- Snapshot verifier: passed.
+- Android web bundle and Capacitor sync passed; Gradle has not yet been shown to start successfully. Several pending runs were cancelled by subsequent manifest-evidence commits while queued. Current full verification run: https://github.com/Rilan-Dev/mailflow/actions/runs/39035810908 — pending and triggered after the workflow now explicitly invokes `bash ./gradlew`. Do not update watched manifests until this run has started/completed; continue independent work in project-control docs if needed.
+- Current path classification is 182/1,350 (1,168 unclassified); 14 capabilities have partial traces, 2 remain not started and none are closed. License/provenance and redistribution clearance remain open.
