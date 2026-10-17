@@ -382,13 +382,14 @@
       "size": 8993,
       "candidate_areas": [
         "database-migrations",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0002_subject_threading.sql",
@@ -397,13 +398,14 @@
       "size": 3219,
       "candidate_areas": [
         "database-migrations",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0003_sender_name.sql",
@@ -412,13 +414,14 @@
       "size": 80,
       "candidate_areas": [
         "database-migrations",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0004_internal_auth_setting.sql",
@@ -428,13 +431,14 @@
       "candidate_areas": [
         "database-migrations",
         "auth-identity",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0005_auth_events.sql",
@@ -444,13 +448,14 @@
       "candidate_areas": [
         "database-migrations",
         "auth-identity",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0006_threaded_query_indexes.sql",
@@ -459,13 +464,14 @@
       "size": 1007,
       "candidate_areas": [
         "database-migrations",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0007_thread_paging_index.sql",
@@ -474,13 +480,14 @@
       "size": 753,
       "candidate_areas": [
         "database-migrations",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0008_search_indexes.sql",
@@ -489,13 +496,14 @@
       "size": 1506,
       "candidate_areas": [
         "database-migrations",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0009_thread_key_column.sql",
@@ -504,13 +512,14 @@
       "size": 1690,
       "candidate_areas": [
         "database-migrations",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0010_inbox_rules.sql",
@@ -519,13 +528,14 @@
       "size": 917,
       "candidate_areas": [
         "database-migrations",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0011_message_id_dedup_index.sql",
@@ -535,13 +545,14 @@
       "candidate_areas": [
         "database-migrations",
         "mail-protocol-and-sync",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0012_oidc_allow_insecure.sql",
@@ -551,13 +562,14 @@
       "candidate_areas": [
         "database-migrations",
         "auth-identity",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0013_block_list.sql",
@@ -566,13 +578,14 @@
       "size": 381,
       "candidate_areas": [
         "database-migrations",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0014_account_allow_private_host.sql",
@@ -581,13 +594,14 @@
       "size": 401,
       "candidate_areas": [
         "database-migrations",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0015_contacts.sql",
@@ -597,13 +611,14 @@
       "candidate_areas": [
         "database-migrations",
         "contacts-carddav",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0016_is_bulk.sql",
@@ -612,13 +627,14 @@
       "size": 63,
       "candidate_areas": [
         "database-migrations",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0017_contacts_v2.sql",
@@ -628,13 +644,14 @@
       "candidate_areas": [
         "database-migrations",
         "contacts-carddav",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0018_contacts_search_indexes.sql",
@@ -644,13 +661,14 @@
       "candidate_areas": [
         "database-migrations",
         "contacts-carddav",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0019_user_integrations.sql",
@@ -659,13 +677,14 @@
       "size": 378,
       "candidate_areas": [
         "database-migrations",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0020_mfa_device_trust.sql",
@@ -675,13 +694,14 @@
       "candidate_areas": [
         "database-migrations",
         "auth-identity",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0021_spam_training.sql",
@@ -690,13 +710,14 @@
       "size": 3023,
       "candidate_areas": [
         "database-migrations",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0022_password_reset_tokens.sql",
@@ -706,13 +727,14 @@
       "candidate_areas": [
         "database-migrations",
         "auth-identity",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0023_message_categories.sql",
@@ -722,13 +744,14 @@
       "candidate_areas": [
         "database-migrations",
         "mail-protocol-and-sync",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0024_category_improvements.sql",
@@ -737,13 +760,14 @@
       "size": 430,
       "candidate_areas": [
         "database-migrations",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0025_unsubscribe_state.sql",
@@ -752,13 +776,14 @@
       "size": 88,
       "candidate_areas": [
         "database-migrations",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0026_oidc_admin_group_claim.sql",
@@ -769,13 +794,14 @@
         "database-migrations",
         "auth-identity",
         "docs-and-licenses",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0027_carddav_client.sql",
@@ -785,13 +811,14 @@
       "candidate_areas": [
         "database-migrations",
         "contacts-carddav",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0028_folder_highestmodseq.sql",
@@ -800,13 +827,14 @@
       "size": 502,
       "candidate_areas": [
         "database-migrations",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0029_oauth_public_client.sql",
@@ -816,13 +844,14 @@
       "candidate_areas": [
         "database-migrations",
         "auth-identity",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0030_gtd.sql",
@@ -831,13 +860,14 @@
       "size": 886,
       "candidate_areas": [
         "database-migrations",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0031_gtd_gist.sql",
@@ -846,13 +876,14 @@
       "size": 953,
       "candidate_areas": [
         "database-migrations",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0032_gtd_pets.sql",
@@ -861,13 +892,14 @@
       "size": 898,
       "candidate_areas": [
         "database-migrations",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0033_gtd_pets_custom.sql",
@@ -876,13 +908,14 @@
       "size": 605,
       "candidate_areas": [
         "database-migrations",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0034_lock_pin.sql",
@@ -891,13 +924,14 @@
       "size": 370,
       "candidate_areas": [
         "database-migrations",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0035_oidc_rp_initiated_logout.sql",
@@ -907,13 +941,14 @@
       "candidate_areas": [
         "database-migrations",
         "auth-identity",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0036_unified_inbox_accounts.sql",
@@ -922,13 +957,14 @@
       "size": 110,
       "candidate_areas": [
         "database-migrations",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0037_message_delivery_addresses.sql",
@@ -938,13 +974,14 @@
       "candidate_areas": [
         "database-migrations",
         "mail-protocol-and-sync",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0038_ai_codex_oauth.sql",
@@ -955,13 +992,14 @@
         "database-migrations",
         "auth-identity",
         "ai-assistant",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0039_inbox_rule_forwards.sql",
@@ -970,13 +1008,14 @@
       "size": 532,
       "candidate_areas": [
         "database-migrations",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0040_smtp_separate_auth.sql",
@@ -987,13 +1026,14 @@
         "database-migrations",
         "auth-identity",
         "mail-protocol-and-sync",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0041_plugin_data.sql",
@@ -1003,13 +1043,14 @@
       "candidate_areas": [
         "database-migrations",
         "plugin-system",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0042_grandfather_gtd_plugin.sql",
@@ -1019,13 +1060,14 @@
       "candidate_areas": [
         "database-migrations",
         "plugin-system",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0043_drop_gtd_pets.sql",
@@ -1034,13 +1076,14 @@
       "size": 423,
       "candidate_areas": [
         "database-migrations",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0044_message_plugin_annotations.sql",
@@ -1051,13 +1094,14 @@
         "database-migrations",
         "plugin-system",
         "mail-protocol-and-sync",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0045_plugin_account_config.sql",
@@ -1067,13 +1111,14 @@
       "candidate_areas": [
         "database-migrations",
         "plugin-system",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0046_drop_legacy_gtd_columns.sql",
@@ -1082,13 +1127,14 @@
       "size": 740,
       "candidate_areas": [
         "database-migrations",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0047_folder_no_select.sql",
@@ -1097,13 +1143,14 @@
       "size": 953,
       "candidate_areas": [
         "database-migrations",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0048_snippet_attempted_at.sql",
@@ -1112,13 +1159,14 @@
       "size": 864,
       "candidate_areas": [
         "database-migrations",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0049_oidc_login_match_claim.sql",
@@ -1129,13 +1177,14 @@
         "database-migrations",
         "auth-identity",
         "docs-and-licenses",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0050_message_sender.sql",
@@ -1145,13 +1194,14 @@
       "candidate_areas": [
         "database-migrations",
         "mail-protocol-and-sync",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0051_folder_server_status.sql",
@@ -1160,13 +1210,14 @@
       "size": 812,
       "candidate_areas": [
         "database-migrations",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0052_spam_training_features.sql",
@@ -1175,13 +1226,14 @@
       "size": 2896,
       "candidate_areas": [
         "database-migrations",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0053_spam_models.sql",
@@ -1190,13 +1242,14 @@
       "size": 4395,
       "candidate_areas": [
         "database-migrations",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0054_email_accounts_antispam_enabled.sql",
@@ -1205,13 +1258,14 @@
       "size": 1758,
       "candidate_areas": [
         "database-migrations",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0055_spam_training_deletions.sql",
@@ -1220,13 +1274,14 @@
       "size": 1376,
       "candidate_areas": [
         "database-migrations",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0056_email_accounts_trusted_authserv_id.sql",
@@ -1236,13 +1291,14 @@
       "candidate_areas": [
         "database-migrations",
         "auth-identity",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0057_split_subject_merged_threads.sql",
@@ -1251,13 +1307,14 @@
       "size": 6643,
       "candidate_areas": [
         "database-migrations",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0058_unfetchable_uids.sql",
@@ -1266,13 +1323,14 @@
       "size": 2141,
       "candidate_areas": [
         "database-migrations",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0059_message_forwarded_from.sql",
@@ -1282,13 +1340,14 @@
       "candidate_areas": [
         "database-migrations",
         "mail-protocol-and-sync",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0060_thread_id_index_covers_deleted.sql",
@@ -1297,13 +1356,14 @@
       "size": 1675,
       "candidate_areas": [
         "database-migrations",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0061_message_bcc_addresses.sql",
@@ -1313,13 +1373,14 @@
       "candidate_areas": [
         "database-migrations",
         "mail-protocol-and-sync",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0062_email_accounts_auto_recipients.sql",
@@ -1328,13 +1389,14 @@
       "size": 1082,
       "candidate_areas": [
         "database-migrations",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0063_user_last_seen.sql",
@@ -1343,13 +1405,14 @@
       "size": 827,
       "candidate_areas": [
         "database-migrations",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0064_auth_events_actor.sql",
@@ -1359,13 +1422,14 @@
       "candidate_areas": [
         "database-migrations",
         "auth-identity",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0065_email_accounts_signature_enabled.sql",
@@ -1374,13 +1438,14 @@
       "size": 103,
       "candidate_areas": [
         "database-migrations",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/migrations/0066_email_accounts_icon.sql",
@@ -1390,13 +1455,14 @@
       "candidate_areas": [
         "database-migrations",
         "assets-and-fonts",
-        "database-and-migrations"
+        "database-and-migrations",
+        "database-schema"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "SCHEMA_INVENTORY_PARTIAL",
-      "notes": "SQL migration role inventoried against the pinned snapshot; migration semantics are summarized in postgres-schema-runtime-map-2026-10-17.md. Full column/constraint extraction, runtime SQL-consumer closure, upgrade tests and per-path provenance/license review remain open."
+      "closure_status": "MIGRATION_SEMANTICS_MAPPED_PARTIALLY",
+      "notes": "Ordered PostgreSQL migration; schema domain and runtime consumers summarized in postgresql-schema-runtime-map-2026-10-17.md. Upgrade/backfill, rollback/recovery and all SQL caller closure remain open."
     },
     {
       "path": "backend/package-lock.json",
@@ -19537,7 +19603,7 @@
     }
   ],
   "removed_since_previous_pin": [],
-  "review_checkpoint": "2026-10-17: expanded path register for auth/session, OAuth/OIDC, host validation/safeFetch, image proxy, sanitizer and corresponding tests. Dependency-role classification is not license clearance.",
+  "review_checkpoint": "2026-10-17: all 66 ordered PostgreSQL migration paths classified as dependency-closure candidates; license remains unreviewed and runtime SQL closure partial.",
   "summary": {
     "unclassified_paths": 1167,
     "classified_paths": 183,
