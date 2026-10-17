@@ -1,28 +1,16 @@
-# Next Action
+# Next Action — MailFlow Source Extraction
 
-1. Read `extraction/README.md`, root `source-extraction-agent/AGENTS.md`, `EXTRACTION_RULES.md`, `EXTRACTION_AGENT_SPEC.md`, and the MailFlow files in `extraction/project-control/`.
-2. Reconfirm live upstream `main` commit/tree against `extraction/source-pins/current.json`; stop discovery claims if either differs.
-3. Audit architecture and build/test surfaces from README, CLA, licenses, CI, package manifests, Docker/config, migrations, backend/frontend and platform packages.
-4. Expand all-path dispositions and capability/dependency manifests. Trace end-to-end flows and high-risk security/privacy/auth/data paths.
-5. Run closure scan and independent reconciliation; resolve unknown paths and missing dependency edges.
-6. Only after gate PASS, plan versioned immutable copy and exact blob/tree verification.
-7. Reconcile central update-watcher behavior: the shared watcher must explicitly support reading the source pin from this external repository before MailFlow monitoring is enabled.
-8. Append evidence and precise next action; never delete completed history.
+## Immediate work
+1. Check the run of .github/workflows/mailflow-source-snapshot.yml triggered by its addition on main. If no run started, manually dispatch it from GitHub Actions.
+2. Review the generated PR from branch automation/mailflow-upstream-snapshot. Confirm the pin points to the live maathimself/mailflow main commit and root tree, the snapshot is under extraction/snapshots/<commit>/source, and every blob SHA was checked.
+3. Run node extraction/tools/verify-inventory.mjs in a real checkout after the snapshot PR is available; fix every actual failure and record the exact output. Do not infer success from workflow YAML or a PR existing.
+4. Merge the source snapshot PR only after the exact-copy verification and license notices are retained. Keep the snapshot commit immutable.
+5. Continue the 1,300+ path review: classify all paths, review third-party provenance, AGPL/commercial license terms, CLA, LFS/submodules, and map transitive first-party dependency closure.
+6. Trace full capabilities through source, callers, schemas/migrations, runtime/config, permissions, retries, recovery, tests, UI states, Electron and Android.
+7. Keep each upstream update as a new commit-addressed snapshot. The watcher may create/update a reviewable PR; never overwrite a prior snapshot or silently merge new upstream code into a host application.
 
-## Update — 2026-10-14
-
-The complete tree inventory and preliminary candidate index are present under `extraction/manifests/`. All 1,319 file paths are registered but remain UNCLASSIFIED. The watcher workflow is authored in `ai-reusable-libraries` but has not been verified on a default-branch run and currently must not be treated as watching this repository's pin.
-
-Immediate next action: inspect high-risk and central architecture paths (backend entry/config, package manifests, IMAP manager, message service/parser, auth/OIDC/OAuth, image proxy/sanitizer, migrations, plugin boundary, frontend app, Electron/Android security and CI); map callers and tests; update the per-path disposition register with evidence. Do not copy source until closure and license gates pass.
-
-## Architecture map update
-
-The initial map includes 16 candidate capability areas with pinned blob identities and test candidates. Expand each candidate through actual imports/callers, schema/migrations, configuration, permissions, runtime and tests, then use evidence to classify paths. High-risk priority: auth/OAuth, safeFetch/image proxy/email sanitizer, IMAP move/sync, plugin isolation, migrations, native Electron/Android security and update watcher permissions.
-
-## Verification update
-
-Stored-manifest consistency was checked against the pinned tree and passed with zero mismatches. The Node verifier at `extraction/tools/verify-inventory.mjs` has not been executed in a local checkout. Run it when a checkout is available, then continue actual content/call-chain discovery and path classification. Do not confuse manifest consistency with extraction closure.
-
-## Workspace migration update
-
-MailFlow-specific project-control, manifests, source pin and verifier now live under `extraction/`; generic prompts, skills, schemas, rules and workflows live under the versioned root `source-extraction-agent/` copy. Review https://github.com/Rilan-Dev/mailflow/pull/1 for the migration. Keep source-copy authorization false.
+## Guardrails
+- Current upstream observed during the 2026-10-17 review: https://github.com/maathimself/mailflow, main commit 35067fc2876d50980f1a8a3b8ea72b5467b69f60, root tree a2a82b50b8a1ac24a273e55dc0f9418aefdfed17. The workflow must resolve live main at execution time; do not assume this pin remains current.
+- PR #1 (self-contained workspace) is merged. PRs #2 and #3 were closed as superseded after PR #1; their useful memory/source-identity changes are being retained on main.
+- Source snapshot capture is authorized by the user, but license clearance, capability closure, host-integration readiness and extraction PASS are not established.
+- The reusable framework remains in source-extraction-agent/; MailFlow-specific evidence stays under extraction/.
