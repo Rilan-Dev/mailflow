@@ -702,3 +702,17 @@ If any accounts were configured with **Skip TLS verification** (e.g. for a self-
 - IMAP/SMTP credentials are stored at rest in the database (standard for webmail clients — protect access to your server and database volume accordingly)
 - Responses set a strict `Content-Security-Policy`, clickjacking protection via `X-Frame-Options`, and a restrictive `Referrer-Policy`
 - Email HTML is sanitized before rendering, including stripping external `url()` references from CSS style blocks to prevent tracking
+
+---
+
+## Source extraction library
+
+This repository also maintains a full, commit-pinned source library for reuse and audit:
+
+- [Extraction workspace](extraction/README.md) — rules, memory, sessions, source pins, manifests, project control and verification.
+- [Current source pin](extraction/source-pins/current.json) — exact upstream repository, commit and root tree.
+- [Current immutable source snapshot](extraction/snapshots/35067fc2876d50980f1a8a3b8ea72b5467b69f60/source/) — byte-exact Git blob snapshot of upstream commit `35067fc2876d50980f1a8a3b8ea72b5467b69f60`.
+- [Capability closure tracker](extraction/manifests/capability-closure-2026-10-17-35067fc.json) — work remaining before extracted capabilities can be safely reused.
+- [Upstream snapshot workflow](.github/workflows/mailflow-source-snapshot.yml) — captures future upstream main changes as new immutable snapshots.
+
+The source tree is captured and its Git blob/tree identities are verified. Capability/dependency closure and per-path license/provenance review are still in progress; this does not mean every capability is ready to integrate into another application.
