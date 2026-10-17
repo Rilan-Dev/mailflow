@@ -6,7 +6,7 @@ import { createRemoteJWKSet, jwtVerify, customFetch } from 'jose';
 import { query, pool } from '../services/db.js';
 import { requireAuth } from '../middleware/auth.js';
 import { decrypt, isEncrypted } from '../services/encryption.js';
-import { imapManager } from '../index.js';
+import { imapManager } from '../services/imapManagerRef.js';  // NEXAHUB: was ../index.js
 import { validateHost } from '../services/hostValidation.js';
 import { logAuthEvent } from '../services/authEvents.js';
 
@@ -103,8 +103,25 @@ function generatePKCE() {
   return { verifier, challenge };
 }
 
+// NEXAHUB: per-tenant callback URLs -- see docs/mailflow/SYNC.md.
+// APP_URL is one value for the whole process. Under multi-tenancy each tenant is served
+// on its own hostname, so a single APP_URL would send every tenant's IdP to the same
+// host -- and since this callback path carries only the provider slug, that host cannot
+// tell which tenant's provider config to use. Two tenants both using the slug "okta"
+// would be indistinguishable. NexaHub installs a resolver returning the current tenant's
+// origin; left unset, upstream behaviour is unchanged.
+let baseUrlResolver = null;
+
+export function setBaseUrlResolver(resolver) {
+  baseUrlResolver = resolver;
+}
+
+function baseUrl() {
+  return baseUrlResolver ? baseUrlResolver() : process.env.APP_URL;
+}
+
 function getRedirectUri(provider) {
-  return `${process.env.APP_URL}/auth/oidc/${provider.slug}/callback`;
+  return `${baseUrl()}/auth/oidc/${provider.slug}/callback`;
 }
 
 // Returns true/false when admin_group_claim is configured, null when not configured.
@@ -151,7 +168,8 @@ export async function buildEndSessionUrl({ providerId, idToken } = {}) {
     if (idToken) params.set('id_token_hint', idToken);
     // post_logout_redirect_uri must be registered with the IdP; omit it when APP_URL is
     // unset (dev) so the request stays valid and the IdP shows its own logged-out page.
-    if (process.env.APP_URL) params.set('post_logout_redirect_uri', `${process.env.APP_URL}/login`);
+    const base = baseUrl();  // NEXAHUB: tenant-aware, was process.env.APP_URL
+    if (base) params.set('post_logout_redirect_uri', `${base}/login`);
 
     return `${doc.end_session_endpoint}?${params}`;
   } catch (err) {

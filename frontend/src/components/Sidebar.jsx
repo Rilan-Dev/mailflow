@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { mailflowApiUrl, mailflowFetchHeaders, mailflowHostChrome } from '../utils/api.js';  // NEXAHUB
 import { useTranslation } from 'react-i18next';
 import { useStore } from '../store/index.js';
 import { api } from '../utils/api.js';
@@ -454,7 +455,7 @@ export default function Sidebar() {
   const [updateInfo, setUpdateInfo] = useState(null);
   useEffect(() => {
     let cancelled = false;
-    fetch('/api/update')
+    fetch(mailflowApiUrl('/update'), { headers: mailflowFetchHeaders() })
       .then(r => (r.ok ? r.json() : null))
       .then(d => { if (!cancelled && d) setUpdateInfo(d); })
       .catch(() => {});
@@ -1519,6 +1520,13 @@ export default function Sidebar() {
 
       {/* Bottom — mobile: inline user section; desktop: user menu button */}
       {isMobile ? (
+        /* NEXAHUB: the same gate the desktop branch below already carries. A host that
+           draws its own user menu draws it on phones too -- NexaHub's is in its nav
+           drawer -- so without this the Mail tab shows two user sections on mobile and
+           only one on desktop. Every control in this block (identity, block remote
+           images, search all folders, edit profile, settings, sign out) has a host
+           equivalent; see docs/mailflow/UI-AUDIT.md for the item-by-item mapping. */
+        !mailflowHostChrome().hidesUserMenu && (
         <div style={{ borderTop: '1px solid var(--border-subtle)', flexShrink: 0 }}>
           {/* User identity — tap to expand/collapse actions */}
           <div
@@ -1737,6 +1745,7 @@ export default function Sidebar() {
           </>
           )}
         </div>
+        )
       ) : (
         <>
           <div style={{ padding: '4px 8px', display: 'flex', justifyContent: sidebarCollapsed ? 'center' : 'flex-start' }}>
@@ -1757,6 +1766,9 @@ export default function Sidebar() {
               {ICONS.contacts}
             </button>
           </div>
+          {/* NEXAHUB: hidden when the host draws its own user menu -- otherwise the
+              app shows two profile menus at once, one per sidebar. */}
+          {!mailflowHostChrome().hidesUserMenu && (
           <div style={{ padding: '8px', borderTop: '1px solid var(--border-subtle)' }}>
           <div
             ref={userMenuBtnRef}
@@ -1801,6 +1813,7 @@ export default function Sidebar() {
             )}
           </div>
         </div>
+          )}
         </>
       )}
 

@@ -2,7 +2,7 @@ import { randomBytes } from 'crypto';
 import { Router } from 'express';
 import { createRemoteJWKSet, jwtVerify } from 'jose';
 import { query, withTransaction } from '../services/db.js';
-import { imapManager } from '../index.js';
+import { imapManager } from '../services/imapManagerRef.js';  // NEXAHUB: was ../index.js
 import { encrypt, decrypt } from '../services/encryption.js';
 import { redactEmail } from '../utils/redact.js';
 

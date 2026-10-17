@@ -5,9 +5,24 @@ import {
   MASKED_API_KEY,
   createAiProvider,
   normalizeAiConfig,
+  // NEXAHUB: the host-bridged providers — Anthropic and Gemini run on NexaHub's own
+  // adapters rather than on a second SDK implementation inside vendor/mailflow.
+  AI_PROVIDER_ANTHROPIC,
+  AI_PROVIDER_GEMINI,
+  setHostAiBridge,
 } from './aiProvider.js';
 
 const encoder = new TextEncoder();
+
+// NEXAHUB: every normalized config now carries one section per host-bridged provider,
+// always present, so a caller can read it without a null check. `apiKey` defaults to null
+// rather than '' to match apiKeyConfig — null is "nothing stored", which is what the
+// encrypted column holds. Spread into the existing whole-object assertions so they keep
+// asserting the exact shape rather than being loosened to a subset match.
+const EMPTY_BRIDGED_SECTIONS = {
+  anthropicConfig: { apiKey: null, model: '' },
+  geminiConfig: { apiKey: null, model: '' },
+};
 
 function jsonResponse(body, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -93,6 +108,7 @@ describe('normalizeAiConfig', () => {
         baseUrl: 'http://ollama:11434/v1', apiKey: 'encrypted:key', model: 'llama3',
       },
       chatgptConfig: { model: 'gpt-5.6-luna' },
+      ...EMPTY_BRIDGED_SECTIONS, // NEXAHUB
       features: { compose: false, summarize: true },
     });
   });
@@ -108,6 +124,7 @@ describe('normalizeAiConfig', () => {
       provider: AI_PROVIDER_CHATGPT,
       apiKeyConfig: { baseUrl: 'https://api.example/v1', apiKey: null, model: 'api-model' },
       chatgptConfig: { model: 'gpt-5.4' },
+      ...EMPTY_BRIDGED_SECTIONS, // NEXAHUB
       features: { compose: true, summarize: true },
     });
   });

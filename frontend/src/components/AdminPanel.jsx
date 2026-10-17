@@ -1,4 +1,5 @@
 import { useCallback, useState, useEffect, useLayoutEffect, useRef, useMemo } from 'react';
+import { mailflowAbout, mailflowApiUrl, mailflowFetchHeaders } from '../utils/api.js';  // NEXAHUB
 import { useTranslation } from 'react-i18next';
 import { useStore } from '../store/index.js';
 import { getPluginMeta } from '../plugins/registry.js';
@@ -14,6 +15,12 @@ import {
   AI_PROVIDER_API_KEY,
   AI_PROVIDER_CHATGPT,
   OPENAI_MODELS_URL,
+  // NEXAHUB: Anthropic + Gemini, which are configured with a key and a model only.
+  AI_DIRECT_PROVIDER_SECTIONS,
+  AI_PROVIDER_ANTHROPIC,
+  AI_PROVIDER_GEMINI,
+  ANTHROPIC_MODELS_URL,
+  GEMINI_MODELS_URL,
   buildAiSavePayload,
   createCodexDevicePoller,
   isAiFormValid,
@@ -3635,7 +3642,29 @@ function SSOTab() {
 }
 
 // ─── AI Section ───────────────────────────────────────────────────────────────
-function AISection() {
+/**
+ * NEXAHUB: per-provider copy for the direct (key + model) providers. Keyed by the same value
+ * the connection-method selector and the stored `provider` field use, so one lookup serves the
+ * render branch and there is no second switch to keep in step.
+ */
+const AI_DIRECT_PROVIDER_COPY = {
+  [AI_PROVIDER_ANTHROPIC]: {
+    apiKeyPlaceholderKey: 'admin.ai.anthropicApiKeyPh',
+    modelPlaceholderKey: 'admin.ai.anthropicModelPh',
+    modelsUrl: ANTHROPIC_MODELS_URL,
+  },
+  [AI_PROVIDER_GEMINI]: {
+    apiKeyPlaceholderKey: 'admin.ai.geminiApiKeyPh',
+    modelPlaceholderKey: 'admin.ai.geminiModelPh',
+    modelsUrl: GEMINI_MODELS_URL,
+  },
+};
+
+// NEXAHUB: exported as well as rendered by AdminPanel below. NexaHub's shell opens its own
+// settings window (SettingsModal) instead of this AdminPanel, so its "AI Assistant" tab
+// mounts this section directly. Exporting the existing component keeps one implementation
+// of the MailFlow AI config form rather than a second copy on the host side.
+export function AISection() {
   const { t } = useTranslation();
   const isMobile = useMobile();
   const [config, setConfig] = useState(null);
@@ -3845,6 +3874,10 @@ function AISection() {
   const apiSelected = form.connectionMethod === AI_CONNECTION_METHOD_API;
   const accountSelected = form.connectionMethod === AI_CONNECTION_METHOD_ACCOUNT;
   const chatgptSelected = accountSelected && form.accountProvider === AI_PROVIDER_CHATGPT;
+  // NEXAHUB: Anthropic / Gemini — the selected method is also the provider name and the key
+  // into both the form section and the copy table.
+  const directSection = AI_DIRECT_PROVIDER_SECTIONS[form.connectionMethod] || null;
+  const directCopy = AI_DIRECT_PROVIDER_COPY[form.connectionMethod] || null;
   const chatgptConnected = codexStatus.connected === true || deviceState?.phase === 'connected';
   const reconnectRequired = codexStatus.reconnectRequired === true || codexStatus.state === 'reconnect_required' || deviceState?.phase === 'failed';
   const pendingDevice = deviceState?.phase === 'pending' ? deviceState : null;
@@ -3920,6 +3953,37 @@ function AISection() {
           </>
         )}
 
+        {/* NEXAHUB: Anthropic / Gemini — an API key and a model, no base URL. The endpoint is
+            the provider's own and is owned by NexaHub's adapter, not by a settings field. */}
+        {directSection && directCopy && (
+          <>
+            {field(
+              t('admin.ai.apiKey'),
+              form[directSection].apiKey,
+              value => setForm(f => ({ ...f, [directSection]: { ...f[directSection], apiKey: value } })),
+              'password',
+              t(directCopy.apiKeyPlaceholderKey),
+            )}
+            {field(
+              t('admin.ai.model'),
+              form[directSection].model,
+              value => setForm(f => ({ ...f, [directSection]: { ...f[directSection], model: value } })),
+              'text',
+              t(directCopy.modelPlaceholderKey),
+              <a href={directCopy.modelsUrl} target="_blank" rel="noreferrer" style={{ color: 'var(--accent)' }}>
+                {t('admin.ai.chatgptModelDocs')}
+              </a>,
+            )}
+            {/* Testing calls the saved config, so it only appears once this provider is the
+                saved one — same rule the API-key branch above follows. */}
+            {config?.provider === form.connectionMethod && (
+              <button type="button" onClick={handleTest} disabled={testing} style={{ fontSize: 12, padding: '6px 12px', marginBottom: 14, background: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: 6, color: 'var(--text-primary)', cursor: testing ? 'default' : 'pointer', opacity: testing ? 0.6 : 1 }}>
+                {testing ? t('admin.ai.testing') : t('admin.ai.test')}
+              </button>
+            )}
+          </>
+        )}
+
         {chatgptSelected && (
           <>
             {field(
@@ -3986,7 +4050,8 @@ function AISection() {
           </>
         )}
 
-        {(apiSelected || chatgptSelected) && (
+        {/* NEXAHUB: directSection — the feature toggles apply to every configured provider. */}
+        {(apiSelected || chatgptSelected || directSection) && (
           <div style={{ marginBottom: 14 }}>
             <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 8 }}>{t('admin.ai.features')}</div>
             {toggle(t('admin.ai.featureCompose'), form.features.compose, () => setForm(f => ({ ...f, features: { ...f.features, compose: !f.features.compose } })))}
@@ -5578,7 +5643,7 @@ function AboutTab() {
   const [info, setInfo] = useState(null);
 
   useEffect(() => {
-    fetch('/api/version')
+    fetch(mailflowApiUrl('/version'), { headers: mailflowFetchHeaders() })
       .then(r => r.ok ? r.json() : Promise.reject())
       .then(setInfo)
       .catch(() => setInfo({ version: '—', sha: '—' }));
@@ -5589,16 +5654,14 @@ function AboutTab() {
     [t('admin.about.version'),       info ? info.version : '…'],
     [t('admin.about.backendBuild'),  info ? info.sha     : '…'],
     [t('admin.about.frontendBuild'), feSha],
-    [t('admin.about.license'),       'AGPL-3.0'],
+    [t('admin.about.license'),       about.license],
   ];
-  const generalRows = [
-    [t('admin.about.website'),    'https://mailflow.sh'],
-    [t('admin.about.sourceCode'), 'https://github.com/maathimself/mailflow'],
-  ];
-  const supportRows = [
-    [t('admin.about.kofi'),           'https://ko-fi.com/mailflow'],
-    [t('admin.about.githubSponsors'), 'https://github.com/sponsors/maathimself'],
-  ];
+  // NEXAHUB: read through the branding seam rather than hard-coding MailFlow's own name
+  // and links -- inside NexaHub, MailFlow is a vendored dependency, not the product the
+  // user signed in to. Unconfigured, mailflowAbout() returns exactly the values above.
+  const about = mailflowAbout();
+  const generalRows = about.links.map(([key, href]) => [t(`admin.about.${key}`), href]);
+  const supportRows = about.support.map(([key, href]) => [t(`admin.about.${key}`), href]);
 
   const rowStyle = (last) => ({
     display: 'flex', justifyContent: 'space-between', alignItems: 'center',
@@ -5609,7 +5672,7 @@ function AboutTab() {
   return (
     <div style={{ maxWidth: 420 }}>
       <div style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>
-        MailFlow
+        {about.name}
       </div>
       <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 24 }}>
         {t('admin.about.subtitle')}
@@ -5632,6 +5695,7 @@ function AboutTab() {
           </div>
         ))}
       </div>
+      {supportRows.length > 0 && (<>
       <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 8px 4px' }}>
         {t('admin.about.sponsor')}
       </div>
@@ -5645,6 +5709,7 @@ function AboutTab() {
           </div>
         ))}
       </div>
+      </>)}
     </div>
   );
 }

@@ -6,7 +6,7 @@ import { requireAuth } from '../middleware/auth.js';
 import sanitizeHtml from 'sanitize-html';
 import { sanitizeSignature, sanitizeComposeBody } from '../services/emailSanitizer.js';
 import { embedInlineDataImages } from '../utils/inlineImages.js';
-import { imapManager } from '../index.js';
+import { imapManager } from '../services/imapManagerRef.js';  // NEXAHUB: was ../index.js
 
 const router = Router();
 router.use(requireAuth);

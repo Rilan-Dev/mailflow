@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { query } from '../services/db.js';
 import { requireAuth } from '../middleware/auth.js';
-import { imapManager } from '../index.js';
+import { imapManager } from '../services/imapManagerRef.js';  // NEXAHUB: was ../index.js
 import { encrypt } from '../services/encryption.js';
 import { sanitizeSignature } from '../services/emailSanitizer.js';
 import { validateHost } from '../services/hostValidation.js';

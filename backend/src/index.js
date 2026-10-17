@@ -3,6 +3,7 @@ import 'express-async-errors'; // route a rejected async handler to the error mi
 import session from 'express-session';
 import cors from 'cors';
 import { createServer } from 'http';
+import { setImapManager } from './services/imapManagerRef.js';  // NEXAHUB
 import { readFileSync } from 'fs';
 import { WebSocketServer } from 'ws';
 import RedisStore from 'connect-redis';
@@ -157,6 +158,7 @@ app.use('/api', (req, res, next) => {
 
 // Make imap manager available globally
 export const imapManager = new ImapManager(wss);
+setImapManager(imapManager);  // NEXAHUB: let routes reach it without importing this file
 app.set('imapManager', imapManager);
 // Hand the mail engine to the plugin platform so plugin-api capabilities (labels, archive,
 // broadcast) can be bound to it without any plugin importing the mail engine or this entry file.

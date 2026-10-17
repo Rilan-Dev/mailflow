@@ -10,7 +10,7 @@ import { redisClient } from '../services/redis.js';
 import { redactEmail } from '../utils/redact.js';
 import { generateVCard } from '../utils/vcard.js';
 import { createAccountSmtpTransport } from '../services/smtpTransport.js';
-import { imapManager } from '../index.js';
+import { imapManager } from '../services/imapManagerRef.js';  // NEXAHUB: was ../index.js
 import { pluginRegistry } from '../plugins/registry.js';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;

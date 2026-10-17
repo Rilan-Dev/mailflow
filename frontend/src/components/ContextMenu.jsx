@@ -7,6 +7,13 @@ import { usePluginCollected } from '../plugins/PluginSlot.jsx';
 import MessageHeaderModal from './MessageHeaderModal.jsx';
 import { useUiScale, descale } from '../hooks/useUiScale.js';
 
+// NEXAHUB: a stable reference, not a fresh [] per call. This selector runs through
+// useSyncExternalStore; returning a new array every time makes React see the store as
+// perpetually changed -- "The result of getSnapshot should be cached", then "Maximum
+// update depth exceeded", and the pane never renders. zustand v4 hid this by caching
+// selector results internally; v5 does not, so the value must be stable at the source.
+const NO_FOLDERS = [];
+
 // Module-level regex — spam-name heuristic shared with MessagePane.jsx so
 // it isn't recompiled on every render. Mirrors resolveAllSpamPaths on the
 // backend; keep these three in sync when adding a new locale.
@@ -26,7 +33,7 @@ export default function ContextMenu({ x, y, message, onClose, onAction, defaultM
   // Pull the current account so we can render the spam/ham visibility based on
   // folder_mappings.spam + special_use heuristics instead of a fragile name match.
   const account = useStore(s => s.accounts.find(a => a.id === message.account_id));
-  const accountFolders = useStore(s => s.folders[message.account_id] || []);
+  const accountFolders = useStore(s => s.folders[message.account_id] || NO_FOLDERS);
   const categorizationEnabled = useStore(s => s.categorizationEnabled);
   const categorizationActive = categorizationEnabled || !!account?.categorization_enabled;
   const menuRef = useRef(null);

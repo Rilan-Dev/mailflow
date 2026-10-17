@@ -8,12 +8,15 @@ router.use(requireAuth);
 
 // Simple in-memory rate limiter: 20 searches per minute per user.
 const searchBuckets = new Map();
-setInterval(() => {
+// NEXAHUB: .unref() added, matching the pruneTimer in services/rateLimiter.js. Without it
+// this keeps any process that imports this router alive forever.
+const searchPruneTimer = setInterval(() => {
   const now = Date.now();
   for (const [k, b] of searchBuckets) {
     if (now > b.resetAt) searchBuckets.delete(k);
   }
 }, 60_000);
+searchPruneTimer.unref?.();
 
 function searchLimiter(req, res, next) {
   const key = req.session.userId;

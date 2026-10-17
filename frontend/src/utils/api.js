@@ -1,5 +1,79 @@
 const BASE = '/api';
 
+// NEXAHUB: host configuration seam -- see docs/mailflow/SYNC.md.
+// Standalone MailFlow serves its API at /api and authenticates with a session cookie.
+// Mounted inside NexaHub it lives at /api/mailflow and authenticates with NexaHub's JWT,
+// so the host supplies both. Left unconfigured, everything below behaves exactly as
+// upstream, which is what keeps MailFlow's own dev server and tests working.
+let hostApiBase = null;
+let hostAuthHeaders = null;
+
+// NEXAHUB: branding seam. Mounted inside NexaHub, the About panel must name NexaHub and
+// point at NexaHub's own links -- MailFlow is a vendored dependency there, not the
+// product the user signed in to. Left unconfigured this returns MailFlow's own details,
+// so upstream is unchanged.
+const UPSTREAM_ABOUT = {
+  name: 'MailFlow',
+  license: 'AGPL-3.0',
+  links: [
+    ['website', 'https://mailflow.sh'],
+    ['sourceCode', 'https://github.com/maathimself/mailflow'],
+  ],
+  support: [
+    ['kofi', 'https://ko-fi.com/mailflow'],
+    ['githubSponsors', 'https://github.com/sponsors/maathimself'],
+  ],
+};
+let hostAbout = null;
+
+// NEXAHUB: chrome the host already provides. MailFlow's sidebar carries its own user menu
+// at the bottom; mounted inside a host that has one in its own shell, both render at once
+// and the user sees two profile menus side by side. Left unconfigured nothing is hidden.
+let hostChrome = { hidesUserMenu: false };
+
+export function configureMailflowApi({ base, getAuthHeaders, about, chrome } = {}) {
+  if (typeof base === 'string') hostApiBase = base.replace(/\/+$/, '');
+  if (typeof getAuthHeaders === 'function') hostAuthHeaders = getAuthHeaders;
+  if (about && typeof about === 'object') hostAbout = about;
+  if (chrome && typeof chrome === 'object') hostChrome = { ...hostChrome, ...chrome };
+}
+
+/** Which pieces of MailFlow's own chrome the host has already drawn. */
+export function mailflowHostChrome() {
+  return hostChrome;
+}
+
+/** What the About panel should call this product, and where it should link. */
+export function mailflowAbout() {
+  return { ...UPSTREAM_ABOUT, ...(hostAbout || {}) };
+}
+
+function apiBase() {
+  return hostApiBase === null ? BASE : hostApiBase;
+}
+
+/**
+ * NEXAHUB: for the handful of places that call fetch() directly instead of going through
+ * request(). Without this they target /api on the host origin, which under NexaHub is its
+ * own API and answers 401 rather than reaching MailFlow at all.
+ */
+export function mailflowApiUrl(path) {
+  return apiBase() + path;
+}
+
+export function mailflowFetchHeaders(extra) {
+  return { [CSRF_HEADER]: CSRF_VALUE, ...hostHeaders(), ...(extra || {}) };
+}
+
+function hostHeaders() {
+  if (!hostAuthHeaders) return {};
+  try {
+    return hostAuthHeaders() || {};
+  } catch {
+    return {};
+  }
+}
+
 // Sent on every /api request so the backend CSRF guard accepts it. A cross-site
 // form/navigation cannot set a custom header, and a cross-origin fetch that tries
 // triggers a CORS preflight the server rejects. Any raw fetch() to /api elsewhere
@@ -12,13 +86,13 @@ async function request(method, path, body, extraHeaders) {
   const opts = {
     method,
     credentials: 'include',
-    headers: { [CSRF_HEADER]: CSRF_VALUE, ...(extraHeaders || {}) },
+    headers: { [CSRF_HEADER]: CSRF_VALUE, ...hostHeaders(), ...(extraHeaders || {}) },  // NEXAHUB
   };
   if (body) {
     opts.headers['Content-Type'] = 'application/json';
     opts.body = JSON.stringify(body);
   }
-  const res = await fetch(BASE + path, opts);
+  const res = await fetch(apiBase() + path, opts);  // NEXAHUB
   if (!res.ok) {
     if (res.status === 423) {
       // Server-enforced screen lock (#235) — surface the lock overlay from any call.
@@ -34,10 +108,10 @@ async function request(method, path, body, extraHeaders) {
 }
 
 export async function streamAiChat(messages, { signal, onDelta } = {}) {
-  const response = await fetch(`${BASE}/ai/chat`, {
+  const response = await fetch(`${apiBase()}/ai/chat`, {  // NEXAHUB
     method: 'POST',
     credentials: 'include',
-    headers: { 'Content-Type': 'application/json', [CSRF_HEADER]: CSRF_VALUE },
+    headers: { 'Content-Type': 'application/json', [CSRF_HEADER]: CSRF_VALUE, ...hostHeaders() },
     body: JSON.stringify({ messages }),
     signal,
   });
@@ -127,7 +201,7 @@ export const api = {
     // Custom (not request()) so we can read the lockout flag on failure: after too many
     // attempts the server destroys the session and returns { signedOut: true }; route to
     // login via session_expired rather than showing an error.
-    const res = await fetch(BASE + '/auth/unlock', {
+    const res = await fetch(apiBase() + '/auth/unlock', {  // NEXAHUB
       method: 'POST', credentials: 'include',
       headers: { [CSRF_HEADER]: CSRF_VALUE, 'Content-Type': 'application/json' },
       body: JSON.stringify({ pin }),
@@ -403,7 +477,7 @@ export const api = {
   // directly as an <img>/background src (authenticated same-origin, cookies ride along).
   importGtdPet: (payload) => request('POST', '/gtd/pet/import', payload),
   getGtdPetMeta: (slug) => request('GET', `/gtd/pet/${encodeURIComponent(slug)}/meta`),
-  gtdPetSheetUrl: (slug) => `${BASE}/gtd/pet/${encodeURIComponent(slug)}/sheet`,
+  gtdPetSheetUrl: (slug) => `${apiBase()}/gtd/pet/${encodeURIComponent(slug)}/sheet`,
 
   // Plugins — registered plugins for this build plus the user's per-user activation. Activation is
   // independent of a plugin's own per-account config (e.g. GTD's gtd_enabled).

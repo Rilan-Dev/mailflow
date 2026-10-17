@@ -7,7 +7,7 @@ import { validateHost, resolveForConnection } from '../services/hostValidation.j
 import { createSmtpTransport } from '../services/smtpTransport.js';
 import { getConnectionPolicy, invalidateConnectionPolicyCache } from '../services/connectionPolicy.js';
 import { reloadAuthSettings } from '../services/authLimiter.js';
-import { imapManager } from '../index.js';
+import { imapManager } from '../services/imapManagerRef.js';  // NEXAHUB: was ../index.js
 import { stopCardavUser } from '../services/carddavSync.js';
 import { pluginRegistry } from '../plugins/registry.js';
 

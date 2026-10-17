@@ -3,7 +3,23 @@ import { encrypt, isEncrypted } from './encryption.js';
 
 const { Pool } = pg;
 
-export const pool = new Pool({
+// NEXAHUB: tenant scoping -- see docs/mailflow/SYNC.md and docs/mailflow/SCHEMA.md.
+// MailFlow is single-tenant upstream: 82 files import `query`/`pool` from here and none
+// of them name a tenant. NexaHub installs a resolver at boot that returns the pool for
+// whichever tenant owns the current request, so every one of those consumers becomes
+// tenant-scoped without being touched. Left unset -- plain upstream MailFlow, and its
+// own tests -- everything falls through to the single pool below, unchanged.
+let tenantPoolResolver = null;
+
+export function setTenantPoolResolver(resolver) {
+  tenantPoolResolver = resolver;
+}
+
+function activePool() {
+  return tenantPoolResolver ? tenantPoolResolver() : defaultPool;
+}
+
+const defaultPool = new Pool({
   host: process.env.DB_HOST || 'postgres',
   port: parseInt(process.env.DB_PORT, 10) || 5432,
   database: process.env.DB_NAME || 'mailflow',
@@ -20,15 +36,26 @@ export const pool = new Pool({
   options: '-c statement_timeout=30000',
 });
 
+// A proxy rather than a re-export, so `pool.connect()` in routes/auth.js, routes/oidc.js
+// and services/migrations.js reaches the current tenant's pool without those files
+// changing. NEXAHUB.
+export const pool = new Proxy({}, {
+  get(_target, property) {
+    const active = activePool();
+    const value = active[property];
+    return typeof value === 'function' ? value.bind(active) : value;
+  },
+});
+
 export async function query(text, params) {
-  return pool.query(text, params);
+  return activePool().query(text, params);  // NEXAHUB: tenant-scoped
 }
 
 // Run fn(client) inside a serializable transaction. Commits on success, rolls
 // back on throw. The client exposes a .query(text, params) method identical to
 // the top-level query() helper.
 export async function withTransaction(fn) {
-  const client = await pool.connect();
+  const client = await activePool().connect();  // NEXAHUB: tenant-scoped
   try {
     await client.query('BEGIN');
     const result = await fn(client);

@@ -126,6 +126,12 @@ const SAME_VALUE_ALLOWED = {
   'admin.accounts.smtpHostPh':              'any', // smtp.gmail.com
   'admin.ai.baseUrlPh':                      'any', // http://localhost:11434/v1
   'admin.ai.chatgptModelPh':                 'any', // gpt-5.6-luna
+  // NEXAHUB: Anthropic / Gemini credential + model placeholders. Key prefixes and model
+  // identifiers are literals the provider defines, so every locale shows the same string.
+  'admin.ai.anthropicApiKeyPh':              'any', // sk-ant-…
+  'admin.ai.anthropicModelPh':               'any', // claude-sonnet-4-5
+  'admin.ai.geminiApiKeyPh':                 'any', // AIza…
+  'admin.ai.geminiModelPh':                  'any', // gemini-2.5-flash
   'admin.appearance.customCssPlaceholder':   'any', // CSS code snippet, same in all locales
   'admin.integrations.microsoft.clientIdPh':'any', // xxxxxxxx-xxxx-…
   'admin.integrations.microsoft.title':     'any', // Microsoft 365 / Outlook.com

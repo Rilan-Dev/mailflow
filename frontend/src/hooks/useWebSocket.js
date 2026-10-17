@@ -100,7 +100,16 @@ export function useWebSocket() {
       wsRef.current.close();
     }
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const ws = new WebSocket(`${protocol}//${window.location.host}/ws`);
+    // NEXAHUB: the host may need to authenticate this socket -- see docs/mailflow/SYNC.md.
+    // A browser cannot set headers on a WebSocket, so NexaHub passes its JWT as a
+    // subprotocol rather than a query parameter, which would write a live credential into
+    // every access log the request passes through. Unset, this is upstream's plain socket.
+    const wsProtocols = typeof globalThis.__mailflowSocketProtocols === 'function'
+      ? globalThis.__mailflowSocketProtocols()
+      : undefined;
+    const ws = wsProtocols && wsProtocols.length
+      ? new WebSocket(`${protocol}//${window.location.host}/ws`, wsProtocols)
+      : new WebSocket(`${protocol}//${window.location.host}/ws`);
 
     ws.onopen = () => {
       const wasReconnect = hasConnectedBefore.current;

@@ -4,7 +4,7 @@ import crypto from 'crypto';
 import { authenticator } from 'otplib';
 import QRCode from 'qrcode';
 import { query, pool } from '../services/db.js';
-import { imapManager } from '../index.js';
+import { imapManager } from '../services/imapManagerRef.js';  // NEXAHUB: was ../index.js
 import { decrypt, encrypt } from '../services/encryption.js';
 import { pushConfigured } from '../services/pushNotifications.js';
 import { validateHost, resolveForConnection } from '../services/hostValidation.js';

@@ -11,7 +11,46 @@ export const AI_PROVIDER_CHATGPT = 'chatgpt';
 export const MASKED_API_KEY = '••••••••';
 export const DEFAULT_CODEX_MODEL = 'gpt-5.6-luna';
 
-const PROVIDERS = new Set([AI_PROVIDER_API_KEY, AI_PROVIDER_CHATGPT]);
+// NEXAHUB: providers whose completions are executed by the host application rather than by
+// MailFlow itself. NexaHub already owns a multi-provider AI layer (apps/server/src/ai/*)
+// with adapters, model catalogue and quota accounting for these two; duplicating their SDK
+// calls here would mean two implementations to keep current. Standalone MailFlow never
+// installs a host bridge, so selecting one of these without a host is refused (501) rather
+// than half-working.
+export const AI_PROVIDER_ANTHROPIC = 'anthropic';
+export const AI_PROVIDER_GEMINI = 'gemini';
+
+/** NEXAHUB: provider -> the config section holding its credential and model. */
+const HOST_BRIDGED_PROVIDERS = new Map([
+  [AI_PROVIDER_ANTHROPIC, 'anthropicConfig'],
+  [AI_PROVIDER_GEMINI, 'geminiConfig'],
+]);
+
+// NEXAHUB: the host-supplied completion bridge. Injected the same way MailFlow already
+// accepts an ImapManager and a tenant pool resolver, so the dependency points host ->
+// vendor and this file needs no knowledge of NexaHub.
+let hostAiBridge = null;
+
+/** NEXAHUB: called once at boot by the host (NexaHub: mailflow/aiBridge.ts). */
+export function setHostAiBridge(bridge) {
+  if (bridge !== null && typeof bridge?.complete !== 'function') {
+    throw new TypeError('A host AI bridge must expose complete()');
+  }
+  hostAiBridge = bridge;
+}
+
+/** NEXAHUB: exported for the host's own verification scripts. */
+export function getHostAiBridge() {
+  return hostAiBridge;
+}
+
+const PROVIDERS = new Set([
+  AI_PROVIDER_API_KEY,
+  AI_PROVIDER_CHATGPT,
+  // NEXAHUB
+  AI_PROVIDER_ANTHROPIC,
+  AI_PROVIDER_GEMINI,
+]);
 const ERROR_BODY_LIMIT_BYTES = 8 * 1024;
 const JSON_BODY_LIMIT_BYTES = 2 * 1024 * 1024;
 const SSE_EVENT_LIMIT_BYTES = 256 * 1024;
@@ -34,6 +73,15 @@ function normalizeBaseUrl(value) {
   return cleanString(value).replace(/\/+$/, '');
 }
 
+/** NEXAHUB: `{ apiKey, model }` section for a host-bridged provider. */
+function normalizeHostBridgedSection(raw) {
+  const source = raw && typeof raw === 'object' ? raw : {};
+  return {
+    apiKey: source.apiKey || null,
+    model: cleanString(source.model),
+  };
+}
+
 export function normalizeAiConfig(raw = {}) {
   const hasStructuredConfig = raw.apiKeyConfig && typeof raw.apiKeyConfig === 'object';
   const apiSource = hasStructuredConfig ? raw.apiKeyConfig : raw;
@@ -52,6 +100,10 @@ export function normalizeAiConfig(raw = {}) {
     chatgptConfig: {
       model: cleanString(chatgptSource.model) || DEFAULT_CODEX_MODEL,
     },
+    // NEXAHUB: one section per host-bridged provider, same shape as apiKeyConfig
+    // minus baseUrl (the host SDKs own their endpoints).
+    anthropicConfig: normalizeHostBridgedSection(raw.anthropicConfig),
+    geminiConfig: normalizeHostBridgedSection(raw.geminiConfig),
     features: {
       compose: raw.features?.compose !== false,
       summarize: raw.features?.summarize !== false,
@@ -61,13 +113,21 @@ export function normalizeAiConfig(raw = {}) {
 
 function publicConfig(config) {
   if (!config) return null;
-  return {
+  const masked = {
     ...config,
     apiKeyConfig: {
       ...config.apiKeyConfig,
       apiKey: config.apiKeyConfig.apiKey ? MASKED_API_KEY : '',
     },
   };
+  // NEXAHUB: host-bridged credentials must never leave the server either.
+  for (const section of HOST_BRIDGED_PROVIDERS.values()) {
+    masked[section] = {
+      ...config[section],
+      apiKey: config[section]?.apiKey ? MASKED_API_KEY : '',
+    };
+  }
+  return masked;
 }
 
 function redactSecrets(value, secrets = []) {
@@ -163,13 +223,47 @@ export function createAiProvider({
     const existing = await loadAiConfig();
     const incomingApi = input.apiKeyConfig || {};
     const incomingKey = incomingApi.apiKey;
-    const storedKey = typeof incomingKey === 'string' && incomingKey && incomingKey !== MASKED_API_KEY
-      ? encryptFn(incomingKey)
-      : (existing?.apiKeyConfig.apiKey || null);
+    // NEXAHUB: a blank or masked key means "keep the stored one" — shared by every
+    // credential section so the admin form never has to round-trip a secret.
+    const keepOrEncrypt = (submitted, stored) => (
+      typeof submitted === 'string' && submitted && submitted !== MASKED_API_KEY
+        ? encryptFn(submitted)
+        : (stored || null)
+    );
+    const storedKey = keepOrEncrypt(incomingKey, existing?.apiKeyConfig.apiKey);
+    // NEXAHUB
+    const hostBridgedSections = {};
+    for (const section of HOST_BRIDGED_PROVIDERS.values()) {
+      const incoming = input[section] || {};
+      hostBridgedSections[section] = {
+        ...incoming,
+        apiKey: keepOrEncrypt(incoming.apiKey, existing?.[section]?.apiKey),
+      };
+    }
     const config = normalizeAiConfig({
       ...input,
       apiKeyConfig: { ...incomingApi, apiKey: storedKey },
+      ...hostBridgedSections,
     });
+
+    // NEXAHUB: a host-bridged provider needs a credential and a model, and it needs a
+    // host that can actually run it. Refusing at save time keeps standalone MailFlow
+    // from storing a selection it can never serve.
+    const hostBridgedSection = HOST_BRIDGED_PROVIDERS.get(config.provider);
+    if (config.enabled && hostBridgedSection) {
+      if (!hostAiBridge) {
+        throw new AiProviderError(
+          `${config.provider} is only available when MailFlow runs inside a host that provides an AI bridge`,
+          { status: 501 },
+        );
+      }
+      if (!config[hostBridgedSection].apiKey) {
+        throw new AiProviderError('API key is required', { status: 400 });
+      }
+      if (!config[hostBridgedSection].model) {
+        throw new AiProviderError('Model name is required', { status: 400 });
+      }
+    }
 
     if (config.enabled && config.provider === AI_PROVIDER_API_KEY
         && (!config.apiKeyConfig.baseUrl || !config.apiKeyConfig.model)) {
@@ -207,11 +301,102 @@ export function createAiProvider({
         && (!config.apiKeyConfig.baseUrl || !config.apiKeyConfig.model)) {
       throw new AiProviderError('AI provider not fully configured');
     }
+    // NEXAHUB
+    const hostBridgedSection = HOST_BRIDGED_PROVIDERS.get(config.provider);
+    if (hostBridgedSection
+        && (!config[hostBridgedSection].apiKey || !config[hostBridgedSection].model)) {
+      throw new AiProviderError('AI provider not fully configured');
+    }
     return config;
   }
 
   function apiKeyCredential(config) {
     return config.apiKeyConfig.apiKey ? decryptFn(config.apiKeyConfig.apiKey) : null;
+  }
+
+  /**
+   * NEXAHUB: build the host bridge call for a host-bridged provider. Throws 501 when
+   * MailFlow runs standalone so the failure names the missing host rather than
+   * surfacing as a generic provider error.
+   */
+  function hostBridgeRequest(config, messages, { signal, maxTokens, onDelta } = {}) {
+    const section = HOST_BRIDGED_PROVIDERS.get(config.provider);
+    if (!hostAiBridge) {
+      throw new AiProviderError(
+        `${config.provider} requires a host AI bridge, which this deployment does not provide`,
+        { status: 501 },
+      );
+    }
+    return {
+      bridge: hostAiBridge,
+      request: {
+        provider: config.provider,
+        model: config[section].model,
+        apiKey: decryptFn(config[section].apiKey),
+        messages,
+        ...(Number.isFinite(maxTokens) ? { maxTokens } : {}),
+        signal,
+        ...(onDelta ? { onDelta } : {}),
+      },
+    };
+  }
+
+  async function completeHostBridged(config, messages, options = {}) {
+    const { bridge, request } = hostBridgeRequest(config, messages, options);
+    let content;
+    try {
+      content = await bridge.complete(request);
+    } catch (error) {
+      if (error instanceof AiProviderError) throw error;
+      throw new AiProviderError(
+        `AI provider request failed: ${redactSecrets(sanitizeText(error?.message) || 'host bridge error', [request.apiKey])}`,
+        { status: Number.isInteger(error?.status) ? error.status : 502 },
+      );
+    }
+    if (typeof content !== 'string') {
+      throw new AiProviderError('AI provider returned an invalid completion', { status: 502 });
+    }
+    return content;
+  }
+
+  /**
+   * NEXAHUB: the host bridge pushes deltas through `onDelta`; MailFlow's chat route
+   * consumes an async iterator. Buffer the pushes so a slow SSE client cannot drop
+   * tokens, and fall back to the full completion when the host never streams.
+   */
+  async function* streamHostBridged(config, messages, options = {}) {
+    const pending = [];
+    let wake = null;
+    let settled = null;
+    const push = (delta) => {
+      if (typeof delta !== 'string' || !delta) return;
+      pending.push(delta);
+      wake?.();
+    };
+
+    const completion = completeHostBridged(config, messages, { ...options, onDelta: push })
+      .then((text) => { settled = { text }; }, (error) => { settled = { error }; })
+      .finally(() => { wake?.(); });
+
+    let emittedChars = 0;
+    for (;;) {
+      while (pending.length) {
+        const delta = pending.shift();
+        emittedChars += delta.length;
+        if (emittedChars > OUTPUT_LIMIT_CHARS) {
+          throw new AiProviderError('AI provider output was too large', { status: 502 });
+        }
+        yield delta;
+      }
+      if (settled) break;
+      await new Promise((resolve) => { wake = resolve; });
+      wake = null;
+    }
+    await completion;
+
+    if (settled.error) throw settled.error;
+    // A host that completed without ever calling onDelta still owes us the answer.
+    if (emittedChars === 0 && settled.text) yield settled.text;
   }
 
   function apiKeyHeaders(apiKey) {
@@ -282,6 +467,8 @@ export function createAiProvider({
   async function completeText(messages, options = {}) {
     const config = await requireSelectedConfig();
     if (config.provider === AI_PROVIDER_API_KEY) return completeApiKey(config, messages, options);
+    // NEXAHUB
+    if (HOST_BRIDGED_PROVIDERS.has(config.provider)) return completeHostBridged(config, messages, options);
     let credentials = await getCodexAccessFn();
     try {
       return await completeCodexTextFn(codexRequest(config, messages, options, credentials));
@@ -296,6 +483,11 @@ export function createAiProvider({
     const config = await requireSelectedConfig();
     if (config.provider === AI_PROVIDER_API_KEY) {
       yield* streamApiKey(config, messages, options);
+      return;
+    }
+    // NEXAHUB
+    if (HOST_BRIDGED_PROVIDERS.has(config.provider)) {
+      yield* streamHostBridged(config, messages, options);
       return;
     }
 
@@ -331,6 +523,18 @@ export function createAiProvider({
     if (config.provider === AI_PROVIDER_API_KEY) {
       const enabled = Boolean(config.apiKeyConfig.baseUrl && config.apiKeyConfig.model);
       return { enabled, provider: config.provider, features: config.features, reconnectRequired: false };
+    }
+    // NEXAHUB: host-bridged providers are ready as soon as credential, model and host
+    // bridge are all present — there is no separate authorization handshake to poll.
+    const hostBridgedSection = HOST_BRIDGED_PROVIDERS.get(config.provider);
+    if (hostBridgedSection) {
+      const section = config[hostBridgedSection];
+      return {
+        enabled: Boolean(hostAiBridge && section.apiKey && section.model),
+        provider: config.provider,
+        features: config.features,
+        reconnectRequired: false,
+      };
     }
     const connection = await getCodexStatusFn();
     return {

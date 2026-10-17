@@ -5,9 +5,31 @@ export const AI_CONNECTION_METHOD_ACCOUNT = 'account';
 export const DEFAULT_CODEX_MODEL = 'gpt-5.6-luna';
 export const OPENAI_MODELS_URL = 'https://developers.openai.com/api/docs/models';
 
+// NEXAHUB: Anthropic and Gemini are first-party providers rather than "some OpenAI-compatible
+// endpoint", so they get their own entries in the one connection-method selector instead of a
+// base URL the admin has to know. Each carries only an API key and a model: the endpoint is the
+// provider's own and belongs to the SDK, not to a settings field.
+//
+// The connection-method value doubles as the stored `provider` value for these two, matching
+// AI_PROVIDER_ANTHROPIC / AI_PROVIDER_GEMINI in backend/src/services/aiProvider.js. OpenAI and
+// ChatGPT keep their existing two-step shape (method, then account provider) untouched.
+export const AI_PROVIDER_ANTHROPIC = 'anthropic';
+export const AI_PROVIDER_GEMINI = 'gemini';
+export const ANTHROPIC_MODELS_URL = 'https://docs.anthropic.com/en/docs/about-claude/models';
+export const GEMINI_MODELS_URL = 'https://ai.google.dev/gemini-api/docs/models';
+
+/** NEXAHUB: connection method -> the form section holding its credential and model. */
+export const AI_DIRECT_PROVIDER_SECTIONS = {
+  [AI_PROVIDER_ANTHROPIC]: 'anthropicConfig',
+  [AI_PROVIDER_GEMINI]: 'geminiConfig',
+};
+
 export const AI_CONNECTION_METHOD_OPTIONS = [
   { value: AI_CONNECTION_METHOD_API, labelKey: 'admin.ai.connectionMethodApi' },
   { value: AI_CONNECTION_METHOD_ACCOUNT, labelKey: 'admin.ai.connectionMethodAccount' },
+  // NEXAHUB
+  { value: AI_PROVIDER_ANTHROPIC, labelKey: 'admin.ai.connectionMethodAnthropic' },
+  { value: AI_PROVIDER_GEMINI, labelKey: 'admin.ai.connectionMethodGemini' },
 ];
 export const AI_ACCOUNT_PROVIDER_OPTIONS = [
   { value: AI_PROVIDER_CHATGPT, labelKey: 'admin.ai.subscriptionProviderChatgpt' },
@@ -15,6 +37,8 @@ export const AI_ACCOUNT_PROVIDER_OPTIONS = [
 
 const CONNECTION_METHODS = new Set(AI_CONNECTION_METHOD_OPTIONS.map(({ value }) => value));
 const ACCOUNT_PROVIDERS = new Set(AI_ACCOUNT_PROVIDER_OPTIONS.map(({ value }) => value));
+// NEXAHUB
+const DIRECT_PROVIDERS = new Map(Object.entries(AI_DIRECT_PROVIDER_SECTIONS));
 
 function cleanString(value) {
   return typeof value === 'string' ? value.trim() : '';
@@ -22,6 +46,15 @@ function cleanString(value) {
 
 function cleanBaseUrl(value) {
   return cleanString(value).replace(/\/+$/, '');
+}
+
+/** NEXAHUB: the `{ apiKey, model }` shape a direct provider section always has. */
+function normalizeDirectSection(raw) {
+  const source = raw && typeof raw === 'object' ? raw : {};
+  return {
+    apiKey: typeof source.apiKey === 'string' ? source.apiKey : '',
+    model: cleanString(source.model),
+  };
 }
 
 export function normalizeAiForm(raw = {}) {
@@ -43,9 +76,13 @@ export function normalizeAiForm(raw = {}) {
   );
   const inferredConnectionMethod = ACCOUNT_PROVIDERS.has(raw.provider)
     ? AI_CONNECTION_METHOD_ACCOUNT
-    : raw.provider === AI_PROVIDER_API_KEY || hasLegacyApiConfig
-      ? AI_CONNECTION_METHOD_API
-      : '';
+    // NEXAHUB: a direct provider stores its own name as the provider, so loading a saved
+    // config reselects it without a separate connectionMethod field on the wire.
+    : DIRECT_PROVIDERS.has(raw.provider)
+      ? raw.provider
+      : raw.provider === AI_PROVIDER_API_KEY || hasLegacyApiConfig
+        ? AI_CONNECTION_METHOD_API
+        : '';
   const connectionMethod = explicitConnectionMethod || inferredConnectionMethod;
   const accountProvider = explicitAccountProvider
     || (ACCOUNT_PROVIDERS.has(raw.provider) ? raw.provider : '')
@@ -62,6 +99,10 @@ export function normalizeAiForm(raw = {}) {
     chatgptConfig: {
       model: cleanString(chatgptConfig.model) || DEFAULT_CODEX_MODEL,
     },
+    // NEXAHUB: always present so the form can render a section without a null check, the
+    // same way apiKeyConfig and chatgptConfig already are.
+    anthropicConfig: normalizeDirectSection(raw.anthropicConfig),
+    geminiConfig: normalizeDirectSection(raw.geminiConfig),
     features: {
       compose: raw.features?.compose !== false,
       summarize: raw.features?.summarize !== false,
@@ -86,6 +127,13 @@ export function isAiFormValid(form = {}) {
       && form.accountProvider === AI_PROVIDER_CHATGPT) {
     return !!cleanString(form.chatgptConfig?.model);
   }
+  // NEXAHUB: a direct provider needs both halves. The key counts as present when it is the
+  // mask the backend sends back for an already-stored one, so re-saving a loaded config does
+  // not require retyping the secret.
+  const section = DIRECT_PROVIDERS.get(form.connectionMethod);
+  if (section) {
+    return !!cleanString(form[section]?.apiKey) && !!cleanString(form[section]?.model);
+  }
   return false;
 }
 
@@ -98,9 +146,15 @@ export function buildAiSavePayload(form = {}) {
     enabled: normalized.enabled,
     provider: normalized.connectionMethod === AI_CONNECTION_METHOD_ACCOUNT
       ? normalized.accountProvider
-      : AI_PROVIDER_API_KEY,
+      // NEXAHUB: a direct provider's method value *is* its provider value.
+      : DIRECT_PROVIDERS.has(normalized.connectionMethod)
+        ? normalized.connectionMethod
+        : AI_PROVIDER_API_KEY,
     apiKeyConfig: normalized.apiKeyConfig,
     chatgptConfig: normalized.chatgptConfig,
+    // NEXAHUB
+    anthropicConfig: normalized.anthropicConfig,
+    geminiConfig: normalized.geminiConfig,
     features: normalized.features,
   };
 }

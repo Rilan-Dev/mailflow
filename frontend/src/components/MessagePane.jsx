@@ -39,6 +39,13 @@ import TodoistTaskModal from './TodoistTaskModal.jsx';
 import SenderAvatarImage from './SenderAvatarImage.jsx';
 import ContextMenu from './ContextMenu.jsx';
 
+// NEXAHUB: a stable reference, not a fresh [] per call. This selector runs through
+// useSyncExternalStore; returning a new array every time makes React see the store as
+// perpetually changed -- "The result of getSnapshot should be cached", then "Maximum
+// update depth exceeded", and the pane never renders. zustand v4 hid this by caching
+// selector results internally; v5 does not, so the value must be stable at the source.
+const NO_FOLDERS = [];
+
 function parseAddressField(raw) {
   try {
     const arr = Array.isArray(raw) ? raw : JSON.parse(raw || '[]');
@@ -237,7 +244,7 @@ export default function MessagePane({ windowMessageId = null, onWindowClose = nu
   // Antispam (v0.1) — toolbar visibility for the spam / ham buttons.
   // Mirrors the heuristic in ContextMenu.jsx so the toolbar matches the menu.
   const account = accounts.find(a => a.id === message?.account_id);
-  const accountFolders = useStore(s => s.folders[message?.account_id] || []);
+  const accountFolders = useStore(s => s.folders[message?.account_id] || NO_FOLDERS);
   const spamFolderPaths = (() => {
     const mapped = account?.folder_mappings?.spam;
     if (mapped) return new Set([mapped]);

@@ -11,12 +11,14 @@ router.use(requireAuth);
 
 // In-memory rate limiter for TOTP verification attempts (5 per 15 min per user)
 const totpBuckets = new Map();
-setInterval(() => {
+// NEXAHUB: .unref() added, matching the pruneTimer in services/rateLimiter.js.
+const totpPruneTimer = setInterval(() => {
   const now = Date.now();
   for (const [key, bucket] of totpBuckets) {
     if (now > bucket.resetAt) totpBuckets.delete(key);
   }
 }, 5 * 60 * 1000);
+totpPruneTimer.unref?.();
 
 function totpLimiter(req, res, next) {
   const key = req.session.userId;
