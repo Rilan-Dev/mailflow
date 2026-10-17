@@ -6,14 +6,14 @@
     "tree": "a2a82b50b8a1ac24a273e55dc0f9418aefdfed17"
   },
   "created_at": "2026-10-17",
-  "status": "CLOSURE_TRACKING_STARTED_NOT_COMPLETE",
+  "status": "PARTIAL_SECURITY_TRACE_AND_LICENSE_NOTICE_CLASSIFICATION_IN_PROGRESS_NOT_CLOSED",
   "summary": {
     "capability_count": 16,
     "closed": 0,
-    "partial_traces": 0,
-    "not_started": 16,
+    "partial_traces": 3,
+    "not_started": 13,
     "source_blobs": 1350,
-    "unclassified_paths": 1350
+    "unclassified_paths": 1344
   },
   "dimensions": [
     "first_party_imports_and_callers",
@@ -93,7 +93,7 @@
       "id": "message-ingestion-rendering",
       "name": "Message parsing, sanitization, body storage and rendering",
       "priority": 3,
-      "status": "CANDIDATE_NOT_CLOSED",
+      "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED",
       "source_paths": [
         {
           "path": "backend/src/services/messageParser.js",
@@ -139,23 +139,23 @@
         }
       ],
       "dimensions": {
-        "first_party_imports_and_callers": "NOT_STARTED",
+        "first_party_imports_and_callers": "PARTIAL_STATIC_TRACE",
         "data_schema_and_migrations": "NOT_STARTED",
         "configuration_and_runtime": "NOT_STARTED",
-        "authorization_and_security": "NOT_STARTED",
+        "authorization_and_security": "PARTIAL_STATIC_TRACE",
         "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
         "UI_routes_and_interaction_states": "NOT_STARTED",
-        "tests_and_negative_cases": "NOT_STARTED",
+        "tests_and_negative_cases": "TESTS_IDENTIFIED_NOT_RUN",
         "external_dependency_and_native_tool_closure": "NOT_STARTED",
         "path_level_license_and_provenance": "NOT_STARTED"
       },
-      "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
+      "next_action": "Trace parser/sanitizer callers, every HTML rendering sink, CID handling, attachments and compose sanitization; execute parser/sanitizer negative tests."
     },
     {
       "id": "image-proxy-privacy",
       "name": "Remote image proxy and tracking protection",
       "priority": 1,
-      "status": "CANDIDATE_NOT_CLOSED",
+      "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED",
       "source_paths": [
         {
           "path": "backend/src/services/imageProxy.js",
@@ -191,23 +191,23 @@
         }
       ],
       "dimensions": {
-        "first_party_imports_and_callers": "NOT_STARTED",
+        "first_party_imports_and_callers": "PARTIAL_STATIC_TRACE",
         "data_schema_and_migrations": "NOT_STARTED",
         "configuration_and_runtime": "NOT_STARTED",
-        "authorization_and_security": "NOT_STARTED",
+        "authorization_and_security": "PARTIAL_STATIC_TRACE",
         "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
         "UI_routes_and_interaction_states": "NOT_STARTED",
-        "tests_and_negative_cases": "NOT_STARTED",
+        "tests_and_negative_cases": "TESTS_IDENTIFIED_NOT_RUN",
         "external_dependency_and_native_tool_closure": "NOT_STARTED",
         "path_level_license_and_provenance": "NOT_STARTED"
       },
-      "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
+      "next_action": "Trace all image proxy callers, redirect hops, safeFetch enforcement, body limiter, cache isolation and response headers; execute proxy tests."
     },
     {
       "id": "auth-and-identity",
       "name": "Session auth, OAuth/OIDC, MFA and account recovery",
       "priority": 1,
-      "status": "CANDIDATE_NOT_CLOSED",
+      "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED",
       "source_paths": [
         {
           "path": "backend/src/index.js",
@@ -248,17 +248,17 @@
         }
       ],
       "dimensions": {
-        "first_party_imports_and_callers": "NOT_STARTED",
+        "first_party_imports_and_callers": "PARTIAL_STATIC_TRACE",
         "data_schema_and_migrations": "NOT_STARTED",
         "configuration_and_runtime": "NOT_STARTED",
-        "authorization_and_security": "NOT_STARTED",
+        "authorization_and_security": "PARTIAL_STATIC_TRACE",
         "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
         "UI_routes_and_interaction_states": "NOT_STARTED",
-        "tests_and_negative_cases": "NOT_STARTED",
+        "tests_and_negative_cases": "TESTS_IDENTIFIED_NOT_RUN",
         "external_dependency_and_native_tool_closure": "NOT_STARTED",
         "path_level_license_and_provenance": "NOT_STARTED"
       },
-      "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
+      "next_action": "Trace all auth endpoints, session/Redis/WebSocket invalidation, reset-token consumption, MFA lifecycle and migrations; execute auth/OAuth/OIDC tests in a checkout."
     },
     {
       "id": "database-schema",
