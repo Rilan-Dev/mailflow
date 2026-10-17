@@ -1,0 +1,286 @@
+{
+  "schema_version": "1.0.0",
+  "source_pin": {
+    "repository": "maathimself/mailflow",
+    "commit": "35067fc2876d50980f1a8a3b8ea72b5467b69f60",
+    "tree": "a2a82b50b8a1ac24a273e55dc0f9418aefdfed17"
+  },
+  "captured_at": "2026-10-17",
+  "status": "PARTIAL_IMPORT_AND_ROUTE_SCAN_NOT_TRANSITIVE_CLOSURE",
+  "method": "Read current immutable snapshot files through GitHub contents API; extracted relative first-party import statements and route signatures. No runtime tests were run by this scan.",
+  "files": [
+    {
+      "path": "backend/src/index.js",
+      "blob_sha": "24c4a8b060d49760dc22e998673b609cbb8c57ab",
+      "bytes": 15552,
+      "line_count": 338,
+      "first_party_imports": [
+        "import { corsExceptDav } from './middleware/corsExceptDav.js';",
+        "import { redisClient } from './services/redis.js';",
+        "import { parseTrustProxyHops } from './utils/trustProxy.js';",
+        "import { buildSessionOptions } from './utils/sessionConfig.js';",
+        "import { mountBodyParsers } from './middleware/bodyParsers.js';",
+        "import sendRoutes from './routes/send.js';",
+        "import draftRoutes from './routes/draft.js';",
+        "import oauthRoutes from './routes/oauth.js';",
+        "import integrationsRoutes, { loadIntegrationConfigs } from './routes/integrations.js';",
+        "import authRoutes from './routes/auth.js';",
+        "import accountRoutes from './routes/accounts.js';",
+        "import mailRoutes from './routes/mail.js';",
+        "import searchRoutes from './routes/search.js';",
+        "import adminRoutes from './routes/admin.js';",
+        "import totpRoutes from './routes/totp.js';",
+        "import oidcApiRouter, { oidcBrowserRouter } from './routes/oidc.js';",
+        "import rulesRoutes from './routes/rules.js';",
+        "import blockListRoutes from './routes/blockList.js';",
+        "import contactsRoutes from './routes/contacts.js';",
+        "import todoistRoutes from './routes/todoist.js';",
+        "import aiRoutes from './routes/ai.js';",
+        "import categoriesRoutes from './routes/categories.js';",
+        "import { pluginRegistry } from './plugins/registry.js';",
+        "import { loadBundledPlugins } from './plugins/loadPlugins.js';",
+        "import { setMailEngine } from './plugins/mailEngine.js';",
+        "import pluginsRoutes from './routes/plugins.js';",
+        "import senderFaviconsRoutes from './routes/senderFavicons.js';",
+        "import diagnosticsRoutes from './routes/diagnostics.js';",
+        "import backupRoutes from './routes/backup.js';",
+        "import spamRoutes, { accountSpamRouter } from './routes/spam.js';",
+        "import carddavRouter from './routes/carddav.js';",
+        "import carddavAccountRouter from './routes/carddavAccount.js';",
+        "import { startCardavScheduler } from './services/carddavSync.js';",
+        "import { start as startSpamScheduler } from './services/spamScheduler.js';",
+        "import { encryptExistingCredentials, query } from './services/db.js';",
+        "import { runMigrations } from './services/migrations.js';",
+        "import { parseVCard } from './utils/vcard.js';",
+        "import { reloadAuthSettings } from './services/authLimiter.js';",
+        "import { createWebSocketServer, setupWebSocket } from './services/websocket.js';",
+        "import { ImapManager } from './services/imapManager.js';",
+        "import { getUpdateStatus } from './services/updateCheck.js';",
+        "import { recordHttp } from './services/performanceMetrics.js';",
+        "import { flushHeldSends } from './services/sendHold.js';"
+      ],
+      "route_signatures": []
+    },
+    {
+      "path": "backend/src/services/imapManager.js",
+      "blob_sha": "dd0633bf265ca3cafe9f216948a65ef5d6f72754",
+      "bytes": 424730,
+      "line_count": 7562,
+      "first_party_imports": [
+        "import { FolderStatusMonitor, checkpointFolderStatus } from './folderStatus.js';",
+        "import { extractImapError } from './imapError.js';",
+        "import { recordUnfetchable, suppressedUids, clearUnfetchable, hasRealGap } from './unfetchableUids.js';",
+        "import { query } from './db.js';",
+        "import { parseMessage, parseMailboxList, snippetFromBody, detectBulkFromParsedHeaders, ALIAS_FORWARDER_HEADERS, parseHeadersInput, headersToRawString, decodeMimeWords, enrichParsedMetadata, renderCalendarInvite } from './messageParser.js';",
+        "import { headerIds, searchReplyDraftUids, draftFolderPaths } from './replyDraftLookup.js';",
+        "import { classifyMessage, loadSocialDomains, getGlobalCategorizationEnabled } from './categorizer.js';",
+        "import { sanitizeEmail } from './emailSanitizer.js';",
+        "import { logger } from './logger.js';",
+        "import { recordBroadcast, recordWarning, recordSyncSignal } from './diagnosticsRing.js';",
+        "import { decrypt } from './encryption.js';",
+        "import { sendPushToUser } from './pushNotifications.js';",
+        "import { getAccountAddresses } from './mailAccess.js';",
+        "import { resolveForConnection, createPinnedLookup } from './hostValidation.js';",
+        "import { getConnectionPolicy } from './connectionPolicy.js';",
+        "import { applyInboxRules, applyBlockList, newMailAlerts } from './inboxRules.js';",
+        "import { classifyAndTagMessage } from './spamPipeline.js';",
+        "import { BLOCK, WARN } from './attachmentExtensions.js';"
+      ],
+      "route_signatures": []
+    },
+    {
+      "path": "backend/src/routes/accounts.js",
+      "blob_sha": "895cba74951171846d151147abb96cc266931b45",
+      "bytes": 25461,
+      "line_count": 522,
+      "first_party_imports": [],
+      "route_signatures": [
+        "router.get('/', async (req, res) => {",
+        "router.post('/', async (req, res) => {",
+        "router.put('/:id', async (req, res) => {",
+        "router.delete('/:id', async (req, res) => {",
+        "router.post('/:id/reconnect', async (req, res) => {",
+        "router.get('/:id/aliases', async (req, res) => {",
+        "router.post('/:id/aliases', async (req, res) => {",
+        "router.put('/:id/aliases/:aliasId', async (req, res) => {",
+        "router.delete('/:id/aliases/:aliasId', async (req, res) => {",
+        "router.get('/:id/folders', async (req, res) => {",
+        "router.post('/:id/reindex', async (req, res) => {"
+      ]
+    },
+    {
+      "path": "backend/src/routes/mail.js",
+      "blob_sha": "d20a0f293c155b54780967c047ed621a0c3af28d",
+      "bytes": 141799,
+      "line_count": 2855,
+      "first_party_imports": [],
+      "route_signatures": [
+        "router.get('/messages', async (req, res) => {",
+        "router.get('/messages/:id', async (req, res) => {",
+        "router.get('/resolve-message', async (req, res) => {",
+        "router.get('/thread', (req, res) => getThread(req, res, req.query.id));",
+        "router.get('/thread/:threadId', (req, res) => getThread(req, res, req.params.threadId));",
+        "router.get('/unread-counts', async (req, res) => {",
+        "router.get('/messages/:id/body', async (req, res) => {",
+        "router.get('/messages/:id/headers', async (req, res) => {",
+        "router.get('/messages/:id/bcc', async (req, res) => {",
+        "router.get('/messages/:id/attachments.zip', async (req, res) => {",
+        "router.get('/messages/:id/attachments/:part', async (req, res) => {",
+        "router.get('/messages/:id/image', async (req, res) => {",
+        "router.get('/messages/:id/raw.eml', async (req, res) => {",
+        "router.patch('/messages/:id/read', async (req, res) => {",
+        "router.patch('/messages/:id/star', async (req, res) => {",
+        "router.post('/sync', async (req, res) => {",
+        "router.post('/sync-folders', async (req, res) => {",
+        "router.post('/sync-folder', async (req, res) => {",
+        "router.post('/mark-all-read', async (req, res) => {",
+        "router.post('/folders', async (req, res) => {",
+        "router.post('/folders/delete', async (req, res) => {",
+        "router.post('/folders/rename', async (req, res) => {",
+        "router.post('/folders/empty', async (req, res) => {",
+        "router.post('/messages/bulk-read', async (req, res) => {",
+        "router.post('/messages/bulk-star', async (req, res) => {",
+        "router.post('/messages/bulk-delete', async (req, res) => {",
+        "router.get('/mailbox-usage', async (req, res) => {",
+        "router.get('/cleanup-preview', async (req, res) => {",
+        "router.post('/messages/bulk-move', async (req, res) => {",
+        "router.post('/messages/:id/copy', async (req, res) => {",
+        "router.post('/messages/bulk-archive', async (req, res) => {",
+        "router.post('/messages/:id/snooze', async (req, res) => {",
+        "router.patch('/messages/:id/snooze', async (req, res) => {",
+        "router.post('/messages/:id/unsnooze', async (req, res) => {",
+        "router.delete('/messages/:id', async (req, res) => {",
+        "router.post('/messages/:id/spam', async (req, res) => {",
+        "router.get('/category-counts', async (req, res) => {",
+        "router.patch('/messages/:id/category', async (req, res) => {",
+        "router.post('/messages/:id/unsubscribe', async (req, res) => {",
+        "router.post('/messages/:id/ham', async (req, res) => {"
+      ]
+    },
+    {
+      "path": "backend/src/routes/oauth.js",
+      "blob_sha": "c8e6821501bbf622ca953ae2d1861753b4cc6bd5",
+      "bytes": 26794,
+      "line_count": 630,
+      "first_party_imports": [],
+      "route_signatures": [
+        "router.get('/microsoft', async (req, res) => {",
+        "router.get('/microsoft/callback', async (req, res) => {",
+        "router.post('/microsoft/device', async (req, res) => {",
+        "router.get('/microsoft/device/poll', async (req, res) => {",
+        "router.get('/google', async (req, res) => {",
+        "router.get('/google/callback', async (req, res) => {"
+      ]
+    },
+    {
+      "path": "backend/src/middleware/auth.js",
+      "blob_sha": "e2e38cfbf8111705a04b0357d4b4be5b01f1bf09",
+      "bytes": 1396,
+      "line_count": 43,
+      "first_party_imports": [],
+      "route_signatures": []
+    },
+    {
+      "path": "backend/src/services/db.js",
+      "blob_sha": "a3527cf3d0252efb831cffadf0860ac74247bb2e",
+      "bytes": 4422,
+      "line_count": 116,
+      "first_party_imports": [
+        "import { encrypt, isEncrypted } from './encryption.js';",
+        "import { recordDb } from './performanceMetrics.js';"
+      ],
+      "route_signatures": []
+    },
+    {
+      "path": "backend/src/plugins/registry.js",
+      "blob_sha": "b2ad424e595344e80a69df8cd1e74769a1eefffa",
+      "bytes": 7377,
+      "line_count": 151,
+      "first_party_imports": [],
+      "route_signatures": []
+    },
+    {
+      "path": "backend/src/services/hostValidation.js",
+      "blob_sha": "e4b3aad016b81d10f72ea7f1e8dc3e00d0cd1bda",
+      "bytes": 9974,
+      "line_count": 220,
+      "first_party_imports": [],
+      "route_signatures": []
+    },
+    {
+      "path": "backend/src/services/safeFetch.js",
+      "blob_sha": "dd0f0973b515131c88ff9afab640d58f1720a8f1",
+      "bytes": 3556,
+      "line_count": 79,
+      "first_party_imports": [
+        "import { validateHostLiteral } from './hostValidation.js';"
+      ],
+      "route_signatures": []
+    },
+    {
+      "path": "backend/src/services/emailSanitizer.js",
+      "blob_sha": "846a6497643b1147863e9c2a8f4de94b1a03c27f",
+      "bytes": 59137,
+      "line_count": 1214,
+      "first_party_imports": [
+        "import { logger } from './logger.js';"
+      ],
+      "route_signatures": []
+    },
+    {
+      "path": "frontend/src/main.jsx",
+      "blob_sha": "ff3e0b08f08b892f2e636f215160674feea11a5c",
+      "bytes": 901,
+      "line_count": 24,
+      "first_party_imports": [
+        "import App from './App.jsx';",
+        "import ErrorBoundary from './components/ErrorBoundary.jsx';",
+        "import './index.css';",
+        "import { i18nReady } from './i18n.js';",
+        "import './plugins/index.js'; // register bundled plugins' UI slots before first paint"
+      ],
+      "route_signatures": []
+    },
+    {
+      "path": "frontend/src/App.jsx",
+      "blob_sha": "ae2328e7c89fb3df5bb27e943a901dc4f8fc7483",
+      "bytes": 5306,
+      "line_count": 121,
+      "first_party_imports": [
+        "import { useStore } from './store/index.js';",
+        "import { api } from './utils/api.js';",
+        "import { applyTheme, getInitialTheme } from './themes.js';",
+        "import { applyFontSet, effectiveFontSet } from './fonts.js'; // still used for the instant localStorage apply on mount",
+        "import { applyLayout } from './layouts.js';",
+        "import LoginPage from './components/LoginPage.jsx';",
+        "import MailApp from './components/MailApp.jsx';",
+        "import LockScreen from './components/LockScreen.jsx';"
+      ],
+      "route_signatures": []
+    },
+    {
+      "path": "docker-compose.yml",
+      "blob_sha": "f546da93d75fb2a2333a43d3f80d5be400dbb16c",
+      "bytes": 4967,
+      "line_count": 160,
+      "first_party_imports": [],
+      "route_signatures": []
+    },
+    {
+      "path": "backend/package.json",
+      "blob_sha": "7317eb730ec7d303067dffaf8b7f71ca75da5482",
+      "bytes": 1341,
+      "line_count": 53,
+      "first_party_imports": [],
+      "route_signatures": []
+    },
+    {
+      "path": "frontend/package.json",
+      "blob_sha": "0f560cbf59bac05a6be03ff08608ece57a9fed7c",
+      "bytes": 5201,
+      "line_count": 184,
+      "first_party_imports": [],
+      "route_signatures": []
+    }
+  ]
+}
