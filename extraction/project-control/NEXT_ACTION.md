@@ -152,3 +152,11 @@ The full pinned-snapshot run 39034971662 provides these verified results:
 - Snapshot verifier: passed.
 - Android web bundle and Capacitor sync passed; Gradle has not yet been shown to start successfully. Several pending runs were cancelled by subsequent manifest-evidence commits while queued. Current full verification run: https://github.com/Rilan-Dev/mailflow/actions/runs/39035810908 — pending and triggered after the workflow now explicitly invokes `bash ./gradlew`. Do not update watched manifests until this run has started/completed; continue independent work in project-control docs if needed.
 - Current path classification is 182/1,350 (1,168 unclassified); 14 capabilities have partial traces, 2 remain not started and none are closed. License/provenance and redistribution clearance remain open.
+
+
+## Update — 2026-10-17 — Security closure second pass
+- Expanded `security-transport-database-trace-2026-10-17.md` with runtime route/session wiring, OIDC state/nonce/PKCE callback behavior, safeFetch connector guarantees, image proxy bounds and sanitizer/compose sink tracing.
+- Explicit unresolved risk: OIDC discovery/token exchange and Microsoft OAuth provider requests use native fetch after DNS validation, not the connection-pinned safeFetch dispatcher. DNS rebinding/redirect target controls remain open. OIDC `allow_insecure` is a deliberate bypass of HTTPS and host validation and requires policy/UX/permission review.
+- Path dispositions now record 183 classified / 1,167 unclassified. Security path classifications remain dependency-closure candidates and license-unreviewed.
+- Selected security tests remain PASS (run 39031942550: 379 tests). Full backend/frontend/PostgreSQL evidence remains PASS in run 39034971662. Android Gradle remains unverified: run 39035662163 was cancelled before jobs started despite the corrected bash wrapper command. Do not claim native Android build PASS.
+- Next: inspect every outbound OAuth/OIDC fetch and every HTML render sink, then trace account lifecycle/IMAP/SMTP and all 66 migration consumers. Re-run the exact inventory verifier after manifest changes; keep license/redistribution gates open.
