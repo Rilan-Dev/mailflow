@@ -125,3 +125,10 @@ This is baseline identity/inventory evidence only, not full extraction verificat
 - Enumerated migrations `0001_baseline.sql` through `0066_email_accounts_icon.sql` (66 files) and inspected DDL/data operations. The runner uses a session-level advisory lock, records applied versions in `schema_migrations`, runs normal migrations transactionally and handles `-- no-transaction` files statement-by-statement for concurrent index operations.
 - Initial FK/cascade map identifies core users/accounts/messages/folders/aliases/snooze relations and later plugin configuration, unfetchable UID and spam-training relations. Account deletion's DB cascades do not prove cleanup of in-memory connections, caches, files or plugin-owned external state.
 - Remaining: machine-readable column/index/constraint inventory, SQL-consumer mapping, real PostgreSQL migration tests from clean and upgrade states, and partial-failure/idempotency tests for no-transaction migrations. This is not a schema closure or extraction PASS.
+
+
+## 2026-10-17 — Transport test expansion started
+
+- Added `.github/workflows/mailflow-transport-closure.yml` to execute targeted IMAP manager, sync/draft/snooze, move fallback, SMTP transport, account CRUD/settings, mailbox mutation, attachment, unified-inbox and send reliability tests against the immutable snapshot.
+- Workflow run: https://github.com/Rilan-Dev/mailflow/actions/runs/39034389282 — queued at last check. Result pending; not a test PASS yet.
+- Source snapshot/inventory verifier after the current path and closure manifest updates: https://github.com/Rilan-Dev/mailflow/actions/runs/39034359461 — success. This verifies snapshot/manifests consistency and exact source identity, not capability closure.
