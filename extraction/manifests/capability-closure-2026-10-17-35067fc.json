@@ -375,7 +375,7 @@
       "id": "database-schema",
       "name": "PostgreSQL persistence and ordered migrations",
       "priority": 2,
-      "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED",
+      "status": "PARTIAL_STATIC_TRACE_MIGRATIONS_MAPPED_NOT_CLOSED",
       "source_paths": [
         {
           "path": "backend/src/services/db.js",
@@ -396,21 +396,341 @@
           "path": "backend/src/services/migrations.js",
           "blob_sha": "38fc9a20d9a239123fad1ee075255fd7658b6d5d",
           "exists": true
+        },
+        {
+          "path": "backend/migrations/0002_subject_threading.sql",
+          "blob_sha": "973d8533345fc8214d41e49ab1b4d6dd5f7fa8af",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0003_sender_name.sql",
+          "blob_sha": "4d04f7f70df845918b1def640d439bba373cf927",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0004_internal_auth_setting.sql",
+          "blob_sha": "a3724c5c30ba986efd731f894004586c98d2df6f",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0005_auth_events.sql",
+          "blob_sha": "5c8cade482b3c8fd16bcbe10e00e89206856dc0a",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0006_threaded_query_indexes.sql",
+          "blob_sha": "d8afa2efcac97a1f0b7d34f0183af46ea0c25a14",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0007_thread_paging_index.sql",
+          "blob_sha": "f32359226eece02ac51ad94a01681fc847db3ead",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0008_search_indexes.sql",
+          "blob_sha": "64e6f728ec02abb4643534eecdb170945b7099d6",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0009_thread_key_column.sql",
+          "blob_sha": "4ee132ecdf92adf5fc70617bb3f0778548ebf046",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0010_inbox_rules.sql",
+          "blob_sha": "64d0fbe0ddc79a0d7b5164d3e10d688e3f7c929b",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0011_message_id_dedup_index.sql",
+          "blob_sha": "856a71d27c871756865d1526f93493b95c5f5732",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0012_oidc_allow_insecure.sql",
+          "blob_sha": "ac4c343e7e95c719628351beafd0ea770a6b47a3",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0013_block_list.sql",
+          "blob_sha": "28eb2bda74435795d9c0a9d46ab67d1bdd43f4db",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0014_account_allow_private_host.sql",
+          "blob_sha": "e02d0df86fba5f2d7ca9ddc9e7b467b05c80470b",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0015_contacts.sql",
+          "blob_sha": "ec1307bf5fde7d4f89c902bd42bd4cc379729ff9",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0016_is_bulk.sql",
+          "blob_sha": "04c5b03aba2fd9bf869cdf85521004e475cb8ac4",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0017_contacts_v2.sql",
+          "blob_sha": "6e389af61a8f77414336811ffd2dc1e0f8db21cb",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0018_contacts_search_indexes.sql",
+          "blob_sha": "c1af37f799eea7b957a3c7b944c39240f2f0a1b0",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0019_user_integrations.sql",
+          "blob_sha": "0c77f49c7fa41aa95968dd9797e4ea0863ffc3aa",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0020_mfa_device_trust.sql",
+          "blob_sha": "a3f41cf17a97b554b525e1935dc7fd1b97e30495",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0021_spam_training.sql",
+          "blob_sha": "01a2693bdb3df2b46ad87838d199cdd9d1e94a7e",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0022_password_reset_tokens.sql",
+          "blob_sha": "334f3e269746bb76da5fc4c70403743dc4ddf0e1",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0023_message_categories.sql",
+          "blob_sha": "874f0b6daac9d4cfb133527ac3d42807648f5c74",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0024_category_improvements.sql",
+          "blob_sha": "80e2c8bfda29fc5442f9fe35ded1b5b54eaf12fb",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0025_unsubscribe_state.sql",
+          "blob_sha": "7eda87a51e57457c6ff0925bc154e7ff2c40b7d1",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0026_oidc_admin_group_claim.sql",
+          "blob_sha": "06de5aa5bbe8eb50d42e4585df0423eac52f5cbc",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0027_carddav_client.sql",
+          "blob_sha": "dfeaa894827b62c0171a261b2644a309a52f54a4",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0028_folder_highestmodseq.sql",
+          "blob_sha": "13e6fe636b91371945c62255050d24436f39c443",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0029_oauth_public_client.sql",
+          "blob_sha": "5f35afbf24974402dc7263c57cfeb3dd07ce10f6",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0030_gtd.sql",
+          "blob_sha": "fc3689fa676e370dbd73dd8f9615dee210394608",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0031_gtd_gist.sql",
+          "blob_sha": "9782951007e91c9a0445ed0c8f684d2c0404c30c",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0032_gtd_pets.sql",
+          "blob_sha": "5e7fe447720965f47a527bc29d5d29b87c0bd528",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0033_gtd_pets_custom.sql",
+          "blob_sha": "752303690d7268f071f6315cb5cd4bca8173a561",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0034_lock_pin.sql",
+          "blob_sha": "8f0e67dfb739be1ae2ea84e7ce9ab2fe4dcb05e9",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0035_oidc_rp_initiated_logout.sql",
+          "blob_sha": "cc1616af5ebc18cbf553af93b54436e361df62cb",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0036_unified_inbox_accounts.sql",
+          "blob_sha": "f17ce1d134635eaacc3096f99c13eeee6be42e23",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0037_message_delivery_addresses.sql",
+          "blob_sha": "0970dce289c652e0e08d30eeea3f5d582ebba6c4",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0038_ai_codex_oauth.sql",
+          "blob_sha": "934036d22fbd09679546a455dbfa0b2d2bdd68e2",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0039_inbox_rule_forwards.sql",
+          "blob_sha": "8fb9c38ad2d064a41f6aea0cb9b232321ce25d10",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0040_smtp_separate_auth.sql",
+          "blob_sha": "020cc1565f6ec74f45c785b5eaae0ed3ca962314",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0041_plugin_data.sql",
+          "blob_sha": "cfb6753258b450dc2da1d8f8be284292ced08af2",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0042_grandfather_gtd_plugin.sql",
+          "blob_sha": "ff402780e4516dd4c2c15e8a1db77a46d2132379",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0043_drop_gtd_pets.sql",
+          "blob_sha": "78e893527303a67707ac2218e07b8afc8314eb70",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0044_message_plugin_annotations.sql",
+          "blob_sha": "9a3769746f8266b937504fdabc675901a68f0ab1",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0045_plugin_account_config.sql",
+          "blob_sha": "02eb705dd7651279e69173f9f4fa5a4df51776d5",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0046_drop_legacy_gtd_columns.sql",
+          "blob_sha": "82555b8935bbbe506c9d592e1f9463318e4ea35b",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0047_folder_no_select.sql",
+          "blob_sha": "3a4364c7125281447a03fe7dbdaf334cf9f51d8b",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0048_snippet_attempted_at.sql",
+          "blob_sha": "272c207ca5638a6a6b23674647cf09c5747c6216",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0049_oidc_login_match_claim.sql",
+          "blob_sha": "1dc116fcacb49f82b103e3c063da8e2d8440e28d",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0050_message_sender.sql",
+          "blob_sha": "ee9c81fc3f5fd836d931cd7db4f198ed390c017a",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0051_folder_server_status.sql",
+          "blob_sha": "ddac5c51833ce293a21bda17ed7ac467db0770a5",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0052_spam_training_features.sql",
+          "blob_sha": "464bd51cf3fb96ecfd004267fcff48530ea4c25f",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0053_spam_models.sql",
+          "blob_sha": "47f86727c89dd913e0060cc0598480724ef555fc",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0054_email_accounts_antispam_enabled.sql",
+          "blob_sha": "43ce0866c95c1a0cccb2cabbde2976d55f81576a",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0055_spam_training_deletions.sql",
+          "blob_sha": "a48fcd14af4167104076e00b74e06bce85517035",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0056_email_accounts_trusted_authserv_id.sql",
+          "blob_sha": "26eceb1f0ad9f6cf922484273378891bef231544",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0057_split_subject_merged_threads.sql",
+          "blob_sha": "bcfba63c0bde5b8b10c3b52ff171541938da1108",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0058_unfetchable_uids.sql",
+          "blob_sha": "b28320fcc60542420ca4585705d746df508c154c",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0059_message_forwarded_from.sql",
+          "blob_sha": "8c7fa9de2f9bd7d60a8e7c1192519e57f6d2b4e4",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0060_thread_id_index_covers_deleted.sql",
+          "blob_sha": "eaafa56e53833fd189c58021b474ba67560f9684",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0061_message_bcc_addresses.sql",
+          "blob_sha": "e769c81bdc209d29cb07e2d12ec6869e4d4a3bbd",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0062_email_accounts_auto_recipients.sql",
+          "blob_sha": "9b335bafd78804daca6b99b946ad737fad7587bd",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0063_user_last_seen.sql",
+          "blob_sha": "8e715093f8668885f3381b4281b88bfbd0f58d8c",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0064_auth_events_actor.sql",
+          "blob_sha": "bf68f53a082c229de3ff4be15a371c2f68843499",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0065_email_accounts_signature_enabled.sql",
+          "blob_sha": "93390137d7f1302c695e68d1ee986c1c914cb2b4",
+          "exists": true
         }
       ],
       "test_paths": [],
       "dimensions": {
         "first_party_imports_and_callers": "PARTIAL_STATIC_TRACE",
-        "data_schema_and_migrations": "PARTIAL_STATIC_TRACE",
+        "data_schema_and_migrations": "PARTIAL_STATIC_TRACE: all 66 migrations classified and domains/runtime consumers summarized; 32 tables/97 indexes/282 constraints observed from clean PostgreSQL 17 run; per-column caller/query-plan/upgrade closure open",
         "configuration_and_runtime": "PARTIAL_STATIC_TRACE",
         "authorization_and_security": "PARTIAL_STATIC_TRACE",
         "side_effects_retries_idempotency_and_recovery": "PARTIAL_STATIC_TRACE",
-        "tests_and_negative_cases": "PASS: PostgreSQL 17 clean install, all 66 migrations, idempotent rerun and table/index/constraint sanity counts; upgrade and partial-failure tests pending",
+        "tests_and_negative_cases": "PASS: PostgreSQL 17 clean install applied 66 migrations and idempotent rerun passed in run 39034971662; legacy-state upgrade and failure recovery tests remain open",
         "external_dependency_and_native_tool_closure": "NOT_STARTED",
         "path_level_license_and_provenance": "UNREVIEWED",
         "ui_routes_and_interaction_states": "NOT_STARTED"
       },
-      "next_action": "Map each table/index/constraint to runtime SQL callers; add prior-version upgrade fixtures and simulate partial failure for no-transaction migrations."
+      "next_action": "Complete table/column/index/constraint/FK inventory across migrations 0001-0066; map every SQL caller and generated query fragment; test representative upgrades from legacy contacts/GTD/thread/spam schemas, concurrent-index failure recovery, query plans and user/account deletion cleanup. PostgreSQL 17 clean install + idempotent rerun passed in run 39034971662; this is not full SQL runtime closure."
     },
     {
       "id": "plugin-boundary",
