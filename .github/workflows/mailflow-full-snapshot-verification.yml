@@ -1,0 +1,113 @@
+name: MailFlow pinned snapshot full verification
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/mailflow-full-snapshot-verification.yml"
+      - "extraction/manifests/closure-test-results-2026-10-17-35067fc.json"
+      - "extraction/manifests/capability-closure-2026-10-17-35067fc.json"
+      - "extraction/source-pins/current.json"
+      - "extraction/tools/verify-inventory.mjs"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mailflow-full-snapshot-verification
+  cancel-in-progress: false
+
+env:
+  SNAPSHOT: extraction/snapshots/35067fc2876d50980f1a8a3b8ea72b5467b69f60/source
+
+jobs:
+  inventory-verifier:
+    name: Exact pinned snapshot and manifest verifier
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Verify source tree, blobs, modes, symlinks, path register and closure references
+        run: node extraction/tools/verify-inventory.mjs
+
+  backend-full:
+    name: Full backend lint, plugin boundary, tests and dependency audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: ${{ env.SNAPSHOT }}/backend/package-lock.json
+      - name: Install pinned backend dependencies
+        working-directory: ${{ env.SNAPSHOT }}/backend
+        run: npm ci
+      - name: Lint
+        working-directory: ${{ env.SNAPSHOT }}/backend
+        run: npm run lint
+      - name: Plugin boundary lint
+        working-directory: ${{ env.SNAPSHOT }}/backend
+        run: npm run lint:plugins
+      - name: Syntax check
+        working-directory: ${{ env.SNAPSHOT }}/backend
+        run: node --check src/index.js
+      - name: Full backend test suite
+        working-directory: ${{ env.SNAPSHOT }}/backend
+        run: npm test
+      - name: Production dependency audit
+        working-directory: ${{ env.SNAPSHOT }}/backend
+        run: npm audit --omit=dev --audit-level=high
+
+  frontend-full:
+    name: Full frontend lint, tests, production build and dependency audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: ${{ env.SNAPSHOT }}/frontend/package-lock.json
+      - name: Install pinned frontend dependencies
+        working-directory: ${{ env.SNAPSHOT }}/frontend
+        run: npm ci
+      - name: Lint
+        working-directory: ${{ env.SNAPSHOT }}/frontend
+        run: npm run lint
+      - name: Full frontend and Electron Node test suite
+        working-directory: ${{ env.SNAPSHOT }}/frontend
+        run: npm test
+      - name: Production web build
+        working-directory: ${{ env.SNAPSHOT }}/frontend
+        run: npm run build
+      - name: Production dependency audit
+        working-directory: ${{ env.SNAPSHOT }}/frontend
+        run: npm audit --omit=dev --audit-level=high
+
+  android-debug:
+    name: Android sync, unit tests and debug APK build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: ${{ env.SNAPSHOT }}/frontend/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+      - name: Install pinned frontend dependencies
+        working-directory: ${{ env.SNAPSHOT }}/frontend
+        run: npm ci
+      - name: Build web bundle and sync native Android project
+        working-directory: ${{ env.SNAPSHOT }}/frontend
+        run: npm run android:sync
+      - name: Run Android unit tests and assemble debug APK
+        working-directory: ${{ env.SNAPSHOT }}/frontend/packages/android
+        run: ./gradlew testDebugUnitTest assembleDebug --no-daemon
