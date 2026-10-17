@@ -1,21 +1,23 @@
 # Next Action — MailFlow Extraction
 
 ## Completed checkpoint
-The full upstream Git tree at commit 35067fc2876d50980f1a8a3b8ea72b5467b69f60 is stored at extraction/snapshots/35067fc2876d50980f1a8a3b8ea72b5467b69f60/source. The source pin and commit-specific manifests are updated. GitHub Actions verified 1,350 source blobs, exact snapshot file-set/mode/symlink identity, and reconstructed the root tree SHA a2a82b50b8a1ac24a273e55dc0f9418aefdfed17 plus all 147 nested tree SHAs. Workflow: https://github.com/Rilan-Dev/mailflow/actions/runs/39030338698
+The full upstream Git tree at commit 35067fc2876d50980f1a8a3b8ea72b5467b69f60 is stored at extraction/snapshots/35067fc2876d50980f1a8a3b8ea72b5467b69f60/source. The source pin and commit-specific manifests are updated. GitHub Actions verified 1,350 source blobs, exact file-set/mode/symlink identity, reconstructed the root tree SHA a2a82b50b8a1ac24a273e55dc0f9418aefdfed17 and all 147 nested tree SHAs; it detected 0 Git LFS pointer files and 0 gitlinks. Latest full verifier evidence: https://github.com/Rilan-Dev/mailflow/actions/runs/39030794029
 
 ## Immediate next work
-1. Continue the first security closure slice against the immutable snapshot: backend/src/routes/auth.js, backend/src/routes/oauth.js, backend/src/routes/oidc.js, backend/src/middleware/auth.js, backend/src/services/authLimiter.js, backend/src/services/hostValidation.js, backend/src/services/safeFetch.js, backend/src/services/imageProxy.js and backend/src/services/emailSanitizer.js.
-2. Trace all callers/importers, environment variables, route mounting, session/Redis behavior, database tables/migrations, redirects/state/nonces, permission checks, SSRF/DNS rebinding controls, sanitizer behavior, error paths, tests and user-visible states. Record source blob SHAs and direct evidence.
-3. Audit the 116 changed blobs and 31 new blobs first. The old October 14 candidate map is historical; use architecture-map-2026-10-17-35067fc.json and capability-closure-2026-10-17-35067fc.json.
-4. Update the closure tracker with actual edges and test coverage; do not mark a capability closed merely because referenced paths exist.
-5. Start per-path provenance/license classification, including LICENSE, LICENSE-COMMERCIAL, CLA, dependency lockfiles, fonts/icons/images, generated/native assets and any LFS/submodule evidence.
-6. After the security slice, close IMAP/account lifecycle, database/migrations, parser/rendering, plugins, frontend, CardDAV, rules/spam, AI, realtime, Electron, Android and release/deployment capabilities.
-7. Re-run node extraction/tools/verify-inventory.mjs after manifest updates. Keep upstream snapshot updates scheduled and direct to main, but never use source in a host app until dependency closure and license gates pass.
+1. Continue the security closure slice against the immutable snapshot: auth.js, oauth.js, oidc.js, auth middleware/session config, authLimiter, hostValidation, safeFetch, imageProxy and emailSanitizer. Trace callers, route mounting, session/Redis behavior, provider state/nonce/PKCE, private-host policy, DNS rebinding, redirect hops, sanitization sinks, error paths and user-visible states.
+2. Run the identified auth/OAuth/OIDC, hostValidation/safeFetch, imageProxy and sanitizer tests in a real checkout. Static trace did not execute tests. Record exact commands and outcomes.
+3. Close the dependency graph using extraction/manifests/dependency-inventory-2026-10-17-35067fc.json: 1,124 lockfile package entries (445 backend, 679 frontend), 50 direct dependencies and 16 direct dev dependencies. Map imports/runtime/native build usage; review each third-party license/provenance before marking eligible.
+4. Review the 116 changed and 31 new upstream blobs first. The October 14 candidate/architecture maps are historical; use architecture-map-2026-10-17-35067fc.json, capability-closure-2026-10-17-35067fc.json and security-closure-2026-10-17-35067fc.json.
+5. Continue path-level classification. Six notice/dependency-manifest paths have initial classifications; 1,344 source blobs remain UNCLASSIFIED. Keep source license/provenance and dependency closure statuses evidence-backed.
+6. Close remaining capabilities in dependency order: IMAP/account lifecycle; PostgreSQL schema and all migrations; message parsing/rendering; plugins; compose/drafts/attachments; unified inbox/search; CardDAV; rules/categories/spam; AI; notifications; Electron; Android; deployment/release.
+7. Re-run node extraction/tools/verify-inventory.mjs after tree/disposition/closure manifest updates. Keep upstream snapshot automation scheduled and direct to main; never use extracted code in a host app until dependency closure and license gates pass.
 
 ## Guardrails
 - Keep prior snapshots immutable; new upstream commits receive new snapshot directories.
-- Changed/new paths reset to UNCLASSIFIED unless their SHA and mode are identical to an already assessed path.
-- Source snapshot integrity is PASS; capability closure, per-path license clearance, redistribution clearance, host-integration readiness and extraction PASS remain open.
+- Changed/new paths reset to UNCLASSIFIED unless both SHA and mode exactly match an already assessed path.
+- Source snapshot integrity is PASS. Capability closure, third-party/license clearance, redistribution clearance, runtime validation and extraction PASS remain open.
+- Upstream declares AGPL-3.0, a separate commercial-license path and CLA. Preserve notices and do not infer blanket reuse rights.
+
 
 ---
 
