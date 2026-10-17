@@ -200,3 +200,9 @@ The full pinned-snapshot run 39034971662 provides these verified results:
 - Current path register: 285 classified / 1,065 unclassified (1,350 source blobs total). Classification does not imply license clearance.
 - Packaging drift found: backend package.json=4.0.1 vs lockfile root=3.9.0; frontend package.json=4.0.1 vs lockfile root=3.8.2. Snapshot remains immutable; record for upstream resolution, don't silently patch source.
 - The full verifier run 39038991437 is pending for the latest manifests. Existing passing full backend/frontend/PostgreSQL evidence remains from 39034971662; Android Gradle is still unverified.
+
+
+## Update — 2026-10-17 — HTML sink inventory and current counts
+- Security trace now identifies the three React `dangerouslySetInnerHTML` sinks (AI markdown, prepared email HTML, plain-text linkification), plus compose quoted HTML/signature, SignatureEditor, print-document and sandboxed iframe paths. AI markdown is DOMPurify-sanitized; prepared email HTML uses scopeEmailCss → sanitizeEmailForApp; linkifyText escapes HTML metacharacters. SignatureEditor remains safe only if every parent caller sanitizes before innerHTML assignment.
+- Current path register: 287 classified / 1,063 unclassified. The changed/new delta review remains 146/147, with the PKCS#12 Android test fixture pending binary certificate/provenance inspection.
+- Full verification run 39039116102 predates the newest security-sink path additions; the path-disposition trigger now causes a fresh verification run. Keep the OIDC native-fetch DNS-rebinding/redirect gap open; no upstream source was modified.
