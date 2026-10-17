@@ -711,7 +711,7 @@ This repository also maintains a full, commit-pinned source library for reuse an
 
 - [Extraction workspace](extraction/README.md) — rules, memory, sessions, source pins, manifests, project control and verification.
 - [Current source pin](extraction/source-pins/current.json) — exact upstream repository, commit and root tree.
-- [Current immutable source snapshot](extraction/snapshots/35067fc2876d50980f1a8a3b8ea72b5467b69f60/source/) — byte-exact Git blob snapshot of upstream commit `35067fc2876d50980f1a8a3b8ea72b5467b69f60`.
+- [Immutable source snapshots](extraction/snapshots/) — each upstream commit is stored in its own directory; the active commit and tree are recorded in the [current source pin](extraction/source-pins/current.json).
 - [Capability closure tracker](extraction/manifests/capability-closure-2026-10-17-35067fc.json) — work remaining before extracted capabilities can be safely reused.
 - [Upstream snapshot workflow](.github/workflows/mailflow-source-snapshot.yml) — captures future upstream main changes as new immutable snapshots.
 
