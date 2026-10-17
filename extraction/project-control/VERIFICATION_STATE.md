@@ -149,3 +149,9 @@ This is baseline identity/inventory evidence only, not full extraction verificat
 - Combined selected tests: 64 file-runs, 1,277 passed, 10 skipped, zero failures. Machine-readable evidence: `extraction/manifests/closure-test-results-2026-10-17-35067fc.json`.
 - Snapshot verifier run after the updated path/capability manifests: https://github.com/Rilan-Dev/mailflow/actions/runs/39034548818 — success.
 - Still open: full backend/frontend suites, native builds, column-level schema/SQL-consumer closure, all capability closure, third-party provenance/license clearance, redistribution clearance and extraction PASS.
+
+
+## 2026-10-17 — Full snapshot verification workflow
+
+- Added `.github/workflows/mailflow-full-snapshot-verification.yml`: exact pinned snapshot verifier; full backend lint/plugin boundary/syntax/tests/audit; full frontend lint/tests/build/audit; Android sync, unit tests and debug APK build. Run: https://github.com/Rilan-Dev/mailflow/actions/runs/39034814909, queued at last check.
+- Pending run does not establish full verification. Existing selected tests passed (1,277 passed, 10 skipped across 64 file-runs) and snapshot verifier run 39034692855 succeeded. The full suite/native job must finish before marking those dimensions PASS.
