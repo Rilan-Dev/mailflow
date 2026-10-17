@@ -66,3 +66,28 @@ jobs:
       - name: Run image proxy tests
         working-directory: extraction/snapshots/35067fc2876d50980f1a8a3b8ea72b5467b69f60/source/frontend
         run: node --test src/utils/imageProxy.test.js
+
+  frontend-email-render-security-tests:
+    name: Frontend email HTML sinks and image policy tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: extraction/snapshots/35067fc2876d50980f1a8a3b8ea72b5467b69f60/source/frontend/package-lock.json
+      - name: Install pinned frontend dependencies
+        working-directory: extraction/snapshots/35067fc2876d50980f1a8a3b8ea72b5467b69f60/source/frontend
+        run: npm ci
+      - name: Test sandboxed email frame, app-origin sanitization, image policy and HTML renderers
+        working-directory: extraction/snapshots/35067fc2876d50980f1a8a3b8ea72b5467b69f60/source/frontend
+        run: >-
+          node --test
+          src/components/MessageBodyView.csp.test.js
+          src/components/MessageBodyView.render.test.js
+          src/components/ComposeModal.imageProxy.render.test.js
+          src/components/ComposeModal.render.test.js
+          src/components/MessagePane.render.test.js
+          src/utils/appEmailHtml.test.js
+          src/utils/imageProxy.test.js
