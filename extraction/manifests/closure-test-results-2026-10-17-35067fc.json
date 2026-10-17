@@ -68,14 +68,14 @@
   "verification_boundaries": {
     "snapshot_integrity": "PASS; latest completed full verifier run https://github.com/Rilan-Dev/mailflow/actions/runs/39034971662; a fresh run is pending after the workflow command correction",
     "selected_security_and_transport_tests": "PASS",
-    "full_backend_suite": "PASS: full backend lint, plugin-boundary lint, syntax check, npm test and production dependency audit passed in run 39034971662",
-    "full_frontend_suite": "PASS: full frontend lint, npm test (including Electron Node tests), production build and production dependency audit passed in run 39034971662",
-    "native_android_electron_builds": "PARTIAL: Electron Node tests passed in full frontend npm test; Android web build/Capacitor sync passed, Gradle compile/unit tests/debug APK pending a run that actually executes bash ./gradlew; Electron packaging not run.",
+    "full_backend_suite": "PASS: 2,804 passed / 41 skipped across 172 backend test files; lint, plugin-boundary lint, syntax and production dependency audit passed in run 39034971662",
+    "full_frontend_suite": "PASS: 3,142 passed / 0 skipped / 0 failed; lint, production build and production dependency audit passed in run 39034971662",
+    "native_android_electron_builds": "PARTIAL: Electron Node tests passed in full frontend suite; Android web build/Capacitor sync passed; Gradle unit tests/debug APK pending on run 39035662163; Electron packaging not run.",
     "capability_closure": "NOT_CLOSED",
     "path_license_and_provenance": "IN_PROGRESS",
     "redistribution_clearance": "PENDING",
     "extraction_pass": "NOT_CLAIMED; Android build pending, capability closure and licensing/provenance remain open",
-    "postgres_migrations": "PASS: PostgreSQL 17 clean database, 66 migrations, idempotent second run and schema object sanity checks passed in run 39034971662"
+    "postgres_migrations": "PASS: PostgreSQL 17; all 66 migrations; second run idempotent; 32 tables, 97 indexes and 282 constraints in run 39034971662"
   },
   "full_verification": {
     "workflow_run": 39034971662,
@@ -93,7 +93,7 @@
     "corrected_run": {
       "id": 39035662163,
       "url": "https://github.com/Rilan-Dev/mailflow/actions/runs/39035662163",
-      "status": "PENDING; workflow file was updated in this commit to explicitly use bash ./gradlew"
+      "status": "PENDING; this run was triggered by a commit containing the explicit bash ./gradlew command"
     },
     "previous_attempts": [
       {
@@ -108,6 +108,42 @@
         "run": 39035265386,
         "result": "CANCELLED_BEFORE_JOBS_STARTED"
       }
-    ]
+    ],
+    "full_backend": {
+      "run": 39034971662,
+      "result": "PASS",
+      "test_files_passed": 166,
+      "test_files_skipped": 6,
+      "tests_passed": 2804,
+      "tests_skipped": 41,
+      "failures": 0,
+      "lint": "PASS",
+      "plugin_boundary_lint": "PASS",
+      "syntax_check": "PASS",
+      "production_dependency_audit": "PASS"
+    },
+    "full_frontend": {
+      "run": 39034971662,
+      "result": "PASS",
+      "test_count": 3142,
+      "tests_passed": 3142,
+      "tests_skipped": 0,
+      "failures": 0,
+      "top_level_suites": 330,
+      "lint": "PASS",
+      "production_build": "PASS",
+      "production_dependency_audit": "PASS",
+      "electron_node_tests": "INCLUDED_IN_NPM_TEST"
+    },
+    "postgres_migrations": {
+      "run": 39034971662,
+      "result": "PASS",
+      "postgres_version": 17,
+      "migrations_applied": 66,
+      "idempotent_rerun": "PASS",
+      "tables": 32,
+      "indexes": 97,
+      "constraints": 282
+    }
   }
 }
