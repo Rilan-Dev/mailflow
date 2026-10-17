@@ -6,15 +6,15 @@
     "tree": "a2a82b50b8a1ac24a273e55dc0f9418aefdfed17"
   },
   "created_at": "2026-10-17",
-  "status": "PARTIAL_SECURITY_TRACE_AND_LICENSE_NOTICE_CLASSIFICATION_IN_PROGRESS_NOT_CLOSED",
+  "status": "PARTIAL_SECURITY_TRANSPORT_SCHEMA_TRACE_AND_LICENSE_REVIEW_IN_PROGRESS_NOT_CLOSED",
   "summary": {
     "capability_count": 16,
     "closed": 0,
     "partial_traces": 3,
     "not_started": 13,
     "source_blobs": 1350,
-    "unclassified_paths": 1311,
-    "initially_classified_paths": 39
+    "unclassified_paths": 1238,
+    "initially_classified_paths": 112
   },
   "dimensions": [
     "first_party_imports_and_callers",
@@ -851,6 +851,18 @@
         "path_level_license_and_provenance": "NOT_STARTED"
       },
       "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
+    }
+  ],
+  "evidence": [
+    {
+      "kind": "security_transport_database_trace",
+      "path": "extraction/manifests/security-transport-database-trace-2026-10-17.md",
+      "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED"
+    },
+    {
+      "kind": "postgres_schema_runtime_map",
+      "path": "extraction/manifests/postgres-schema-runtime-map-2026-10-17.md",
+      "status": "INITIAL_SCHEMA_MAP_NOT_CLOSED"
     }
   ]
 }
