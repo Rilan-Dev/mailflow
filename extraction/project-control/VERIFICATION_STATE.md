@@ -34,3 +34,11 @@ This is baseline identity/inventory evidence only, not full extraction verificat
 - API/connector validation against the stored manifests: PASS. Source pin and tree manifest agree; 1,462 unique tree entries; all 1,319 blobs have a matching disposition record with identical SHA/mode; all candidate paths and all 16 capability source/test references exist with matching blob SHAs; zero inconsistencies found.
 - The authored Node script tools/verify-inventory.mjs has not yet been executed directly. The GitHub Actions workflow has not been run end-to-end.
 - Discovery remains incomplete: 1,319 paths unclassified, licensing unreviewed, closure unmapped. No source copy or extraction PASS.
+
+## 2026-10-17 — Snapshot automation authored; execution pending
+- MailFlow PR #1 is merged; the self-contained framework and source-specific workspace now exist on main.
+- Current upstream identity observed during review: maathimself/mailflow main at 35067fc2876d50980f1a8a3b8ea72b5467b69f60; root tree a2a82b50b8a1ac24a273e55dc0f9418aefdfed17. Workflow execution must resolve the live branch again.
+- Added exact Git-object capture tool and a scheduled/manual GitHub Actions workflow. The tool writes commit-addressed snapshots, tree/path manifests, preserves unchanged path assessments only on exact SHA+mode match, and resets changed/new files to unclassified.
+- Updated verifier to check exact Git blob hashes, snapshot file-set equality, symlink status and executable bits when a snapshot exists.
+- NOT YET VERIFIED: workflow execution, generated snapshot PR, current live upstream inventory, local verifier output, snapshot exactness in a real checkout, per-path license/provenance, dependency closure, independent reconciliation, LFS/submodule completeness, or extraction PASS.
+- Licensing notice: upstream declares AGPL-3.0 and a separate commercial license route; preserve notices and do not assume arbitrary reuse/redistribution rights.
