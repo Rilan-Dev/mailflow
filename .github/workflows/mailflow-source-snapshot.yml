@@ -10,6 +10,7 @@ on:
       - ".github/workflows/mailflow-source-snapshot.yml"
       - "extraction/tools/capture-upstream-snapshot.mjs"
       - "extraction/tools/verify-inventory.mjs"
+      - "extraction/source-pins/current.json"
 
 permissions:
   contents: write
