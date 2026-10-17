@@ -9,7 +9,7 @@
 - Snapshot evidence: https://github.com/Rilan-Dev/mailflow/actions/runs/39030794029
 
 ## Work started after snapshot capture
-- **Path dispositions:** 39 of 1,350 paths classified; 1311 remain UNCLASSIFIED. Classification of a path does not mean it is license-cleared or reusable.
+- **Path dispositions:** 112 of 1,350 paths classified by role; 1,238 remain UNCLASSIFIED. Newly classified transport and migration paths still have UNREVIEWED licenses and partial closure. Classification of a path does not mean it is license-cleared or reusable.
 - **Capability map:** 16 capability candidates; 3 have partial static security traces; 0 are closed.
 - **Security slice:** auth/session, OAuth/OIDC, host validation, safe fetch, image proxy and email sanitization. Selected test execution now PASS: 15 files / 379 tests, 0 failures; see `extraction/manifests/security-test-results-2026-10-17-35067fc.json`. Static caller/threat-model closure remains partial.
 - **Dependencies:** 1,124 locked package entries (445 backend, 679 frontend), 50 direct dependencies and 16 direct dev dependencies. 0 third-party package licenses have been cleared.
@@ -32,3 +32,11 @@
 - Machine-readable evidence: `extraction/manifests/security-test-results-2026-10-17-35067fc.json`.
 - Updated `.github/workflows/mailflow-source-snapshot.yml` so scheduled/manual upstream captures create or update `automation/mailflow-upstream-snapshot` as a reviewable pull request after verification, instead of pushing newly captured upstream code directly to main. This preserves immutable snapshots while preventing unreviewed upstream changes from being silently merged.
 - Remaining status is unchanged for overall extraction: 1,311 blobs unclassified, third-party license/provenance review open, capability/dependency closure open, redistribution and host integration not cleared.
+
+
+## Update — 2026-10-17 — Security/transport/schema tracing
+- Trace: `extraction/manifests/security-transport-database-trace-2026-10-17.md`.
+- Schema map: `extraction/manifests/postgres-schema-runtime-map-2026-10-17.md`; 66 SQL migrations are indexed with key relationships and runtime capability linkage, but column-level DDL and exhaustive SQL consumer closure remain open.
+- Path register: 112 paths classified by role; 1,238 remain unclassified. Classification is not reuse permission; new paths remain license-unreviewed.
+- Account/API trace covers encrypted credentials, user ownership checks, connection policy, asynchronous disconnect after delete, IMAP cooldown/concurrency, SMTP connect-time DNS pinning/TLS policy, and send/draft recovery paths.
+- Remaining gates: complete security caller/sink closure, full migration object/runtime map and PostgreSQL upgrade tests, all capability closures, third-party license/provenance and redistribution clearance, and full backend/frontend/native verification.
