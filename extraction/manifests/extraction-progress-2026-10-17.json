@@ -61,7 +61,7 @@
     "host_integration": "NOT_CLEARED"
   },
   "evidence_links": {
-    "snapshot_verification": "https://github.com/Rilan-Dev/mailflow/actions/runs/39030794029",
+    "snapshot_verification": "https://github.com/Rilan-Dev/mailflow/actions/runs/39031182967",
     "source_verification_report": "extraction/manifests/source-verification-2026-10-17-35067fc.json",
     "security_closure": "extraction/manifests/security-closure-2026-10-17-35067fc.json",
     "dependency_inventory": "extraction/manifests/dependency-inventory-2026-10-17-35067fc.json",
