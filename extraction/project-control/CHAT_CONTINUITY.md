@@ -80,3 +80,8 @@ Added `.github/workflows/mailflow-full-snapshot-verification.yml` to run the exa
 ## Continuity update — 2026-10-17 — PostgreSQL migration test job
 
 Added a PostgreSQL 17 job to the full pinned snapshot verification workflow: apply all 66 migrations to a clean DB, rerun for idempotency, assert 66 ledger entries and inspect table/index/constraint counts. Commit `3aabe903e75196956c49e77b3499467496578c12`. The earlier queued workflow run predates this job; inspect the newer run before recording results. This still does not cover upgrades from old schemas or simulated partial failure of non-transactional migrations.
+
+
+## Continuity update — 2026-10-17 — Full verification found wrapper-mode issue
+
+Full pinned snapshot run 39034971662 passed exact inventory verification, full backend lint/plugin boundary/tests/audit, full frontend lint/tests/build/audit, PostgreSQL 17 clean install + all 66 migrations + idempotent rerun, and Android web build/Capacitor sync. The only failed job step was Android Gradle invocation, exit 126 because immutable upstream `gradlew` lacks executable mode; Gradle never started, so this is not a source compile failure. Snapshot mode remains untouched. Workflow now runs `bash ./gradlew testDebugUnitTest assembleDebug --no-daemon` (commit 981a7fbaec746ca765424c9e24572101716cca96); wait for the corrected run's result before calling native verification complete.
