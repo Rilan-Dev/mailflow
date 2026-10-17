@@ -147,3 +147,11 @@
 - Android web build and Capacitor sync passed; Gradle invocation failed with exit 126 because the upstream pinned `gradlew` file is not executable in the snapshot (permission denied before Gradle ran). This is a workflow invocation issue, not evidence of Android source compilation failure.
 - Preserved immutable snapshot mode and fixed workflow command to `bash ./gradlew testDebugUnitTest assembleDebug --no-daemon`, commit `981a7fbaec746ca765424c9e24572101716cca96`. New run must confirm Android compilation and unit tests.
 - Until the corrected Android job succeeds, overall full verification remains PARTIAL. Licensing/provenance and capability closure remain open regardless of CI.
+
+
+## 016 — 2026-10-17 — Full-suite counts confirmed; Android rerun queued correctly
+- Extracted the full backend Vitest summary from run 39034971662: 166 test files passed, 6 skipped; 2,804 tests passed, 41 skipped, zero failures. Backend lint, plugin boundary lint, syntax and production audit passed.
+- Extracted the full frontend Node test summary: 3,142 passed, zero skipped/failures; frontend lint, Vite production build and production dependency audit passed. Electron Node test files are included in `npm test`.
+- PostgreSQL 17 job passed: 66 migrations applied, idempotent second run, 32 tables, 97 indexes and 282 constraints.
+- Android web bundle/Capacitor sync passed, but earlier full-verification runs failed or were cancelled before the corrected Gradle wrapper command was actually tested. Latest run https://github.com/Rilan-Dev/mailflow/actions/runs/39035810908 is pending and triggered after the workflow explicitly documents/runs `bash ./gradlew`. Avoid editing files in that workflow's trigger paths until the run progresses.
+- Reusable capability trace added at `extraction/manifests/reusable-capability-runtime-trace-2026-10-17.md`; role classifications now 182, unclassified 1,168; capability closure register has 14 partial, 2 not started, zero closed.
