@@ -713,6 +713,9 @@ This repository also maintains a full, commit-pinned source library for reuse an
 - [Current source pin](extraction/source-pins/current.json) — exact upstream repository, commit and root tree.
 - [Immutable source snapshots](extraction/snapshots/) — each upstream commit is stored in its own directory; the active commit and tree are recorded in the [current source pin](extraction/source-pins/current.json).
 - [Capability closure tracker](extraction/manifests/capability-closure-2026-10-17-35067fc.json) — work remaining before extracted capabilities can be safely reused.
+- [Security closure slice](extraction/manifests/SECURITY_CLOSURE_2026-10-17.md) — first-pass auth/OIDC, outbound fetch, image proxy and sanitizer trace.
+- [Dependency closure inventory](extraction/manifests/DEPENDENCY_CLOSURE_2026-10-17.md) — pinned backend/frontend lockfile coverage and license-review status.
+- [Snapshot verification report](extraction/manifests/source-verification-2026-10-17-35067fc.json) — exact blob/tree and LFS/gitlink checks.
 - [Upstream snapshot workflow](.github/workflows/mailflow-source-snapshot.yml) — captures future upstream main changes as new immutable snapshots.
 
 The source tree is captured and its Git blob/tree identities are verified. Capability/dependency closure and per-path license/provenance review are still in progress; this does not mean every capability is ready to integrate into another application.
