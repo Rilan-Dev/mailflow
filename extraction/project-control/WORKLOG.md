@@ -50,3 +50,13 @@
 - Added .github/workflows/mailflow-source-snapshot.yml to capture upstream main on dispatch, every six hours, and on workflow/tool introduction. It opens or updates a reviewable PR rather than silently merging source changes.
 - Refreshed NEXT_ACTION.md, PROJECT_STATE.md and durable agent memory. Source capture has been authorized by the user; capability closure, per-path licensing/provenance, redistribution clearance and host integration remain unverified.
 - Snapshot workflow run and generated PR are not yet evidenced in this worklog. Do not claim a source snapshot is captured until its actual output is reviewed.
+
+## 006 — 2026-10-17 — Full upstream snapshot captured and tree verified
+- The first capture workflow run created the snapshot, but its initial PR-creation step failed because repository Actions settings prohibit the GITHUB_TOKEN from creating PRs. The first attempt's temporary automation branch contained an unintended upstream-source gitlink and was not merged.
+- Corrected the workflow to clone upstream outside the target working tree and publish the verified snapshot directly to main, matching the user's explicit main-branch instruction. Removed PR-creation dependency.
+- Captured upstream maathimself/mailflow commit 35067fc2876d50980f1a8a3b8ea72b5467b69f60, tree a2a82b50b8a1ac24a273e55dc0f9418aefdfed17.
+- Snapshot path: extraction/snapshots/35067fc2876d50980f1a8a3b8ea72b5467b69f60/source. Snapshot manifest records 1,350 copied blobs, 0 blob hash failures, 147 tree entries and 0 gitlinks.
+- GitHub Actions verifier run https://github.com/Rilan-Dev/mailflow/actions/runs/39030338698 completed successfully. Exact log: PASS: inventory consistency checks passed; tree entries 1497, blobs 1350, trees 147; reconstructed root tree SHA a2a82b50b8a1ac24a273e55dc0f9418aefdfed17; all 147 nested tree SHA values verified. Snapshot file set, blob hashes, symlinks and executable bits passed.
+- Compared initial discovery inventory to current upstream: 31 added blobs, 116 changed blobs, 1,203 unchanged blobs, 0 removed blobs. All 1,350 current paths remain UNCLASSIFIED / license UNREVIEWED / closure UNMAPPED.
+- Added current-pin architecture map, upstream delta report, capability closure tracker and direct import/route scan across 16 files (78 first-party import lines and 57 route signatures). These are partial evidence only, not transitive closure.
+- Next: security closure (auth/OAuth/OIDC, host validation, safeFetch/image proxy, sanitizer), then IMAP/account lifecycle, DB/migrations, and remaining capability families. Licensing/provenance review remains mandatory.
