@@ -56,15 +56,15 @@
     "redistribution_clearance": "PENDING",
     "path_disposition_summary": {
       "total_blobs": 1350,
-      "classified": 183,
-      "unclassified": 1167,
-      "note": "Latest path-level classification snapshot; license/provenance review remains open."
+      "classified": 156,
+      "unclassified": 1194,
+      "note": "After delta review, 17 high-priority changed/new blobs received first-pass review; other changed/new blobs were reset to UNCLASSIFIED."
     },
     "security_static_trace": "PARTIAL_NOT_CLOSED",
     "latest_manifest_verifier": {
-      "workflow_url": "https://github.com/Rilan-Dev/mailflow/actions/runs/39037683681",
-      "workflow_result": "queued_at_recording",
-      "note": "Triggered after capability/path manifest updates; prior verifier run is not evidence for these latest manifests."
+      "workflow_url": "https://github.com/Rilan-Dev/mailflow/actions/runs/39038119553",
+      "workflow_result": "pending_at_recording",
+      "note": "Run triggered before the latest delta/path-disposition update; another verifier run is expected from current manifest changes."
     }
   }
 }
