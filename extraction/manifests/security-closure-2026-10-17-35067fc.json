@@ -6,8 +6,8 @@
     "tree": "a2a82b50b8a1ac24a273e55dc0f9418aefdfed17"
   },
   "created_at": "2026-10-17",
-  "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED",
-  "scope": "Initial security-sensitive static trace of authentication/session, OIDC/OAuth, outbound host validation, remote fetch, image proxy and email HTML sanitization. No tests were executed against the snapshot during this static trace.",
+  "status": "PARTIAL_STATIC_TRACE_AND_SELECTED_TESTS_PASS_NOT_CLOSED",
+  "scope": "Static trace of authentication/session, OAuth/OIDC, outbound host validation, remote fetch, image proxy and email HTML sanitization, followed by selected pinned-snapshot security/render test execution. The selected tests passed; this does not close every caller, threat path, UI sink or capability.",
   "evidence": [
     {
       "capability": "auth-and-identity",
@@ -91,8 +91,9 @@
         }
       ],
       "openQuestions": [
-        "Trace all OIDC metadata and JWKS fetch call sites, issuer/audience/nonce/PKCE enforcement and provider configuration persistence.",
-        "Confirm private-host opt-in behavior and execution-time policy rechecks across all discovery/token/end-session requests."
+        "Native fetch is used for discovery and token requests after hostname validation; trace/fix DNS-rebinding and redirect-to-private behavior by enforcing connection-time target policy at every hop.",
+        "allow_insecure bypasses host validation/HTTPS-only enforcement and disables TLS certificate verification. Confirm admin-only control, explicit warnings, response bounds and exact policy scope for discovery/JWKS/token/end-session.",
+        "Complete issuer/audience/nonce/PKCE validation, provider persistence, logout/session invalidation and negative tests across all supported providers."
       ]
     },
     {
@@ -121,8 +122,8 @@
         }
       ],
       "openQuestions": [
-        "Trace redirect behavior and confirm the connector is re-applied on every redirect hop for all safeFetch callers.",
-        "Map the policy that allows private hosts and prove it is rechecked at use time; review DNS rebinding/time-of-check behavior for every IMAP/SMTP/OIDC path."
+        "safeFetch redirect-hop validation is established for its own callers, but OIDC/native-fetch callers do not inherit the guarded connector. Enumerate every outbound network call and ensure private/reserved destinations cannot be reached through redirect or DNS rebinding.",
+        "Map private-host and insecure-TLS policy across create/update and connection time for IMAP/SMTP, and OIDC at every discovery/token/end-session hop; verify mixed DNS answers and TLS/SNI behavior."
       ]
     },
     {
@@ -190,8 +191,75 @@
         }
       ],
       "openQuestions": [
-        "Trace rendering sink and every email/compose/signature sanitizer caller; confirm no alternate unsafe HTML path.",
-        "Map all sanitization transforms to browser-visible behavior and negative tests."
+        "Trace both MessageBodyView's sandboxed iframe and MessagePane's optional div-render prepared.html path; prove prepareEmailHtml/scopeEmailCss sanitization and CSS scoping remain active whenever the div-render feature flag is enabled.",
+        "linkifyText(body.text) escapes ampersand and angle brackets before link generation; add/verify explicit hostile markup tests for plain-text fallback and URL attribute edge cases.",
+        "Trace ComposeModal/appEmailHtml DOMPurify image policy and SignatureEditor innerHTML values through account settings, API read/write, draft reopen and signature source mode. No alternate unsafe HTML path may be assumed absent without caller trace."
+      ]
+    },
+    {
+      "capability": "frontend-email-render-sinks",
+      "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED",
+      "source_files": [
+        {
+          "path": "frontend/src/components/MessageBodyView.jsx",
+          "sha": "f66423195823889185bc0f8ecfa77d3c8e246c05",
+          "observed": "Sandboxed srcDoc iframe without allow-scripts; CSP denies scripts, objects, nested frames and forms."
+        },
+        {
+          "path": "frontend/src/components/MessagePane.jsx",
+          "sha": "05376cf03b831c9ffd43796e654ecd9f949c64dd",
+          "observed": "Optional div-render prepared.html sink and escaped plain-text linkifyText sink; feature flag VITE_EMAIL_DIV_RENDER."
+        },
+        {
+          "path": "frontend/src/utils/scopeEmailCss.js",
+          "sha": "bbad42f0508fe670e7a50320a23822ab2e28c317",
+          "observed": "Strips unsafe at-rules, scopes selectors, and applies sanitizeEmailForApp before app-origin innerHTML."
+        },
+        {
+          "path": "frontend/src/utils/appEmailHtml.js",
+          "sha": "9a87890c4e55bb5d60494558a1945dad3e4b256a",
+          "observed": "DOMPurify plus URL/CSS checks restrict image fetches to local/data/blob/CID."
+        },
+        {
+          "path": "frontend/src/components/ComposeModal.jsx",
+          "sha": "5303edc5d83f7b7690efdc605fc58b5961004cf8",
+          "observed": "Signature HTML sanitized with DOMPurify; quoted reply/forward HTML uses app-origin sanitization."
+        },
+        {
+          "path": "frontend/src/components/SignatureEditor.jsx",
+          "sha": "504c4acccd64464bf83636cdec6ca1467edf150c",
+          "observed": "ContentEditable innerHTML is initialized and updated from caller value/source editor; caller-side boundary still needs end-to-end trace."
+        }
+      ],
+      "tests": [
+        {
+          "path": "frontend/src/components/MessageBodyView.csp.test.js",
+          "sha": "6e5da27f94b9ab315c58cf66102d9ee062e8c94e"
+        },
+        {
+          "path": "frontend/src/components/MessageBodyView.render.test.js",
+          "sha": "7546a4ecf0535bf237cf6d13499f1026bae513d6"
+        },
+        {
+          "path": "frontend/src/components/ComposeModal.imageProxy.render.test.js",
+          "sha": "a61edb9494fa8cb70ca731e35184f94d6410427b"
+        },
+        {
+          "path": "frontend/src/components/ComposeModal.render.test.js",
+          "sha": "bbb6132c984c0460a02d20312955083ad827ec0d"
+        },
+        {
+          "path": "frontend/src/components/MessagePane.render.test.js",
+          "sha": "59e9146e629ac5b67e2d047ea1bd238f1b474882"
+        },
+        {
+          "path": "frontend/src/utils/appEmailHtml.test.js",
+          "sha": "99235be791780c4723e97d743e45d705287abcbd"
+        }
+      ],
+      "openQuestions": [
+        "Test results are available in closure-test-results-2026-10-17-35067fc.json; confirm exact feature-flag configuration and that hostile markup cannot reach the div renderer unsanitized.",
+        "Audit signature editor saved-value API and plain-text URL linkifier edge cases. Selected rendering tests do not close every sink."
       ]
     }
   ],
@@ -210,9 +278,11 @@
   "status_summary": {
     "source_snapshot_integrity": "PASS",
     "static_trace": "PARTIAL",
-    "tests_executed_in_this_trace": 0,
+    "tests_executed_in_this_trace": 500,
     "capability_closure": "PENDING",
     "license_provenance": "PENDING",
-    "host_integration": "NOT_CLEARED"
+    "host_integration": "NOT_CLEARED",
+    "test_evidence": "extraction/manifests/closure-test-results-2026-10-17-35067fc.json",
+    "selected_test_result": "PASS: 500 security/render tests passed, zero failures; full capability closure remains PENDING"
   }
 }
