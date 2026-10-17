@@ -9,7 +9,7 @@
 - Snapshot evidence: https://github.com/Rilan-Dev/mailflow/actions/runs/39030794029
 
 ## Work started after snapshot capture
-- **Path dispositions:** 124 of 1,350 paths classified by role; 1,226 remain UNCLASSIFIED. Newly classified transport and migration paths still have UNREVIEWED licenses and partial closure. Classification of a path does not mean it is license-cleared or reusable.
+- **Path dispositions:** 131 of 1,350 paths classified by role; 1,219 remain UNCLASSIFIED. Newly classified transport and migration paths still have UNREVIEWED licenses and partial closure. Classification of a path does not mean it is license-cleared or reusable.
 - **Capability map:** 16 capability candidates; 3 have partial static security traces; 0 are closed.
 - **Security slice:** auth/session, OAuth/OIDC, host validation, safe fetch, image proxy and email sanitization. Selected test execution now PASS: 15 files / 379 tests, 0 failures; see `extraction/manifests/security-test-results-2026-10-17-35067fc.json`. Static caller/threat-model closure remains partial.
 - **Dependencies:** 1,124 locked package entries (445 backend, 679 frontend), 50 direct dependencies and 16 direct dev dependencies. 0 third-party package licenses have been cleared.
@@ -55,3 +55,9 @@
 - Aggregate selected evidence: 64 file-runs, 1,277 passed tests, 10 skipped, 0 failures. Machine-readable: `extraction/manifests/closure-test-results-2026-10-17-35067fc.json`.
 - Snapshot/inventory verifier after the updated path and capability manifests: https://github.com/Rilan-Dev/mailflow/actions/runs/39034692855 — success.
 - This is selected suite evidence, not full backend/frontend/native verification or extraction PASS. OIDC native-fetch redirect/DNS pinning, complete sink closure, full migration object/consumer mapping and licensing/provenance remain open.
+
+
+## Update — 2026-10-17 — Renderer dependency classification
+- Added role-level classifications for CSS scoping/style registry, remote-image CSP/lazy-loading helpers, message body tests, and compose signature/reply-draft tests. Current register: 131 classified, 1,219 unclassified.
+- Capability closure references now include the new renderer and image-policy dependencies. These are partial role classifications only; licensing remains unreviewed.
+- Latest security/render suite passed 500 tests and transport suite passed 777 with 10 skipped; full pinned-snapshot workflow (including PostgreSQL migration clean install/rerun and Android debug build) remains pending at https://github.com/Rilan-Dev/mailflow/actions/runs/39034971662. That run predates the newest closure-manifest edit; the run triggered by the latest closure update should be used for final verifier result.
