@@ -23,10 +23,10 @@
     "old_tree_entries": 1462,
     "old_tree_truncated": false
   },
-  "status": "PARTIAL_REVIEW_17_HIGH_PRIORITY_PATHS_REVIEWED_130_PATHS_PENDING",
+  "status": "PARTIAL_REVIEW_33_HIGH_PRIORITY_PATHS_REVIEWED_114_PATHS_PENDING",
   "guardrail": "Review classification is not license clearance. Do not change or overwrite either immutable snapshot. Every changed/new path must be re-evaluated against exact blob SHA and mode.",
-  "reviewed_high_priority_count": 17,
-  "pending_count": 130,
+  "reviewed_high_priority_count": 33,
+  "pending_count": 114,
   "entries": [
     {
       "path": ".env.example",
@@ -138,14 +138,14 @@
       "additions": 4,
       "deletions": 1,
       "changes": 5,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "HIGH",
+      "first_pass_notes": "AI provider 401 is remapped to 409 to avoid treating provider credential failure as MailFlow session expiration; error contract and frontend sign-out behavior are the dependencies.",
       "base_blob_sha": "8dafd6f88fca03a8dfa35c6f4b9ab28304f6569b",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "backend/src/routes/ai.test.js",
@@ -308,14 +308,14 @@
       "additions": 8,
       "deletions": 0,
       "changes": 8,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "HIGH",
+      "first_pass_notes": "Todoist 401 is remapped to 409 with reconnect guidance because an external integration token rejection must not sign the user out.",
       "base_blob_sha": "8298838477909b6cee96ce91281ff5125a22604d",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "backend/src/routes/todoist.test.js",
@@ -496,13 +496,13 @@
       "additions": 172,
       "deletions": 0,
       "changes": 172,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "HIGH",
+      "first_pass_notes": "New disk cache hashes user ID, URL and width into filenames; per-user keys, 30-day expiry, LRU byte cap, 10-minute failure cache, in-flight coalescing and read-only-filesystem fallback are present. Need filesystem permission/symlink/cleanup race review.",
       "base_mode": null,
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "backend/src/services/imageCache.test.js",
@@ -546,14 +546,14 @@
       "additions": 39,
       "deletions": 21,
       "changes": 60,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "HIGH",
+      "first_pass_notes": "Image fitting now targets display width and re-encodes eligible images while preserving animated/GIF/small images; native sharp/platform closure and MIME/signature cases remain open.",
       "base_blob_sha": "015a6baac1c6489f3feda7a7b917faf002fa0707",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "backend/src/services/imageShrink.test.js",
@@ -666,13 +666,13 @@
       "additions": 36,
       "deletions": 0,
       "changes": 36,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "HIGH",
+      "first_pass_notes": "New inline data-image fitting caches by user and content hash; body route keeps originals for forwarding. Need malformed base64, MIME, size and cache quota tests.",
       "base_mode": null,
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "backend/src/services/inlineImageFit.test.js",
@@ -767,14 +767,14 @@
       "additions": 10,
       "deletions": 2,
       "changes": 12,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "HIGH",
+      "first_pass_notes": "Forwarding sanitizer now removes existing dark-mode switch before and after sanitization to prevent active dark CSS in forwarded email; attachment and rule retry closure remains open.",
       "base_blob_sha": "4eeebe72d0d949d8f0fa0f7a043c3225d20f5b4a",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "backend/src/services/ruleForwarder.test.js",
@@ -1005,14 +1005,14 @@
       "additions": 35,
       "deletions": 0,
       "changes": 35,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "HIGH",
+      "first_pass_notes": "Adds 32,000-character cap and natural-boundary truncation with explicit partial-email note; compose UI rejects destructive whole-draft replacement when over limit.",
       "base_blob_sha": "49dfeaaee0851d51759d3d3200f3aed30fec5866",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/aiActions.test.js",
@@ -1125,13 +1125,13 @@
       "additions": 184,
       "deletions": 0,
       "changes": 184,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "HIGH",
+      "first_pass_notes": "New shared attachment strip unifies reading pane/conversation cards, risk confirmation for dangerous attachments, in-app preview and download-all handling; route size/auth/error closure remains open.",
       "base_mode": null,
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/components/ComposeModal.aiLength.test.js",
@@ -1498,14 +1498,14 @@
       "additions": 7,
       "deletions": 1,
       "changes": 8,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "HIGH",
+      "first_pass_notes": "Reconnect backoff resets only after 10 seconds stable open to avoid rapid reconnect/refetch loops; session revocation/event isolation remains open.",
       "base_blob_sha": "04a79d11565cad0f91ff57185a9430ef010cfd94",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/i18n.js",
@@ -1805,13 +1805,13 @@
       "additions": 89,
       "deletions": 0,
       "changes": 89,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "HIGH",
+      "first_pass_notes": "New DOMPurify hook evaluates URL/srcset and CSS URLs with browser URL/CSS parsing; allows only local origin and data/blob/cid schemes, including SVG image-bearing elements. Must test browser parsing edge cases and all call sites.",
       "base_mode": null,
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/utils/appEmailHtml.test.js",
@@ -1839,13 +1839,13 @@
       "additions": 37,
       "deletions": 0,
       "changes": 37,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "HIGH",
+      "first_pass_notes": "New shared file-size formatting and MIME-driven icon rendering used by attachment strip; presentation helper only, asset/preview dependencies remain open.",
       "base_mode": null,
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/utils/bodyCache.js",
@@ -1856,13 +1856,13 @@
       "additions": 72,
       "deletions": 0,
       "changes": 72,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "HIGH",
+      "first_pass_notes": "New bounded LRU body cache (50 bodies/40 MiB) clears on user change and supports prefetch; ensure cache keys include image mode/original mode and no cross-user stale body survives transitions.",
       "base_mode": null,
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/utils/bodyCache.test.js",
@@ -1991,14 +1991,14 @@
       "additions": 24,
       "deletions": 2,
       "changes": 26,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "HIGH",
+      "first_pass_notes": "Conversation actions now separate drafts and leave Trash/Spam copies alone unless action originates there; depends on folderRole and server-side account/folder scope.",
       "base_blob_sha": "02c1a1c20cc9cc706fd54f3ccd6746e23c620ae0",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/utils/conversationActions.test.js",
@@ -2230,13 +2230,13 @@
       "additions": 123,
       "deletions": 0,
       "changes": 123,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "HIGH",
+      "first_pass_notes": "New lazy-loading defers only MailFlow image-proxy URLs in sandboxed email frame, loads near viewport and cleans observers/timers; inspect iframe CSP, resize/scroll races and image errors.",
       "base_mode": null,
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/utils/frameLazyImages.test.js",
@@ -2416,14 +2416,14 @@
       "additions": 9,
       "deletions": 0,
       "changes": 9,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "HIGH",
+      "first_pass_notes": "Sign-out clears per-user favorite/recent folders/default sender and last account; Android OIDC end-session handoff is optional and falls back for older clients.",
       "base_blob_sha": "649a73308de6bbe8ef009d96dd94137edb7b9520",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/utils/signOut.test.js",
@@ -2484,14 +2484,14 @@
       "additions": 76,
       "deletions": 29,
       "changes": 105,
-      "review_status": "NOT_REVIEWED",
-      "priority": "UNASSESSED",
-      "first_pass_notes": "Delta exists between initial pin e7a53760a7e4b15e0ee631533655d99dde657599 and current pin; inspect patch, callers/tests, runtime/data/UI dependencies and license/provenance before disposition.",
+      "review_status": "FIRST_PASS_REVIEWED",
+      "priority": "HIGH",
+      "first_pass_notes": "Thread actions filter copies by account unless unified inbox requests all; Trash/Spam/draft separation added. Server must remain authoritative and enforce same account scope.",
       "base_blob_sha": "65ea391a6c1c6d3cea3b516072bddf11962e503f",
       "base_mode": "100644",
       "target_mode": "100644",
       "same_sha_and_mode": false,
-      "reviewed_against_current_sha": false
+      "reviewed_against_current_sha": true
     },
     {
       "path": "frontend/src/utils/threadActions.test.js",
