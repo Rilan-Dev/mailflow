@@ -51,3 +51,10 @@
 - Direct runtime consumers are mapped for major backend mail/security/data capabilities and frontend compose/render/native surfaces.
 - All 1,124 lockfile entries remain `UNREVIEWED` for license and provenance; no third-party source is vendored.
 - This does not close dependency closure: native packages, dynamic imports, build assets, migration/schema callers, runtime environment, and package-level notices still require reconciliation.
+
+
+## Packaging version drift found during delta review
+- Pinned backend/package.json declares 4.0.1 while unchanged backend/package-lock.json root metadata declares 3.9.0.
+- Pinned frontend/package.json declares 4.0.1 while unchanged frontend/package-lock.json root metadata declares 3.8.2.
+- npm may still install dependencies despite this mismatch, but build metadata/release provenance can disagree. The immutable upstream snapshot is not modified here; verify intended release version and ask upstream to reconcile package and lockfile metadata in a future reviewed snapshot.
+- One added binary test asset, frontend/packages/android/app/src/androidTest/assets/untrusted-provider.p12, remains unreviewed at byte level. It is referenced only as an untrusted-provider TLS fixture by the Android OIDC instrumentation test, but certificate fingerprint/validity and generation provenance must be checked before classification/reuse.
