@@ -97,3 +97,13 @@ This is baseline identity/inventory evidence only, not full extraction verificat
 - Current disposition register: 39 paths initially classified; 1,311 remain UNCLASSIFIED. Security-source roles are marked DEPENDENCY_CLOSURE / CANDIDATE_REQUIRES_CLOSURE; test candidates are identified but not run.
 - Dependency inventory: 1,124 package-lock entries (445 backend, 679 frontend), 50 direct dependencies and 16 direct dev dependencies. No third-party licenses are cleared.
 - The exact snapshot/tree verification remains PASS; path classification, transitive closure, runtime/test execution, license/provenance and redistribution remain pending.
+
+## 2026-10-17 — Selected security test execution
+
+- Workflow: https://github.com/Rilan-Dev/mailflow/actions/runs/39031942550 — completed successfully.
+- Immutable source pin under test: maathimself/mailflow commit 35067fc2876d50980f1a8a3b8ea72b5467b69f60; root tree a2a82b50b8a1ac24a273e55dc0f9418aefdfed17.
+- Backend: `npm ci`, then selected Vitest auth, OAuth/OIDC, hostValidation, safeFetch, imageProxy and emailSanitizer suite. 14 test files passed, 375 tests passed, 0 failed.
+- Frontend: `npm ci`, then `node --test src/utils/imageProxy.test.js`. 1 test file passed, 4 tests passed, 0 failed.
+- Aggregate: 15 test files, 379 tests passed, 0 failed. Machine-readable evidence: `extraction/manifests/security-test-results-2026-10-17-35067fc.json`.
+- The first attempt failed due to an incorrect snapshot working-directory path in the new workflow. The path was corrected; the successful run above is authoritative.
+- This closes only the selected test-execution task, not the five security capabilities. Caller/sink/redirect/DNS-rebinding/session/provider-state tracing, complete test coverage, dependency closure and UI behavior mapping remain open. License/provenance and overall extraction PASS remain open.
