@@ -70,7 +70,7 @@
     "selected_security_and_transport_tests": "PASS",
     "full_backend_suite": "PASS: full backend lint, plugin-boundary lint, syntax check, npm test and production dependency audit passed in run 39034971662",
     "full_frontend_suite": "PASS: full frontend lint, npm test (including Electron Node tests), production build and production dependency audit passed in run 39034971662",
-    "native_android_electron_builds": "PARTIAL: Electron Node tests passed as part of frontend npm test; Android web build/Capacitor sync passed, but Gradle did not start because gradlew was non-executable. Corrected run pending; Electron packaging not run.",
+    "native_android_electron_builds": "PARTIAL: Electron Node tests passed in full frontend npm test; Android web build/Capacitor sync passed, Gradle compile/unit tests/debug APK pending a run that actually executes bash ./gradlew; Electron packaging not run.",
     "capability_closure": "NOT_CLOSED",
     "path_license_and_provenance": "IN_PROGRESS",
     "redistribution_clearance": "PENDING",
@@ -89,11 +89,25 @@
       "android_web_build_and_capacitor_sync": "PASS",
       "android_gradle_unit_tests_and_debug_apk": "FAILED_BEFORE_GRADLE_START_PERMISSION_DENIED_EXIT_126"
     },
-    "failure_analysis": "Pinned snapshot frontend/packages/android/gradlew is non-executable. The source snapshot mode was preserved. Workflow was corrected to invoke bash ./gradlew; corrected run 39035265386 is pending.",
+    "failure_analysis": "The pinned source tracks frontend/packages/android/gradlew without executable mode. Snapshot file mode is preserved. Latest workflow file commit a34f8d32f579abb334b2dadb9d4234da0cbfd1db explicitly documents and invokes `bash ./gradlew`; run 39035662163 is pending and should be used to confirm the actual command.",
     "corrected_run": {
-      "id": 39035265386,
-      "url": "https://github.com/Rilan-Dev/mailflow/actions/runs/39035265386",
-      "status": "PENDING"
-    }
+      "id": 39035662163,
+      "url": "https://github.com/Rilan-Dev/mailflow/actions/runs/39035662163",
+      "status": "PENDING; workflow file was updated in this commit to explicitly use bash ./gradlew"
+    },
+    "previous_attempts": [
+      {
+        "run": 39034971662,
+        "result": "BACKEND_FRONTEND_POSTGRES_VERIFIER_PASS; ANDROID FAILED BEFORE GRADLE START, EXIT 126"
+      },
+      {
+        "run": 39035228359,
+        "result": "BACKEND_FRONTEND_POSTGRES_VERIFIER_PASS; ANDROID STILL RAN OLD ./gradlew COMMAND AND FAILED BEFORE GRADLE START"
+      },
+      {
+        "run": 39035265386,
+        "result": "CANCELLED_BEFORE_JOBS_STARTED"
+      }
+    ]
   }
 }
