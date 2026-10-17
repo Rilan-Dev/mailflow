@@ -1496,7 +1496,7 @@
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
       "closure_status": "PARTIAL_FIRST_PASS_DIFF_REVIEW",
-      "notes": "Bumps backend version 3.9.0 to 4.0.1. Lockfile root package version should be checked for alignment; package provenance/license remains open. Exact target SHA/mode matches source-tree manifest; license/provenance remains open."
+      "notes": "Bumps backend version 3.9.0 to 4.0.1. Lockfile root package version should be checked for alignment; package provenance/license remains open. Exact target SHA/mode matches source-tree manifest; license/provenance remains open. Confirmed package version differs from unchanged lockfile root metadata (backend 4.0.1 vs 3.9.0; frontend 4.0.1 vs 3.8.2); source snapshot left unchanged pending upstream packaging review."
     },
     {
       "path": "backend/scripts/verify-count-integrity.mjs",
@@ -6158,7 +6158,7 @@
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
       "closure_status": "PARTIAL_FIRST_PASS_DIFF_REVIEW",
-      "notes": "Bumps frontend version 3.9.0 to 4.0.1. Lockfile root package version should be checked; no dependency-license clearance inferred. Exact target SHA/mode matches source-tree manifest; license/provenance remains open."
+      "notes": "Bumps frontend version 3.9.0 to 4.0.1. Lockfile root package version should be checked; no dependency-license clearance inferred. Exact target SHA/mode matches source-tree manifest; license/provenance remains open. Confirmed package version differs from unchanged lockfile root metadata (backend 4.0.1 vs 3.9.0; frontend 4.0.1 vs 3.8.2); source snapshot left unchanged pending upstream packaging review."
     },
     {
       "path": "frontend/packages/android/.gitignore",
@@ -6239,8 +6239,8 @@
       "disposition": "UNCLASSIFIED",
       "reuse_status": "UNDECIDED",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Changed/new blob relative to initial source pin e7a53760a7e4b15e0ee631533655d99dde657599; reset to UNCLASSIFIED until exact target SHA/mode is reviewed. See upstream-delta-review-2026-10-17.json."
+      "closure_status": "BINARY_CONTENT_PENDING",
+      "notes": "Referenced by Android OIDC instrumentation test as an untrusted TLS certificate fixture. Binary content/fingerprint/validity and provenance not inspected; do not classify or reuse until inspected."
     },
     {
       "path": "frontend/packages/android/app/src/androidTest/java/com/getcapacitor/myapp/ExampleInstrumentedTest.java",
@@ -19744,7 +19744,7 @@
     }
   ],
   "removed_since_previous_pin": [],
-  "review_checkpoint": "2026-10-17: initial-to-current diff has 147 changed/new paths. 146 paths received first-pass review; 1 remain UNCLASSIFIED pending exact blob review.",
+  "review_checkpoint": "2026-10-17: 146/147 changed/new blobs reviewed at source/diff level; 1 PKCS#12 test fixture remains unclassified because its bytes and certificate provenance were not inspected. Package/lockfile version mismatch found.",
   "summary": {
     "unclassified_paths": 1065,
     "classified_paths": 285,
