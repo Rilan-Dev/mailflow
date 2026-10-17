@@ -55,3 +55,8 @@ Read current extraction project-control, pinned manifests and source files. Adde
 ## Continuity update — 2026-10-17 — PostgreSQL migration map
 
 Inspected all 66 pinned SQL migration files and the migration runner; added `extraction/manifests/postgres-schema-runtime-map-2026-10-17.md`. The map captures baseline core tables/foreign-key cascades, migration-by-migration changes, runtime capability linkage, and risk points in contacts/plugin migrations and concurrent-index migrations. It remains an initial human-readable map, not a complete DDL/constraint artifact or a live PostgreSQL migration test. Next: generate the machine-readable schema object inventory, map SQL consumers, test migrations in clean/upgrade DBs, and continue IMAP sync/recovery plus security/license closure.
+
+
+## Continuity update — 2026-10-17 — IMAP/SMTP test expansion
+
+Traced IMAP connect/disconnect, folder sync, message sync, account auto-connect, UIDVALIDITY purge/re-backfill, UID-keyed message upserts and thread propagation. SMTP transport re-checks connection policy and pins resolved addresses at send time; auth credentials are decrypted only for transport, OAuth refresh is handled, and plaintext SMTP is denied unless insecure TLS is explicitly enabled by admin policy. Added `.github/workflows/mailflow-transport-closure.yml` with 43 targeted snapshot tests. Run 39034389282 is queued; no result yet. Snapshot verifier run 39034359461 passed after manifest updates. Continue UI states, attachment and account cleanup closure, then verify the test run and expand the schema/dependency/license map.
