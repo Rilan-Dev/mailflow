@@ -47,3 +47,11 @@
 - Traced frontend body rendering through sandboxed email iframe/CSP, optional div-render `prepared.html`, plain-text `linkifyText` sink, composer DOMPurify/app-origin image policy and signature editor innerHTML paths. Preparation/escaping/caller closure remains pending.
 - Role classification advanced to 124 paths; 1,226 remain unclassified. License/provenance remains unreviewed for these paths.
 - Transport workflow: https://github.com/Rilan-Dev/mailflow/actions/runs/39034389282 (queued at last check). Frontend email-render security job added to security workflow; results pending.
+
+
+## Update — 2026-10-17 — Selected test expansion passed
+- Security/render workflow: https://github.com/Rilan-Dev/mailflow/actions/runs/39034509010 — 21 file-runs, 500 tests passed, 0 failures (backend auth/OAuth/OIDC/host validation/safeFetch/image proxy/sanitizer; frontend image proxy and email HTML/render sinks).
+- IMAP/SMTP/account workflow: https://github.com/Rilan-Dev/mailflow/actions/runs/39034692849 — 42 test files passed, 1 skipped; 777 passed, 10 skipped, 0 failures.
+- Aggregate selected evidence: 64 file-runs, 1,277 passed tests, 10 skipped, 0 failures. Machine-readable: `extraction/manifests/closure-test-results-2026-10-17-35067fc.json`.
+- Snapshot/inventory verifier after the updated path and capability manifests: https://github.com/Rilan-Dev/mailflow/actions/runs/39034692855 — success.
+- This is selected suite evidence, not full backend/frontend/native verification or extraction PASS. OIDC native-fetch redirect/DNS pinning, complete sink closure, full migration object/consumer mapping and licensing/provenance remain open.
