@@ -6,7 +6,7 @@
     "tree": "a2a82b50b8a1ac24a273e55dc0f9418aefdfed17"
   },
   "created_at": "2026-10-17T11:46:33.594Z",
-  "status": "PARTIAL_CLASSIFICATION_IN_PROGRESS",
+  "status": "PARTIAL_CLASSIFICATION_AND_SECURITY_CLOSURE_IN_PROGRESS",
   "files": [
     {
       "path": ".dockerignore",
@@ -1380,11 +1380,11 @@
       "candidate_areas": [
         "backend-and-api"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Included in initial security-sensitive static import/caller trace. Role classified as a first-party dependency of auth/session, outbound-host validation, remote-image or email-rendering capabilities; not behaviorally closed, license-cleared, or approved for reuse."
     },
     {
       "path": "backend/src/middleware/auth.js",
@@ -1395,11 +1395,11 @@
         "backend-and-api",
         "auth-identity"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Included in initial security-sensitive static import/caller trace. Role classified as a first-party dependency of auth/session, outbound-host validation, remote-image or email-rendering capabilities; not behaviorally closed, license-cleared, or approved for reuse."
     },
     {
       "path": "backend/src/middleware/auth.test.js",
@@ -1411,11 +1411,11 @@
         "auth-identity",
         "tests"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "TEST_EVIDENCE_CANDIDATE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "TESTS_IDENTIFIED_NOT_RUN",
+      "notes": "Test candidate linked to the first security-sensitive static trace. Test was identified but not executed in this session; no test PASS claimed."
     },
     {
       "path": "backend/src/middleware/bodyParsers.js",
@@ -2210,11 +2210,11 @@
         "auth-identity",
         "tests"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "TEST_EVIDENCE_CANDIDATE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "TESTS_IDENTIFIED_NOT_RUN",
+      "notes": "Test candidate linked to the first security-sensitive static trace. Test was identified but not executed in this session; no test PASS claimed."
     },
     {
       "path": "backend/src/routes/auth.js",
@@ -2225,11 +2225,11 @@
         "backend-and-api",
         "auth-identity"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Included in initial security-sensitive static import/caller trace. Role classified as a first-party dependency of auth/session, outbound-host validation, remote-image or email-rendering capabilities; not behaviorally closed, license-cleared, or approved for reuse."
     },
     {
       "path": "backend/src/routes/auth.logout.test.js",
@@ -2241,11 +2241,11 @@
         "auth-identity",
         "tests"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "TEST_EVIDENCE_CANDIDATE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "TESTS_IDENTIFIED_NOT_RUN",
+      "notes": "Test candidate linked to the first security-sensitive static trace. Test was identified but not executed in this session; no test PASS claimed."
     },
     {
       "path": "backend/src/routes/auth.me.test.js",
@@ -2257,11 +2257,11 @@
         "auth-identity",
         "tests"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "TEST_EVIDENCE_CANDIDATE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "TESTS_IDENTIFIED_NOT_RUN",
+      "notes": "Test candidate linked to the first security-sensitive static trace. Test was identified but not executed in this session; no test PASS claimed."
     },
     {
       "path": "backend/src/routes/auth.preferences.test.js",
@@ -2736,11 +2736,11 @@
       "candidate_areas": [
         "backend-and-api"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Included in initial security-sensitive static import/caller trace. Role classified as a first-party dependency of auth/session, outbound-host validation, remote-image or email-rendering capabilities; not behaviorally closed, license-cleared, or approved for reuse."
     },
     {
       "path": "backend/src/routes/mail.rawEml.test.js",
@@ -2898,11 +2898,11 @@
         "backend-and-api",
         "auth-identity"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Included in initial security-sensitive static import/caller trace. Role classified as a first-party dependency of auth/session, outbound-host validation, remote-image or email-rendering capabilities; not behaviorally closed, license-cleared, or approved for reuse."
     },
     {
       "path": "backend/src/routes/oauth.refresh.test.js",
@@ -2914,11 +2914,11 @@
         "auth-identity",
         "tests"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "TEST_EVIDENCE_CANDIDATE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "TESTS_IDENTIFIED_NOT_RUN",
+      "notes": "Test candidate linked to the first security-sensitive static trace. Test was identified but not executed in this session; no test PASS claimed."
     },
     {
       "path": "backend/src/routes/oidc.endsession.test.js",
@@ -2930,11 +2930,11 @@
         "auth-identity",
         "tests"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "TEST_EVIDENCE_CANDIDATE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "TESTS_IDENTIFIED_NOT_RUN",
+      "notes": "Test candidate linked to the first security-sensitive static trace. Test was identified but not executed in this session; no test PASS claimed."
     },
     {
       "path": "backend/src/routes/oidc.js",
@@ -2945,11 +2945,11 @@
         "backend-and-api",
         "auth-identity"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Included in initial security-sensitive static import/caller trace. Role classified as a first-party dependency of auth/session, outbound-host validation, remote-image or email-rendering capabilities; not behaviorally closed, license-cleared, or approved for reuse."
     },
     {
       "path": "backend/src/routes/oidc.match.test.js",
@@ -2961,11 +2961,11 @@
         "auth-identity",
         "tests"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "TEST_EVIDENCE_CANDIDATE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "TESTS_IDENTIFIED_NOT_RUN",
+      "notes": "Test candidate linked to the first security-sensitive static trace. Test was identified but not executed in this session; no test PASS claimed."
     },
     {
       "path": "backend/src/routes/oidc.privateIssuer.test.js",
@@ -2977,11 +2977,11 @@
         "auth-identity",
         "tests"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "TEST_EVIDENCE_CANDIDATE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "TESTS_IDENTIFIED_NOT_RUN",
+      "notes": "Test candidate linked to the first security-sensitive static trace. Test was identified but not executed in this session; no test PASS claimed."
     },
     {
       "path": "backend/src/routes/oidc.screenLock.test.js",
@@ -3490,11 +3490,11 @@
         "backend-and-api",
         "auth-identity"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Included in initial security-sensitive static import/caller trace. Role classified as a first-party dependency of auth/session, outbound-host validation, remote-image or email-rendering capabilities; not behaviorally closed, license-cleared, or approved for reuse."
     },
     {
       "path": "backend/src/services/backup.js",
@@ -3637,11 +3637,11 @@
       "candidate_areas": [
         "backend-and-api"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Included in initial security-sensitive static import/caller trace. Role classified as a first-party dependency of auth/session, outbound-host validation, remote-image or email-rendering capabilities; not behaviorally closed, license-cleared, or approved for reuse."
     },
     {
       "path": "backend/src/services/db.js",
@@ -3651,11 +3651,11 @@
       "candidate_areas": [
         "backend-and-api"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Included in initial security-sensitive static import/caller trace. Role classified as a first-party dependency of auth/session, outbound-host validation, remote-image or email-rendering capabilities; not behaviorally closed, license-cleared, or approved for reuse."
     },
     {
       "path": "backend/src/services/db.test.js",
@@ -3739,11 +3739,11 @@
         "backend-and-api",
         "security-and-privacy"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Included in initial security-sensitive static import/caller trace. Role classified as a first-party dependency of auth/session, outbound-host validation, remote-image or email-rendering capabilities; not behaviorally closed, license-cleared, or approved for reuse."
     },
     {
       "path": "backend/src/services/emailSanitizer.parse5Error.test.js",
@@ -3755,11 +3755,11 @@
         "security-and-privacy",
         "tests"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "TEST_EVIDENCE_CANDIDATE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "TESTS_IDENTIFIED_NOT_RUN",
+      "notes": "Test candidate linked to the first security-sensitive static trace. Test was identified but not executed in this session; no test PASS claimed."
     },
     {
       "path": "backend/src/services/emailSanitizer.test.js",
@@ -3771,11 +3771,11 @@
         "security-and-privacy",
         "tests"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "TEST_EVIDENCE_CANDIDATE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "closure_status": "TESTS_IDENTIFIED_NOT_RUN",
+      "notes": "Test candidate linked to the first security-sensitive static trace. Test was identified but not executed in this session; no test PASS claimed."
     },
     {
       "path": "backend/src/services/emailSanitizer.trackers.test.js",
@@ -3787,11 +3787,11 @@
         "security-and-privacy",
         "tests"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "TEST_EVIDENCE_CANDIDATE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "closure_status": "TESTS_IDENTIFIED_NOT_RUN",
+      "notes": "Test candidate linked to the first security-sensitive static trace. Test was identified but not executed in this session; no test PASS claimed."
     },
     {
       "path": "backend/src/services/encryption.js",
@@ -3801,11 +3801,11 @@
       "candidate_areas": [
         "backend-and-api"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Included in initial security-sensitive static import/caller trace. Role classified as a first-party dependency of auth/session, outbound-host validation, remote-image or email-rendering capabilities; not behaviorally closed, license-cleared, or approved for reuse."
     },
     {
       "path": "backend/src/services/encryption.test.js",
@@ -3859,11 +3859,11 @@
       "candidate_areas": [
         "backend-and-api"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Included in initial security-sensitive static import/caller trace. Role classified as a first-party dependency of auth/session, outbound-host validation, remote-image or email-rendering capabilities; not behaviorally closed, license-cleared, or approved for reuse."
     },
     {
       "path": "backend/src/services/hostValidation.test.js",
@@ -3874,11 +3874,11 @@
         "backend-and-api",
         "tests"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "TEST_EVIDENCE_CANDIDATE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "closure_status": "TESTS_IDENTIFIED_NOT_RUN",
+      "notes": "Test candidate linked to the first security-sensitive static trace. Test was identified but not executed in this session; no test PASS claimed."
     },
     {
       "path": "backend/src/services/imageCache.js",
@@ -3913,11 +3913,11 @@
         "backend-and-api",
         "security-and-privacy"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Included in initial security-sensitive static import/caller trace. Role classified as a first-party dependency of auth/session, outbound-host validation, remote-image or email-rendering capabilities; not behaviorally closed, license-cleared, or approved for reuse."
     },
     {
       "path": "backend/src/services/imageProxy.test.js",
@@ -3929,11 +3929,11 @@
         "security-and-privacy",
         "tests"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "TEST_EVIDENCE_CANDIDATE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "TESTS_IDENTIFIED_NOT_RUN",
+      "notes": "Test candidate linked to the first security-sensitive static trace. Test was identified but not executed in this session; no test PASS claimed."
     },
     {
       "path": "backend/src/services/imageShrink.js",
@@ -4757,11 +4757,11 @@
       "candidate_areas": [
         "backend-and-api"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Included in initial security-sensitive static import/caller trace. Role classified as a first-party dependency of auth/session, outbound-host validation, remote-image or email-rendering capabilities; not behaviorally closed, license-cleared, or approved for reuse."
     },
     {
       "path": "backend/src/services/replyDraftLookup.js",
@@ -4829,11 +4829,11 @@
       "candidate_areas": [
         "backend-and-api"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Included in initial security-sensitive static import/caller trace. Role classified as a first-party dependency of auth/session, outbound-host validation, remote-image or email-rendering capabilities; not behaviorally closed, license-cleared, or approved for reuse."
     },
     {
       "path": "backend/src/services/safeFetch.test.js",
@@ -4844,11 +4844,11 @@
         "backend-and-api",
         "tests"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "TEST_EVIDENCE_CANDIDATE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "TESTS_IDENTIFIED_NOT_RUN",
+      "notes": "Test candidate linked to the first security-sensitive static trace. Test was identified but not executed in this session; no test PASS claimed."
     },
     {
       "path": "backend/src/services/sendHold.js",
@@ -4888,11 +4888,11 @@
         "backend-and-api",
         "assets-and-fonts"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Included in initial security-sensitive static import/caller trace. Role classified as a first-party dependency of auth/session, outbound-host validation, remote-image or email-rendering capabilities; not behaviorally closed, license-cleared, or approved for reuse."
     },
     {
       "path": "backend/src/services/senderFavicon.test.js",
@@ -5622,11 +5622,11 @@
         "backend-and-api",
         "auth-identity"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Included in initial security-sensitive static import/caller trace. Role classified as a first-party dependency of auth/session, outbound-host validation, remote-image or email-rendering capabilities; not behaviorally closed, license-cleared, or approved for reuse."
     },
     {
       "path": "backend/src/utils/sessionConfig.test.js",
@@ -17833,11 +17833,11 @@
         "frontend-web",
         "security-and-privacy"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "closure_status": "PARTIAL_TRACE",
+      "notes": "Included in initial security-sensitive static import/caller trace. Role classified as a first-party dependency of auth/session, outbound-host validation, remote-image or email-rendering capabilities; not behaviorally closed, license-cleared, or approved for reuse."
     },
     {
       "path": "frontend/src/utils/imageProxy.test.js",
@@ -17849,11 +17849,11 @@
         "security-and-privacy",
         "tests"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "TEST_EVIDENCE_CANDIDATE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Content or mode changed at upstream 35067fc2876d50980f1a8a3b8ea72b5467b69f60; prior assessment reset and requires review."
+      "closure_status": "TESTS_IDENTIFIED_NOT_RUN",
+      "notes": "Test candidate linked to the first security-sensitive static trace. Test was identified but not executed in this session; no test PASS claimed."
     },
     {
       "path": "frontend/src/utils/labelPicker.js",
@@ -19375,5 +19375,5 @@
     }
   ],
   "removed_since_previous_pin": [],
-  "review_checkpoint": "2026-10-17: reviewed notice files and direct dependency manifests only; all other paths remain unclassified."
+  "review_checkpoint": "2026-10-17: six license/dependency metadata paths classified; security slice paths classified by role with closure/test execution still pending."
 }
