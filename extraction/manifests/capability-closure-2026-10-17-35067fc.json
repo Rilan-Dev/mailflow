@@ -6,7 +6,7 @@
     "tree": "a2a82b50b8a1ac24a273e55dc0f9418aefdfed17"
   },
   "created_at": "2026-10-17",
-  "status": "PARTIAL_SECURITY_TRANSPORT_SCHEMA_FRONTEND_TRACE_AND_LICENSE_REVIEW_NOT_CLOSED",
+  "status": "PARTIAL_STATIC_TRACE_AND_SELECTED_TESTS_PASS; CAPABILITY_LICENSE_AND_FULL_VERIFICATION_OPEN",
   "summary": {
     "capability_count": 16,
     "closed": 0,
@@ -89,7 +89,7 @@
         "authorization_and_security": "PARTIAL_STATIC_TRACE",
         "side_effects_retries_idempotency_and_recovery": "PARTIAL_STATIC_TRACE",
         "UI_routes_and_interaction_states": "NOT_STARTED",
-        "tests_and_negative_cases": "SELECTED_SECURITY_TESTS_RUN; IMAP/SMTP FULL SUITE PENDING",
+        "tests_and_negative_cases": "TARGETED IMAP/SMTP/ACCOUNT SUITE PASSED (777 PASS; 10 SKIPPED); FULL CAPABILITY SUITE PENDING",
         "external_dependency_and_native_tool_closure": "PARTIAL_MANIFEST_IDENTIFIED",
         "path_level_license_and_provenance": "UNREVIEWED"
       },
@@ -151,7 +151,7 @@
         "authorization_and_security": "PARTIAL_STATIC_TRACE",
         "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
         "UI_routes_and_interaction_states": "NOT_STARTED",
-        "tests_and_negative_cases": "SELECTED_BACKEND_TESTS_PASSED; FRONTEND_RENDER_SECURITY_TESTS_QUEUED",
+        "tests_and_negative_cases": "SELECTED BACKEND SECURITY/SANITIZER AND FRONTEND RENDER TESTS PASSED (500 TOTAL ACROSS SECURITY WORKFLOW); FULL SINK COVERAGE PENDING",
         "external_dependency_and_native_tool_closure": "NOT_STARTED",
         "path_level_license_and_provenance": "NOT_STARTED",
         "ui_routes_and_interaction_states": "PARTIAL_STATIC_TRACE"
@@ -261,7 +261,7 @@
         "authorization_and_security": "PARTIAL_STATIC_TRACE",
         "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
         "UI_routes_and_interaction_states": "NOT_STARTED",
-        "tests_and_negative_cases": "TESTS_IDENTIFIED_NOT_RUN",
+        "tests_and_negative_cases": "SELECTED AUTH/OAUTH/OIDC/SSRF/SANITIZER SUITE PASSED (375 TESTS); FULL SECURITY CLOSURE PENDING",
         "external_dependency_and_native_tool_closure": "NOT_STARTED",
         "path_level_license_and_provenance": "NOT_STARTED"
       },
@@ -473,7 +473,7 @@
         "authorization_and_security": "PARTIAL_STATIC_TRACE",
         "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
         "UI_routes_and_interaction_states": "NOT_STARTED",
-        "tests_and_negative_cases": "TARGETED BACKEND TESTS QUEUED; FRONTEND RENDER TESTS QUEUED",
+        "tests_and_negative_cases": "TARGETED TRANSPORT/COMPOSE SUITE PASSED (777 PASS; 10 SKIPPED) AND FRONTEND RENDER TESTS PASSED; FULL CAPABILITY SUITE PENDING",
         "external_dependency_and_native_tool_closure": "NOT_STARTED",
         "path_level_license_and_provenance": "UNREVIEWED",
         "ui_routes_and_interaction_states": "PARTIAL_STATIC_TRACE"
@@ -895,6 +895,11 @@
       "kind": "frontend_html_sink_trace",
       "path": "extraction/manifests/security-transport-database-trace-2026-10-17.md",
       "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED"
+    },
+    {
+      "kind": "closure_test_results",
+      "path": "extraction/manifests/closure-test-results-2026-10-17-35067fc.json",
+      "status": "SELECTED_SECURITY_AND_TRANSPORT_TESTS_PASSED; FULL_VERIFICATION_PENDING"
     }
   ]
 }
