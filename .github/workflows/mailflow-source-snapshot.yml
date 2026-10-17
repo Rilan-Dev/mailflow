@@ -1,0 +1,58 @@
+name: MailFlow upstream source snapshot
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 */6 * * *"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/mailflow-source-snapshot.yml"
+      - "extraction/tools/capture-upstream-snapshot.mjs"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: mailflow-upstream-source-snapshot
+  cancel-in-progress: false
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the extraction workspace
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch current upstream main
+        id: upstream
+        run: |
+          git clone --depth=1 https://github.com/maathimself/mailflow.git upstream-source
+          echo "upstream_commit=$(git -C upstream-source rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Capture immutable source snapshot and regenerate inventories
+        run: node extraction/tools/capture-upstream-snapshot.mjs upstream-source
+
+      - name: Open or update the upstream snapshot PR
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ github.token }}
+          branch: automation/mailflow-upstream-snapshot
+          delete-branch: false
+          commit-message: "chore(extraction): capture MailFlow upstream snapshot ${{ steps.upstream.outputs.upstream_commit }}"
+          title: "chore(extraction): capture MailFlow upstream ${{ steps.upstream.outputs.upstream_commit }}"
+          body: |
+            Automated immutable source snapshot of maathimself/mailflow main.
+
+            - Upstream commit: ${{ steps.upstream.outputs.upstream_commit }}
+            - Snapshot and exact blob checks are recorded under extraction/snapshots/.
+            - Existing path assessments are retained only when path, blob SHA, and mode are unchanged. Changed/new paths reset to UNCLASSIFIED.
+            - Review source notices, third-party provenance, LFS/submodule status, capability closure and verification before reuse.
+
+            This PR updates the source library; it does not integrate source into a host application or claim extraction PASS.
+          labels: |
+            extraction
+            upstream-sync
