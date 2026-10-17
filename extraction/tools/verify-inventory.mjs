@@ -124,6 +124,7 @@ if (snapshotRelative) {
       const stat = fs.lstatSync(actual.full);
       assert((source.mode === '120000') === actual.symlink, 'symlink mode mismatch: ' + source.path);
       if (source.mode === '100755') assert((stat.mode & 0o111) !== 0, 'executable bit missing: ' + source.path);
+      if (source.mode === '100644') assert((stat.mode & 0o111) === 0, 'unexpected executable bit: ' + source.path);
       const bytes = actual.symlink ? Buffer.from(fs.readlinkSync(actual.full)) : fs.readFileSync(actual.full);
       if (bytes.subarray(0, 80).toString('utf8').startsWith('version https://git-lfs.github.com/spec/v1')) lfsPointerPaths.push(source.path);
       const actualSha = createHash('sha1').update('blob ' + bytes.length + '\0').update(bytes).digest('hex');
@@ -133,6 +134,7 @@ if (snapshotRelative) {
       assert(blobByPath.has(actual.path), 'unexpected file in snapshot: ' + actual.path);
     }
     if (pin.source.gitlink_count > 0) failures.push('source tree contains gitlinks that require separate submodule capture.');
+    if (lfsPointerPaths.length > 0) failures.push('Git LFS pointer files require explicit external-object capture before the snapshot can be considered complete.');
   }
 } else {
   warnings.push('Pin has no immutable snapshot path; snapshot capture has not yet been recorded.');
