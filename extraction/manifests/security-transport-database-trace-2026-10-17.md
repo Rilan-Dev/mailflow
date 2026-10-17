@@ -101,3 +101,30 @@ Workflow: https://github.com/Rilan-Dev/mailflow/actions/runs/39031942550
 - `imapManager.js` is 7,562 lines and includes pooled/fresh clients, folder resolution, move/expunge fallback, MIME structure walking, body/attachment parsing, threading, OAuth refresh, modseq planning, folder status, sync/backfill and account connection lifecycle. It imports plugin registry/facade, inbox rules, spam pipeline, push notifications, message parser, sanitizer, body storage, CID settlement, encryption, folder status, unfetchable-UID tracking and connection-policy helpers. Its direct extraction closure must include these first-party modules and their schemas/tests; treating it as a reusable standalone transport would be incomplete.
 - Explicit pure/testable helpers include `planModseqSync`, `planIntegrityFlagScan`, `folderSyncDue`, `isConnectionRefusal`, `isAuthFailure`, `connectCooldownMs`, `authCooldownMs`, persistent connection cap selection, move classification and MIME structure/body fallbacks. These are useful test anchors, not a substitute for tracing the stateful caller graph.
 - Account delete in `routes/accounts.js` issues SQL DELETE after owner check and then asynchronously calls `disconnectAccount(id)`. Core FK cascades are not enough to prove external state cleanup: verify WebSocket subscriptions/broadcasts, pools, timers, plugin config/hooks, local body/attachment storage and any caches keyed by account.
+
+
+## Follow-up — OIDC network boundary and frontend HTML sinks
+
+### OIDC boundary finding requiring explicit disposition
+
+Inspection of `backend/src/routes/oidc.js` found an important closure gap to resolve before treating the OIDC capability as reusable:
+
+- `getDiscovery()` rechecks issuer hostname with `validateHost` before using the five-minute cache when `allowInsecure === false`; it also validates advertised authorization/token/JWKS endpoint schemes and hostnames.
+- The actual discovery request is then made with native `fetch(wellKnown)`, not `safeFetch`. The token exchange path also uses native fetch. Because host validation and the eventual socket connection are separate operations, DNS pinning is not carried from validation into the request. Native fetch redirect handling also does not reuse MailFlow's guarded per-hop connector. This means the static checks alone do not prove resistance to DNS rebinding or a redirect to a disallowed target.
+- When provider `allow_insecure` is true, discovery intentionally bypasses both HTTPS-only enforcement and the `validateHost` checks, and uses a custom HTTP(S) request with `rejectUnauthorized: false`. This must remain a clearly documented high-risk, explicit opt-in; inspect admin-only controls, endpoint reachability, redirect handling, response size and timeout/cancellation at every discovery/JWKS/token/end-session call site.
+- This is recorded as an unresolved source security risk, not a claim that the existing implementation is exploitable in every deployment. Keep the source immutable; any adapter/host policy must wrap these boundaries rather than silently modifying the snapshot.
+
+### Frontend HTML sink trace
+
+- `MessageBodyView.jsx` renders the body through `buildFrameDoc()` into a sandboxed iframe (`allow-same-origin`, without `allow-scripts`) with a CSP forbidding scripts, objects, frames and forms. Remote image loads are controlled by `remoteImagePolicy.js` and lazy proxying. `emailFrameDoc.js` also forces links to open with `rel="noopener noreferrer"` and rejects dark CSS containing a closing style tag.
+- `MessagePane.jsx` has a separate optional div-render path using `dangerouslySetInnerHTML` on `prepared.html`; that path must be traced through its HTML preparation/CSS scoping pipeline and test gates. Its plain-text fallback uses `linkifyText(body.text)` as HTML and requires the linkifier's escaping guarantees to be tested.
+- `ComposeModal.jsx` sanitizes signatures with DOMPurify and quoted reply/forward HTML with `sanitizeEmailForApp`, which applies DOMPurify plus browser-parsed URL/CSS checks to keep only same-origin, data, blob and CID image loads. This is important because composer HTML is in the app origin, not the sandboxed email iframe.
+- `SignatureEditor.jsx` initializes and writes `innerHTML` from its `value`/source editor. Caller-side sanitization and the saved-signature API boundary need to be traced end to end; do not classify the component in isolation.
+- Existing CSP/render tests include `MessageBodyView.csp.test.js`, `MessageBodyView.render.test.js`, `ComposeModal.imageProxy.render.test.js`, `MessagePane.render.test.js`, and `appEmailHtml.test.js`. They need to be added to a frontend security render suite after mapping their full setup and coverage.
+
+### Updated high-priority follow-ups
+
+1. Audit/fix or explicitly boundary-wrap OIDC discovery/token/JWKS network requests so private-host and redirect policy is enforced at connection time; inspect allow-insecure admin authorization and make the opt-in warning explicit.
+2. Trace `prepared.html` to the source sanitizer and CSS scope function; determine whether `USE_DIV_RENDER` can be enabled and test all content paths under both renderer modes.
+3. Prove `linkifyText` escapes all HTML metacharacters before the plain-text sink.
+4. Trace signature editor values from account settings/API to render/save and verify sanitize-on-write and sanitize-on-read.
