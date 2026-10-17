@@ -21,3 +21,10 @@ A connector-based check verified consistency across the pinned tree, complete tr
 A PR was opened to make this repository self-contained for extraction work. The shared framework is copied to the repository root at `source-extraction-agent/`; MailFlow-specific records are under `extraction/`. The framework copy is pinned to canonical `ai-reusable-libraries` commit `1e6ba9588e715e698722949e1c592b08f4ea7a00`. PR: https://github.com/Rilan-Dev/mailflow/pull/1. It is open and not merged at the time of this note.
 
 No application source was copied, source-copy authorization remains false, and no extraction PASS is claimed.
+
+## Continuity update — 2026-10-17
+The MailFlow workspace migration PR #1 is merged. The old parallel PRs #2 and #3 were closed as superseded because they conflict with the merged workspace; their useful intent is recorded in durable memory and current project-control. In ai-reusable-libraries, PR #8 is merged and duplicate cleanup PRs #6/#7 are closed.
+
+The user explicitly requested beginning full source extraction and ongoing updates from upstream maathimself/mailflow. Current upstream observed at review time: commit 35067fc2876d50980f1a8a3b8ea72b5467b69f60, root tree a2a82b50b8a1ac24a273e55dc0f9418aefdfed17. The exact snapshot capture script and scheduled/manual workflow have been added to main. First inspect workflow runs and the generated automation/mailflow-upstream-snapshot PR. Do not claim the snapshot was copied until actual run output and verifier evidence are present.
+
+Resume from NEXT_ACTION.md, then inspect source-pins/current.json and the exact manifest paths recorded there. Preserve immutable snapshots; do not merge automated source updates without checking exact blob verification and license/provenance state.
