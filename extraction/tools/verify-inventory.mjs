@@ -97,6 +97,7 @@ for (const relative of [candidatesPath, architecturePath]) {
   }
 }
 
+const lfsPointerPaths = [];
 const snapshotRelative = pin.manifest_paths?.snapshot;
 if (snapshotRelative) {
   const snapshotRoot = path.join(root, snapshotRelative);
@@ -124,6 +125,7 @@ if (snapshotRelative) {
       assert((source.mode === '120000') === actual.symlink, 'symlink mode mismatch: ' + source.path);
       if (source.mode === '100755') assert((stat.mode & 0o111) !== 0, 'executable bit missing: ' + source.path);
       const bytes = actual.symlink ? Buffer.from(fs.readlinkSync(actual.full)) : fs.readFileSync(actual.full);
+      if (bytes.subarray(0, 80).toString('utf8').startsWith('version https://git-lfs.github.com/spec/v1')) lfsPointerPaths.push(source.path);
       const actualSha = createHash('sha1').update('blob ' + bytes.length + '\0').update(bytes).digest('hex');
       assert(actualSha === source.sha, 'snapshot blob SHA mismatch for ' + source.path + ': expected ' + source.sha + ', got ' + actualSha);
     }
@@ -146,6 +148,8 @@ if (failures.length) {
   console.log('Source pin: ' + pin.source.commit + ' / ' + pin.source.tree);
   console.log('Tree entries: ' + tree.entries.length + '; blobs: ' + blobs.length + '; trees: ' + treeEntries.length + '.');
   console.log('Reconstructed Git tree SHA: ' + reconstructedRootTree + '; verified nested trees: ' + treeEntries.length + '.');
+  console.log('Git LFS pointer files detected: ' + lfsPointerPaths.length + '.');
+  if (lfsPointerPaths.length) console.log('Git LFS paths: ' + lfsPointerPaths.join(', '));
   console.log('Explicitly unclassified paths: ' + unclassified + '.');
   for (const message of warnings) console.warn('WARN: ' + message);
   console.log('This check does not prove capability closure, license clearance, or host-integration readiness.');
