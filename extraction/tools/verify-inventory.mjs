@@ -28,6 +28,39 @@ for (const entry of tree.entries) {
 }
 const blobs = tree.entries.filter((entry) => entry.type === 'blob');
 const blobByPath = new Map(blobs.map((entry) => [entry.path, entry]));
+const treeEntries = tree.entries.filter((entry) => entry.type === 'tree');
+const childrenByDirectory = new Map([['', []]]);
+for (const entry of tree.entries) {
+  const parent = path.posix.dirname(entry.path) === '.' ? '' : path.posix.dirname(entry.path);
+  if (!childrenByDirectory.has(parent)) childrenByDirectory.set(parent, []);
+  childrenByDirectory.get(parent).push(entry);
+  if (entry.type === 'tree' && !childrenByDirectory.has(entry.path)) childrenByDirectory.set(entry.path, []);
+}
+const computedTreeHashes = new Map();
+const computeTreeHash = (directory) => {
+  if (computedTreeHashes.has(directory)) return computedTreeHashes.get(directory);
+  const children = [...(childrenByDirectory.get(directory) || [])];
+  const sortKey = (entry) => entry.path.slice(entry.path.lastIndexOf('/') + 1) + (entry.type === 'tree' ? '/' : '\0');
+  children.sort((a, b) => Buffer.compare(Buffer.from(sortKey(a)), Buffer.from(sortKey(b))));
+  const chunks = [];
+  for (const child of children) {
+    const name = child.path.slice(child.path.lastIndexOf('/') + 1);
+    const mode = child.type === 'tree' ? '40000' : child.mode;
+    const objectSha = child.type === 'tree' ? computeTreeHash(child.path) : child.sha;
+    chunks.push(Buffer.from(mode + ' ' + name + '\0'));
+    chunks.push(Buffer.from(objectSha, 'hex'));
+  }
+  const body = Buffer.concat(chunks);
+  const sha = createHash('sha1').update('tree ' + body.length + '\0').update(body).digest('hex');
+  computedTreeHashes.set(directory, sha);
+  return sha;
+};
+const reconstructedRootTree = computeTreeHash('');
+assert(reconstructedRootTree === pin.source.tree, 'reconstructed snapshot root tree SHA differs from pinned source tree: expected ' + pin.source.tree + ', got ' + reconstructedRootTree);
+for (const entry of treeEntries) {
+  assert(computedTreeHashes.get(entry.path) === entry.sha, 'reconstructed directory tree SHA mismatch: ' + entry.path);
+}
+
 assert(dispositions.source_pin.commit === pin.source.commit, 'disposition register belongs to a different source commit');
 assert(dispositions.source_pin.tree === pin.source.tree, 'disposition register belongs to a different source tree');
 assert(dispositions.files.length === blobs.length, 'disposition register does not cover every current source blob');
@@ -111,7 +144,8 @@ if (failures.length) {
   const unclassified = dispositions.files.filter((item) => item.disposition === 'UNCLASSIFIED').length;
   console.log('PASS: inventory consistency checks passed.');
   console.log('Source pin: ' + pin.source.commit + ' / ' + pin.source.tree);
-  console.log('Tree entries: ' + tree.entries.length + '; blobs: ' + blobs.length + '; trees: ' + tree.entries.filter((entry) => entry.type === 'tree').length);
+  console.log('Tree entries: ' + tree.entries.length + '; blobs: ' + blobs.length + '; trees: ' + treeEntries.length + '.');
+  console.log('Reconstructed Git tree SHA: ' + reconstructedRootTree + '; verified nested trees: ' + treeEntries.length + '.');
   console.log('Explicitly unclassified paths: ' + unclassified + '.');
   for (const message of warnings) console.warn('WARN: ' + message);
   console.log('This check does not prove capability closure, license clearance, or host-integration readiness.');
