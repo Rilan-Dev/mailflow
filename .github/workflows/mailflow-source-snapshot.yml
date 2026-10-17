@@ -53,6 +53,3 @@ jobs:
             - Review source notices, third-party provenance, LFS/submodule status, capability closure and verification before reuse.
 
             This PR updates the source library; it does not integrate source into a host application or claim extraction PASS.
-          labels: |
-            extraction
-            upstream-sync
