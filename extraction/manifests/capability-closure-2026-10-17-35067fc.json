@@ -1,0 +1,855 @@
+{
+  "schema_version": "1.0.0",
+  "source_pin": {
+    "repository": "maathimself/mailflow",
+    "commit": "35067fc2876d50980f1a8a3b8ea72b5467b69f60",
+    "tree": "a2a82b50b8a1ac24a273e55dc0f9418aefdfed17"
+  },
+  "created_at": "2026-10-17",
+  "status": "CLOSURE_TRACKING_STARTED_NOT_COMPLETE",
+  "summary": {
+    "capability_count": 16,
+    "closed": 0,
+    "partial_traces": 0,
+    "not_started": 16,
+    "source_blobs": 1350,
+    "unclassified_paths": 1350
+  },
+  "dimensions": [
+    "first_party_imports_and_callers",
+    "data_schema_and_migrations",
+    "configuration_and_runtime",
+    "authorization_and_security",
+    "side_effects_retries_idempotency_and_recovery",
+    "UI_routes_and_interaction_states",
+    "tests_and_negative_cases",
+    "external_dependency_and_native_tool_closure",
+    "path_level_license_and_provenance"
+  ],
+  "capabilities": [
+    {
+      "id": "mail-transport-sync",
+      "name": "IMAP/SMTP transport and account synchronization",
+      "priority": 2,
+      "status": "CANDIDATE_NOT_CLOSED",
+      "source_paths": [
+        {
+          "path": "backend/src/services/imapManager.js",
+          "blob_sha": "dd0633bf265ca3cafe9f216948a65ef5d6f72754",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/imapError.js",
+          "blob_sha": "1720d51bdddc4f60b5c4bdadf6345e26b93ecfd3",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/accounts.js",
+          "blob_sha": "895cba74951171846d151147abb96cc266931b45",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/send.js",
+          "blob_sha": "2184a60715f14280e2ba475f081de2f52cc99d8d",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/draft.js",
+          "blob_sha": "49a4cabe76208ac330a270084e14ebe185a0bf7a",
+          "exists": true
+        },
+        {
+          "path": "backend/package.json",
+          "blob_sha": "7317eb730ec7d303067dffaf8b7f71ca75da5482",
+          "exists": true
+        }
+      ],
+      "test_paths": [
+        {
+          "path": "backend/src/services/imapManager.test.js",
+          "blob_sha": "0d6b5a5963402b9af45489fd96551c7ae43907c0",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/imapMoveFallback.test.js",
+          "blob_sha": "6aecc2bfbc3546b3d27463e67912f119b99dffda",
+          "exists": true
+        }
+      ],
+      "dimensions": {
+        "first_party_imports_and_callers": "NOT_STARTED",
+        "data_schema_and_migrations": "NOT_STARTED",
+        "configuration_and_runtime": "NOT_STARTED",
+        "authorization_and_security": "NOT_STARTED",
+        "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
+        "UI_routes_and_interaction_states": "NOT_STARTED",
+        "tests_and_negative_cases": "NOT_STARTED",
+        "external_dependency_and_native_tool_closure": "NOT_STARTED",
+        "path_level_license_and_provenance": "NOT_STARTED"
+      },
+      "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
+    },
+    {
+      "id": "message-ingestion-rendering",
+      "name": "Message parsing, sanitization, body storage and rendering",
+      "priority": 3,
+      "status": "CANDIDATE_NOT_CLOSED",
+      "source_paths": [
+        {
+          "path": "backend/src/services/messageParser.js",
+          "blob_sha": "787f21f3a7c8aa5d501dfeb18885dc75854078a4",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/emailSanitizer.js",
+          "blob_sha": "846a6497643b1147863e9c2a8f4de94b1a03c27f",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/messageBodyStore.js",
+          "blob_sha": "44b4807914c9de3ce523d1abb50d6dd92382aa43",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/mail.js",
+          "blob_sha": "d20a0f293c155b54780967c047ed621a0c3af28d",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/components/MessagePane.jsx",
+          "blob_sha": "05376cf03b831c9ffd43796e654ecd9f949c64dd",
+          "exists": true
+        }
+      ],
+      "test_paths": [
+        {
+          "path": "backend/src/services/messageParser.headers.test.js",
+          "blob_sha": "8a39a45869a8a34e443c276271e1ea99a0c55776",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/emailSanitizer.test.js",
+          "blob_sha": "79a9b1cadc816ca918b827838d1718e378347e77",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/emailSanitizer.trackers.test.js",
+          "blob_sha": "e24a0dc0b3300f5d5b878a0d1b156ddd8f0b46bb",
+          "exists": true
+        }
+      ],
+      "dimensions": {
+        "first_party_imports_and_callers": "NOT_STARTED",
+        "data_schema_and_migrations": "NOT_STARTED",
+        "configuration_and_runtime": "NOT_STARTED",
+        "authorization_and_security": "NOT_STARTED",
+        "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
+        "UI_routes_and_interaction_states": "NOT_STARTED",
+        "tests_and_negative_cases": "NOT_STARTED",
+        "external_dependency_and_native_tool_closure": "NOT_STARTED",
+        "path_level_license_and_provenance": "NOT_STARTED"
+      },
+      "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
+    },
+    {
+      "id": "image-proxy-privacy",
+      "name": "Remote image proxy and tracking protection",
+      "priority": 1,
+      "status": "CANDIDATE_NOT_CLOSED",
+      "source_paths": [
+        {
+          "path": "backend/src/services/imageProxy.js",
+          "blob_sha": "4570f9f03f7c5883c4e9f4843e4e63f501396b30",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/safeFetch.js",
+          "blob_sha": "dd0f0973b515131c88ff9afab640d58f1720a8f1",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/mail.js",
+          "blob_sha": "d20a0f293c155b54780967c047ed621a0c3af28d",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/utils/imageProxy.js",
+          "blob_sha": "933c3cb7ab2780d7fd5eaf530c67b8913697074e",
+          "exists": true
+        }
+      ],
+      "test_paths": [
+        {
+          "path": "backend/src/services/imageProxy.test.js",
+          "blob_sha": "cf7c3d90b09efa40ecb0911c15cddefc2074abec",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/utils/imageProxy.test.js",
+          "blob_sha": "9bb485616ebba234e4f3a100ea61d36cb8707bc4",
+          "exists": true
+        }
+      ],
+      "dimensions": {
+        "first_party_imports_and_callers": "NOT_STARTED",
+        "data_schema_and_migrations": "NOT_STARTED",
+        "configuration_and_runtime": "NOT_STARTED",
+        "authorization_and_security": "NOT_STARTED",
+        "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
+        "UI_routes_and_interaction_states": "NOT_STARTED",
+        "tests_and_negative_cases": "NOT_STARTED",
+        "external_dependency_and_native_tool_closure": "NOT_STARTED",
+        "path_level_license_and_provenance": "NOT_STARTED"
+      },
+      "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
+    },
+    {
+      "id": "auth-and-identity",
+      "name": "Session auth, OAuth/OIDC, MFA and account recovery",
+      "priority": 1,
+      "status": "CANDIDATE_NOT_CLOSED",
+      "source_paths": [
+        {
+          "path": "backend/src/index.js",
+          "blob_sha": "24c4a8b060d49760dc22e998673b609cbb8c57ab",
+          "exists": true
+        },
+        {
+          "path": "backend/src/middleware/auth.js",
+          "blob_sha": "e2e38cfbf8111705a04b0357d4b4be5b01f1bf09",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/auth.js",
+          "blob_sha": "35e41f494440dfdc412ad47bb463f32039c69bb5",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/oauth.js",
+          "blob_sha": "c8e6821501bbf622ca953ae2d1861753b4cc6bd5",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/oidc.js",
+          "blob_sha": "ef6ef1fd15cf5f6594f72a6e835f24be8cc236b7",
+          "exists": true
+        }
+      ],
+      "test_paths": [
+        {
+          "path": "backend/src/middleware/auth.test.js",
+          "blob_sha": "a30c27148c41b4da0fdeefe68fc56203c56165ca",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/oauth.refresh.test.js",
+          "blob_sha": "6e234619dea52d2460deb6a99ad7a2b5d7cdd509",
+          "exists": true
+        }
+      ],
+      "dimensions": {
+        "first_party_imports_and_callers": "NOT_STARTED",
+        "data_schema_and_migrations": "NOT_STARTED",
+        "configuration_and_runtime": "NOT_STARTED",
+        "authorization_and_security": "NOT_STARTED",
+        "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
+        "UI_routes_and_interaction_states": "NOT_STARTED",
+        "tests_and_negative_cases": "NOT_STARTED",
+        "external_dependency_and_native_tool_closure": "NOT_STARTED",
+        "path_level_license_and_provenance": "NOT_STARTED"
+      },
+      "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
+    },
+    {
+      "id": "database-schema",
+      "name": "PostgreSQL persistence and ordered migrations",
+      "priority": 2,
+      "status": "CANDIDATE_NOT_CLOSED",
+      "source_paths": [
+        {
+          "path": "backend/src/services/db.js",
+          "blob_sha": "a3527cf3d0252efb831cffadf0860ac74247bb2e",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0001_baseline.sql",
+          "blob_sha": "bbe2b20ebe0d9f4b8f0d63d6563ed57ffa026a1a",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0066_email_accounts_icon.sql",
+          "blob_sha": "281f462c7960225156cc01b1dc18d80f9194b21f",
+          "exists": true
+        }
+      ],
+      "test_paths": [],
+      "dimensions": {
+        "first_party_imports_and_callers": "NOT_STARTED",
+        "data_schema_and_migrations": "NOT_STARTED",
+        "configuration_and_runtime": "NOT_STARTED",
+        "authorization_and_security": "NOT_STARTED",
+        "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
+        "UI_routes_and_interaction_states": "NOT_STARTED",
+        "tests_and_negative_cases": "NOT_STARTED",
+        "external_dependency_and_native_tool_closure": "NOT_STARTED",
+        "path_level_license_and_provenance": "NOT_STARTED"
+      },
+      "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
+    },
+    {
+      "id": "plugin-boundary",
+      "name": "Plugin API, activation, registry and storage boundary",
+      "priority": 3,
+      "status": "CANDIDATE_NOT_CLOSED",
+      "source_paths": [
+        {
+          "path": "backend/src/plugins/README.md",
+          "blob_sha": "e5a5abb83d7bfddf766ef6af7513247db5dfa75f",
+          "exists": true
+        },
+        {
+          "path": "backend/src/plugins/api.js",
+          "blob_sha": "b22623582fe0f8ad00687d05718d12fabcca3f33",
+          "exists": true
+        },
+        {
+          "path": "backend/src/plugins/registry.js",
+          "blob_sha": "b2ad424e595344e80a69df8cd1e74769a1eefffa",
+          "exists": true
+        },
+        {
+          "path": "backend/src/plugins/activation.js",
+          "blob_sha": "2c85079fcc957b288cfbbbbf774c79d99eb5e073",
+          "exists": true
+        },
+        {
+          "path": "backend/eslint.plugins-boundary.js",
+          "blob_sha": "037c159b84a5d6f0b8556ef1647f511be28d8364",
+          "exists": true
+        }
+      ],
+      "test_paths": [
+        {
+          "path": "backend/src/plugins/activation.test.js",
+          "blob_sha": "a988354e6fe5e66b7df3814c0b5841daaae7b9cf",
+          "exists": true
+        },
+        {
+          "path": "backend/src/plugins/registry.test.js",
+          "blob_sha": "53c68e4a11ad3b00f4d936006bf3914a8f8dfba4",
+          "exists": true
+        }
+      ],
+      "dimensions": {
+        "first_party_imports_and_callers": "NOT_STARTED",
+        "data_schema_and_migrations": "NOT_STARTED",
+        "configuration_and_runtime": "NOT_STARTED",
+        "authorization_and_security": "NOT_STARTED",
+        "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
+        "UI_routes_and_interaction_states": "NOT_STARTED",
+        "tests_and_negative_cases": "NOT_STARTED",
+        "external_dependency_and_native_tool_closure": "NOT_STARTED",
+        "path_level_license_and_provenance": "NOT_STARTED"
+      },
+      "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
+    },
+    {
+      "id": "frontend-app",
+      "name": "Web application shell, state and routing",
+      "priority": 4,
+      "status": "CANDIDATE_NOT_CLOSED",
+      "source_paths": [
+        {
+          "path": "frontend/src/App.jsx",
+          "blob_sha": "ae2328e7c89fb3df5bb27e943a901dc4f8fc7483",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/store/index.js",
+          "blob_sha": "519a700e1bd973a82867539a85d7d205a0a7de7b",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/components/MailApp.jsx",
+          "blob_sha": "c7fdf2822f51d6e583a57b70b3df92cf0283f2b5",
+          "exists": true
+        },
+        {
+          "path": "frontend/package.json",
+          "blob_sha": "0f560cbf59bac05a6be03ff08608ece57a9fed7c",
+          "exists": true
+        }
+      ],
+      "test_paths": [
+        {
+          "path": "frontend/src/App.render.test.js",
+          "blob_sha": "054b7e721b2cf2bdffbc36d72365ebab55cb122d",
+          "exists": true
+        }
+      ],
+      "dimensions": {
+        "first_party_imports_and_callers": "NOT_STARTED",
+        "data_schema_and_migrations": "NOT_STARTED",
+        "configuration_and_runtime": "NOT_STARTED",
+        "authorization_and_security": "NOT_STARTED",
+        "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
+        "UI_routes_and_interaction_states": "NOT_STARTED",
+        "tests_and_negative_cases": "NOT_STARTED",
+        "external_dependency_and_native_tool_closure": "NOT_STARTED",
+        "path_level_license_and_provenance": "NOT_STARTED"
+      },
+      "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
+    },
+    {
+      "id": "compose-and-send",
+      "name": "Compose, reply, forward, drafts, attachments and SMTP routing",
+      "priority": 4,
+      "status": "CANDIDATE_NOT_CLOSED",
+      "source_paths": [
+        {
+          "path": "frontend/src/components/ComposeModal.jsx",
+          "blob_sha": "5303edc5d83f7b7690efdc605fc58b5961004cf8",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/utils/composeFromMessage.js",
+          "blob_sha": "d63fe90afaec35a718e09cc1d2054ee2b9beeef0",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/send.js",
+          "blob_sha": "2184a60715f14280e2ba475f081de2f52cc99d8d",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/draft.js",
+          "blob_sha": "49a4cabe76208ac330a270084e14ebe185a0bf7a",
+          "exists": true
+        }
+      ],
+      "test_paths": [
+        {
+          "path": "frontend/src/components/ComposeModal.render.test.js",
+          "blob_sha": "bbb6132c984c0460a02d20312955083ad827ec0d",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/components/ComposeModal.replyDraft.test.js",
+          "blob_sha": "90237e74285eea041854cced670870b7ebd3197f",
+          "exists": true
+        }
+      ],
+      "dimensions": {
+        "first_party_imports_and_callers": "NOT_STARTED",
+        "data_schema_and_migrations": "NOT_STARTED",
+        "configuration_and_runtime": "NOT_STARTED",
+        "authorization_and_security": "NOT_STARTED",
+        "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
+        "UI_routes_and_interaction_states": "NOT_STARTED",
+        "tests_and_negative_cases": "NOT_STARTED",
+        "external_dependency_and_native_tool_closure": "NOT_STARTED",
+        "path_level_license_and_provenance": "NOT_STARTED"
+      },
+      "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
+    },
+    {
+      "id": "search-and-unified-inbox",
+      "name": "Cross-account search and unified inbox scope",
+      "priority": 4,
+      "status": "CANDIDATE_NOT_CLOSED",
+      "source_paths": [
+        {
+          "path": "backend/src/routes/search.js",
+          "blob_sha": "292f9da119eba5f9de7dc3602c420f476afd7e0a",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/unifiedInbox.js",
+          "blob_sha": "e8ef1efe89184e8e8f66f52ff0b70e5ec35187c4",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/messageService.js",
+          "blob_sha": "8247bee67c4b0f9f2a9d925df2cea899a8208b51",
+          "exists": true
+        }
+      ],
+      "test_paths": [
+        {
+          "path": "backend/src/services/messageService.test.js",
+          "blob_sha": "3b3dae3217452cd6023c14e90915e8d937bcea52",
+          "exists": true
+        }
+      ],
+      "dimensions": {
+        "first_party_imports_and_callers": "NOT_STARTED",
+        "data_schema_and_migrations": "NOT_STARTED",
+        "configuration_and_runtime": "NOT_STARTED",
+        "authorization_and_security": "NOT_STARTED",
+        "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
+        "UI_routes_and_interaction_states": "NOT_STARTED",
+        "tests_and_negative_cases": "NOT_STARTED",
+        "external_dependency_and_native_tool_closure": "NOT_STARTED",
+        "path_level_license_and_provenance": "NOT_STARTED"
+      },
+      "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
+    },
+    {
+      "id": "contacts-carddav",
+      "name": "Contacts, CardDAV and vCard synchronization",
+      "priority": 4,
+      "status": "CANDIDATE_NOT_CLOSED",
+      "source_paths": [
+        {
+          "path": "backend/src/routes/contacts.js",
+          "blob_sha": "c84f9c0f74335f367299449e9d67c22071d9e8da",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/carddav.js",
+          "blob_sha": "7516d58a9b8606c04af5c20ad009a6ac369c6c7b",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/carddavClient.js",
+          "blob_sha": "7eed7e1a7abf5c10b29c50941146bc2d4c84b266",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/carddavSync.js",
+          "blob_sha": "6fd4f0dd8b182cac618a5b0105677fc7fe14005f",
+          "exists": true
+        },
+        {
+          "path": "backend/src/utils/vcard.js",
+          "blob_sha": "67fa3f7cafdd226469eab79da4a25f7dbcdf911e",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/components/ContactsPage.jsx",
+          "blob_sha": "55b1719c3865d57295508bd5b1d041f552bd6ab6",
+          "exists": true
+        }
+      ],
+      "test_paths": [
+        {
+          "path": "backend/src/services/carddavClient.test.js",
+          "blob_sha": "1fd18141c5d22fcbadde40a89130d8392b1c3919",
+          "exists": true
+        },
+        {
+          "path": "backend/src/utils/vcard.test.js",
+          "blob_sha": "6e61586cc776ad0c6ae682093d9f291c07e1b75c",
+          "exists": true
+        }
+      ],
+      "dimensions": {
+        "first_party_imports_and_callers": "NOT_STARTED",
+        "data_schema_and_migrations": "NOT_STARTED",
+        "configuration_and_runtime": "NOT_STARTED",
+        "authorization_and_security": "NOT_STARTED",
+        "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
+        "UI_routes_and_interaction_states": "NOT_STARTED",
+        "tests_and_negative_cases": "NOT_STARTED",
+        "external_dependency_and_native_tool_closure": "NOT_STARTED",
+        "path_level_license_and_provenance": "NOT_STARTED"
+      },
+      "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
+    },
+    {
+      "id": "rules-categorization",
+      "name": "Inbox rules, sender blocks, categories and spam training",
+      "priority": 4,
+      "status": "CANDIDATE_NOT_CLOSED",
+      "source_paths": [
+        {
+          "path": "backend/src/routes/rules.js",
+          "blob_sha": "c6214a7a9e8f41cd640ed3e2c2487765727c8f71",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/categorizer.js",
+          "blob_sha": "a98ab8a88f97c642d257961fd6aca33298254423",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/spamPipeline.js",
+          "blob_sha": "35e24b0162610b0e6af1203995c4a5a7a16e1f28",
+          "exists": true
+        }
+      ],
+      "test_paths": [],
+      "dimensions": {
+        "first_party_imports_and_callers": "NOT_STARTED",
+        "data_schema_and_migrations": "NOT_STARTED",
+        "configuration_and_runtime": "NOT_STARTED",
+        "authorization_and_security": "NOT_STARTED",
+        "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
+        "UI_routes_and_interaction_states": "NOT_STARTED",
+        "tests_and_negative_cases": "NOT_STARTED",
+        "external_dependency_and_native_tool_closure": "NOT_STARTED",
+        "path_level_license_and_provenance": "NOT_STARTED"
+      },
+      "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
+    },
+    {
+      "id": "ai-assistant",
+      "name": "AI provider configuration, thread summarization and draft assistance",
+      "priority": 4,
+      "status": "CANDIDATE_NOT_CLOSED",
+      "source_paths": [
+        {
+          "path": "backend/src/routes/ai.js",
+          "blob_sha": "28d2f334b0e379a68ccf47f04c84facc8c091751",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/aiProvider.js",
+          "blob_sha": "d5d40c77bc9369daab6e696fe7288049743a2270",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/openaiCodexAuth.js",
+          "blob_sha": "d2539a2fffd6fc9efe9104a01e0de1b208fb9f29",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/aiActions.js",
+          "blob_sha": "d1d9625e5c3155f5a07f3934aac7dc84e5cc66a0",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/aiResults.js",
+          "blob_sha": "f22e744333d916de7b06618735652ba71f017b42",
+          "exists": true
+        }
+      ],
+      "test_paths": [
+        {
+          "path": "backend/src/routes/ai.test.js",
+          "blob_sha": "71c3365bf1a851c00250b622703ca12df9c4170a",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/aiActions.test.js",
+          "blob_sha": "f6e5b900ae26e88dd596bfa5aaea156edf1a7288",
+          "exists": true
+        }
+      ],
+      "dimensions": {
+        "first_party_imports_and_callers": "NOT_STARTED",
+        "data_schema_and_migrations": "NOT_STARTED",
+        "configuration_and_runtime": "NOT_STARTED",
+        "authorization_and_security": "NOT_STARTED",
+        "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
+        "UI_routes_and_interaction_states": "NOT_STARTED",
+        "tests_and_negative_cases": "NOT_STARTED",
+        "external_dependency_and_native_tool_closure": "NOT_STARTED",
+        "path_level_license_and_provenance": "NOT_STARTED"
+      },
+      "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
+    },
+    {
+      "id": "notifications-realtime",
+      "name": "WebSocket, push and notification actions",
+      "priority": 4,
+      "status": "CANDIDATE_NOT_CLOSED",
+      "source_paths": [
+        {
+          "path": "backend/src/services/websocket.js",
+          "blob_sha": "4afeddb4a7bb60aac23313ca99d4eb163f409778",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/pushNotifications.js",
+          "blob_sha": "be663d9552e73442d1e7ed39ed7fc870abeb8450",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/hooks/useWebSocket.js",
+          "blob_sha": "59a9d3369a34dcba8566674747bf87001160b28d",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/hooks/usePushNotifications.js",
+          "blob_sha": "2f3f675ac34b7ccd3b8721b43e7445838a09e3d5",
+          "exists": true
+        }
+      ],
+      "test_paths": [
+        {
+          "path": "backend/src/services/websocket.test.js",
+          "blob_sha": "8c9d27af76913b3904e9215b5f3b0b9334c3a173",
+          "exists": true
+        }
+      ],
+      "dimensions": {
+        "first_party_imports_and_callers": "NOT_STARTED",
+        "data_schema_and_migrations": "NOT_STARTED",
+        "configuration_and_runtime": "NOT_STARTED",
+        "authorization_and_security": "NOT_STARTED",
+        "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
+        "UI_routes_and_interaction_states": "NOT_STARTED",
+        "tests_and_negative_cases": "NOT_STARTED",
+        "external_dependency_and_native_tool_closure": "NOT_STARTED",
+        "path_level_license_and_provenance": "NOT_STARTED"
+      },
+      "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
+    },
+    {
+      "id": "electron-desktop",
+      "name": "Electron desktop shell, notifications and navigation security",
+      "priority": 4,
+      "status": "CANDIDATE_NOT_CLOSED",
+      "source_paths": [
+        {
+          "path": "frontend/packages/electron/main.cjs",
+          "blob_sha": "e4a7b1f3265543756b9959b58b7195135b0b2d69",
+          "exists": true
+        },
+        {
+          "path": "frontend/packages/electron/preload.cjs",
+          "blob_sha": "c75cf421ff4d65b7567e61f268f7ee306371299b",
+          "exists": true
+        },
+        {
+          "path": "frontend/packages/electron/security.cjs",
+          "blob_sha": "0a98e4af5e047f3b54b23042ae3fecc5da0b8281",
+          "exists": true
+        },
+        {
+          "path": "frontend/packages/electron/mailApi.cjs",
+          "blob_sha": "5f5974f824079fe09212314afa71898788425045",
+          "exists": true
+        }
+      ],
+      "test_paths": [
+        {
+          "path": "frontend/packages/electron/security.test.cjs",
+          "blob_sha": "25ea9d49cd6fc6e4cc67b412c61aece5ce94da23",
+          "exists": true
+        },
+        {
+          "path": "frontend/packages/electron/mailApi.test.cjs",
+          "blob_sha": "8ac64cf79883f7e68e0c166738fd78a87ca50029",
+          "exists": true
+        }
+      ],
+      "dimensions": {
+        "first_party_imports_and_callers": "NOT_STARTED",
+        "data_schema_and_migrations": "NOT_STARTED",
+        "configuration_and_runtime": "NOT_STARTED",
+        "authorization_and_security": "NOT_STARTED",
+        "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
+        "UI_routes_and_interaction_states": "NOT_STARTED",
+        "tests_and_negative_cases": "NOT_STARTED",
+        "external_dependency_and_native_tool_closure": "NOT_STARTED",
+        "path_level_license_and_provenance": "NOT_STARTED"
+      },
+      "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
+    },
+    {
+      "id": "android-mobile",
+      "name": "Android background sync, native bridge and notification actions",
+      "priority": 4,
+      "status": "CANDIDATE_NOT_CLOSED",
+      "source_paths": [
+        {
+          "path": "frontend/packages/android/app/src/main/java/sh/mailflow/app/MailFlowBackgroundSync.java",
+          "blob_sha": "517c4a15bf345bbb35da2d34f393e10e9f2d0206",
+          "exists": true
+        },
+        {
+          "path": "frontend/packages/android/app/src/main/java/sh/mailflow/app/MailFlowNativePlugin.java",
+          "blob_sha": "4851cfa27eb4344db33d5f61ce839a24af0abcb4",
+          "exists": true
+        },
+        {
+          "path": "frontend/packages/android/app/src/main/java/sh/mailflow/app/NativeSecurity.java",
+          "blob_sha": "edd0fc10c0f7fb5ec8dd8bcc864ff28a5c31418c",
+          "exists": true
+        },
+        {
+          "path": "frontend/packages/android/app/src/main/java/sh/mailflow/app/MailFlowNotificationActionWorker.java",
+          "blob_sha": "166f33f4d0c41706973e3aa6263b06fe3b84a914",
+          "exists": true
+        }
+      ],
+      "test_paths": [
+        {
+          "path": "frontend/packages/android/app/src/test/java/sh/mailflow/app/NativeSecurityTest.java",
+          "blob_sha": "11097a233ee8a632cb9a4d3dc82652d6ab5feeeb",
+          "exists": true
+        },
+        {
+          "path": "frontend/packages/android/app/src/test/java/sh/mailflow/app/MailFlowNotificationActionWorkerTest.java",
+          "blob_sha": "9581d330c8f4c607df57163f724408a062c9a155",
+          "exists": true
+        }
+      ],
+      "dimensions": {
+        "first_party_imports_and_callers": "NOT_STARTED",
+        "data_schema_and_migrations": "NOT_STARTED",
+        "configuration_and_runtime": "NOT_STARTED",
+        "authorization_and_security": "NOT_STARTED",
+        "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
+        "UI_routes_and_interaction_states": "NOT_STARTED",
+        "tests_and_negative_cases": "NOT_STARTED",
+        "external_dependency_and_native_tool_closure": "NOT_STARTED",
+        "path_level_license_and_provenance": "NOT_STARTED"
+      },
+      "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
+    },
+    {
+      "id": "deployment-and-release",
+      "name": "Docker deployment, CI and application release packaging",
+      "priority": 4,
+      "status": "CANDIDATE_NOT_CLOSED",
+      "source_paths": [
+        {
+          "path": "docker-compose.yml",
+          "blob_sha": "f546da93d75fb2a2333a43d3f80d5be400dbb16c",
+          "exists": true
+        },
+        {
+          "path": "backend/Dockerfile",
+          "blob_sha": "61908fc7d75fbc9d575f871001aa0cc1b0486db0",
+          "exists": true
+        },
+        {
+          "path": "frontend/Dockerfile",
+          "blob_sha": "303bd15e08c871df4c58f2768928b32e158de2aa",
+          "exists": true
+        },
+        {
+          "path": ".github/workflows/ci.yml",
+          "blob_sha": "24aef57f8bba6327cc20d026966d69da28b4f4fb",
+          "exists": true
+        },
+        {
+          "path": ".github/workflows/publish-apps.yml",
+          "blob_sha": "8ff9bf9482665b218b1e1d902d815a6524a4316f",
+          "exists": true
+        },
+        {
+          "path": ".github/workflows/publish.yml",
+          "blob_sha": "ca42f2f732bc04b0291a37da408a646e275b2807",
+          "exists": true
+        }
+      ],
+      "test_paths": [],
+      "dimensions": {
+        "first_party_imports_and_callers": "NOT_STARTED",
+        "data_schema_and_migrations": "NOT_STARTED",
+        "configuration_and_runtime": "NOT_STARTED",
+        "authorization_and_security": "NOT_STARTED",
+        "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
+        "UI_routes_and_interaction_states": "NOT_STARTED",
+        "tests_and_negative_cases": "NOT_STARTED",
+        "external_dependency_and_native_tool_closure": "NOT_STARTED",
+        "path_level_license_and_provenance": "NOT_STARTED"
+      },
+      "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
+    }
+  ]
+}
