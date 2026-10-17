@@ -29,10 +29,10 @@ jobs:
           cache: npm
           cache-dependency-path: extraction/snapshots/35067fc2876d50980f1a8a3b8ea72b5467b69f60/source/backend/package-lock.json
       - name: Install pinned backend dependencies
-        working-directory: extraction/snapshots/35067fc2876d50980f1a8b3b8ea72b5467b69f60/source/backend
+        working-directory: extraction/snapshots/35067fc2876d50980f1a8a3b8ea72b5467b69f60/source/backend
         run: npm ci
       - name: Run auth, OAuth/OIDC, host validation, safe fetch, image proxy and sanitizer tests
-        working-directory: extraction/snapshots/35067fc2876d50980f1a8b3b8ea72b5467b69f60/source/backend
+        working-directory: extraction/snapshots/35067fc2876d50980f1a8a3b8ea72b5467b69f60/source/backend
         run: >-
           npx vitest run
           src/middleware/auth.test.js
@@ -64,5 +64,5 @@ jobs:
         working-directory: extraction/snapshots/35067fc2876d50980f1a8a3b8ea72b5467b69f60/source/frontend
         run: npm ci
       - name: Run image proxy tests
-        working-directory: extraction/snapshots/35067fc2876d50980f1a8b3b8ea72b5467b69f60/source/frontend
+        working-directory: extraction/snapshots/35067fc2876d50980f1a8a3b8ea72b5467b69f60/source/frontend
         run: node --test src/utils/imageProxy.test.js
