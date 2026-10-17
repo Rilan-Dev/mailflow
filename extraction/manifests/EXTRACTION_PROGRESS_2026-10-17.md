@@ -76,3 +76,9 @@
 - PostgreSQL 17: 66 migrations applied, idempotent rerun, 32 tables, 97 indexes, 282 constraints. Snapshot verifier passed in run https://github.com/Rilan-Dev/mailflow/actions/runs/39034971662.
 - Android web build and Capacitor sync passed; Gradle has not yet started successfully due the immutable wrapper's non-executable mode. Workflow now explicitly uses `bash ./gradlew`; current run https://github.com/Rilan-Dev/mailflow/actions/runs/39035810908 is pending.
 - Reusable capability runtime trace: `extraction/manifests/reusable-capability-runtime-trace-2026-10-17.md`. Current path register: 182 classified, 1,168 unclassified. Capability closure: 14 partial, 2 not started, 0 closed. Licensing/provenance remains open.
+
+
+## Update — 2026-10-17 — Security and mail lifecycle evidence
+- Security static trace expanded; identified unresolved OIDC native-fetch DNS rebinding/redirect-policy gap. Security tests: 379 passed in run 39031942550.
+- IMAP/SMTP account lifecycle test slice: 42 files / 777 passed / 10 skipped in run 39037515886; no live provider integration. Draft-ingest tests were skipped.
+- Path register: 183 classified / 1,167 unclassified; security classifications remain license-unreviewed. Capability closure is still partial; full verifier re-run is queued after latest manifest changes.
