@@ -13,8 +13,8 @@
     "partial_traces": 6,
     "not_started": 10,
     "source_blobs": 1350,
-    "unclassified_paths": 1226,
-    "initially_classified_paths": 124
+    "unclassified_paths": 1219,
+    "initially_classified_paths": 131
   },
   "dimensions": [
     "first_party_imports_and_callers",
@@ -125,6 +125,16 @@
           "path": "frontend/src/components/MessagePane.jsx",
           "blob_sha": "05376cf03b831c9ffd43796e654ecd9f949c64dd",
           "exists": true
+        },
+        {
+          "path": "frontend/src/utils/scopeEmailCss.js",
+          "blob_sha": "bbad42f0508fe670e7a50320a23822ab2e28c317",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/utils/emailStyleRegistry.js",
+          "blob_sha": "3587abbaebbfe864472fe05fcc7baecb883c659d",
+          "exists": true
         }
       ],
       "test_paths": [
@@ -151,12 +161,12 @@
         "authorization_and_security": "PARTIAL_STATIC_TRACE",
         "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
         "UI_routes_and_interaction_states": "NOT_STARTED",
-        "tests_and_negative_cases": "SELECTED BACKEND SECURITY/SANITIZER AND FRONTEND RENDER TESTS PASSED (500 TOTAL ACROSS SECURITY WORKFLOW); FULL SINK COVERAGE PENDING",
+        "tests_and_negative_cases": "SELECTED BACKEND AND FRONTEND SECURITY/RENDER TESTS PASSED; FULL FRONTEND SUITE PENDING",
         "external_dependency_and_native_tool_closure": "NOT_STARTED",
         "path_level_license_and_provenance": "NOT_STARTED",
         "ui_routes_and_interaction_states": "PARTIAL_STATIC_TRACE"
       },
-      "next_action": "Trace prepared.html through CSS scoping, prove linkifyText escaping, test both renderer modes, enumerate every sanitizer/render sink and close CID/attachment/body-store paths."
+      "next_action": "Verify both iframe and VITE_EMAIL_DIV_RENDER paths; prove sanitizeEmailForApp and CSS scoping remain in force; add explicit hostile plain-text linkifier and signature source/read/write tests; close CID/attachment/body-store call graph."
     },
     {
       "id": "image-proxy-privacy",
@@ -183,6 +193,16 @@
           "path": "frontend/src/utils/imageProxy.js",
           "blob_sha": "933c3cb7ab2780d7fd5eaf530c67b8913697074e",
           "exists": true
+        },
+        {
+          "path": "frontend/src/utils/remoteImagePolicy.js",
+          "blob_sha": "3cdb2b77d6696a3604a4715f1062cbfad63eaff2",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/utils/frameLazyImages.js",
+          "blob_sha": "aab965475440601c522aa82163476ec03df13d24",
+          "exists": true
         }
       ],
       "test_paths": [
@@ -204,11 +224,12 @@
         "authorization_and_security": "PARTIAL_STATIC_TRACE",
         "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
         "UI_routes_and_interaction_states": "NOT_STARTED",
-        "tests_and_negative_cases": "TESTS_IDENTIFIED_NOT_RUN",
+        "tests_and_negative_cases": "SELECTED BACKEND AND FRONTEND IMAGE POLICY TESTS PASSED; FULL CALLER COVERAGE PENDING",
         "external_dependency_and_native_tool_closure": "NOT_STARTED",
-        "path_level_license_and_provenance": "NOT_STARTED"
+        "path_level_license_and_provenance": "NOT_STARTED",
+        "ui_routes_and_interaction_states": "PARTIAL_STATIC_TRACE"
       },
-      "next_action": "Trace all image proxy callers, redirect hops, safeFetch enforcement, body limiter, cache isolation and response headers; execute proxy tests."
+      "next_action": "Trace all image proxy callers, per-user cache isolation, lazy frame rewrites, remote image allow/block state and redirect behavior; complete response header/body limiter tests."
     },
     {
       "id": "auth-and-identity",
@@ -463,6 +484,11 @@
         {
           "path": "frontend/src/components/ComposeModal.replyDraft.test.js",
           "blob_sha": "90237e74285eea041854cced670870b7ebd3197f",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/components/ComposeModal.signatureToggle.test.js",
+          "blob_sha": "e04dd739759c16a1c9c4397c789fddfe78916460",
           "exists": true
         }
       ],
@@ -892,14 +918,14 @@
       "status": "INITIAL_SCHEMA_MAP_NOT_CLOSED"
     },
     {
-      "kind": "frontend_html_sink_trace",
-      "path": "extraction/manifests/security-transport-database-trace-2026-10-17.md",
-      "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED"
-    },
-    {
       "kind": "closure_test_results",
       "path": "extraction/manifests/closure-test-results-2026-10-17-35067fc.json",
       "status": "SELECTED_SECURITY_AND_TRANSPORT_TESTS_PASSED; FULL_VERIFICATION_PENDING"
+    },
+    {
+      "kind": "frontend_html_sink_trace",
+      "path": "extraction/manifests/security-transport-database-trace-2026-10-17.md",
+      "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED"
     }
   ]
 }
