@@ -1444,13 +1444,14 @@
       "mode": "100644",
       "size": 15572,
       "candidate_areas": [
-        "backend-and-api"
+        "backend-and-api",
+        "auth-and-identity"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "PARTIAL_TRACE",
-      "notes": "Included in initial security-sensitive static import/caller trace. Role classified as a first-party dependency of auth/session, outbound-host validation, remote-image or email-rendering capabilities; not behaviorally closed, license-cleared, or approved for reuse."
+      "closure_status": "PARTIAL_STATIC_TRACE",
+      "notes": "Static call path mapped in security-transport-database-trace-2026-10-17.md; license/provenance unreviewed and transitive closure open."
     },
     {
       "path": "backend/src/middleware/auth.js",
@@ -1459,13 +1460,14 @@
       "size": 1396,
       "candidate_areas": [
         "backend-and-api",
-        "auth-identity"
+        "auth-identity",
+        "auth-and-identity"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "PARTIAL_TRACE",
-      "notes": "Included in initial security-sensitive static import/caller trace. Role classified as a first-party dependency of auth/session, outbound-host validation, remote-image or email-rendering capabilities; not behaviorally closed, license-cleared, or approved for reuse."
+      "closure_status": "PARTIAL_STATIC_TRACE",
+      "notes": "Static call path mapped in security-transport-database-trace-2026-10-17.md; license/provenance unreviewed and transitive closure open."
     },
     {
       "path": "backend/src/middleware/auth.test.js",
@@ -2280,13 +2282,14 @@
       "candidate_areas": [
         "backend-and-api",
         "auth-identity",
-        "tests"
+        "tests",
+        "auth-and-identity"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
-      "reuse_status": "TEST_EVIDENCE_CANDIDATE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "TESTS_IDENTIFIED_NOT_RUN",
-      "notes": "Test candidate linked to the first security-sensitive static trace. Test was identified but not executed in this session; no test PASS claimed."
+      "closure_status": "TESTS_EXECUTED_IN_PINNED_SNAPSHOT",
+      "notes": "Included in selected security run 39031942550 and/or full backend/frontend run 39034971662; test evidence does not close all callers, sinks or capability behavior."
     },
     {
       "path": "backend/src/routes/auth.js",
@@ -2295,13 +2298,14 @@
       "size": 64808,
       "candidate_areas": [
         "backend-and-api",
-        "auth-identity"
+        "auth-identity",
+        "auth-and-identity"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "PARTIAL_TRACE",
-      "notes": "Included in initial security-sensitive static import/caller trace. Role classified as a first-party dependency of auth/session, outbound-host validation, remote-image or email-rendering capabilities; not behaviorally closed, license-cleared, or approved for reuse."
+      "closure_status": "PARTIAL_STATIC_TRACE",
+      "notes": "Static call path mapped in security-transport-database-trace-2026-10-17.md; license/provenance unreviewed and transitive closure open."
     },
     {
       "path": "backend/src/routes/auth.logout.test.js",
@@ -2311,13 +2315,14 @@
       "candidate_areas": [
         "backend-and-api",
         "auth-identity",
-        "tests"
+        "tests",
+        "auth-and-identity"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
-      "reuse_status": "TEST_EVIDENCE_CANDIDATE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "TESTS_IDENTIFIED_NOT_RUN",
-      "notes": "Test candidate linked to the first security-sensitive static trace. Test was identified but not executed in this session; no test PASS claimed."
+      "closure_status": "TESTS_EXECUTED_IN_PINNED_SNAPSHOT",
+      "notes": "Included in selected security run 39031942550 and/or full backend/frontend run 39034971662; test evidence does not close all callers, sinks or capability behavior."
     },
     {
       "path": "backend/src/routes/auth.me.test.js",
@@ -2327,13 +2332,14 @@
       "candidate_areas": [
         "backend-and-api",
         "auth-identity",
-        "tests"
+        "tests",
+        "auth-and-identity"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
-      "reuse_status": "TEST_EVIDENCE_CANDIDATE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "TESTS_IDENTIFIED_NOT_RUN",
-      "notes": "Test candidate linked to the first security-sensitive static trace. Test was identified but not executed in this session; no test PASS claimed."
+      "closure_status": "TESTS_EXECUTED_IN_PINNED_SNAPSHOT",
+      "notes": "Included in selected security run 39031942550 and/or full backend/frontend run 39034971662; test evidence does not close all callers, sinks or capability behavior."
     },
     {
       "path": "backend/src/routes/auth.preferences.test.js",
@@ -2969,13 +2975,14 @@
       "size": 26974,
       "candidate_areas": [
         "backend-and-api",
-        "auth-identity"
+        "auth-identity",
+        "oidc-oauth"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "PARTIAL_TRACE",
-      "notes": "Included in initial security-sensitive static import/caller trace. Role classified as a first-party dependency of auth/session, outbound-host validation, remote-image or email-rendering capabilities; not behaviorally closed, license-cleared, or approved for reuse."
+      "closure_status": "PARTIAL_STATIC_TRACE",
+      "notes": "Static call path mapped in security-transport-database-trace-2026-10-17.md; license/provenance unreviewed and transitive closure open."
     },
     {
       "path": "backend/src/routes/oauth.refresh.test.js",
@@ -2985,13 +2992,14 @@
       "candidate_areas": [
         "backend-and-api",
         "auth-identity",
-        "tests"
+        "tests",
+        "oidc-oauth"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
-      "reuse_status": "TEST_EVIDENCE_CANDIDATE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "TESTS_IDENTIFIED_NOT_RUN",
-      "notes": "Test candidate linked to the first security-sensitive static trace. Test was identified but not executed in this session; no test PASS claimed."
+      "closure_status": "TESTS_EXECUTED_IN_PINNED_SNAPSHOT",
+      "notes": "Included in selected security run 39031942550 and/or full backend/frontend run 39034971662; test evidence does not close all callers, sinks or capability behavior."
     },
     {
       "path": "backend/src/routes/oidc.endsession.test.js",
@@ -3001,13 +3009,14 @@
       "candidate_areas": [
         "backend-and-api",
         "auth-identity",
-        "tests"
+        "tests",
+        "oidc-oauth"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
-      "reuse_status": "TEST_EVIDENCE_CANDIDATE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "TESTS_IDENTIFIED_NOT_RUN",
-      "notes": "Test candidate linked to the first security-sensitive static trace. Test was identified but not executed in this session; no test PASS claimed."
+      "closure_status": "TESTS_EXECUTED_IN_PINNED_SNAPSHOT",
+      "notes": "Included in selected security run 39031942550 and/or full backend/frontend run 39034971662; test evidence does not close all callers, sinks or capability behavior."
     },
     {
       "path": "backend/src/routes/oidc.js",
@@ -3016,13 +3025,14 @@
       "size": 29368,
       "candidate_areas": [
         "backend-and-api",
-        "auth-identity"
+        "auth-identity",
+        "oidc-oauth"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "PARTIAL_TRACE",
-      "notes": "Included in initial security-sensitive static import/caller trace. Role classified as a first-party dependency of auth/session, outbound-host validation, remote-image or email-rendering capabilities; not behaviorally closed, license-cleared, or approved for reuse."
+      "closure_status": "PARTIAL_STATIC_TRACE",
+      "notes": "Static call path mapped in security-transport-database-trace-2026-10-17.md; license/provenance unreviewed and transitive closure open."
     },
     {
       "path": "backend/src/routes/oidc.match.test.js",
@@ -3032,13 +3042,14 @@
       "candidate_areas": [
         "backend-and-api",
         "auth-identity",
-        "tests"
+        "tests",
+        "oidc-oauth"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
-      "reuse_status": "TEST_EVIDENCE_CANDIDATE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "TESTS_IDENTIFIED_NOT_RUN",
-      "notes": "Test candidate linked to the first security-sensitive static trace. Test was identified but not executed in this session; no test PASS claimed."
+      "closure_status": "TESTS_EXECUTED_IN_PINNED_SNAPSHOT",
+      "notes": "Included in selected security run 39031942550 and/or full backend/frontend run 39034971662; test evidence does not close all callers, sinks or capability behavior."
     },
     {
       "path": "backend/src/routes/oidc.privateIssuer.test.js",
@@ -3048,13 +3059,14 @@
       "candidate_areas": [
         "backend-and-api",
         "auth-identity",
-        "tests"
+        "tests",
+        "oidc-oauth"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
-      "reuse_status": "TEST_EVIDENCE_CANDIDATE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "TESTS_IDENTIFIED_NOT_RUN",
-      "notes": "Test candidate linked to the first security-sensitive static trace. Test was identified but not executed in this session; no test PASS claimed."
+      "closure_status": "TESTS_EXECUTED_IN_PINNED_SNAPSHOT",
+      "notes": "Included in selected security run 39031942550 and/or full backend/frontend run 39034971662; test evidence does not close all callers, sinks or capability behavior."
     },
     {
       "path": "backend/src/routes/oidc.screenLock.test.js",
@@ -3571,13 +3583,14 @@
       "size": 1018,
       "candidate_areas": [
         "backend-and-api",
-        "auth-identity"
+        "auth-identity",
+        "auth-and-identity"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "PARTIAL_TRACE",
-      "notes": "Included in initial security-sensitive static import/caller trace. Role classified as a first-party dependency of auth/session, outbound-host validation, remote-image or email-rendering capabilities; not behaviorally closed, license-cleared, or approved for reuse."
+      "closure_status": "PARTIAL_STATIC_TRACE",
+      "notes": "Static call path mapped in security-transport-database-trace-2026-10-17.md; license/provenance unreviewed and transitive closure open."
     },
     {
       "path": "backend/src/services/backup.js",
@@ -3824,13 +3837,14 @@
       "size": 59203,
       "candidate_areas": [
         "backend-and-api",
-        "security-and-privacy"
+        "security-and-privacy",
+        "email-html-sanitization"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "PARTIAL_TRACE",
-      "notes": "Included in initial security-sensitive static import/caller trace. Role classified as a first-party dependency of auth/session, outbound-host validation, remote-image or email-rendering capabilities; not behaviorally closed, license-cleared, or approved for reuse."
+      "closure_status": "PARTIAL_STATIC_TRACE",
+      "notes": "Static call path mapped in security-transport-database-trace-2026-10-17.md; license/provenance unreviewed and transitive closure open."
     },
     {
       "path": "backend/src/services/emailSanitizer.parse5Error.test.js",
@@ -3840,13 +3854,14 @@
       "candidate_areas": [
         "backend-and-api",
         "security-and-privacy",
-        "tests"
+        "tests",
+        "email-html-sanitization"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
-      "reuse_status": "TEST_EVIDENCE_CANDIDATE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "TESTS_IDENTIFIED_NOT_RUN",
-      "notes": "Test candidate linked to the first security-sensitive static trace. Test was identified but not executed in this session; no test PASS claimed."
+      "closure_status": "TESTS_EXECUTED_IN_PINNED_SNAPSHOT",
+      "notes": "Included in selected security run 39031942550 and/or full backend/frontend run 39034971662; test evidence does not close all callers, sinks or capability behavior."
     },
     {
       "path": "backend/src/services/emailSanitizer.test.js",
@@ -3856,13 +3871,14 @@
       "candidate_areas": [
         "backend-and-api",
         "security-and-privacy",
-        "tests"
+        "tests",
+        "email-html-sanitization"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
-      "reuse_status": "TEST_EVIDENCE_CANDIDATE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "TESTS_IDENTIFIED_NOT_RUN",
-      "notes": "Test candidate linked to the first security-sensitive static trace. Test was identified but not executed in this session; no test PASS claimed."
+      "closure_status": "TESTS_EXECUTED_IN_PINNED_SNAPSHOT",
+      "notes": "Included in selected security run 39031942550 and/or full backend/frontend run 39034971662; test evidence does not close all callers, sinks or capability behavior."
     },
     {
       "path": "backend/src/services/emailSanitizer.trackers.test.js",
@@ -3872,13 +3888,14 @@
       "candidate_areas": [
         "backend-and-api",
         "security-and-privacy",
-        "tests"
+        "tests",
+        "email-html-sanitization"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
-      "reuse_status": "TEST_EVIDENCE_CANDIDATE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "TESTS_IDENTIFIED_NOT_RUN",
-      "notes": "Test candidate linked to the first security-sensitive static trace. Test was identified but not executed in this session; no test PASS claimed."
+      "closure_status": "TESTS_EXECUTED_IN_PINNED_SNAPSHOT",
+      "notes": "Included in selected security run 39031942550 and/or full backend/frontend run 39034971662; test evidence does not close all callers, sinks or capability behavior."
     },
     {
       "path": "backend/src/services/encryption.js",
@@ -3944,13 +3961,14 @@
       "mode": "100644",
       "size": 10002,
       "candidate_areas": [
-        "backend-and-api"
+        "backend-and-api",
+        "outbound-host-validation"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "PARTIAL_TRACE",
-      "notes": "Included in initial security-sensitive static import/caller trace. Role classified as a first-party dependency of auth/session, outbound-host validation, remote-image or email-rendering capabilities; not behaviorally closed, license-cleared, or approved for reuse."
+      "closure_status": "PARTIAL_STATIC_TRACE",
+      "notes": "Static call path mapped in security-transport-database-trace-2026-10-17.md; license/provenance unreviewed and transitive closure open."
     },
     {
       "path": "backend/src/services/hostValidation.test.js",
@@ -3959,13 +3977,14 @@
       "size": 17919,
       "candidate_areas": [
         "backend-and-api",
-        "tests"
+        "tests",
+        "outbound-host-validation"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
-      "reuse_status": "TEST_EVIDENCE_CANDIDATE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "TESTS_IDENTIFIED_NOT_RUN",
-      "notes": "Test candidate linked to the first security-sensitive static trace. Test was identified but not executed in this session; no test PASS claimed."
+      "closure_status": "TESTS_EXECUTED_IN_PINNED_SNAPSHOT",
+      "notes": "Included in selected security run 39031942550 and/or full backend/frontend run 39034971662; test evidence does not close all callers, sinks or capability behavior."
     },
     {
       "path": "backend/src/services/imageCache.js",
@@ -3998,13 +4017,14 @@
       "size": 6402,
       "candidate_areas": [
         "backend-and-api",
-        "security-and-privacy"
+        "security-and-privacy",
+        "remote-image-proxy"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "PARTIAL_TRACE",
-      "notes": "Included in initial security-sensitive static import/caller trace. Role classified as a first-party dependency of auth/session, outbound-host validation, remote-image or email-rendering capabilities; not behaviorally closed, license-cleared, or approved for reuse."
+      "closure_status": "PARTIAL_STATIC_TRACE",
+      "notes": "Static call path mapped in security-transport-database-trace-2026-10-17.md; license/provenance unreviewed and transitive closure open."
     },
     {
       "path": "backend/src/services/imageProxy.test.js",
@@ -4014,13 +4034,14 @@
       "candidate_areas": [
         "backend-and-api",
         "security-and-privacy",
-        "tests"
+        "tests",
+        "remote-image-proxy"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
-      "reuse_status": "TEST_EVIDENCE_CANDIDATE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "TESTS_IDENTIFIED_NOT_RUN",
-      "notes": "Test candidate linked to the first security-sensitive static trace. Test was identified but not executed in this session; no test PASS claimed."
+      "closure_status": "TESTS_EXECUTED_IN_PINNED_SNAPSHOT",
+      "notes": "Included in selected security run 39031942550 and/or full backend/frontend run 39034971662; test evidence does not close all callers, sinks or capability behavior."
     },
     {
       "path": "backend/src/services/imageShrink.js",
@@ -4922,13 +4943,14 @@
       "mode": "100644",
       "size": 3566,
       "candidate_areas": [
-        "backend-and-api"
+        "backend-and-api",
+        "outbound-host-validation"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "PARTIAL_TRACE",
-      "notes": "Included in initial security-sensitive static import/caller trace. Role classified as a first-party dependency of auth/session, outbound-host validation, remote-image or email-rendering capabilities; not behaviorally closed, license-cleared, or approved for reuse."
+      "closure_status": "PARTIAL_STATIC_TRACE",
+      "notes": "Static call path mapped in security-transport-database-trace-2026-10-17.md; license/provenance unreviewed and transitive closure open."
     },
     {
       "path": "backend/src/services/safeFetch.test.js",
@@ -4937,13 +4959,14 @@
       "size": 2907,
       "candidate_areas": [
         "backend-and-api",
-        "tests"
+        "tests",
+        "outbound-host-validation"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
-      "reuse_status": "TEST_EVIDENCE_CANDIDATE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "TESTS_IDENTIFIED_NOT_RUN",
-      "notes": "Test candidate linked to the first security-sensitive static trace. Test was identified but not executed in this session; no test PASS claimed."
+      "closure_status": "TESTS_EXECUTED_IN_PINNED_SNAPSHOT",
+      "notes": "Included in selected security run 39031942550 and/or full backend/frontend run 39034971662; test evidence does not close all callers, sinks or capability behavior."
     },
     {
       "path": "backend/src/services/sendHold.js",
@@ -5723,13 +5746,14 @@
       "size": 1469,
       "candidate_areas": [
         "backend-and-api",
-        "auth-identity"
+        "auth-identity",
+        "auth-and-identity"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "PARTIAL_TRACE",
-      "notes": "Included in initial security-sensitive static import/caller trace. Role classified as a first-party dependency of auth/session, outbound-host validation, remote-image or email-rendering capabilities; not behaviorally closed, license-cleared, or approved for reuse."
+      "closure_status": "PARTIAL_STATIC_TRACE",
+      "notes": "Static call path mapped in security-transport-database-trace-2026-10-17.md; license/provenance unreviewed and transitive closure open."
     },
     {
       "path": "backend/src/utils/sessionConfig.test.js",
@@ -5739,13 +5763,14 @@
       "candidate_areas": [
         "backend-and-api",
         "auth-identity",
-        "tests"
+        "tests",
+        "auth-and-identity"
       ],
-      "disposition": "UNCLASSIFIED",
-      "reuse_status": "UNDECIDED",
+      "disposition": "DEPENDENCY_CLOSURE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "UNMAPPED",
-      "notes": "Initial inventory only; agent must inspect content and provenance."
+      "closure_status": "TESTS_EXECUTED_IN_PINNED_SNAPSHOT",
+      "notes": "Included in selected security run 39031942550 and/or full backend/frontend run 39034971662; test evidence does not close all callers, sinks or capability behavior."
     },
     {
       "path": "backend/src/utils/trustProxy.js",
@@ -14693,13 +14718,14 @@
         "security-and-privacy",
         "tests",
         "build-and-release",
-        "compose-and-send"
+        "compose-and-send",
+        "email-html-sanitization"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "TESTS_IDENTIFIED_NOT_RUN",
-      "notes": "Composer image proxy render regression test identified; new frontend render-security workflow will execute it."
+      "closure_status": "TESTS_EXECUTED_IN_PINNED_SNAPSHOT",
+      "notes": "Included in selected security run 39031942550 and/or full backend/frontend run 39034971662; test evidence does not close all callers, sinks or capability behavior."
     },
     {
       "path": "frontend/src/components/ComposeModal.jsx",
@@ -14709,13 +14735,14 @@
       "candidate_areas": [
         "frontend-web",
         "build-and-release",
-        "compose-and-send"
+        "compose-and-send",
+        "email-html-sanitization"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "PARTIAL_TRACE",
-      "notes": "DOMPurify signature handling and app-origin quoted HTML sanitization traced; compose save/restore/attachment/UI closure pending."
+      "closure_status": "PARTIAL_STATIC_TRACE",
+      "notes": "Static call path mapped in security-transport-database-trace-2026-10-17.md; license/provenance unreviewed and transitive closure open."
     },
     {
       "path": "frontend/src/components/ComposeModal.render.test.js",
@@ -17961,13 +17988,14 @@
       "size": 1286,
       "candidate_areas": [
         "frontend-web",
-        "security-and-privacy"
+        "security-and-privacy",
+        "remote-image-proxy"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
       "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "PARTIAL_TRACE",
-      "notes": "Included in initial security-sensitive static import/caller trace. Role classified as a first-party dependency of auth/session, outbound-host validation, remote-image or email-rendering capabilities; not behaviorally closed, license-cleared, or approved for reuse."
+      "closure_status": "PARTIAL_STATIC_TRACE",
+      "notes": "Static call path mapped in security-transport-database-trace-2026-10-17.md; license/provenance unreviewed and transitive closure open."
     },
     {
       "path": "frontend/src/utils/imageProxy.test.js",
@@ -17977,13 +18005,14 @@
       "candidate_areas": [
         "frontend-web",
         "security-and-privacy",
-        "tests"
+        "tests",
+        "remote-image-proxy"
       ],
       "disposition": "DEPENDENCY_CLOSURE",
-      "reuse_status": "TEST_EVIDENCE_CANDIDATE",
+      "reuse_status": "CANDIDATE_REQUIRES_CLOSURE",
       "license_status": "UNREVIEWED",
-      "closure_status": "TESTS_IDENTIFIED_NOT_RUN",
-      "notes": "Test candidate linked to the first security-sensitive static trace. Test was identified but not executed in this session; no test PASS claimed."
+      "closure_status": "TESTS_EXECUTED_IN_PINNED_SNAPSHOT",
+      "notes": "Included in selected security run 39031942550 and/or full backend/frontend run 39034971662; test evidence does not close all callers, sinks or capability behavior."
     },
     {
       "path": "frontend/src/utils/labelPicker.js",
@@ -19508,10 +19537,10 @@
     }
   ],
   "removed_since_previous_pin": [],
-  "review_checkpoint": "2026-10-17: role-level partial classifications include search/unified inbox, contacts/CardDAV, rules/spam, plugin runtime, AI and notifications/realtime. Capability closure and license/provenance remain open.",
+  "review_checkpoint": "2026-10-17: expanded path register for auth/session, OAuth/OIDC, host validation/safeFetch, image proxy, sanitizer and corresponding tests. Dependency-role classification is not license clearance.",
   "summary": {
-    "unclassified_paths": 1168,
-    "classified_paths": 182,
+    "unclassified_paths": 1167,
+    "classified_paths": 183,
     "classification_note": "Role and test status are grounded in source/test evidence; this is not license clearance or proof of capability closure."
   }
 }
