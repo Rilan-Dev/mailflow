@@ -139,3 +139,11 @@
 - Extended `.github/workflows/mailflow-full-snapshot-verification.yml` with PostgreSQL 17 service job. It runs the pinned migration runner twice against a clean database, asserts all 66 migration versions were recorded, and sanity-checks public table/index/constraint counts.
 - This covers clean-install and idempotent second-run behavior only. Upgrade fixtures from prior versions and crash/partial-failure simulation for no-transaction migrations remain open.
 - Workflow commit: `3aabe903e75196956c49e77b3499467496578c12`; wait for the new run's actual result before recording a database migration PASS.
+
+
+## 015 — 2026-10-17 — Full suite and PostgreSQL checks passed; Android wrapper command fixed
+- Inspected full verification run https://github.com/Rilan-Dev/mailflow/actions/runs/39034971662. Exact snapshot verifier, full backend lint/plugin boundary/syntax/test/audit, full frontend lint/test/build/audit, and PostgreSQL 17 clean migration install/rerun all passed.
+- PostgreSQL job recorded 66 migration ledger rows and passed table/index/constraint sanity checks after applying all migrations twice.
+- Android web build and Capacitor sync passed; Gradle invocation failed with exit 126 because the upstream pinned `gradlew` file is not executable in the snapshot (permission denied before Gradle ran). This is a workflow invocation issue, not evidence of Android source compilation failure.
+- Preserved immutable snapshot mode and fixed workflow command to `bash ./gradlew testDebugUnitTest assembleDebug --no-daemon`, commit `981a7fbaec746ca765424c9e24572101716cca96`. New run must confirm Android compilation and unit tests.
+- Until the corrected Android job succeeds, overall full verification remains PARTIAL. Licensing/provenance and capability closure remain open regardless of CI.
