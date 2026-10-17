@@ -109,3 +109,13 @@ Do not wait for that run before continuing independent trace work. When convenie
 - Combined targeted evidence: 64 file-runs, 1,277 passed tests, 10 skipped tests, 0 failures. Machine-readable record: `extraction/manifests/closure-test-results-2026-10-17-35067fc.json`.
 - Snapshot/inventory verifier succeeded after path and capability manifest updates: https://github.com/Rilan-Dev/mailflow/actions/runs/39034548818. This is exact-copy/manifests integrity only; it is not overall extraction PASS.
 - Keep proceeding without waiting on root CI. Next: close the OIDC native-fetch/redirect/DNS pinning risk, complete sanitizer sink proof (div renderer and linkifier), generate column-level schema object inventory and SQL-consumer mapping, and continue dependency/license/provenance review. Full backend/frontend suites and native builds are still not established by these selected runs.
+
+
+## Update — 2026-10-17 — Full pinned-snapshot verification launched
+
+Added `.github/workflows/mailflow-full-snapshot-verification.yml` with three independent jobs against the immutable snapshot:
+- exact inventory/path-register verifier,
+- full backend lint/plugin-boundary/syntax/tests/production audit,
+- full frontend lint/tests/build/production audit plus Android sync, Android unit tests and debug APK build (Electron Node tests run through frontend `npm test`).
+
+Run: https://github.com/Rilan-Dev/mailflow/actions/runs/39034814909 — queued at last check. Do not report it as passed until completed. This verification workflow is independent of the ongoing static tracing and should not block further work.
