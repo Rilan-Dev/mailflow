@@ -12,7 +12,6 @@ on:
 
 permissions:
   contents: write
-  pull-requests: write
 
 concurrency:
   group: mailflow-upstream-source-snapshot
@@ -27,29 +26,26 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Fetch current upstream main
+      - name: Fetch current upstream main outside the working tree
         id: upstream
         run: |
-          git clone --depth=1 https://github.com/maathimself/mailflow.git upstream-source
-          echo "upstream_commit=$(git -C upstream-source rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          git clone --depth=1 https://github.com/maathimself/mailflow.git "$RUNNER_TEMP/upstream-source"
+          commit=$(git -C "$RUNNER_TEMP/upstream-source" rev-parse HEAD)
+          echo "upstream_commit=$commit" >> "$GITHUB_OUTPUT"
 
       - name: Capture immutable source snapshot and regenerate inventories
-        run: node extraction/tools/capture-upstream-snapshot.mjs upstream-source
+        run: node extraction/tools/capture-upstream-snapshot.mjs "$RUNNER_TEMP/upstream-source"
 
-      - name: Open or update the upstream snapshot PR
-        uses: peter-evans/create-pull-request@v7
-        with:
-          token: ${{ github.token }}
-          branch: automation/mailflow-upstream-snapshot
-          delete-branch: false
-          commit-message: "chore(extraction): capture MailFlow upstream snapshot ${{ steps.upstream.outputs.upstream_commit }}"
-          title: "chore(extraction): capture MailFlow upstream ${{ steps.upstream.outputs.upstream_commit }}"
-          body: |
-            Automated immutable source snapshot of maathimself/mailflow main.
-
-            - Upstream commit: ${{ steps.upstream.outputs.upstream_commit }}
-            - Snapshot and exact blob checks are recorded under extraction/snapshots/.
-            - Existing path assessments are retained only when path, blob SHA, and mode are unchanged. Changed/new paths reset to UNCLASSIFIED.
-            - Review source notices, third-party provenance, LFS/submodule status, capability closure and verification before reuse.
-
-            This PR updates the source library; it does not integrate source into a host application or claim extraction PASS.
+      - name: Commit the source-library update on main
+        env:
+          UPSTREAM_COMMIT: ${{ steps.upstream.outputs.upstream_commit }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add extraction/source-pins/current.json extraction/manifests/source-tree-*.json extraction/manifests/path-dispositions-*.json extraction/snapshots/
+          if git diff --cached --quiet; then
+            echo "No new upstream source snapshot to commit."
+            exit 0
+          fi
+          git commit -m "chore(extraction): capture MailFlow upstream $UPSTREAM_COMMIT"
+          git push origin HEAD:main
