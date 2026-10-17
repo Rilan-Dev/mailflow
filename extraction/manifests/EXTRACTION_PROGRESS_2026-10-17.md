@@ -82,3 +82,8 @@
 - Security static trace expanded; identified unresolved OIDC native-fetch DNS rebinding/redirect-policy gap. Security tests: 379 passed in run 39031942550.
 - IMAP/SMTP account lifecycle test slice: 42 files / 777 passed / 10 skipped in run 39037515886; no live provider integration. Draft-ingest tests were skipped.
 - Path register: 183 classified / 1,167 unclassified; security classifications remain license-unreviewed. Capability closure is still partial; full verifier re-run is queued after latest manifest changes.
+
+
+## Update — 2026-10-17 — Dependency triage
+- Direct dependency runtime map added at `extraction/manifests/dependency-runtime-license-triage-2026-10-17.md`. Package license/provenance review remains 0/1,124 cleared; lockfile metadata is not proof of license compliance.
+- The source pin's current path summary is refreshed to 183 classified / 1,167 unclassified; a new verifier run is queued after manifest changes.
