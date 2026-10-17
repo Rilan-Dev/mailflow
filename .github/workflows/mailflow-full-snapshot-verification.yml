@@ -111,3 +111,60 @@ jobs:
       - name: Run Android unit tests and assemble debug APK
         working-directory: ${{ env.SNAPSHOT }}/frontend/packages/android
         run: ./gradlew testDebugUnitTest assembleDebug --no-daemon
+
+  postgres-migrations:
+    name: Clean PostgreSQL install, 66 migrations and idempotent rerun
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: mailflow
+          POSTGRES_USER: mailflow
+          POSTGRES_PASSWORD: mailflow-test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U mailflow -d mailflow"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      DB_HOST: 127.0.0.1
+      DB_PORT: "5432"
+      DB_NAME: mailflow
+      DB_USER: mailflow
+      DB_PASSWORD: mailflow-test
+      ENCRYPTION_KEY: "0123456789abcdef0123456789abcdef"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: ${{ env.SNAPSHOT }}/backend/package-lock.json
+      - name: Install pinned backend dependencies
+        working-directory: ${{ env.SNAPSHOT }}/backend
+        run: npm ci
+      - name: Apply all migrations twice and inspect resulting schema
+        working-directory: ${{ env.SNAPSHOT }}/backend
+        run: |
+          node --input-type=module <<'NODE'
+          import { runMigrations } from './src/services/migrations.js';
+          import { pool } from './src/services/db.js';
+          try {
+            await runMigrations();
+            await runMigrations();
+            const { rows: [ledger] } = await pool.query('SELECT COUNT(*)::int AS n FROM schema_migrations');
+            if (ledger.n !== 66) throw new Error(`Expected 66 migration ledger rows, found ${ledger.n}`);
+            const { rows: [tables] } = await pool.query(`SELECT COUNT(*)::int AS n FROM information_schema.tables WHERE table_schema = 'public' AND table_type = 'BASE TABLE'`);
+            const { rows: [indexes] } = await pool.query(`SELECT COUNT(*)::int AS n FROM pg_indexes WHERE schemaname = 'public'`);
+            const { rows: [constraints] } = await pool.query(`SELECT COUNT(*)::int AS n FROM information_schema.table_constraints WHERE constraint_schema = 'public'`);
+            if (tables.n < 15 || indexes.n < 20 || constraints.n < 20) {
+              throw new Error(`Schema object counts below sanity thresholds: tables=${tables.n}, indexes=${indexes.n}, constraints=${constraints.n}`);
+            }
+            console.log(JSON.stringify({ migrationLedgerRows: ledger.n, tables: tables.n, indexes: indexes.n, constraints: constraints.n }, null, 2));
+          } finally {
+            await pool.end();
+          }
+          NODE
