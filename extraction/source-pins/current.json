@@ -1,0 +1,70 @@
+{
+  "schema_version": "1.0.0",
+  "source": {
+    "repository": "https://github.com/maathimself/mailflow",
+    "repository_full_name": "maathimself/mailflow",
+    "branch": "main",
+    "commit": "35067fc2876d50980f1a8a3b8ea72b5467b69f60",
+    "tree": "a2a82b50b8a1ac24a273e55dc0f9418aefdfed17",
+    "commit_url": "https://github.com/maathimself/mailflow/commit/35067fc2876d50980f1a8a3b8ea72b5467b69f60",
+    "tree_url": "https://github.com/maathimself/mailflow/tree/35067fc2876d50980f1a8a3b8ea72b5467b69f60",
+    "captured_at": "2026-10-17T11:46:33.594Z",
+    "capture_method": "Git object database; recursive ls-tree and exact blob extraction",
+    "tree_truncated": false,
+    "entry_count": 1497,
+    "blob_count": 1350,
+    "directory_count": 147,
+    "gitlink_count": 0
+  },
+  "license": {
+    "primary": "AGPL-3.0",
+    "commercial_license_present": true,
+    "cla_present": true,
+    "review_required": true,
+    "notes": [
+      "README declares AGPL-3.0 and a separate commercial license.",
+      "Retain provenance and license notices.",
+      "Classify per-path licenses and third-party provenance before reuse."
+    ]
+  },
+  "state": {
+    "phase": "PHASE 3 - CAPABILITY CLOSURE AND LICENSE/PROVENANCE REVIEW",
+    "source_copy_authorized": true,
+    "verification_status": "EXACT GIT TREE AND SNAPSHOT VERIFIED; 1,350 BLOBS AND 147 NESTED TREES MATCH; CAPABILITY CLOSURE AND PER-PATH LICENSE CLASSIFICATION REMAIN OPEN",
+    "baseline_type": "IMMUTABLE_UPSTREAM_SNAPSHOT",
+    "status": "SNAPSHOT_AND_TREE_VERIFICATION_PASS; EXTRACTION CLOSURE AND LICENSE REVIEW PENDING"
+  },
+  "manifest_paths": {
+    "tree": "extraction/manifests/source-tree-2026-10-17-35067fc.json",
+    "dispositions": "extraction/manifests/path-dispositions-2026-10-17-35067fc.json",
+    "snapshot": "extraction/snapshots/35067fc2876d50980f1a8a3b8ea72b5467b69f60/source"
+  },
+  "verification": {
+    "workflow_url": "https://github.com/Rilan-Dev/mailflow/actions/runs/39031182967",
+    "workflow_result": "success",
+    "verified_at": "2026-10-17T12:06:01Z",
+    "source_blob_count": 1350,
+    "source_blob_sha_failures": 0,
+    "snapshot_file_set": "PASS",
+    "file_modes_and_symlinks": "PASS",
+    "reconstructed_root_tree_sha": "a2a82b50b8a1ac24a273e55dc0f9418aefdfed17",
+    "reconstructed_nested_tree_count": 147,
+    "gitlink_count": 0,
+    "git_lfs_pointer_count": 0,
+    "capability_closure": "PARTIAL_STATIC_TRACE_NOT_CLOSED",
+    "path_license_provenance": "PENDING",
+    "redistribution_clearance": "PENDING",
+    "path_disposition_summary": {
+      "total_blobs": 1350,
+      "classified": 287,
+      "unclassified": 1063,
+      "note": "146/147 upstream changed/new blobs received first-pass review; one binary PKCS#12 test fixture remains pending byte-level certificate/provenance review. Three unchanged frontend HTML-sink dependencies were added to the current security trace."
+    },
+    "security_static_trace": "PARTIAL_NOT_CLOSED",
+    "latest_manifest_verifier": {
+      "workflow_url": "https://github.com/Rilan-Dev/mailflow/actions/runs/39039116102",
+      "workflow_result": "stale_for_latest_security_sink_classifications",
+      "note": "Run was triggered before the latest security sink path additions; workflow now includes path-disposition changes, so a fresh run should verify the latest register."
+    }
+  }
+}

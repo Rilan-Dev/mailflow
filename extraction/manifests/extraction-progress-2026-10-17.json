@@ -1,0 +1,78 @@
+{
+  "schema_version": "1.0.0",
+  "updated_at": "2026-10-17",
+  "source_pin": {
+    "repository": "https://github.com/maathimself/mailflow",
+    "repository_full_name": "maathimself/mailflow",
+    "branch": "main",
+    "commit": "35067fc2876d50980f1a8a3b8ea72b5467b69f60",
+    "tree": "a2a82b50b8a1ac24a273e55dc0f9418aefdfed17",
+    "commit_url": "https://github.com/maathimself/mailflow/commit/35067fc2876d50980f1a8a3b8ea72b5467b69f60",
+    "tree_url": "https://github.com/maathimself/mailflow/tree/35067fc2876d50980f1a8a3b8ea72b5467b69f60",
+    "captured_at": "2026-10-17T11:46:33.594Z",
+    "capture_method": "Git object database; recursive ls-tree and exact blob extraction",
+    "tree_truncated": false,
+    "entry_count": 1497,
+    "blob_count": 1350,
+    "directory_count": 147,
+    "gitlink_count": 0
+  },
+  "snapshot_path": "extraction/snapshots/35067fc2876d50980f1a8a3b8ea72b5467b69f60/source",
+  "snapshot_integrity": "PASS",
+  "source_inventory": {
+    "entries": 1497,
+    "blobs": 1350,
+    "nested_trees": 147,
+    "gitlinks": 0,
+    "lfs_pointers": 0
+  },
+  "path_classification": {
+    "total": 1350,
+    "classified": 182,
+    "unclassified": 1168,
+    "license_unreviewed": 1346,
+    "closure_unmapped": 1311
+  },
+  "capability_closure": {
+    "capabilities": 16,
+    "closed": 0,
+    "partial_static_trace": 3,
+    "not_started": 13
+  },
+  "dependencies": {
+    "backend_lock_entries": 445,
+    "frontend_lock_entries": 679,
+    "total_lock_entries": 1124,
+    "direct_dependencies": 50,
+    "direct_dev_dependencies": 16,
+    "third_party_licenses_cleared": 0
+  },
+  "pull_requests": {
+    "mailflow_open": 0,
+    "reusable_libraries_open": 0,
+    "stale_duplicates_closed": true
+  },
+  "legal_and_reuse": {
+    "declared_license": "AGPL-3.0",
+    "commercial_license_notice": true,
+    "cla_notice": true,
+    "path_provenance_review": "PENDING",
+    "redistribution_clearance": "PENDING",
+    "host_integration": "NOT_CLEARED"
+  },
+  "evidence_links": {
+    "snapshot_verification": "https://github.com/Rilan-Dev/mailflow/actions/runs/39031182967",
+    "source_verification_report": "extraction/manifests/source-verification-2026-10-17-35067fc.json",
+    "security_closure": "extraction/manifests/security-closure-2026-10-17-35067fc.json",
+    "dependency_inventory": "extraction/manifests/dependency-inventory-2026-10-17-35067fc.json",
+    "current_closure_tracker": "extraction/manifests/capability-closure-2026-10-17-35067fc.json",
+    "security_transport_database_trace": "extraction/manifests/security-transport-database-trace-2026-10-17.md",
+    "postgres_schema_runtime_map": "extraction/manifests/postgres-schema-runtime-map-2026-10-17.md",
+    "frontend_html_sink_trace": "extraction/manifests/security-transport-database-trace-2026-10-17.md",
+    "closure_test_results": "extraction/manifests/closure-test-results-2026-10-17-35067fc.json",
+    "latest_snapshot_verification": "https://github.com/Rilan-Dev/mailflow/actions/runs/39034692855",
+    "reusable_capability_runtime_trace": "extraction/manifests/reusable-capability-runtime-trace-2026-10-17.md",
+    "latest_full_verification": "https://github.com/Rilan-Dev/mailflow/actions/runs/39035810908"
+  },
+  "status": "SOURCE_SNAPSHOT_COMPLETE_AND_VERIFIED; APPLICATION_CAPABILITY_EXTRACTION_IN_PROGRESS; NOT_EXTRACTION_PASS"
+}
