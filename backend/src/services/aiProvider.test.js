@@ -5,11 +5,10 @@ import {
   MASKED_API_KEY,
   createAiProvider,
   normalizeAiConfig,
-  // NEXAHUB: the host-bridged providers — Anthropic and Gemini run on NexaHub's own
-  // adapters rather than on a second SDK implementation inside vendor/mailflow.
-  AI_PROVIDER_ANTHROPIC,
-  AI_PROVIDER_GEMINI,
-  setHostAiBridge,
+  // NEXAHUB: the host-bridged providers (Anthropic and Gemini on NexaHub's own adapters)
+  // are exercised by aiProvider.hostBridged.test.js, which imports
+  // AI_PROVIDER_ANTHROPIC, AI_PROVIDER_GEMINI and setHostAiBridge itself; keeping the
+  // imports here unused broke the zero-warning lint policy, so they were removed.
 } from './aiProvider.js';
 
 const encoder = new TextEncoder();

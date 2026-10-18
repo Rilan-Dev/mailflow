@@ -14,6 +14,13 @@ const imapManager = vi.hoisted(() => ({
 const draftsChanged = () => imapManager.broadcast.mock.calls.filter(([event]) => event.type === 'drafts_changed')
   .map(([event, userId]) => [event.accountId, userId]);
 vi.mock('../index.js', () => ({ imapManager }));
+// NEXAHUB: routes import imapManager from the ref module (services/imapManagerRef.js), so the index.js mock
+// above must cover it too. Re-exports the mocked index.js's imapManager
+// so each test's mock shape stays authoritative in one place.
+vi.mock('../services/imapManagerRef.js', async () => {
+  const { imapManager } = await import('../index.js');
+  return { imapManager };
+});
 
 import express from 'express';
 import draftRoutes, { deleteSentDraft } from './draft.js';

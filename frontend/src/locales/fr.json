@@ -1687,11 +1687,7 @@
       "backendBuild": "Version du backend",
       "frontendBuild": "Version du frontend",
       "license": "Licence",
-      "website": "Site web",
-      "sourceCode": "Code source",
-      "sponsor": "Soutenir le développement",
-      "kofi": "Ko-fi",
-      "githubSponsors": "GitHub Sponsors"
+      "sponsor": "Soutenir le développement"
     },
     "search": {
       "placeholder": "Rechercher dans les paramètres…",

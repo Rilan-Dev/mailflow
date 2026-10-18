@@ -1612,11 +1612,7 @@
       "backendBuild": "Backend-Build",
       "frontendBuild": "Frontend-Build",
       "license": "Lizenz",
-      "website": "Website",
-      "sourceCode": "Quellcode",
-      "sponsor": "Entwicklung unterstützen",
-      "kofi": "Ko-fi",
-      "githubSponsors": "GitHub Sponsors"
+      "sponsor": "Entwicklung unterstützen"
     },
     "rules": {
       "conditionLogicOr": "eine Bedingung (ODER)",

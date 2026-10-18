@@ -8,6 +8,13 @@ vi.mock('../middleware/auth.js', () => ({
   requireAuth: (req, _res, next) => { req.session = { userId: 'u1' }; next(); },
 }));
 vi.mock('../index.js', () => ({ imapManager: {} }));
+// NEXAHUB: routes import imapManager from the ref module (services/imapManagerRef.js), so the index.js mock
+// above must cover it too. Re-exports the mocked index.js's imapManager
+// so each test's mock shape stays authoritative in one place.
+vi.mock('../services/imapManagerRef.js', async () => {
+  const { imapManager } = await import('../index.js');
+  return { imapManager };
+});
 
 // index.js normally installs this Express 4 patch before mounting routes. Because index.js is
 // mocked above, install it explicitly and give rejected async handlers the same 500 boundary.

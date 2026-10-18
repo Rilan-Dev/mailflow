@@ -116,8 +116,8 @@ const dir = dirname(fileURLToPath(import.meta.url));
 // Any unlisted pair will still fail.
 const SAME_VALUE_ALLOWED = {
   // ── Universal placeholders / brand names (all locales share) ───────────────
-  'admin.about.kofi':                       'any', // Ko-fi — brand name, same everywhere
-  'admin.about.githubSponsors':             'any', // GitHub Sponsors — product name, same everywhere
+  // NEXAHUB: admin.about.kofi / githubSponsors keys removed with the unused About
+  // rows the host gates out of AdminPanel (see components/AdminPanel.jsx).
   'admin.ai.subscriptionProviderChatgpt':    'any', // ChatGPT Plus/Pro (Codex Subscription) — product name, same everywhere
   'admin.categories.gtdReveal':             'any', // "GTD" — brand-like acronym, same everywhere
   'admin.accounts.imapHostPh':              'any', // imap.gmail.com
@@ -158,8 +158,7 @@ const SAME_VALUE_ALLOWED = {
   // "{{n}} min" — the "min" abbreviation is shared in en, es, fr, it
   'admin.lock.autoLockMin': [['cs', 'en', 'es', 'fr', 'it', 'pl', 'ptBR']],
 
-  // "Website" — international term, same in de and en
-  'admin.about.website': [['de', 'en']],
+  // NEXAHUB: admin.about.website key removed (unused; host gates those About rows).
 
   // "Plugins" — loanword, same spelling in de and en (it uses singular "Plugin")
   'admin.tabs.plugins':  [['de', 'en', 'ptBR']],

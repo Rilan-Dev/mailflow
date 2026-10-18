@@ -66,12 +66,6 @@ import ContextMenu from './ContextMenu.jsx';
 // selector results internally; v5 does not, so the value must be stable at the source.
 const NO_FOLDERS = [];
 
-function parseAddressField(raw) {
-  try {
-    const arr = Array.isArray(raw) ? raw : JSON.parse(raw || '[]');
-    return arr.map(a => a.name ? `${a.name} <${a.email}>` : a.email).filter(Boolean).join(', ');
-  } catch { return ''; }
-}
 
 function linkifyText(text) {
   const escaped = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');

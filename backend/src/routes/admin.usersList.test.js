@@ -2,6 +2,13 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('../services/db.js', () => ({ query: vi.fn(), pool: {} }));
 vi.mock('../index.js', () => ({ imapManager: { disconnectUser: vi.fn() } }));
+// NEXAHUB: routes import imapManager from the ref module (services/imapManagerRef.js), so the index.js mock
+// above must cover it too. Re-exports the mocked index.js's imapManager
+// so each test's mock shape stays authoritative in one place.
+vi.mock('../services/imapManagerRef.js', async () => {
+  const { imapManager } = await import('../index.js');
+  return { imapManager };
+});
 vi.mock('../services/encryption.js', () => ({ decrypt: v => v, encrypt: v => v }));
 vi.mock('../services/hostValidation.js', () => ({ validateHost: vi.fn(), resolveForConnection: vi.fn() }));
 vi.mock('../services/smtpTransport.js', () => ({ createSmtpTransport: vi.fn() }));

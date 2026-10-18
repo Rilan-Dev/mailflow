@@ -1398,7 +1398,13 @@
       "copied": "Copiado",
       "copyFailed": "Não foi possível copiar o código.",
       "openAuthorization": "Abrir página de autorização",
-      "deviceExpires": "O código expira às {{time}}."
+      "deviceExpires": "O código expira às {{time}}.",
+      "connectionMethodAnthropic": "Usar chave de API da Anthropic",
+      "connectionMethodGemini": "Usar chave de API do Google Gemini",
+      "anthropicApiKeyPh": "sk-ant-…",
+      "anthropicModelPh": "claude-sonnet-4-5",
+      "geminiApiKeyPh": "AIza…",
+      "geminiModelPh": "gemini-2.5-flash"
     },
     "aiActions": {
       "description": "Crie suas próprias ações de IA. Elas aparecem no menu de IA ao ler uma mensagem, junto com Resumir. O prompt de cada ação é aplicado ao conteúdo da mensagem.",
@@ -1681,11 +1687,7 @@
       "backendBuild": "Build do backend",
       "frontendBuild": "Build do frontend",
       "license": "Licença",
-      "website": "Site",
-      "sourceCode": "Código-fonte",
-      "sponsor": "Apoie o desenvolvimento",
-      "kofi": "Ko-fi",
-      "githubSponsors": "GitHub Sponsors"
+      "sponsor": "Apoie o desenvolvimento"
     },
     "search": {
       "placeholder": "Pesquisar configurações…",

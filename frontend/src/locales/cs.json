@@ -1067,11 +1067,7 @@
       "backendBuild": "Sestavení backendu",
       "frontendBuild": "Sestavení frontendu",
       "license": "Licence",
-      "website": "Web",
-      "sourceCode": "Zdrojový kód",
-      "sponsor": "Podpořit vývoj",
-      "kofi": "Ko-fi",
-      "githubSponsors": "GitHub Sponsors"
+      "sponsor": "Podpořit vývoj"
     },
     "appearance": {
       "title": "Vzhled",
@@ -1929,7 +1925,13 @@
       "copied": "Zkopírováno",
       "copyFailed": "Kód se nepodařilo zkopírovat.",
       "openAuthorization": "Otevřít autorizační stránku",
-      "deviceExpires": "Platnost kódu vyprší v {{time}}."
+      "deviceExpires": "Platnost kódu vyprší v {{time}}.",
+      "connectionMethodAnthropic": "Použít klíč API Anthropic",
+      "connectionMethodGemini": "Použít klíč API Google Gemini",
+      "anthropicApiKeyPh": "sk-ant-…",
+      "anthropicModelPh": "claude-sonnet-4-5",
+      "geminiApiKeyPh": "AIza…",
+      "geminiModelPh": "gemini-2.5-flash"
     },
     "aiActions": {
       "description": "Vytvořte si vlastní akce AI. Při čtení zprávy se zobrazí v nabídce AI vedle možnosti Shrnout. Pokyn každé akce se použije na obsah zprávy.",

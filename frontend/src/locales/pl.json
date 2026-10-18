@@ -1417,7 +1417,13 @@
       "copied": "Skopiowano",
       "copyFailed": "Nie udało się skopiować kodu.",
       "openAuthorization": "Otwórz stronę autoryzacji",
-      "deviceExpires": "Kod wygasa {{time}}."
+      "deviceExpires": "Kod wygasa {{time}}.",
+      "connectionMethodAnthropic": "Użyj klucza API Anthropic",
+      "connectionMethodGemini": "Użyj klucza API Google Gemini",
+      "anthropicApiKeyPh": "sk-ant-…",
+      "anthropicModelPh": "claude-sonnet-4-5",
+      "geminiApiKeyPh": "AIza…",
+      "geminiModelPh": "gemini-2.5-flash"
     },
     "aiActions": {
       "description": "Utwórz własne działania AI. Pojawią się w menu AI podczas czytania wiadomości, obok działania „Podsumuj”. Monit każdego działania zostanie zastosowany do treści wiadomości.",
@@ -1700,11 +1706,7 @@
       "backendBuild": "Kompilacja backendu",
       "frontendBuild": "Wersja frontendu",
       "license": "Licencja",
-      "website": "Witryna internetowa",
-      "sourceCode": "Kod źródłowy",
-      "sponsor": "Wesprzyj rozwój",
-      "kofi": "Ko-fi",
-      "githubSponsors": "GitHub Sponsors"
+      "sponsor": "Wesprzyj rozwój"
     },
     "search": {
       "placeholder": "Wyszukaj ustawienie…",

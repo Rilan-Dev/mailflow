@@ -1687,11 +1687,7 @@
       "backendBuild": "后端构建",
       "frontendBuild": "前端构建",
       "license": "许可证",
-      "website": "官方网站",
-      "sourceCode": "源代码",
-      "sponsor": "支持开发",
-      "kofi": "Ko-fi",
-      "githubSponsors": "GitHub Sponsors"
+      "sponsor": "支持开发"
     },
     "search": {
       "placeholder": "搜索设置…",

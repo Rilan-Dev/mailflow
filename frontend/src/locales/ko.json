@@ -1398,7 +1398,13 @@
       "cancelling": "취소 중…",
       "connecting": "시작 중…",
       "copyFailed": "코드를 복사할 수 없습니다.",
-      "deviceExpires": "코드는 {{time}}에 만료됩니다."
+      "deviceExpires": "코드는 {{time}}에 만료됩니다.",
+      "connectionMethodAnthropic": "Anthropic API 키 사용",
+      "connectionMethodGemini": "Google Gemini API 키 사용",
+      "anthropicApiKeyPh": "sk-ant-…",
+      "anthropicModelPh": "claude-sonnet-4-5",
+      "geminiApiKeyPh": "AIza…",
+      "geminiModelPh": "gemini-2.5-flash"
     },
     "aiActions": {
       "remove": "제거",
@@ -1676,13 +1682,9 @@
       "version": "버전",
       "license": "라이선스",
       "subtitle": "오픈 소스, 자체 호스팅 이메일 클라이언트",
-      "website": "웹사이트",
-      "sourceCode": "소스 코드",
-      "kofi": "코파이",
       "backendBuild": "백엔드 빌드",
       "frontendBuild": "프런트엔드 빌드",
-      "sponsor": "개발 지원",
-      "githubSponsors": "GitHub 후원자"
+      "sponsor": "개발 지원"
     },
     "ssoError": {
       "title": "SSO 오류"

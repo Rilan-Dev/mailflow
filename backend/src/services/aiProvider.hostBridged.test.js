@@ -110,8 +110,9 @@ describe('host-bridged provider dispatch', () => {
   });
 
   // The acceptance criterion: the admin test button reaches the host bridge for both
-  // providers, carrying the decrypted key, the configured model and MailFlow's own 5-token
-  // budget -- and never touching fetch or Codex on the way.
+  // providers, carrying the decrypted key, the configured model and MailFlow's own
+  // 16-token budget (upstream raised it from 5 so reasoning models do not return empty
+  // content -- see testAiProvider) -- and never touching fetch or Codex on the way.
   it.each([
     [AI_PROVIDER_ANTHROPIC],
     [AI_PROVIDER_GEMINI],
@@ -127,7 +128,7 @@ describe('host-bridged provider dispatch', () => {
       model: 'model-x',
       // Decrypted exactly once on the way out; the ciphertext never reaches the host.
       apiKey: 'secret-key',
-      maxTokens: 5,
+      maxTokens: 16,
       messages: [{ role: 'user', content: 'Reply with only the word "ok".' }],
     });
     expect(requests[0].onDelta).toBeUndefined();
