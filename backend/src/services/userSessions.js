@@ -1,5 +1,5 @@
 import { redisClient } from './redis.js';
-import { imapManager } from '../index.js';
+import { imapManager } from './imapManagerRef.js';  // NEXAHUB: was ../index.js — destroyUserSessions is reached from the mounted auth/admin routers, and a static index.js import would run MailFlow's standalone bootstrap (Redis, migrations, FATAL env checks) inside the NexaHub host process.
 
 // Delete every server-side session belonging to a user (Redis-backed store, keys
 // prefixed "sess:"), then close the WebSockets those sessions opened, so a pre-existing
