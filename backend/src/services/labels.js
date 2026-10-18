@@ -30,11 +30,35 @@ export async function resolveLabelCopyUid(message, folder) {
 // Apply a label: ensure the label folder exists, then COPY the message into it (leaving the
 // original in place). imapManager.copyMessage also emits the section-refresh event. No-op when
 // the message already lives in the label folder. `message` needs { uid, folder }.
-export async function applyLabel(imapManager, account, message, labelFolder) {
-  if (message.folder === labelFolder) return { applied: false, reason: 'already-there' };
+export async function applyLabel(imapManager, account, message, labelFolder, { forceCopy = false } = {}) {
+  if (message.folder === labelFolder) {
+    return { applied: false, uid: message.uid, reason: 'already-there' };
+  }
+  const existingUid = forceCopy ? null : await resolveLabelCopyUid(message, labelFolder);
+  if (existingUid != null) {
+    return { applied: false, uid: existingUid, reason: 'already-labelled' };
+  }
   await imapManager.ensureFolder(account, labelFolder);
-  await imapManager.copyMessage(account.id, message.uid, message.folder, labelFolder);
-  return { applied: true };
+  const uid = await imapManager.copyMessage(account.id, message.uid, message.folder, labelFolder);
+  return { applied: true, uid: uid ?? null };
+}
+
+// Remove one exact label copy only when it still carries the source message's RFC Message-ID.
+// This is the safe inverse for a COPY whose destination UID was returned by UIDPLUS: a stale or
+// forged UID cannot remove a different message's label copy. Without a Message-ID there is no
+// stable identity shared by the source and copied rows, so no inverse is advertised.
+export async function removeExactLabelCopy(imapManager, message, labelFolder, uid) {
+  if (!message.message_id) return { removed: false };
+  const { rows } = await query(
+    `SELECT uid FROM messages
+      WHERE account_id = $1 AND folder = $2 AND uid = $3
+        AND message_id = $4 AND is_deleted = false
+      LIMIT 1`,
+    [message.account_id, labelFolder, uid, message.message_id]
+  );
+  if (!rows[0]) return { removed: false };
+  await imapManager.removeMessageCopy(message.account_id, uid, labelFolder);
+  return { removed: true };
 }
 
 // Remove a label: delete the message's copy living in the label folder, leaving INBOX and any
@@ -91,4 +115,18 @@ export async function markThreadRead(imapManager, account, message) {
     return { inboxCopy, error: err };
   }
   return { inboxCopy };
+}
+
+// Best-effort \Seen on one copy, for when a copy other than INBOX is the durable one (GTD Done
+// archiving a message's only copy, #524). The DB side is markThreadRead's fan-out; without the
+// flag the next sync of the destination folder reads the copy back as unread. Never throws.
+// `message` needs { uid, folder, is_read }.
+export async function markCopySeen(imapManager, account, message) {
+  if (message.is_read) return {};
+  try {
+    await imapManager.setFlag(account, message.uid, message.folder, '\\Seen', true);
+  } catch (err) {
+    return { error: err };
+  }
+  return {};
 }

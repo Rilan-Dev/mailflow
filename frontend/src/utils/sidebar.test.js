@@ -4,9 +4,11 @@ import assert from 'node:assert/strict';
 import {
   activateOnKey,
   buildFolderTree,
+  subtreeUnread,
   collapsedTooltip,
   FOLDER_ORDER_DRAG_TYPE,
   folderDropPosition,
+  hasRenderedInbox,
   normalizeFolderOrder,
   reorderFolderPaths,
   resolveFolderOrderDrop,
@@ -71,6 +73,66 @@ describe('activateOnKey', () => {
   });
 });
 
+describe('hasRenderedInbox', () => {
+  it('returns false when the sidebar rail is collapsed', () => {
+    assert.equal(hasRenderedInbox(folders, {
+      expanded: true,
+      sidebarCollapsed: true,
+    }), false);
+  });
+
+  it('returns false when the account tree is folded', () => {
+    assert.equal(hasRenderedInbox(folders, {
+      expanded: false,
+      sidebarCollapsed: false,
+    }), false);
+  });
+
+  it('returns true when expanded with a visible INBOX folder', () => {
+    assert.equal(hasRenderedInbox(folders, {
+      expanded: true,
+      sidebarCollapsed: false,
+    }), true);
+  });
+
+  it('returns false when account folders are not loaded yet or missing', () => {
+    assert.equal(hasRenderedInbox([], {
+      expanded: true,
+      sidebarCollapsed: false,
+    }), false);
+    assert.equal(hasRenderedInbox(null, {
+      expanded: true,
+      sidebarCollapsed: false,
+    }), false);
+    assert.equal(hasRenderedInbox(undefined, {
+      expanded: true,
+      sidebarCollapsed: false,
+    }), false);
+    assert.equal(hasRenderedInbox([{ path: 'Archive' }], {
+      expanded: true,
+      sidebarCollapsed: false,
+    }), false);
+  });
+
+  it('returns false when INBOX is hidden and hidden folders are not toggled visible', () => {
+    assert.equal(hasRenderedInbox(folders, {
+      expanded: true,
+      sidebarCollapsed: false,
+      hiddenPaths: ['INBOX'],
+      showingHidden: false,
+    }), false);
+  });
+
+  it('returns true when INBOX is hidden but hidden folders are toggled visible', () => {
+    assert.equal(hasRenderedInbox(folders, {
+      expanded: true,
+      sidebarCollapsed: false,
+      hiddenPaths: ['INBOX'],
+      showingHidden: true,
+    }), true);
+  });
+});
+
 describe('folder ordering', () => {
   it('sanitizes account order maps without duplicate or malformed paths', () => {
     assert.deepEqual(sanitizeFolderOrder({
@@ -115,6 +177,24 @@ describe('folder ordering', () => {
       'Projects/Beta',
       'Projects/Alpha',
     ]);
+  });
+
+  it('shows nested special-use mailboxes at the root without changing their paths', () => {
+    const tree = buildFolderTree([
+      { path: 'INBOX', name: 'INBOX', delimiter: '.' },
+      { path: 'INBOX.INBOX', name: 'INBOX', delimiter: '.', special_use: '\\Inbox' },
+      { path: 'INBOX.INBOX.Sent', name: 'Sent', delimiter: '.', special_use: '\\Sent' },
+      { path: 'INBOX.INBOX.Drafts', name: 'Drafts', delimiter: '.', special_use: '\\Drafts' },
+      { path: 'INBOX.Projects', name: 'Projects', delimiter: '.' },
+    ]);
+
+    assert.deepEqual(tree.map(node => node.path), [
+      'INBOX',
+      'INBOX.INBOX',
+      'INBOX.INBOX.Drafts',
+      'INBOX.INBOX.Sent',
+    ]);
+    assert.deepEqual(tree[0].children.map(node => node.path), ['INBOX.Projects']);
   });
 
   it('puts new folders after ranked folders and ignores stale paths', () => {
@@ -223,5 +303,47 @@ describe('folder ordering', () => {
       ),
       null,
     );
+  });
+});
+
+describe('subtreeUnread (#536)', () => {
+  // Investments has no mail of its own (\\Noselect); its children hold the unread mail.
+  const tree = () => buildFolderTree([
+    { path: 'Investments', name: 'Investments', no_select: true },
+    { path: 'Investments/A', name: 'A', unread_count: 1 },
+    { path: 'Investments/B', name: 'B', unread_count: 0 },
+    { path: 'Investments/C', name: 'C', unread_count: 2 },
+    { path: 'Investments/C/Deep', name: 'Deep', unread_count: 4 },
+    { path: 'Investments/Muted', name: 'Muted', unread_count: 9 },
+  ], []).find(n => n.path === 'Investments');
+
+  it('adds every subfolder at any depth to the folder\'s own count', () => {
+    assert.deepEqual(subtreeUnread(tree()), { count: 16, known: true, stale: false });
+  });
+
+  it('leaves out hidden folders and everything under them', () => {
+    const hidden = new Set(['Investments/Muted', 'Investments/C']);
+    assert.deepEqual(subtreeUnread(tree(), p => hidden.has(p)), { count: 1, known: true, stale: false });
+  });
+
+  it('counts a selectable parent\'s own unread mail too', () => {
+    const [node] = buildFolderTree([
+      { path: 'Banking', name: 'Banking', unread_count: 1 },
+      { path: 'Banking/Cards', name: 'Cards', unread_count: 2 },
+    ], []);
+    assert.equal(subtreeUnread(node).count, 3);
+  });
+
+  it('is unknown until some folder in it has been observed, and stale if a contributing count is', () => {
+    const [unseen] = buildFolderTree([
+      { path: 'P', name: 'P', counts_known: false },
+      { path: 'P/Q', name: 'Q' },
+    ], []);
+    assert.deepEqual(subtreeUnread(unseen), { count: 0, known: false, stale: false });
+    const [stale] = buildFolderTree([
+      { path: 'P', name: 'P', unread_count: 0, counts_stale: true },
+      { path: 'P/Q', name: 'Q', unread_count: 3, counts_stale: true },
+    ], []);
+    assert.deepEqual(subtreeUnread(stale), { count: 3, known: true, stale: true });
   });
 });

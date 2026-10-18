@@ -7,6 +7,10 @@ import { PluginSlot } from '../plugins/PluginSlot.jsx';
 import { newAiAction, AI_ACTION_LIMITS } from '../aiActions.js';
 import { useMobile } from '../hooks/useMobile.js';
 import { api } from '../utils/api.js';
+import { spamApi } from '../utils/spamApi.js';
+import { copyToClipboard } from '../utils/clipboard.js';
+import { isValidFromValue } from '../utils/defaultSender.js';
+import { autoRecipientFields } from '../utils/autoRecipients.js';
 import {
   AI_ACCOUNT_PROVIDER_OPTIONS,
   AI_CONNECTION_METHOD_ACCOUNT,
@@ -33,9 +37,16 @@ import { LAYOUTS, applyLayout } from '../layouts.js';
 import { NOTIFICATION_SOUNDS, playNotificationSound, playCustomSound, warmUpAudioContext } from '../utils/notificationSounds.js';
 import { usePushNotifications } from '../hooks/usePushNotifications.js';
 import SignatureEditor from './SignatureEditor.jsx';
-import { getEffectiveShortcuts, getGroupedActions, ACTION_DEFS, SPECIAL_KEY_LABELS, parseModKey, modLabel } from '../utils/defaultShortcuts.js';
-import { unifiedUnreadTotal } from '../utils/unifiedInbox.js';
+import DiagnosticsReportModal from './DiagnosticsReportModal.jsx';
+import { getEffectiveShortcuts, getGroupedActions, getShortcutConflicts, shortcutActionText, shortcutBindingFromEvent, SPECIAL_KEY_LABELS, parseModKey, modLabel } from '../utils/defaultShortcuts.js';
 import { isValidForwardAddress } from '../utils/ruleActions.js';
+import { folderParentLabel } from '../utils/folderDisplay.js';
+import AdminUserEditor from './AdminUserEditor.jsx';
+import { formatRelativeTime, daysSince } from '../utils/relativeTime.js';
+import { formatDateTime, formatDay, formatTime } from '../utils/formatDate.js';
+import { htmlLang } from '../utils/browserLanguage.js';
+import SpamSettings from './SpamSettings.jsx';
+import BackupSettings from './BackupSettings.jsx';
 
 // ─── Shared field component ───────────────────────────────────────────────────
 function Field({ label, required, children }) {
@@ -59,6 +70,8 @@ const inputStyle = {
 const TOGGLE_OFF_BACKGROUND = 'var(--border)';
 
 // ─── Color picker ─────────────────────────────────────────────────────────────
+// Common mailbox icons (#376); any other emoji can be typed.
+const ACCOUNT_ICON_CHOICES = ['🏠', '💼', '🏢', '🎓', '🛒', '💰', '👨‍👩‍👧', '❤️', '🎮', '✈️', '📦', '🔒'];
 const COLORS = [
   '#6366f1','#8b5cf6','#ec4899','#ef4444',
   '#f97316','#eab308','#22c55e','#06b6d4','#3b82f6','#14b8a6',
@@ -88,10 +101,15 @@ function AccountForm({ initial, onSave, onCancel }) {
     imap_host: '', imap_port: 993, imap_skip_tls_verify: false,
     smtp_host: '', smtp_port: 587, smtp_tls: 'STARTTLS',
     smtp_auth_user: '', smtp_auth_pass: '',
-    auth_user: '', auth_pass: '', categorization_enabled: false,
+    auth_user: '', auth_pass: '', categorization_enabled: false, antispam_enabled: false,
+    trusted_authserv_id: '',
   });
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
+  // Detected Authentication-Results authserv-ids for this account (setup helper
+  // for the trusted-authserv-id field). Fetched only for an existing account
+  // with antispam on, since that is when the backend classifies and records them.
+  const [detectedAuthservIds, setDetectedAuthservIds] = useState(null);
   const [showPass, setShowPass] = useState(false);
   const [showSmtpPass, setShowSmtpPass] = useState(false);
   const [selectedPreset, setSelectedPreset] = useState(null);
@@ -106,6 +124,21 @@ function AccountForm({ initial, onSave, onCancel }) {
       }))
       .catch(() => {});
   }, []);
+
+  // Setup helper: which authserv-ids this account's mail actually carries. The
+  // backend records them when it classifies, so the hint is only meaningful for
+  // an existing account with antispam on (and it fills in as mail arrives).
+  useEffect(() => {
+    if (!isEdit || !form.antispam_enabled) {
+      setDetectedAuthservIds(null);
+      return undefined;
+    }
+    let cancelled = false;
+    spamApi.getAuthservIds(initial.id)
+      .then(d => { if (!cancelled) setDetectedAuthservIds(d); })
+      .catch(() => { if (!cancelled) setDetectedAuthservIds(null); });
+    return () => { cancelled = true; };
+  }, [isEdit, form.antispam_enabled, initial?.id]);
 
   const set = (key, val) => setForm(f => ({ ...f, [key]: val }));
 
@@ -169,6 +202,37 @@ function AccountForm({ initial, onSave, onCancel }) {
             }} />
           ))}
         </div>
+      </Field>
+
+      {/* Icon (#376): an emoji shown in place of the color dot, or none. */}
+      <Field label={t('admin.accounts.icon')}>
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+          {[null, ...ACCOUNT_ICON_CHOICES].map(choice => {
+            const active = (form.icon || null) === choice;
+            return (
+              <button key={choice ?? 'none'} type="button" onClick={() => set('icon', choice)}
+                aria-pressed={active} title={choice ? undefined : t('admin.accounts.iconNone')}
+                aria-label={choice ? undefined : t('admin.accounts.iconNone')}
+                style={{
+                  width: 30, height: 30, borderRadius: 7, padding: 0, fontSize: 16, lineHeight: 1,
+                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer',
+                  border: `1px solid ${active ? 'var(--accent)' : 'var(--border)'}`,
+                  background: active ? 'var(--accent-dim)' : 'transparent',
+                }}>
+                {choice ?? <span style={{ width: 10, height: 10, borderRadius: '50%', background: form.color, display: 'inline-block' }} />}
+              </button>
+            );
+          })}
+          <input
+            aria-label={t('admin.accounts.iconCustom')}
+            placeholder={t('admin.accounts.iconCustom')}
+            value={form.icon && !ACCOUNT_ICON_CHOICES.includes(form.icon) ? form.icon : ''}
+            onChange={e => set('icon', e.target.value.trim() || null)}
+            maxLength={16}
+            style={{ ...inputStyle, width: 150, padding: '6px 10px' }}
+          />
+        </div>
+        <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 6 }}>{t('admin.accounts.iconHint')}</div>
       </Field>
 
       <Field label={t('admin.accounts.displayName')} required>
@@ -351,9 +415,37 @@ function AccountForm({ initial, onSave, onCancel }) {
         value={form.signature || ''}
         onChange={val => set('signature', val)}
       />
+      <label style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 12, fontSize: 13, color: 'var(--text-secondary)', cursor: 'pointer' }}>
+        <input type="checkbox" checked={form.signature_enabled !== false}
+          onChange={e => set('signature_enabled', e.target.checked)}
+          style={{ accentColor: 'var(--accent)' }} />
+        {t('admin.accounts.signatureEnabledDefault')}
+      </label>
 
       {isEdit && (
         <>
+          <div style={{ height: 1, background: 'var(--border-subtle)', margin: '16px 0' }} />
+          <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginBottom: 10, fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+            {t('admin.accounts.autoRecipientsSection')}
+          </div>
+          <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginBottom: 12, lineHeight: 1.5 }}>
+            {t('admin.accounts.autoRecipientsDesc')}
+          </div>
+          <Field label={t('compose.cc')}>
+            <input value={form.auto_cc_text ?? (form.auto_cc_addresses || []).join(', ')}
+              onChange={e => set('auto_cc_text', e.target.value)}
+              placeholder={t('compose.ccPh')} style={inputStyle}
+              onFocus={e => e.target.style.borderColor = 'var(--accent)'}
+              onBlur={e => e.target.style.borderColor = 'var(--border)'} />
+          </Field>
+          <Field label={t('compose.bcc')}>
+            <input value={form.auto_bcc_text ?? (form.auto_bcc_addresses || []).join(', ')}
+              onChange={e => set('auto_bcc_text', e.target.value)}
+              placeholder={t('compose.bccPh')} style={inputStyle}
+              onFocus={e => e.target.style.borderColor = 'var(--accent)'}
+              onBlur={e => e.target.style.borderColor = 'var(--border)'} />
+          </Field>
+
           <div style={{ height: 1, background: 'var(--border-subtle)', margin: '16px 0' }} />
           <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginBottom: 10, fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
             {t('admin.accounts.unifiedInboxSection')}
@@ -415,6 +507,89 @@ function AccountForm({ initial, onSave, onCancel }) {
               </div>
             </div>
           </div>
+
+          <div style={{ height: 1, background: 'var(--border-subtle)', margin: '16px 0' }} />
+          <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginBottom: 10, fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+            {t('admin.accounts.antispamSection')}
+          </div>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+            <button
+              type="button"
+              onClick={() => set('antispam_enabled', !form.antispam_enabled)}
+              style={{
+                width: 36, height: 20, borderRadius: 10, border: 'none',
+                cursor: 'pointer', padding: 0,
+                background: form.antispam_enabled ? 'var(--accent)' : TOGGLE_OFF_BACKGROUND,
+                position: 'relative', transition: 'background 0.2s', flexShrink: 0, marginTop: 1,
+              }}
+            >
+              <span style={{
+                position: 'absolute', top: 2,
+                left: form.antispam_enabled ? 18 : 2,
+                width: 16, height: 16,
+                borderRadius: '50%', background: 'white', transition: 'left 0.2s',
+              }} />
+            </button>
+            <div>
+              <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{t('admin.accounts.antispamEnabled')}</div>
+              <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 2 }}>
+                {t('admin.accounts.antispamEnabledDesc')}
+              </div>
+            </div>
+          </div>
+
+          {/* Trusted Authentication-Results authserv-id: only headers written by
+              this id are honored; empty means "trust none" (the auth signal is
+              then ignored rather than trusted blindly). */}
+          {form.antispam_enabled && (
+            <div style={{ marginTop: 14 }}>
+              <Field label={t('admin.accounts.trustedAuthservLabel')}>
+                <input
+                  value={form.trusted_authserv_id || ''}
+                  onChange={e => set('trusted_authserv_id', e.target.value)}
+                  placeholder={t('admin.accounts.trustedAuthservPlaceholder')}
+                  style={inputStyle}
+                />
+              </Field>
+              <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: -8, lineHeight: 1.5 }}>
+                {t('admin.accounts.trustedAuthservDesc')}
+              </div>
+
+              {detectedAuthservIds && detectedAuthservIds.analyzed > 0 && detectedAuthservIds.detected.length > 0 && (
+                <div style={{ marginTop: 10, fontSize: 11, color: 'var(--text-secondary)' }}>
+                  <div>{t('admin.accounts.trustedAuthservDetected')}</div>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 6 }}>
+                    {detectedAuthservIds.detected.map(d => (
+                      <button
+                        key={d.id}
+                        type="button"
+                        onClick={() => set('trusted_authserv_id', d.id)}
+                        style={{
+                          display: 'flex', alignItems: 'center', gap: 6,
+                          padding: '4px 10px', borderRadius: 14, fontSize: 11,
+                          border: '1px solid var(--border)', background: 'var(--bg-secondary)',
+                          color: 'var(--text-secondary)', cursor: 'pointer',
+                        }}
+                      >
+                        <span style={{ fontFamily: 'monospace' }}>{d.id}</span>
+                        <span style={{ color: 'var(--text-tertiary)' }}>
+                          {d.count}/{detectedAuthservIds.analyzed}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                  <div style={{ marginTop: 8, color: 'var(--text-tertiary)', lineHeight: 1.5 }}>
+                    {t('admin.accounts.trustedAuthservWarn')}
+                  </div>
+                </div>
+              )}
+              {detectedAuthservIds && (detectedAuthservIds.analyzed === 0 || detectedAuthservIds.detected.length === 0) && (
+                <div style={{ marginTop: 10, fontSize: 11, color: 'var(--text-tertiary)', lineHeight: 1.5 }}>
+                  {t('admin.accounts.trustedAuthservDetectedNone')}
+                </div>
+              )}
+            </div>
+          )}
         </>
       )}
 
@@ -453,7 +628,7 @@ function AccountForm({ initial, onSave, onCancel }) {
 // ─── Accounts Tab ─────────────────────────────────────────────────────────────
 function AccountsTab() {
   const { t } = useTranslation();
-  const { accounts, setAccounts, updateAccount, unreadCounts, setUnreadCounts, addNotification, backfillProgress } = useStore();
+  const { accounts, setAccounts, updateAccount, setUnreadCounts, addNotification, backfillProgress } = useStore();
   const [subview, setSubview] = useState('list'); // 'list' | 'add' | 'edit' | 'folders' | 'aliases'
   const [editTarget, setEditTarget] = useState(null);
   const [folderMappings, setFolderMappings] = useState({});
@@ -476,7 +651,8 @@ function AccountsTab() {
   };
 
   const handleEdit = async (form) => {
-    const updates = { name: form.name, sender_name: form.sender_name || null, color: form.color, imap_host: form.imap_host, imap_port: form.imap_port, imap_skip_tls_verify: !!form.imap_skip_tls_verify, smtp_host: form.smtp_host, smtp_port: form.smtp_port, smtp_tls: form.smtp_tls, signature: form.signature || null, categorization_enabled: !!form.categorization_enabled, include_in_unified_inbox: form.include_in_unified_inbox !== false };
+    const updates = { name: form.name, sender_name: form.sender_name || null, color: form.color, icon: form.icon || null, imap_host: form.imap_host, imap_port: form.imap_port, imap_skip_tls_verify: !!form.imap_skip_tls_verify, smtp_host: form.smtp_host, smtp_port: form.smtp_port, smtp_tls: form.smtp_tls, signature: form.signature || null, categorization_enabled: !!form.categorization_enabled, antispam_enabled: !!form.antispam_enabled, trusted_authserv_id: (form.trusted_authserv_id || '').trim() || null, include_in_unified_inbox: form.include_in_unified_inbox !== false };
+    Object.assign(updates, autoRecipientFields(form), { signature_enabled: form.signature_enabled !== false });
     if (form.auth_pass) updates.auth_pass = form.auth_pass;
     if (form.auth_user) updates.auth_user = form.auth_user;
     // Separate SMTP credentials (optional). A username sends both (a blank password on
@@ -489,14 +665,7 @@ function AccountsTab() {
       updates.smtp_auth_pass = null;
     }
     const updated = await api.updateAccount(editTarget.id, updates);
-    const nextAccounts = accounts.map(account => account.id === editTarget.id
-      ? { ...account, ...updated }
-      : account);
     updateAccount(editTarget.id, updated);
-    setUnreadCounts({
-      total: unifiedUnreadTotal(unreadCounts.byAccount, nextAccounts),
-      byAccount: unreadCounts.byAccount,
-    });
     api.getUnreadCounts().then(setUnreadCounts).catch(console.error);
     setSubview('list');
     setEditTarget(null);
@@ -914,7 +1083,7 @@ function AccountsTab() {
                   <option value="" style={{ background: 'var(--bg-tertiary)' }}>
                     {autoFolder ? `${t('admin.folderMappings.autoDetect')} (${autoFolder.path})` : t('admin.folderMappings.autoDetectNone')}
                   </option>
-                  {availableFolders.map(f => (
+                  {availableFolders.filter(f => !f.no_select).map(f => (
                     <option key={f.path} value={f.path} style={{ background: 'var(--bg-tertiary)' }}>
                       {f.path}
                     </option>
@@ -1057,7 +1226,7 @@ function AccountsTab() {
             {[
               ['IMAP', `${account.imap_host}:${account.imap_port}`],
               ['SMTP', `${account.smtp_host}:${account.smtp_port}`],
-              [t('admin.accounts.lastSync'), account.last_sync ? new Date(account.last_sync).toLocaleTimeString() : t('common.never')],
+              [t('admin.accounts.lastSync'), account.last_sync ? formatTime(account.last_sync) : t('common.never')],
             ].map(([label, val]) => (
               <div key={label} style={{ fontSize: 11 }}>
                 <span style={{ color: 'var(--text-tertiary)' }}>{label} </span>
@@ -1098,7 +1267,7 @@ function AccountsTab() {
 // ─── Themes Tab ───────────────────────────────────────────────────────────────
 function ThemesTab() {
   const { t } = useTranslation();
-  const { theme, setTheme } = useStore();
+  const { theme, setTheme, darkEmailBodies, setDarkEmailBodies } = useStore();
   const [customCss, setCustomCss] = useState('');
   const [cssSaving, setCssSaving] = useState(false);
   const [cssSaved, setCssSaved] = useState(false);
@@ -1138,6 +1307,16 @@ function ThemesTab() {
       </div>
       <div style={{ fontSize: 13, color: 'var(--text-tertiary)', marginBottom: 20 }}>
         {t('admin.appearance.description')}
+      </div>
+
+      {/* Dark email bodies (#228): what is shown dark, and why the rest is not, is in utils/darkScheme.js. */}
+      <div style={{ marginBottom: 20 }}>
+        <ToggleRow
+          label={t('admin.appearance.darkEmailBodies')}
+          desc={t('admin.appearance.darkEmailBodiesDesc')}
+          checked={darkEmailBodies}
+          onChange={setDarkEmailBodies}
+        />
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 10 }}>
@@ -1521,11 +1700,315 @@ function SwipeActionIcon({ action, size = 17 }) {
   return <svg {...common}><rect x="2" y="3" width="20" height="5" rx="1"/><path d="M4 8v11a1 1 0 001 1h14a1 1 0 001-1V8"/><polyline points="9 13 12 16 15 13"/><line x1="12" y1="11" x2="12" y2="16"/></svg>;
 }
 
+// ─── Shared setting controls ─────────────────────────────────────────────────
+// Layout and Behavior build every setting from these, so an option has one size and one look
+// wherever it appears.
+
+const choiceStyle = (active) => ({
+  background: active ? 'var(--bg-hover)' : 'var(--bg-tertiary)',
+  border: `2px solid ${active ? 'var(--accent)' : 'var(--border-subtle)'}`,
+  cursor: 'pointer', transition: 'all 0.15s', outline: 'none',
+});
+const hoverBorder = (active) => ({
+  onMouseEnter: e => { if (!active) e.currentTarget.style.borderColor = 'var(--border)'; },
+  onMouseLeave: e => { if (!active) e.currentTarget.style.borderColor = 'var(--border-subtle)'; },
+});
+const CHIP_HEIGHT = 34;
+const selectStyle = {
+  height: CHIP_HEIGHT, padding: '0 10px', borderRadius: 8,
+  background: 'var(--bg-tertiary)', border: '1px solid var(--border)',
+  color: 'var(--text-primary)', fontSize: 13, cursor: 'pointer', outline: 'none',
+};
+
+// A group of settings under a heading, set off from the group above it.
+function SettingGroup({ title, desc, first, children }) {
+  return (
+    <section style={first ? undefined : { marginTop: 28, paddingTop: 22, borderTop: '1px solid var(--border-subtle)' }}>
+      <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)', marginBottom: desc ? 4 : 16 }}>{title}</div>
+      {desc && <div style={{ fontSize: 12, color: 'var(--text-tertiary)', marginBottom: 16 }}>{desc}</div>}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 22 }}>{children}</div>
+    </section>
+  );
+}
+
+// One setting in a group: its name, an optional line under it, then its control.
+function SettingRow({ label, desc, children }) {
+  return (
+    <div>
+      <div style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-secondary)', marginBottom: desc ? 2 : 8 }}>{label}</div>
+      {desc && <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginBottom: 8 }}>{desc}</div>}
+      {children}
+    </div>
+  );
+}
+
+// Pick one of a few options, each with a line on what it does. Cards in a row share one height;
+// three or more stack on a phone, where side by side they would be too narrow to read.
+function ChoiceCards({ options, value, onChange }) {
+  const isMobile = useMobile();
+  const columns = isMobile && options.length > 2 ? 1 : options.length;
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))`, gap: 8 }}>
+      {options.map(({ id, label, desc }) => {
+        const active = value === id;
+        return (
+          <button
+            key={String(id)}
+            type="button"
+            aria-pressed={active}
+            onClick={() => onChange(id)}
+            style={{
+              ...choiceStyle(active), padding: '10px 12px', textAlign: 'left', borderRadius: 8,
+              display: 'flex', flexDirection: 'column', justifyContent: 'flex-start',
+            }}
+            {...hoverBorder(active)}
+          >
+            <div style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-primary)', marginBottom: 2 }}>{label}</div>
+            <div style={{ fontSize: 11, color: 'var(--text-tertiary)', lineHeight: 1.4 }}>{desc}</div>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+// Short options (a number, an interval): one row of equal chips. With `wrap`, chips size to their
+// labels and wrap, for longer sets such as the hover actions.
+function ChoiceChips({ options, isActive, onSelect, wrap = false }) {
+  return (
+    <div style={wrap
+      ? { display: 'flex', flexWrap: 'wrap', gap: 6 }
+      : { display: 'grid', gridTemplateColumns: `repeat(${options.length}, minmax(0, 1fr))`, gap: 6 }}>
+      {options.map(({ value, label }) => {
+        const active = isActive(value);
+        return (
+          <button
+            key={String(value)}
+            type="button"
+            aria-pressed={active}
+            onClick={() => onSelect(value)}
+            style={{
+              ...choiceStyle(active), height: CHIP_HEIGHT, padding: '0 12px', borderRadius: 8,
+              fontSize: 13, fontWeight: 500, whiteSpace: 'nowrap',
+              color: active ? 'var(--accent)' : 'var(--text-secondary)',
+            }}
+            {...hoverBorder(active)}
+          >
+            {label}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+// An on/off setting: its name and what it does, with a switch on the right.
+function ToggleRow({ label, desc, checked, onChange, disabled = false }) {
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16,
+      padding: '10px 12px', borderRadius: 8,
+      background: 'var(--bg-tertiary)', border: '1px solid var(--border-subtle)',
+    }}>
+      <div style={{ minWidth: 0 }}>
+        <div style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-primary)' }}>{label}</div>
+        {desc && <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 2, lineHeight: 1.4 }}>{desc}</div>}
+      </div>
+      <button
+        type="button"
+        role="switch"
+        aria-checked={checked}
+        aria-label={label}
+        disabled={disabled}
+        onClick={() => onChange(!checked)}
+        style={{
+          width: 44, height: 24, borderRadius: 12,
+          background: checked ? 'var(--accent)' : 'var(--bg-elevated)',
+          border: `1px solid ${checked ? 'var(--accent)' : 'var(--border)'}`,
+          cursor: disabled ? 'not-allowed' : 'pointer',
+          position: 'relative', transition: 'all 0.2s', flexShrink: 0,
+          opacity: disabled ? 0.6 : 1,
+        }}
+      >
+        <span style={{
+          position: 'absolute', top: 3, left: checked ? 22 : 3,
+          width: 16, height: 16, borderRadius: '50%', background: 'white',
+          transition: 'left 0.2s', boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
+        }} />
+      </button>
+    </div>
+  );
+}
+
+// ─── Appearance › Layout ─────────────────────────────────────────────────────
+// How things look: the pane arrangement and what the message list shows. How MailFlow acts
+// (reading, writing, sync) is under Behavior.
 function LayoutsTab() {
   const { t } = useTranslation();
   const isMobile = useMobile();
-  const { layout, setLayout, pageSize, setPageSize, scrollMode, setScrollMode, swipeActions, setSwipeAction, syncInterval, setSyncInterval, folderSyncInterval, setFolderSyncInterval, threadedView, setThreadedView, plaintextEmail, setPlaintextEmail, hoverQuickActions, setHoverQuickActions, showMobileAvatars, setShowMobileAvatars, gravatarAvatars, setGravatarAvatars, replyDefault, setReplyDefault, markReadBehavior, setMarkReadBehavior, markReadDelay, setMarkReadDelay, senderFavicons, senderFaviconsSaving, setSenderFavicons, showMessagePreviews, setShowMessagePreviews } = useStore();
+  const { layout, setLayout, pageSize, setPageSize, scrollMode, setScrollMode, conversationMode, setConversationMode, hoverQuickActions, setHoverQuickActions, hoverActionSet, setHoverActionSet, showMobileAvatars, setShowMobileAvatars, gravatarAvatars, setGravatarAvatars, senderFavicons, senderFaviconsSaving, setSenderFavicons, showMessagePreviews, setShowMessagePreviews } = useStore();
   const [senderFaviconsError, setSenderFaviconsError] = useState('');
+
+  const handleSelect = (key) => {
+    setLayout(key);
+    applyLayout(key);
+  };
+
+  return (
+    <div>
+      <SettingGroup first title={t('admin.appearance.layout')} desc={t('admin.appearance.layoutDescription')}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 10 }}>
+          {Object.entries(LAYOUTS).map(([key, l]) => {
+            const isActive = layout === key;
+            return (
+              <button
+                key={key}
+                type="button"
+                aria-pressed={isActive}
+                onClick={() => handleSelect(key)}
+                style={{
+                  ...choiceStyle(isActive), borderRadius: 10, padding: '14px',
+                  textAlign: 'left', display: 'flex', alignItems: 'center', gap: 14,
+                }}
+                {...hoverBorder(isActive)}
+              >
+                <div style={{ flexShrink: 0 }}>
+                  <LayoutDiagram layoutKey={key} layoutConfig={l} active={isActive} />
+                </div>
+
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8,
+                  }}>
+                    <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)' }}>
+                      {t(l.labelKey, l.label)}
+                    </div>
+                    {isActive && (
+                      <div style={{
+                        width: 18, height: 18, borderRadius: '50%', flexShrink: 0,
+                        background: 'var(--accent)', display: 'flex',
+                        alignItems: 'center', justifyContent: 'center',
+                      }}>
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3">
+                          <polyline points="20 6 9 17 4 12"/>
+                        </svg>
+                      </div>
+                    )}
+                  </div>
+                  <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 4, lineHeight: 1.4 }}>
+                    {t(l.descriptionKey, l.description)}
+                  </div>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </SettingGroup>
+
+      <SettingGroup title={t('admin.messageList.title')}>
+        <SettingRow label={t('admin.messageList.threadingMode')}>
+          <ChoiceCards value={conversationMode} onChange={setConversationMode} options={[
+            { id: 'off',  label: t('admin.messageList.threadingOff'),  desc: t('admin.messageList.threadingOffDesc') },
+            { id: 'list', label: t('admin.messageList.threadingOn'),   desc: t('admin.messageList.threadingOnDesc') },
+            { id: 'pane', label: t('admin.messageList.threadingPane'), desc: t('admin.messageList.threadingPaneDesc') },
+          ]} />
+        </SettingRow>
+
+        <SettingRow label={t('admin.messageList.showMessagePreviews')}>
+          <ChoiceCards value={showMessagePreviews} onChange={setShowMessagePreviews} options={[
+            { id: false, label: t('admin.messageList.previewOff'), desc: t('admin.messageList.previewOffDesc') },
+            { id: true,  label: t('admin.messageList.previewOn'),  desc: t('admin.messageList.previewOnDesc') },
+          ]} />
+        </SettingRow>
+
+        <SettingRow label={t('admin.messageList.gravatarMode')}>
+          <ChoiceCards value={gravatarAvatars} onChange={setGravatarAvatars} options={[
+            { id: false, label: t('admin.messageList.gravatarOff'), desc: t('admin.messageList.gravatarOffDesc') },
+            { id: true,  label: t('admin.messageList.gravatarOn'),  desc: t('admin.messageList.gravatarOnDesc') },
+          ]} />
+        </SettingRow>
+
+        {isMobile && (
+          <SettingRow label={t('admin.messageList.mobileAvatarsMode')}>
+            <ChoiceCards value={showMobileAvatars} onChange={setShowMobileAvatars} options={[
+              { id: false, label: t('admin.messageList.mobileAvatarsOff'), desc: t('admin.messageList.mobileAvatarsOffDesc') },
+              { id: true,  label: t('admin.messageList.mobileAvatarsOn'),  desc: t('admin.messageList.mobileAvatarsOnDesc') },
+            ]} />
+          </SettingRow>
+        )}
+
+        <div>
+          <ToggleRow
+            label={t('admin.messageList.senderFavicons')}
+            desc={t('admin.messageList.senderFaviconsDesc')}
+            checked={senderFavicons}
+            disabled={senderFaviconsSaving}
+            onChange={async (next) => {
+              setSenderFaviconsError('');
+              try { await setSenderFavicons(next); }
+              catch { setSenderFaviconsError(t('admin.messageList.senderFaviconsSaveError')); }
+            }}
+          />
+          {senderFaviconsError && (
+            <div style={{ color: 'var(--red)', fontSize: 12, marginTop: 8 }}>
+              {senderFaviconsError}
+            </div>
+          )}
+        </div>
+
+        {/* A phone has no pointer to hover with. */}
+        {!isMobile && (
+          <SettingRow label={t('admin.messageList.hoverQuickActionsMode')}>
+            <ChoiceCards value={hoverQuickActions} onChange={setHoverQuickActions} options={[
+              { id: false, label: t('admin.messageList.hoverQuickActionsOff'), desc: t('admin.messageList.hoverQuickActionsOffDesc') },
+              { id: true,  label: t('admin.messageList.hoverQuickActionsOn'),  desc: t('admin.messageList.hoverQuickActionsOnDesc') },
+            ]} />
+            {/* #440: which actions the cluster shows. Membership only — order stays canonical. */}
+            {hoverQuickActions && (
+              <div style={{ marginTop: 10 }}>
+                <ChoiceChips
+                  wrap
+                  isActive={id => hoverActionSet.includes(id)}
+                  onSelect={id => setHoverActionSet(hoverActionSet.includes(id) ? hoverActionSet.filter(k => k !== id) : [...hoverActionSet, id])}
+                  options={[
+                    { value: 'markRead', label: t('admin.messageList.swipeMarkRead') },
+                    { value: 'star', label: t('admin.messageList.swipeStar') },
+                    { value: 'archive', label: t('admin.messageList.swipeArchive') },
+                    { value: 'snooze', label: t('contextMenu.snooze.label') },
+                    { value: 'delete', label: t('admin.messageList.swipeDelete') },
+                    { value: 'move', label: t('contextMenu.moveToFolder') },
+                  ]}
+                />
+              </div>
+            )}
+          </SettingRow>
+        )}
+
+        <SettingRow label={t('admin.messageList.scrollingMode')}>
+          <ChoiceCards value={scrollMode} onChange={setScrollMode} options={[
+            { id: 'infinite',  label: t('admin.messageList.infiniteScroll'), desc: t('admin.messageList.infiniteScrollDesc') },
+            { id: 'paginated', label: t('admin.messageList.paginated'),      desc: t('admin.messageList.paginatedDesc') },
+          ]} />
+        </SettingRow>
+
+        <SettingRow label={scrollMode === 'paginated' ? t('admin.messageList.perPagePaginated') : t('admin.messageList.perPageInfinite')}>
+          <ChoiceChips
+            isActive={n => pageSize === n}
+            onSelect={setPageSize}
+            options={[25, 50, 100, 200].map(n => ({ value: n, label: String(n) }))}
+          />
+        </SettingRow>
+      </SettingGroup>
+    </div>
+  );
+}
+
+// ─── Behavior ────────────────────────────────────────────────────────────────
+// How MailFlow acts: reading, writing, syncing, and opening mailto: links.
+function BehaviorTab() {
+  const { t } = useTranslation();
+  const isMobile = useMobile();
+  const { swipeActions, setSwipeAction, syncInterval, setSyncInterval, folderSyncInterval, setFolderSyncInterval, autoOpenReplyDrafts, setAutoOpenReplyDrafts, plaintextEmail, setPlaintextEmail, replyDefault, setReplyDefault, afterRemove, setAfterRemove, markReadBehavior, setMarkReadBehavior, markReadDelay, setMarkReadDelay, accounts, defaultSender, setDefaultSender } = useStore();
 
   // "Set MailFlow as your default email app": registerProtocolHandler is the
   // cross-browser path (works in Firefox and non-installed Chromium) and must be
@@ -1542,11 +2025,6 @@ function LayoutsTab() {
     }
   };
 
-  const handleSelect = (key) => {
-    setLayout(key);
-    applyLayout(key);
-  };
-
   const swipeOptions = [
     { id: 'star', label: t('admin.messageList.swipeStar'), desc: t('admin.messageList.swipeStarDesc') },
     { id: 'archive', label: t('admin.messageList.swipeArchive'), desc: t('admin.messageList.swipeArchiveDesc') },
@@ -1559,13 +2037,15 @@ function LayoutsTab() {
 
   const renderSwipePicker = (direction, title) => (
     <div>
-      <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 8 }}>{title}</div>
+      <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginBottom: 6 }}>{title}</div>
       <div style={{ border: '1px solid var(--border-subtle)', borderRadius: 8, overflow: 'hidden' }}>
         {swipeOptions.map((option, i) => {
           const active = (swipeActions?.[direction] || (direction === 'left' ? 'archive' : 'markRead')) === option.id;
           return (
             <button
               key={option.id}
+              type="button"
+              aria-pressed={active}
               onClick={() => setSwipeAction(direction, option.id)}
               style={{
                 width: '100%', display: 'flex', alignItems: 'center', gap: 12,
@@ -1596,562 +2076,148 @@ function LayoutsTab() {
 
   return (
     <div>
-      <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 4 }}>
-        {t('admin.appearance.layout')}
-      </div>
-      <div style={{ fontSize: 13, color: 'var(--text-tertiary)', marginBottom: 20 }}>
-        {t('admin.appearance.layoutDescription')}
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 10 }}>
-        {Object.entries(LAYOUTS).map(([key, l]) => {
-          const isActive = layout === key;
-          return (
-            <button
-              key={key}
-              onClick={() => handleSelect(key)}
-              style={{
-                background: isActive ? 'var(--bg-hover)' : 'var(--bg-tertiary)',
-                border: `2px solid ${isActive ? 'var(--accent)' : 'var(--border-subtle)'}`,
-                borderRadius: 10, padding: '14px', cursor: 'pointer',
-                textAlign: 'left', transition: 'all 0.15s', outline: 'none',
-                display: 'flex', alignItems: 'center', gap: 14,
-              }}
-              onMouseEnter={e => { if (!isActive) e.currentTarget.style.borderColor = 'var(--border)'; }}
-              onMouseLeave={e => { if (!isActive) e.currentTarget.style.borderColor = 'var(--border-subtle)'; }}
-            >
-              <div style={{ flexShrink: 0 }}>
-                <LayoutDiagram layoutKey={key} layoutConfig={l} active={isActive} />
-              </div>
-
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{
-                  display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8,
-                }}>
-                  <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)' }}>
-                    {l.label}
-                  </div>
-                  {isActive && (
-                    <div style={{
-                      width: 18, height: 18, borderRadius: '50%', flexShrink: 0,
-                      background: 'var(--accent)', display: 'flex',
-                      alignItems: 'center', justifyContent: 'center',
-                    }}>
-                      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3">
-                        <polyline points="20 6 9 17 4 12"/>
-                      </svg>
-                    </div>
-                  )}
-                </div>
-                <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 4, lineHeight: 1.4 }}>
-                  {l.description}
-                </div>
-              </div>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Message list behaviour */}
-      <div style={{ marginTop: 28, paddingTop: 22, borderTop: '1px solid var(--border-subtle)' }}>
-        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 16 }}>
-          {t('admin.messageList.title')}
-        </div>
-
-        <div style={{ marginBottom: 18 }}>
-          <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 8 }}>{t('admin.messageList.scrollingMode')}</div>
-          <div style={{ display: 'flex', gap: 8 }}>
-            {[
-              { id: 'infinite',   label: t('admin.messageList.infiniteScroll'), desc: t('admin.messageList.infiniteScrollDesc') },
-              { id: 'paginated',  label: t('admin.messageList.paginated'),       desc: t('admin.messageList.paginatedDesc') },
-            ].map(({ id, label, desc }) => {
-              const active = scrollMode === id;
-              return (
-                <button
-                  key={id}
-                  onClick={() => setScrollMode(id)}
-                  style={{
-                    flex: 1, padding: '10px 12px', textAlign: 'left',
-                    background: active ? 'var(--bg-hover)' : 'var(--bg-tertiary)',
-                    border: `2px solid ${active ? 'var(--accent)' : 'var(--border-subtle)'}`,
-                    borderRadius: 8, cursor: 'pointer', transition: 'all 0.15s', outline: 'none',
-                  }}
-                  onMouseEnter={e => { if (!active) e.currentTarget.style.borderColor = 'var(--border)'; }}
-                  onMouseLeave={e => { if (!active) e.currentTarget.style.borderColor = 'var(--border-subtle)'; }}
-                >
-                  <div style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-primary)', marginBottom: 2 }}>{label}</div>
-                  <div style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>{desc}</div>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        <div style={{ marginBottom: 18 }}>
-          <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 8 }}>
-            {scrollMode === 'paginated' ? t('admin.messageList.perPagePaginated') : t('admin.messageList.perPageInfinite')}
-          </div>
-          <div style={{ display: 'flex', gap: 6 }}>
-            {[25, 50, 100, 200].map(n => {
-              const active = pageSize === n;
-              return (
-                <button
-                  key={n}
-                  onClick={() => setPageSize(n)}
-                  style={{
-                    flex: 1, padding: '7px 4px', fontSize: 13, fontWeight: 500,
-                    background: active ? 'var(--bg-hover)' : 'var(--bg-tertiary)',
-                    border: `2px solid ${active ? 'var(--accent)' : 'var(--border-subtle)'}`,
-                    borderRadius: 7, cursor: 'pointer', transition: 'all 0.15s', outline: 'none',
-                    color: active ? 'var(--accent)' : 'var(--text-secondary)',
-                  }}
-                  onMouseEnter={e => { if (!active) e.currentTarget.style.borderColor = 'var(--border)'; }}
-                  onMouseLeave={e => { if (!active) e.currentTarget.style.borderColor = 'var(--border-subtle)'; }}
-                >
-                  {n}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Hover quick actions */}
-        <div>
-          <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 8 }}>
-            {t('admin.messageList.hoverQuickActionsMode')}
-          </div>
-          <div style={{ display: 'flex', gap: 8 }}>
-            {[
-              { id: false, label: t('admin.messageList.hoverQuickActionsOff'), desc: t('admin.messageList.hoverQuickActionsOffDesc') },
-              { id: true, label: t('admin.messageList.hoverQuickActionsOn'), desc: t('admin.messageList.hoverQuickActionsOnDesc') },
-            ].map(({ id, label, desc }) => {
-              const active = hoverQuickActions === id;
-              return (
-                <button
-                  key={String(id)}
-                  onClick={() => setHoverQuickActions(id)}
-                  style={{
-                    flex: 1, padding: '10px 12px', textAlign: 'left',
-                    background: active ? 'var(--bg-hover)' : 'var(--bg-tertiary)',
-                    border: `2px solid ${active ? 'var(--accent)' : 'var(--border-subtle)'}`,
-                    borderRadius: 8, cursor: 'pointer', transition: 'all 0.15s', outline: 'none',
-                  }}
-                  onMouseEnter={e => { if (!active) e.currentTarget.style.borderColor = 'var(--border)'; }}
-                  onMouseLeave={e => { if (!active) e.currentTarget.style.borderColor = 'var(--border-subtle)'; }}
-                >
-                  <div style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-primary)', marginBottom: 2 }}>{label}</div>
-                  <div style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>{desc}</div>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        <div style={{ marginTop: 22, paddingTop: 18, borderTop: '1px solid var(--border-subtle)' }}>
-          <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 8 }}>
-            {t('admin.messageList.showMessagePreviews')}
-          </div>
-          <div style={{ display: 'flex', gap: 8 }}>
-            {[
-              { id: false, label: t('admin.messageList.previewOff'), desc: t('admin.messageList.previewOffDesc') },
-              { id: true, label: t('admin.messageList.previewOn'), desc: t('admin.messageList.previewOnDesc') },
-            ].map(({ id, label, desc }) => {
-              const active = showMessagePreviews === id;
-              return (
-                <button
-                  key={String(id)}
-                  onClick={() => setShowMessagePreviews(id)}
-                  style={{
-                    flex: 1, padding: '10px 12px', textAlign: 'left',
-                    background: active ? 'var(--bg-hover)' : 'var(--bg-tertiary)',
-                    border: `2px solid ${active ? 'var(--accent)' : 'var(--border-subtle)'}`,
-                    borderRadius: 8, cursor: 'pointer', transition: 'all 0.15s', outline: 'none',
-                  }}
-                  onMouseEnter={e => { if (!active) e.currentTarget.style.borderColor = 'var(--border)'; }}
-                  onMouseLeave={e => { if (!active) e.currentTarget.style.borderColor = 'var(--border-subtle)'; }}
-                >
-                  <div style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-primary)', marginBottom: 2 }}>{label}</div>
-                  <div style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>{desc}</div>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        <div style={{ marginTop: 22, paddingTop: 18, borderTop: '1px solid var(--border-subtle)' }}>
-          <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 8 }}>
-            {t('admin.messageList.gravatarMode')}
-          </div>
-          <div style={{ display: 'flex', gap: 8 }}>
-            {[
-              { id: false, label: t('admin.messageList.gravatarOff'), desc: t('admin.messageList.gravatarOffDesc') },
-              { id: true, label: t('admin.messageList.gravatarOn'), desc: t('admin.messageList.gravatarOnDesc') },
-            ].map(({ id, label, desc }) => {
-              const active = gravatarAvatars === id;
-              return (
-                <button
-                  key={String(id)}
-                  onClick={() => setGravatarAvatars(id)}
-                  style={{
-                    flex: 1, padding: '10px 12px', textAlign: 'left',
-                    background: active ? 'var(--bg-hover)' : 'var(--bg-tertiary)',
-                    border: `2px solid ${active ? 'var(--accent)' : 'var(--border-subtle)'}`,
-                    borderRadius: 8, cursor: 'pointer', transition: 'all 0.15s', outline: 'none',
-                  }}
-                  onMouseEnter={e => { if (!active) e.currentTarget.style.borderColor = 'var(--border)'; }}
-                  onMouseLeave={e => { if (!active) e.currentTarget.style.borderColor = 'var(--border-subtle)'; }}
-                >
-                  <div style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-primary)', marginBottom: 2 }}>{label}</div>
-                  <div style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>{desc}</div>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {isMobile && (
-          <div style={{ marginTop: 22, paddingTop: 18, borderTop: '1px solid var(--border-subtle)' }}>
-            <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 8 }}>
-              {t('admin.messageList.mobileAvatarsMode')}
-            </div>
-            <div style={{ display: 'flex', gap: 8 }}>
-              {[
-                { id: false, label: t('admin.messageList.mobileAvatarsOff'), desc: t('admin.messageList.mobileAvatarsOffDesc') },
-                { id: true, label: t('admin.messageList.mobileAvatarsOn'), desc: t('admin.messageList.mobileAvatarsOnDesc') },
-              ].map(({ id, label, desc }) => {
-                const active = showMobileAvatars === id;
-                return (
-                  <button
-                    key={String(id)}
-                    onClick={() => setShowMobileAvatars(id)}
-                    style={{
-                      flex: 1, padding: '10px 12px', textAlign: 'left',
-                      background: active ? 'var(--bg-hover)' : 'var(--bg-tertiary)',
-                      border: `2px solid ${active ? 'var(--accent)' : 'var(--border-subtle)'}`,
-                      borderRadius: 8, cursor: 'pointer', transition: 'all 0.15s', outline: 'none',
-                    }}
-                    onMouseEnter={e => { if (!active) e.currentTarget.style.borderColor = 'var(--border)'; }}
-                    onMouseLeave={e => { if (!active) e.currentTarget.style.borderColor = 'var(--border-subtle)'; }}
-                  >
-                    <div style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-primary)', marginBottom: 2 }}>{label}</div>
-                    <div style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>{desc}</div>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        <div style={{ marginTop: 18, paddingTop: 18, borderTop: '1px solid var(--border-subtle)' }}>
-          <div style={{
-            display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16,
-            padding: '12px 14px', borderRadius: 8,
-            background: 'var(--bg-tertiary)', border: '1px solid var(--border-subtle)',
-          }}>
-            <div>
-              <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)' }}>
-                {t('admin.messageList.senderFavicons')}
-              </div>
-              <div style={{ fontSize: 12, color: 'var(--text-tertiary)', marginTop: 2 }}>
-                {t('admin.messageList.senderFaviconsDesc')}
-              </div>
-            </div>
-            <button
-              type="button"
-              role="switch"
-              aria-checked={senderFavicons}
-              aria-label={t('admin.messageList.senderFavicons')}
-              disabled={senderFaviconsSaving}
-              onClick={async () => {
-                setSenderFaviconsError('');
-                try { await setSenderFavicons(!senderFavicons); }
-                catch { setSenderFaviconsError(t('admin.messageList.senderFaviconsSaveError')); }
-              }}
-              style={{
-                width: 44, height: 24, borderRadius: 12,
-                background: senderFavicons ? 'var(--accent)' : 'var(--bg-elevated)',
-                border: `1px solid ${senderFavicons ? 'var(--accent)' : 'var(--border)'}`,
-                cursor: senderFaviconsSaving ? 'not-allowed' : 'pointer',
-                position: 'relative', transition: 'all 0.2s', flexShrink: 0,
-                opacity: senderFaviconsSaving ? 0.6 : 1,
-              }}
-            >
-              <span style={{
-                position: 'absolute', top: 3, left: senderFavicons ? 22 : 3,
-                width: 16, height: 16, borderRadius: '50%', background: 'white',
-                transition: 'left 0.2s', boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
-              }} />
-            </button>
-          </div>
-          {senderFaviconsError && (
-            <div style={{ color: 'var(--red)', fontSize: 12, marginTop: 8 }}>
-              {senderFaviconsError}
+      <SettingGroup first title={t('admin.behavior.reading')}>
+        <SettingRow label={t('admin.messageList.markReadBehavior')}>
+          <ChoiceCards value={markReadBehavior} onChange={setMarkReadBehavior} options={[
+            { id: 'immediate', label: t('admin.messageList.markReadImmediate'), desc: t('admin.messageList.markReadImmediateDesc') },
+            { id: 'delay',     label: t('admin.messageList.markReadDelay'),     desc: t('admin.messageList.markReadDelayDesc') },
+            { id: 'manual',    label: t('admin.messageList.markReadManual'),    desc: t('admin.messageList.markReadManualDesc') },
+          ]} />
+          {markReadBehavior === 'delay' && (
+            <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', gap: 10 }}>
+              <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{t('admin.messageList.markReadDelayLabel')}</span>
+              <select
+                value={markReadDelay}
+                onChange={e => setMarkReadDelay(parseInt(e.target.value))}
+                style={selectStyle}
+              >
+                {[1,2,3,5,10].map(s => (
+                  <option key={s} value={s}>{t('admin.messageList.markReadDelaySeconds', { count: s })}</option>
+                ))}
+              </select>
             </div>
           )}
-        </div>
+        </SettingRow>
+
+        {/* What opens after the open message is deleted, archived or moved (#572) */}
+        <SettingRow label={t('admin.messageList.afterRemove')}>
+          <ChoiceCards value={afterRemove} onChange={setAfterRemove} options={[
+            { id: 'next',     label: t('admin.messageList.afterRemoveNext'),     desc: t('admin.messageList.afterRemoveNextDesc') },
+            { id: 'previous', label: t('admin.messageList.afterRemovePrevious'), desc: t('admin.messageList.afterRemovePreviousDesc') },
+            { id: 'list',     label: t('admin.messageList.afterRemoveList'),     desc: t('admin.messageList.afterRemoveListDesc') },
+          ]} />
+          <div style={{ marginTop: 8, fontSize: 11, color: 'var(--text-tertiary)' }}>{t('admin.messageList.afterRemoveMobile')}</div>
+        </SettingRow>
 
         {isMobile && (
-          <div style={{ marginTop: 22, paddingTop: 18, borderTop: '1px solid var(--border-subtle)' }}>
-            <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 8 }}>
-              {t('admin.messageList.swipeActions')}
-            </div>
+          <SettingRow label={t('admin.messageList.swipeActions')}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: 14 }}>
               {renderSwipePicker('left', t('admin.messageList.swipeLeft'))}
               {renderSwipePicker('right', t('admin.messageList.swipeRight'))}
             </div>
-          </div>
+          </SettingRow>
         )}
-      </div>
+      </SettingGroup>
 
-      {/* Sync interval */}
-      <div style={{ marginTop: 28, paddingTop: 22, borderTop: '1px solid var(--border-subtle)' }}>
-        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 4 }}>
-          {t('admin.messageList.syncFrequency')}
-        </div>
-        <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 12 }}>
-          {t('admin.messageList.syncFrequencyDesc')}
-        </div>
-        <div style={{ display: 'flex', gap: 6 }}>
-          {[
-            { value: 15,  label: '15s' },
-            { value: 30,  label: '30s' },
-            { value: 60,  label: '60s' },
-            { value: 120, label: '2 min' },
-          ].map(({ value, label }) => {
-            const active = syncInterval === value;
-            return (
-              <button
-                key={value}
-                onClick={() => setSyncInterval(value)}
-                style={{
-                  flex: 1, padding: '7px 4px', fontSize: 13, fontWeight: 500,
-                  background: active ? 'var(--bg-hover)' : 'var(--bg-tertiary)',
-                  border: `2px solid ${active ? 'var(--accent)' : 'var(--border-subtle)'}`,
-                  borderRadius: 7, cursor: 'pointer', transition: 'all 0.15s', outline: 'none',
-                  color: active ? 'var(--accent)' : 'var(--text-secondary)',
-                }}
-                onMouseEnter={e => { if (!active) e.currentTarget.style.borderColor = 'var(--border)'; }}
-                onMouseLeave={e => { if (!active) e.currentTarget.style.borderColor = 'var(--border-subtle)'; }}
-              >
-                {label}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Folder-structure sync interval */}
-      <div style={{ marginTop: 28, paddingTop: 22, borderTop: '1px solid var(--border-subtle)' }}>
-        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 4 }}>
-          {t('admin.messageList.folderSyncFrequency')}
-        </div>
-        <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 12 }}>
-          {t('admin.messageList.folderSyncFrequencyDesc')}
-        </div>
-        <div style={{ display: 'flex', gap: 6 }}>
-          {[
-            { value: 900,  label: '15 min' },
-            { value: 1800, label: '30 min' },
-            { value: 3600, label: '1 hour' },
-            { value: 0,    label: t('common.never') },
-          ].map(({ value, label }) => {
-            const active = folderSyncInterval === value;
-            return (
-              <button
-                key={value}
-                onClick={() => setFolderSyncInterval(value)}
-                style={{
-                  flex: 1, padding: '7px 4px', fontSize: 13, fontWeight: 500,
-                  background: active ? 'var(--bg-hover)' : 'var(--bg-tertiary)',
-                  border: `2px solid ${active ? 'var(--accent)' : 'var(--border-subtle)'}`,
-                  borderRadius: 7, cursor: 'pointer', transition: 'all 0.15s', outline: 'none',
-                  color: active ? 'var(--accent)' : 'var(--text-secondary)',
-                }}
-                onMouseEnter={e => { if (!active) e.currentTarget.style.borderColor = 'var(--border)'; }}
-                onMouseLeave={e => { if (!active) e.currentTarget.style.borderColor = 'var(--border-subtle)'; }}
-              >
-                {label}
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Threading mode */}
-      <div style={{ marginTop: 28, paddingTop: 22, borderTop: '1px solid var(--border-subtle)' }}>
-        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 4 }}>
-          {t('admin.messageList.threadingMode')}
-        </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          {[
-            { id: false, label: t('admin.messageList.threadingOff'), desc: t('admin.messageList.threadingOffDesc') },
-            { id: true,  label: t('admin.messageList.threadingOn'),  desc: t('admin.messageList.threadingOnDesc') },
-          ].map(({ id, label, desc }) => {
-            const active = threadedView === id;
-            return (
-              <button
-                key={String(id)}
-                onClick={() => setThreadedView(id)}
-                style={{
-                  flex: 1, padding: '10px 12px', textAlign: 'left',
-                  background: active ? 'var(--bg-hover)' : 'var(--bg-tertiary)',
-                  border: `2px solid ${active ? 'var(--accent)' : 'var(--border-subtle)'}`,
-                  borderRadius: 8, cursor: 'pointer', transition: 'all 0.15s', outline: 'none',
-                }}
-                onMouseEnter={e => { if (!active) e.currentTarget.style.borderColor = 'var(--border)'; }}
-                onMouseLeave={e => { if (!active) e.currentTarget.style.borderColor = 'var(--border-subtle)'; }}
-              >
-                <div style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-primary)', marginBottom: 2 }}>{label}</div>
-                <div style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>{desc}</div>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Compose format */}
-      <div style={{ marginTop: 28, paddingTop: 22, borderTop: '1px solid var(--border-subtle)' }}>
-        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 4 }}>
-          {t('admin.messageList.composeFormat')}
-        </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          {[
-            { id: false, label: t('admin.messageList.composeRichText'),  desc: t('admin.messageList.composeRichTextDesc') },
-            { id: true,  label: t('admin.messageList.composePlainText'), desc: t('admin.messageList.composePlainTextDesc') },
-          ].map(({ id, label, desc }) => {
-            const active = plaintextEmail === id;
-            return (
-              <button
-                key={String(id)}
-                onClick={() => setPlaintextEmail(id)}
-                style={{
-                  flex: 1, padding: '10px 12px', textAlign: 'left',
-                  background: active ? 'var(--bg-hover)' : 'var(--bg-tertiary)',
-                  border: `2px solid ${active ? 'var(--accent)' : 'var(--border-subtle)'}`,
-                  borderRadius: 8, cursor: 'pointer', transition: 'all 0.15s', outline: 'none',
-                }}
-                onMouseEnter={e => { if (!active) e.currentTarget.style.borderColor = 'var(--border)'; }}
-                onMouseLeave={e => { if (!active) e.currentTarget.style.borderColor = 'var(--border-subtle)'; }}
-              >
-                <div style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-primary)', marginBottom: 2 }}>{label}</div>
-                <div style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>{desc}</div>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Default reply action */}
-      <div style={{ marginTop: 28, paddingTop: 22, borderTop: '1px solid var(--border-subtle)' }}>
-        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 4 }}>
-          {t('admin.messageList.defaultReplyAction')}
-        </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          {[
+      <SettingGroup title={t('admin.behavior.writing')}>
+        <SettingRow label={t('admin.messageList.defaultReplyAction')}>
+          <ChoiceCards value={replyDefault} onChange={setReplyDefault} options={[
             { id: 'reply',    label: t('admin.messageList.defaultReply'),    desc: t('admin.messageList.defaultReplyDesc') },
             { id: 'replyAll', label: t('admin.messageList.defaultReplyAll'), desc: t('admin.messageList.defaultReplyAllDesc') },
-          ].map(({ id, label, desc }) => {
-            const active = replyDefault === id;
-            return (
-              <button
-                key={id}
-                onClick={() => setReplyDefault(id)}
-                style={{
-                  flex: 1, padding: '10px 12px', textAlign: 'left',
-                  background: active ? 'var(--bg-hover)' : 'var(--bg-tertiary)',
-                  border: `2px solid ${active ? 'var(--accent)' : 'var(--border-subtle)'}`,
-                  borderRadius: 8, cursor: 'pointer', transition: 'all 0.15s', outline: 'none',
-                }}
-                onMouseEnter={e => { if (!active) e.currentTarget.style.borderColor = 'var(--border)'; }}
-                onMouseLeave={e => { if (!active) e.currentTarget.style.borderColor = 'var(--border-subtle)'; }}
-              >
-                <div style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-primary)', marginBottom: 2 }}>{label}</div>
-                <div style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>{desc}</div>
-              </button>
-            );
-          })}
-        </div>
-      </div>
+          ]} />
+        </SettingRow>
 
-      {/* Mark as read behaviour */}
-      <div style={{ marginTop: 28, paddingTop: 22, borderTop: '1px solid var(--border-subtle)' }}>
-        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 4 }}>
-          {t('admin.messageList.markReadBehavior')}
-        </div>
-        <div style={{ display: 'flex', gap: 8 }}>
-          {[
-            { id: 'immediate', label: t('admin.messageList.markReadImmediate'), desc: t('admin.messageList.markReadImmediateDesc') },
-            { id: 'delay',     label: t('admin.messageList.markReadDelay'),     desc: t('admin.messageList.markReadDelayDesc') },
-            { id: 'manual',    label: t('admin.messageList.markReadManual'),    desc: t('admin.messageList.markReadManualDesc') },
-          ].map(({ id, label, desc }) => {
-            const active = markReadBehavior === id;
-            return (
-              <button
-                key={id}
-                onClick={() => setMarkReadBehavior(id)}
-                style={{
-                  flex: 1, padding: '10px 12px', textAlign: 'left',
-                  background: active ? 'var(--bg-hover)' : 'var(--bg-tertiary)',
-                  border: `2px solid ${active ? 'var(--accent)' : 'var(--border-subtle)'}`,
-                  borderRadius: 8, cursor: 'pointer', transition: 'all 0.15s', outline: 'none',
-                }}
-                onMouseEnter={e => { if (!active) e.currentTarget.style.borderColor = 'var(--border)'; }}
-                onMouseLeave={e => { if (!active) e.currentTarget.style.borderColor = 'var(--border-subtle)'; }}
-              >
-                <div style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-primary)', marginBottom: 2 }}>{label}</div>
-                <div style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>{desc}</div>
-              </button>
-            );
-          })}
-        </div>
-        {markReadBehavior === 'delay' && (
-          <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{t('admin.messageList.markReadDelayLabel')}</span>
-            <select
-              value={markReadDelay}
-              onChange={e => setMarkReadDelay(parseInt(e.target.value))}
-              style={{
-                background: 'var(--bg-tertiary)', border: '1px solid var(--border)',
-                borderRadius: 6, padding: '4px 8px', color: 'var(--text-primary)',
-                fontSize: 12, outline: 'none', cursor: 'pointer',
-              }}
-            >
-              {[1,2,3,5,10].map(s => (
-                <option key={s} value={s}>{t('admin.messageList.markReadDelaySeconds', { count: s })}</option>
-              ))}
-            </select>
-          </div>
-        )}
-      </div>
+        <SettingRow label={t('admin.messageList.composeFormat')}>
+          <ChoiceCards value={plaintextEmail} onChange={setPlaintextEmail} options={[
+            { id: false, label: t('admin.messageList.composeRichText'),  desc: t('admin.messageList.composeRichTextDesc') },
+            { id: true,  label: t('admin.messageList.composePlainText'), desc: t('admin.messageList.composePlainTextDesc') },
+          ]} />
+        </SettingRow>
+
+        {/* Default sender (#417) */}
+        <SettingRow label={t('admin.messageList.defaultSender')} desc={t('admin.messageList.defaultSenderDesc')}>
+          <select
+            // A default can outlive the account or alias it names. Showing '' rather than an
+            // unmatched value keeps the control honest: it reflects what the composer will
+            // actually do, which is fall back to last-used.
+            value={isValidFromValue(defaultSender, accounts) ? defaultSender : ''}
+            onChange={e => setDefaultSender(e.target.value)}
+            style={{ ...selectStyle, width: '100%', maxWidth: 420 }}
+          >
+            <option value="">{t('admin.messageList.defaultSenderLastUsed')}</option>
+            {accounts.map(acc => [
+              <option key={acc.id} value={`account:${acc.id}`}>
+                {acc.sender_name ? `${acc.sender_name} <${acc.email_address}>` : acc.email_address}
+              </option>,
+              ...(acc.aliases || []).map(al => (
+                <option key={al.id} value={`alias:${al.id}:${acc.id}`}>
+                  {`\u00a0\u00a0${al.name ? `${al.name} <${al.email}>` : al.email}`}
+                </option>
+              )),
+            ])}
+          </select>
+        </SettingRow>
+
+        <ToggleRow
+          label={t('admin.messageList.autoOpenReplyDrafts', 'Automatically open saved replies when selecting inbox messages')}
+          checked={autoOpenReplyDrafts}
+          onChange={setAutoOpenReplyDrafts}
+        />
+      </SettingGroup>
+
+      <SettingGroup title={t('admin.behavior.sync')}>
+        <SettingRow label={t('admin.messageList.syncFrequency')} desc={t('admin.messageList.syncFrequencyDesc')}>
+          <ChoiceChips
+            isActive={v => syncInterval === v}
+            onSelect={setSyncInterval}
+            options={[
+              { value: 15,  label: '15s' },
+              { value: 30,  label: '30s' },
+              { value: 60,  label: '60s' },
+              { value: 120, label: '2 min' },
+            ]}
+          />
+        </SettingRow>
+
+        <SettingRow label={t('admin.messageList.folderSyncFrequency')} desc={t('admin.messageList.folderSyncFrequencyDesc')}>
+          <ChoiceChips
+            isActive={v => folderSyncInterval === v}
+            onSelect={setFolderSyncInterval}
+            options={[
+              { value: 900,  label: '15 min' },
+              { value: 1800, label: '30 min' },
+              { value: 3600, label: '1 hour' },
+              { value: 0,    label: t('common.never') },
+            ]}
+          />
+        </SettingRow>
+      </SettingGroup>
 
       {typeof navigator !== 'undefined' && 'registerProtocolHandler' in navigator && (
-        <div style={{ marginTop: 28, paddingTop: 22, borderTop: '1px solid var(--border-subtle)' }}>
-          <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 4 }}>
-            {t('admin.messageList.defaultMailApp')}
+        <SettingGroup title={t('admin.messageList.defaultMailApp')} desc={t('admin.messageList.defaultMailAppDesc')}>
+          <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+            <button
+              type="button"
+              onClick={registerMailtoHandler}
+              style={{
+                height: CHIP_HEIGHT, padding: '0 14px', background: 'var(--accent)', color: 'var(--accent-text)',
+                border: 'none', borderRadius: 8, cursor: 'pointer', fontSize: 13, fontWeight: 500,
+              }}
+            >
+              {t('admin.messageList.defaultMailAppBtn')}
+            </button>
+            {mailtoStatus === 'ok' && (
+              <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>
+                {t('admin.messageList.defaultMailAppOk')}
+              </span>
+            )}
+            {mailtoStatus === 'error' && (
+              <span style={{ fontSize: 12, color: 'var(--red)' }}>
+                {t('admin.messageList.defaultMailAppError')}
+              </span>
+            )}
           </div>
-          <div style={{ fontSize: 12, color: 'var(--text-tertiary)', marginBottom: 12 }}>
-            {t('admin.messageList.defaultMailAppDesc')}
-          </div>
-          <button
-            onClick={registerMailtoHandler}
-            style={{
-              padding: '8px 14px', background: 'var(--accent)', color: 'var(--accent-text)',
-              border: 'none', borderRadius: 8, cursor: 'pointer', fontSize: 13, fontWeight: 500,
-            }}
-          >
-            {t('admin.messageList.defaultMailAppBtn')}
-          </button>
-          {mailtoStatus === 'ok' && (
-            <span style={{ marginLeft: 12, fontSize: 12, color: 'var(--text-secondary)' }}>
-              {t('admin.messageList.defaultMailAppOk')}
-            </span>
-          )}
-          {mailtoStatus === 'error' && (
-            <span style={{ marginLeft: 12, fontSize: 12, color: 'var(--red)' }}>
-              {t('admin.messageList.defaultMailAppError')}
-            </span>
-          )}
-        </div>
+        </SettingGroup>
       )}
     </div>
   );
@@ -2222,7 +2288,6 @@ function CardDavCard() {
         <div style={{ flex: 1 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>{t('admin.integrations.carddav.title')}</span>
-            <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 6px', borderRadius: 4, background: 'rgba(99,102,241,0.15)', color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{t('todoist.betaLabel')}</span>
             <span style={{ fontSize: 11, padding: '2px 8px', borderRadius: 10, background: (!loading && connected) ? 'rgba(34,197,94,0.1)' : 'var(--bg-primary)', color: (!loading && connected) ? '#22c55e' : 'var(--text-tertiary)', border: `1px solid ${(!loading && connected) ? '#22c55e' : 'var(--border)'}` }}>
               {loading ? '...' : (connected ? t('admin.integrations.carddav.connected') : t('admin.integrations.carddav.notConnected'))}
             </span>
@@ -2243,7 +2308,7 @@ function CardDavCard() {
                 <div style={{ marginTop: 4 }}>
                   {t('admin.integrations.carddav.summary', { contacts: status.contactCount ?? 0, books: status.bookCount ?? 0 })}
                   {' · '}
-                  {t('admin.integrations.carddav.lastSync', { when: status.lastSyncAt ? new Date(status.lastSyncAt).toLocaleString() : t('common.never') })}
+                  {t('admin.integrations.carddav.lastSync', { when: status.lastSyncAt ? formatDateTime(status.lastSyncAt) : t('common.never') })}
                 </div>
                 {status.lastError && (
                   <div style={{ marginTop: 4, color: 'var(--red, #f87171)' }}>{t('admin.integrations.carddav.syncFailed', { error: status.lastError })}</div>
@@ -2313,9 +2378,16 @@ function IntegrationsTab() {
   // Non-admins can't read the full config (admin-only), but need to know whether
   // Microsoft OAuth is configured so the connect buttons enable. (#315)
   const [msStatus, setMsStatus] = useState(null); // { configured } for non-admins
+  // Admins read config from the DB, but a provider can equally be configured via
+  // plain .env vars, which never appear in integration_config. Fetch the capability
+  // status for admins too so an env-only setup still enables the connect buttons.
+  const [googleStatus, setGoogleStatus] = useState(null);
   const [loading, setLoading] = useState(true);
   const [msForm, setMsForm] = useState({ clientId: '', clientSecret: '', tenantId: '', redirectUri: '' });
   const [msExpanded, setMsExpanded] = useState(false);
+  const [googleForm, setGoogleForm] = useState({ clientId: '', clientSecret: '', redirectUri: '' });
+  const [googleExpanded, setGoogleExpanded] = useState(false);
+  const [connectingGoogle, setConnectingGoogle] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saveMsg, setSaveMsg] = useState('');
   const [connectingMs, setConnectingMs] = useState(false);
@@ -2346,19 +2418,30 @@ function IntegrationsTab() {
             });
             setMsExpanded(true);
           }
-        })
-        .catch(console.error)
-        .finally(() => setLoading(false));
-    } else {
-      // Non-admins can only read the capability status, not the config itself.
-      api.getIntegrationsStatus()
-        .then(data => {
-          setMsStatus(data.microsoft || null);
-          if (data.microsoft?.configured) setMsExpanded(true);
+          if (data.google) {
+            setGoogleForm({
+              clientId: data.google.clientId || '',
+              clientSecret: data.google.clientSecret || '',
+              redirectUri: data.google.redirectUri || '',
+            });
+            setGoogleExpanded(true);
+          }
         })
         .catch(console.error)
         .finally(() => setLoading(false));
     }
+
+    // Capability status is cheap and non-sensitive, so fetch it for everyone.
+    // Admins need it to detect providers configured via .env rather than the UI.
+    api.getIntegrationsStatus()
+      .then(data => {
+        setMsStatus(data.microsoft || null);
+        setGoogleStatus(data.google || null);
+        if (data.microsoft?.configured) setMsExpanded(true);
+        if (data.google?.configured) setGoogleExpanded(true);
+      })
+      .catch(console.error)
+      .finally(() => { if (!isAdmin) setLoading(false); });
 
     api.todoist.status()
       .then(({ connected }) => {
@@ -2381,9 +2464,15 @@ function IntegrationsTab() {
         // getIntegrations is admin-only; non-admins already have the capability status.
         if (isAdmin) api.getIntegrations().then(setConfigs).catch(console.error);
         api.getAccounts().then(setAccounts).catch(console.error);
+      } else if (e.data?.type === 'oauth_success' && e.data?.provider === 'google') {
+        setSaveMsg(t('admin.integrations.google.connectedNote'));
+        setConnectingGoogle(false);
+        if (isAdmin) api.getIntegrations().then(setConfigs).catch(console.error);
+        api.getAccounts().then(setAccounts).catch(console.error);
       } else if (e.data?.type === 'oauth_error') {
         setSaveMsg('Error: ' + e.data.error);
         setConnectingMs(false);
+        setConnectingGoogle(false);
       }
     };
     window.addEventListener('message', handleMessage);
@@ -2467,6 +2556,41 @@ function IntegrationsTab() {
     setTimeout(() => setConnectingMs(false), 5000);
   };
 
+  const handleSaveGoogle = async () => {
+    if (!googleForm.clientId || !googleForm.clientSecret) {
+      setSaveMsg('Client ID and Client Secret are required');
+      return;
+    }
+    setSaving(true);
+    setSaveMsg('');
+    try {
+      await api.saveIntegration('google', googleForm);
+      setConfigs(prev => ({
+        ...prev,
+        google: { clientId: googleForm.clientId, redirectUri: googleForm.redirectUri },
+      }));
+      setGoogleStatus({ configured: true });
+      setSaveMsg(t('admin.integrations.google.savedNote'));
+    } catch (err) {
+      setSaveMsg('Error: ' + err.message);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleConnectGoogle = () => {
+    setConnectingGoogle(true);
+    // Real anchor click rather than window.open — see handleConnectMs.
+    const a = document.createElement('a');
+    a.href = '/oauth/google';
+    a.target = '_blank';
+    a.rel = 'opener';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => setConnectingGoogle(false), 5000);
+  };
+
   const handleTdConnect = async () => {
     const trimmed = tdToken.trim();
     if (!trimmed) return;
@@ -2498,7 +2622,11 @@ function IntegrationsTab() {
     }
   };
 
-  const msConfigured = isAdmin ? configs.microsoft?.clientId : msStatus?.configured;
+  // A provider counts as configured if it's in the DB config (UI-managed) OR the
+  // server reports it configured from .env. Checking only the former left the
+  // connect button disabled on env-only installs.
+  const msConfigured = (isAdmin && configs.microsoft?.clientId) || msStatus?.configured;
+  const googleConfigured = (isAdmin && configs.google?.clientId) || googleStatus?.configured;
 
   const subTabStyle = (key) => ({
     padding: '7px 14px',
@@ -2534,6 +2662,183 @@ function IntegrationsTab() {
           {loading && <div style={{ color: 'var(--text-tertiary)', fontSize: 13 }}>{t('admin.integrations.loading')}</div>}
           {!loading && (
             <div>
+              {/* Google / Gmail */}
+          <div style={{
+            border: '1px solid var(--border-subtle)', borderRadius: 12,
+            overflow: 'hidden', marginBottom: 12,
+          }}>
+            <div
+              onClick={() => setGoogleExpanded(!googleExpanded)}
+              style={{
+                padding: '14px 16px', display: 'flex', alignItems: 'center',
+                gap: 12, cursor: 'pointer', background: 'var(--bg-tertiary)',
+                transition: 'background 0.1s',
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-hover)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'var(--bg-tertiary)'}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2">
+                <rect x="2" y="4" width="20" height="16" rx="2"/>
+                <polyline points="2 7 12 14 22 7"/>
+              </svg>
+              <div style={{ flex: 1 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>
+                    {t('admin.integrations.google.title')}
+                  </span>
+                </div>
+                <div style={{ fontSize: 12, color: 'var(--text-tertiary)', marginTop: 2 }}>
+                  {t('admin.integrations.google.description')}
+                </div>
+              </div>
+              {googleConfigured ? (
+                <span style={{
+                  fontSize: 11, padding: '3px 8px', borderRadius: 20,
+                  background: 'rgba(52,168,83,0.12)', color: 'var(--green)',
+                  border: '1px solid rgba(52,168,83,0.25)',
+                }}>
+                  {t('admin.integrations.google.configured')}
+                </span>
+              ) : (
+                <span style={{
+                  fontSize: 11, padding: '3px 8px', borderRadius: 20,
+                  background: 'var(--bg-elevated)', color: 'var(--text-tertiary)',
+                  border: '1px solid var(--border)',
+                }}>
+                  {t('admin.integrations.google.notConfigured')}
+                </span>
+              )}
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                stroke="var(--text-tertiary)" strokeWidth="2"
+                style={{ transform: googleExpanded ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s' }}>
+                <polyline points="6 9 12 15 18 9"/>
+              </svg>
+            </div>
+
+            {googleExpanded && (
+              <div style={{ padding: '16px', borderTop: '1px solid var(--border-subtle)' }}>
+                {isAdmin && (<>
+                <div style={{
+                  padding: '12px 14px', borderRadius: 8, marginBottom: 16,
+                  background: 'rgba(124,106,247,0.06)',
+                  border: '1px solid rgba(124,106,247,0.15)',
+                  fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.7,
+                }}>
+                  <div style={{ fontWeight: 600, color: 'var(--accent)', marginBottom: 6 }}>
+                    {t('admin.integrations.google.setupTitle')}
+                  </div>
+                  <ol style={{ margin: 0, paddingLeft: 18 }}>
+                    <li>{t('admin.integrations.google.step1')}</li>
+                    <li>{t('admin.integrations.google.step2')}</li>
+                    <li>{t('admin.integrations.google.step3')}</li>
+                    <li>{t('admin.integrations.google.step4')}</li>
+                  </ol>
+                  <div style={{ marginTop: 8, color: 'var(--text-tertiary)' }}>
+                    {t('admin.integrations.google.scopeNote')}
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
+                  <Field label={t('admin.integrations.google.clientId')} required>
+                    <input value={googleForm.clientId} onChange={e => setGoogleForm(f => ({ ...f, clientId: e.target.value }))}
+                      placeholder={t('admin.integrations.google.clientIdPh')}
+                      style={{ ...inputStyle, fontFamily: 'JetBrains Mono, monospace', fontSize: 12 }}
+                      onFocus={e => e.target.style.borderColor = 'var(--accent)'}
+                      onBlur={e => e.target.style.borderColor = 'var(--border)'} />
+                  </Field>
+                  <Field label={t('admin.integrations.google.clientSecret')} required>
+                    <input type="password" value={googleForm.clientSecret} onChange={e => setGoogleForm(f => ({ ...f, clientSecret: e.target.value }))}
+                      placeholder={t('admin.integrations.google.clientSecretPh')}
+                      style={{ ...inputStyle, fontFamily: 'JetBrains Mono, monospace', fontSize: 12 }}
+                      onFocus={e => e.target.style.borderColor = 'var(--accent)'}
+                      onBlur={e => e.target.style.borderColor = 'var(--border)'} />
+                  </Field>
+                </div>
+
+                <div style={{ marginBottom: 14 }}>
+                  <Field label={t('admin.integrations.google.redirectUri')} required>
+                    <input value={googleForm.redirectUri} onChange={e => setGoogleForm(f => ({ ...f, redirectUri: e.target.value }))}
+                      placeholder={`${window.location.protocol}//${window.location.host}/oauth/google/callback`}
+                      style={{ ...inputStyle, fontFamily: 'JetBrains Mono, monospace', fontSize: 12 }}
+                      onFocus={e => e.target.style.borderColor = 'var(--accent)'}
+                      onBlur={e => e.target.style.borderColor = 'var(--border)'} />
+                    <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 5 }}>
+                      {t('admin.integrations.google.redirectUriNote', { uri: `${window.location.protocol}//${window.location.host}/oauth/google/callback` })}
+                    </div>
+                  </Field>
+                </div>
+                </>)}
+
+                {!isAdmin && (
+                  <div style={{
+                    padding: '12px 14px', borderRadius: 8, marginBottom: 16,
+                    background: 'rgba(124,106,247,0.06)',
+                    border: '1px solid rgba(124,106,247,0.15)',
+                    fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.6,
+                  }}>
+                    {googleConfigured
+                      ? t('admin.integrations.google.userNoteConfigured')
+                      : t('admin.integrations.google.userNoteNotConfigured')}
+                  </div>
+                )}
+
+                <div style={{ display: 'flex', gap: 8 }}>
+                  {isAdmin && (
+                    <button onClick={handleSaveGoogle} disabled={saving} style={{
+                      padding: '9px 16px', background: 'var(--bg-elevated)',
+                      border: '1px solid var(--border)', borderRadius: 8,
+                      color: 'var(--text-primary)', cursor: saving ? 'not-allowed' : 'pointer',
+                      fontSize: 13, fontWeight: 500, opacity: saving ? 0.7 : 1,
+                    }}>
+                      {saving ? t('common.saving') : t('admin.integrations.google.save')}
+                    </button>
+                  )}
+
+                  <button
+                    onClick={handleConnectGoogle}
+                    disabled={!googleConfigured || connectingGoogle}
+                    title={!googleConfigured ? t('admin.integrations.google.save') : ''}
+                    style={{
+                      padding: '9px 16px', background: googleConfigured ? 'var(--accent)' : 'var(--bg-elevated)',
+                      border: `1px solid ${googleConfigured ? 'var(--accent)' : 'var(--border)'}`,
+                      borderRadius: 8, color: googleConfigured ? 'white' : 'var(--text-tertiary)',
+                      cursor: googleConfigured && !connectingGoogle ? 'pointer' : 'not-allowed',
+                      fontSize: 13, fontWeight: 500,
+                      opacity: !googleConfigured || connectingGoogle ? 0.6 : 1,
+                      display: 'flex', alignItems: 'center', gap: 6,
+                    }}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="2" y="4" width="20" height="16" rx="2"/>
+                      <polyline points="2 7 12 14 22 7"/>
+                    </svg>
+                    {connectingGoogle ? t('admin.integrations.google.redirecting') : t('admin.integrations.google.connect')}
+                  </button>
+
+                  {isAdmin && configs.google?.clientId && (
+                    <button onClick={async () => {
+                      await api.deleteIntegration('google');
+                      setConfigs(c => { const n = {...c}; delete n.google; return n; });
+                      setGoogleForm({ clientId: '', clientSecret: '', redirectUri: '' });
+                      setGoogleStatus({ configured: false });
+                      setSaveMsg('');
+                    }} style={{
+                      padding: '9px 12px', background: 'transparent',
+                      border: '1px solid transparent', borderRadius: 8,
+                      color: 'var(--text-tertiary)', cursor: 'pointer', fontSize: 13,
+                      marginLeft: 'auto',
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.color = 'var(--red)'; e.currentTarget.style.borderColor = 'rgba(248,113,113,0.3)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-tertiary)'; e.currentTarget.style.borderColor = 'transparent'; }}
+                    >
+                      {t('admin.integrations.google.remove')}
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
               {/* Microsoft 365 */}
           <div style={{
             border: '1px solid var(--border-subtle)', borderRadius: 12,
@@ -2867,13 +3172,6 @@ function IntegrationsTab() {
                     {t('admin.integrations.todoist.title')}
                   </span>
                   <span style={{
-                    fontSize: 10, fontWeight: 700, padding: '2px 6px', borderRadius: 4,
-                    background: 'rgba(99,102,241,0.15)', color: 'var(--accent)',
-                    textTransform: 'uppercase', letterSpacing: '0.06em',
-                  }}>
-                    {t('todoist.betaLabel')}
-                  </span>
-                  <span style={{
                     fontSize: 11, padding: '2px 8px', borderRadius: 10,
                     background: (!tdLoading && tdConnected) ? 'rgba(34,197,94,0.1)' : 'var(--bg-primary)',
                     color: (!tdLoading && tdConnected) ? '#22c55e' : 'var(--text-tertiary)',
@@ -3110,6 +3408,7 @@ const emptyProvider = {
   scopes: 'openid email profile', provisioning_mode: 'login_existing_only',
   allowed_domains: '', enabled: true, require_email_verified: true, allow_insecure: false,
   admin_group_claim: '', admin_group_value: '', rp_initiated_logout: false,
+  login_match_claim: 'email',
 };
 
 function SSOTab() {
@@ -3127,18 +3426,23 @@ function SSOTab() {
   const [error, setError] = useState('');
   const [confirmDialog, setConfirmDialog] = useState(null);
   const [copiedId, setCopiedId] = useState(null);
+  const [uriCopyFailedId, setUriCopyFailedId] = useState(null);
   const [templateNote, setTemplateNote] = useState('');
   const [internalAuthDisabled, setInternalAuthDisabled] = useState(false);
   const [internalAuthSaving, setInternalAuthSaving] = useState(false);
   const [internalAuthError, setInternalAuthError] = useState('');
+  const [loadError, setLoadError] = useState('');
 
   useEffect(() => {
+    // A failed load must never render as an empty list. Reporting only to console.error
+    // made a broken fetch indistinguishable from "no providers configured", which can
+    // hide a live SSO provider from the admin who believes it is gone.
     const fetchProviders = api.admin.oidc.getProviders()
       .then(d => setProviders(d.providers))
-      .catch(console.error);
+      .catch(err => setLoadError(err.message));
     const fetchSettings = api.admin.getSettings()
       .then(d => setInternalAuthDisabled(d.settings.internal_auth_disabled === 'true'))
-      .catch(console.error);
+      .catch(err => setLoadError(err.message));
     Promise.all([fetchProviders, fetchSettings]).finally(() => setLoading(false));
   }, []);
 
@@ -3179,7 +3483,7 @@ function SSOTab() {
     setError('');
   };
   const openEdit = (p) => {
-    setForm({ ...p, client_secret: '••••••••', allowed_domains: p.allowed_domains || '', require_email_verified: p.require_email_verified !== false, allow_insecure: p.allow_insecure === true, admin_group_claim: p.admin_group_claim || '', admin_group_value: p.admin_group_value || '', rp_initiated_logout: p.rp_initiated_logout === true });
+    setForm({ ...p, client_secret: '••••••••', allowed_domains: p.allowed_domains || '', require_email_verified: p.require_email_verified !== false, allow_insecure: p.allow_insecure === true, admin_group_claim: p.admin_group_claim || '', admin_group_value: p.admin_group_value || '', rp_initiated_logout: p.rp_initiated_logout === true, login_match_claim: p.login_match_claim || 'email' });
     setTemplateNote('');
     setEditing(p);
     setError('');
@@ -3210,6 +3514,7 @@ function SSOTab() {
         admin_group_claim: form.admin_group_claim.trim() || null,
         admin_group_value: form.admin_group_value.trim() || null,
         rp_initiated_logout: !!form.rp_initiated_logout,
+        login_match_claim: (form.login_match_claim || '').trim() || 'email',
         ...(form.client_secret && form.client_secret !== '••••••••' ? { client_secret: form.client_secret } : {}),
       };
       if (editing === 'new') {
@@ -3240,12 +3545,12 @@ function SSOTab() {
     });
   };
 
-  const copyRedirectUri = (slug, id) => {
+  const copyRedirectUri = async (slug, id) => {
     const uri = `${window.location.origin}/auth/oidc/${slug}/callback`;
-    navigator.clipboard.writeText(uri).then(() => {
-      setCopiedId(id);
-      setTimeout(() => setCopiedId(null), 2000);
-    });
+    const { ok } = await copyToClipboard(uri);
+    setCopiedId(ok ? id : null);
+    setUriCopyFailedId(ok ? null : id);
+    setTimeout(() => { setCopiedId(null); setUriCopyFailedId(null); }, 2000);
   };
 
   if (loading) return <div style={{ color: 'var(--text-tertiary)', fontSize: 13 }}>{t('common.loading')}</div>;
@@ -3309,7 +3614,15 @@ function SSOTab() {
 
       <div style={{ height: 1, background: 'var(--border-subtle)', marginBottom: 20 }} />
 
-      {providers.length === 0 && !editing && (
+      {loadError && (
+        <div style={{
+          padding: '12px 14px', marginBottom: 16, borderRadius: 8,
+          background: 'rgba(248,113,113,0.1)', border: '1px solid rgba(248,113,113,0.3)',
+          color: 'var(--red)', fontSize: 13,
+        }}>{t('common.error', { message: loadError })}</div>
+      )}
+
+      {!loadError && providers.length === 0 && !editing && (
         <div style={{
           padding: '24px', borderRadius: 8, border: '1px dashed var(--border)',
           textAlign: 'center', color: 'var(--text-tertiary)', fontSize: 13, marginBottom: 16,
@@ -3352,7 +3665,9 @@ function SSOTab() {
                       fontSize: 10, padding: '2px 7px', cursor: 'pointer', flexShrink: 0,
                     }}
                   >
-                    {copiedId === p.id ? t('admin.sso.copiedUri') : t('admin.sso.copyUri')}
+                    {copiedId === p.id ? t('admin.sso.copiedUri')
+                      : uriCopyFailedId === p.id ? t('common.copyFailed')
+                        : t('admin.sso.copyUri')}
                   </button>
                 </div>
               </div>
@@ -3524,6 +3839,22 @@ function SSOTab() {
                 <option key={m.value} value={m.value}>{m.label}</option>
               ))}
             </select>
+          </Field>
+
+          <Field label={t('admin.sso.loginMatchClaim')}>
+            <input
+              value={form.login_match_claim}
+              onChange={e => setForm(f => ({ ...f, login_match_claim: e.target.value }))}
+              placeholder="email"
+              list="oidc-login-match-claims"
+              style={inputStyle}
+            />
+            <datalist id="oidc-login-match-claims">
+              <option value="email" />
+              <option value="preferred_username" />
+              <option value="upn" />
+            </datalist>
+            <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 4 }}>{t('admin.sso.loginMatchClaimDesc')}</div>
           </Field>
 
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
@@ -3819,7 +4150,8 @@ export function AISection() {
 
   const handleCopyCode = async () => {
     try {
-      await navigator.clipboard.writeText(deviceState.userCode);
+      const { ok } = await copyToClipboard(deviceState.userCode);
+      if (!ok) throw new Error('copy failed');
       setCopied(true);
     } catch {
       setMsg({ type: 'error', text: t('admin.ai.copyFailed') });
@@ -4043,7 +4375,7 @@ export function AISection() {
                       {cancelling ? t('admin.ai.cancelling') : t('common.cancel')}
                     </button>
                   </div>
-                  <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 8 }}>{t('admin.ai.deviceExpires', { time: new Date(pendingDevice.expiresAt).toLocaleTimeString() })}</div>
+                  <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 8 }}>{t('admin.ai.deviceExpires', { time: formatTime(pendingDevice.expiresAt) })}</div>
                 </div>
               )}
             </div>
@@ -4663,9 +4995,10 @@ function UsersTab() {
 }
 
 function UsersAndInvitesPanel() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user: currentUser } = useStore();
   const [users, setUsers] = useState([]);
+  const [editingUser, setEditingUser] = useState(null);
   const [userTotal, setUserTotal] = useState(0);
   const [usersLoadingMore, setUsersLoadingMore] = useState(false);
   const [invites, setInvites] = useState([]);
@@ -4677,6 +5010,7 @@ function UsersAndInvitesPanel() {
   const [inviteMsg, setInviteMsg] = useState(null); // { type: 'ok'|'error', text, url? }
   const [loading, setLoading] = useState(true);
   const [copiedId, setCopiedId] = useState(null);
+  const [copyFailedId, setCopyFailedId] = useState(null);
   const [confirmDialog, setConfirmDialog] = useState(null);
 
   useEffect(() => {
@@ -4784,11 +5118,11 @@ function UsersAndInvitesPanel() {
     setInvites(inv => inv.filter(i => i.id !== id));
   };
 
-  const copyInviteUrl = (url, id) => {
-    navigator.clipboard.writeText(url).then(() => {
-      setCopiedId(id);
-      setTimeout(() => setCopiedId(null), 2000);
-    });
+  const copyInviteUrl = async (url, id) => {
+    const { ok } = await copyToClipboard(url);
+    setCopiedId(ok ? id : null);
+    setCopyFailedId(ok ? null : id);
+    setTimeout(() => { setCopiedId(null); setCopyFailedId(null); }, 2000);
   };
 
   if (loading) {
@@ -4817,13 +5151,15 @@ function UsersAndInvitesPanel() {
             background: 'var(--bg-tertiary)', border: '1px solid var(--border-subtle)',
           }}>
             <div style={{
-              width: 32, height: 32, borderRadius: '50%', flexShrink: 0,
+              width: 32, height: 32, borderRadius: '50%', flexShrink: 0, overflow: 'hidden',
               background: u.isAdmin ? 'var(--accent)' : 'var(--bg-elevated)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: 13, fontWeight: 600, color: u.isAdmin ? 'white' : 'var(--text-secondary)',
-              border: '1px solid var(--border)',
+              border: u.isAdmin ? '2px solid var(--accent)' : '1px solid var(--border)',
             }}>
-              {u.username[0].toUpperCase()}
+              {u.avatar
+                ? <img src={u.avatar} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                : u.username[0].toUpperCase()}
             </div>
 
             <div style={{ flex: 1, minWidth: 0 }}>
@@ -4846,9 +5182,27 @@ function UsersAndInvitesPanel() {
                 )}
               </div>
               <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 1 }}>
-                {t('admin.users.joined', { date: new Date(u.created_at).toLocaleDateString() })}
+                {t('admin.users.joined', { date: formatDay(u.created_at) })}
+              </div>
+              {/* Last request, not last login: sessions roll, so a daily user rarely logs in. */}
+              <div
+                title={u.lastSeenAt ? formatDateTime(u.lastSeenAt) : undefined}
+                style={{
+                  fontSize: 11, marginTop: 1,
+                  color: u.lastSeenAt && daysSince(u.lastSeenAt) > 90 ? 'var(--amber)' : 'var(--text-tertiary)',
+                }}
+              >
+                {u.lastSeenAt
+                  ? t('admin.users.lastSeen', { when: formatRelativeTime(u.lastSeenAt, htmlLang(i18n.language)) })
+                  : t('admin.users.neverSeen')}
               </div>
             </div>
+
+            <IconBtn onClick={() => setEditingUser(u)} title={t('admin.users.edit')}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
+              </svg>
+            </IconBtn>
 
             {u.id !== currentUser?.id && (
               <div style={{ display: 'flex', gap: 5, flexShrink: 0 }}>
@@ -4997,14 +5351,16 @@ function UsersAndInvitesPanel() {
                 {inviteMsg.url}
               </code>
               <button
-                onClick={() => navigator.clipboard.writeText(inviteMsg.url)}
+                onClick={() => copyInviteUrl(inviteMsg.url, 'new')}
                 style={{
                   padding: '4px 10px', borderRadius: 6, fontSize: 11,
                   background: 'var(--bg-tertiary)', border: '1px solid var(--border)',
                   color: 'var(--text-secondary)', cursor: 'pointer', flexShrink: 0,
                 }}
               >
-                {t('common.copy')}
+                {copiedId === 'new' ? t('admin.users.inviteCopied')
+                  : copyFailedId === 'new' ? t('common.copyFailed')
+                    : t('common.copy')}
               </button>
             </div>
           )}
@@ -5031,7 +5387,7 @@ function UsersAndInvitesPanel() {
                       {inv.email}
                     </div>
                     <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 1 }}>
-                      {t('admin.users.inviteExpires', { date: new Date(inv.expires_at).toLocaleDateString() })}
+                      {t('admin.users.inviteExpires', { date: formatDay(inv.expires_at) })}
                     </div>
                   </div>
                   <button
@@ -5045,7 +5401,9 @@ function UsersAndInvitesPanel() {
                       cursor: 'pointer', flexShrink: 0, transition: 'all 0.15s',
                     }}
                   >
-                    {copiedId === inv.id ? t('admin.users.inviteCopied') : t('admin.users.inviteCopy')}
+                    {copiedId === inv.id ? t('admin.users.inviteCopied')
+                      : copyFailedId === inv.id ? t('common.copyFailed')
+                        : t('admin.users.inviteCopy')}
                   </button>
                   <IconBtn onClick={() => handleRevokeInvite(inv.id)} title={t('admin.users.inviteRevoke')} danger>
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -5079,8 +5437,8 @@ function UsersAndInvitesPanel() {
                   </div>
                   <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 1 }}>
                     {inv.used_at
-                      ? t('admin.users.inviteUsedBy', { username: inv.used_by_username || 'unknown', date: new Date(inv.used_at).toLocaleDateString() })
-                      : t('admin.users.inviteExpired', { date: new Date(inv.expires_at).toLocaleDateString() })}
+                      ? t('admin.users.inviteUsedBy', { username: inv.used_by_username || 'unknown', date: formatDay(inv.used_at) })
+                      : t('admin.users.inviteExpired', { date: formatDay(inv.expires_at) })}
                   </div>
                 </div>
                 <IconBtn onClick={() => handleRevokeInvite(inv.id)} title={t('admin.users.inviteDelete')} danger>
@@ -5110,6 +5468,21 @@ function UsersAndInvitesPanel() {
         </button>
       )}
       <ConfirmOverlay dialog={confirmDialog} onClose={() => setConfirmDialog(null)} />
+      {editingUser && (
+        <AdminUserEditor
+          user={editingUser}
+          isSelf={editingUser.id === currentUser?.id}
+          onClose={() => setEditingUser(null)}
+          onChanged={updated => {
+            setUsers(us => us.map(x => (x.id === updated.id ? { ...x, ...updated } : x)));
+            setEditingUser(updated);
+          }}
+          onSaved={updated => {
+            setUsers(us => us.map(x => (x.id === updated.id ? { ...x, ...updated } : x)));
+            setEditingUser(null);
+          }}
+        />
+      )}
     </div>
     </>
   );
@@ -5472,7 +5845,34 @@ function NotificationsTab() {
 // ─── Shared confirm overlay (replaces window.confirm everywhere) ──────────────
 function ConfirmOverlay({ dialog, onClose }) {
   const { t } = useTranslation();
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+
+  // Clear transient state whenever a different dialog is opened, so a previous
+  // failure never leaks into the next confirmation.
+  useEffect(() => { setBusy(false); setError(''); }, [dialog]);
+
   if (!dialog) return null;
+
+  // Await the action rather than firing it into the void. This previously closed the
+  // overlay and then called onConfirm() unawaited with no catch, so a rejected request
+  // left no trace at all: the dialog was already gone and the rejection was unhandled.
+  // Every destructive action here (delete account, delete alias, delete user, disable
+  // a user's 2FA, delete an SSO provider, unlink an identity) therefore looked like it
+  // had succeeded while the server had refused it. Keep the dialog open on failure so
+  // the error is shown where the user is already looking; close only on success.
+  const runConfirm = async () => {
+    setError('');
+    setBusy(true);
+    try {
+      await dialog.onConfirm();
+      onClose();
+    } catch (err) {
+      setError(err?.message || String(err));
+    } finally {
+      setBusy(false);
+    }
+  };
   return (
     <div style={{
       position: 'fixed', inset: 0, zIndex: 9100,
@@ -5481,7 +5881,7 @@ function ConfirmOverlay({ dialog, onClose }) {
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       padding: 24,
       animation: 'backdrop-enter var(--motion-fast) var(--ease-standard) both',
-    }} onClick={onClose}>
+    }} onClick={busy ? undefined : onClose}>
       <div style={{
         background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)',
         borderRadius: 12, padding: '24px 24px 20px', maxWidth: 360, width: '100%',
@@ -5494,15 +5894,24 @@ function ConfirmOverlay({ dialog, onClose }) {
         <p style={{ margin: '0 0 20px', fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.5 }}>
           {dialog.message}
         </p>
+        {error && (
+          <div style={{
+            marginBottom: 14, padding: '8px 10px',
+            background: 'rgba(248,113,113,0.1)', border: '1px solid rgba(248,113,113,0.3)',
+            borderRadius: 7, color: 'var(--red)', fontSize: 12,
+          }}>{t('common.error', { message: error })}</div>
+        )}
         <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
-          <button onClick={onClose} className="btn-press" style={{
+          <button onClick={onClose} disabled={busy} className="btn-press" style={{
             padding: '7px 16px', borderRadius: 7, border: '1px solid var(--border-subtle)',
-            background: 'transparent', color: 'var(--text-secondary)', cursor: 'pointer', fontSize: 13,
+            background: 'transparent', color: 'var(--text-secondary)',
+            cursor: busy ? 'default' : 'pointer', opacity: busy ? 0.5 : 1, fontSize: 13,
           }}>{t('common.cancel')}</button>
-          <button onClick={() => { onClose(); dialog.onConfirm(); }} className="btn-press" style={{
+          <button onClick={runConfirm} disabled={busy} className="btn-press" style={{
             padding: '7px 16px', borderRadius: 7, border: 'none',
-            background: '#dc2626', color: 'white', cursor: 'pointer', fontSize: 13, fontWeight: 500,
-          }}>{dialog.confirmLabel || t('common.delete')}</button>
+            background: '#dc2626', color: 'white',
+            cursor: busy ? 'default' : 'pointer', opacity: busy ? 0.7 : 1, fontSize: 13, fontWeight: 500,
+          }}>{busy ? t('common.loading') : (dialog.confirmLabel || t('common.delete'))}</button>
         </div>
       </div>
     </div>
@@ -5518,6 +5927,10 @@ const LANGUAGES = [
   { code: 'it', nativeName: 'Italiano' },
   { code: 'ru', nativeName: 'Русский' },
   { code: 'zhCN', nativeName: '简体中文'},
+  { code: 'pl', nativeName: 'Polski' },
+  { code: 'cs', nativeName: 'Čeština' },
+  { code: 'ptBR', nativeName: 'Português (Brasil)' },
+  { code: 'ko', nativeName: '한국어' },
 ];
 
 function LanguageTab() {
@@ -5641,6 +6054,7 @@ function SecurityPrivacyTab({ initialSubTab }) {
 function AboutTab() {
   const { t } = useTranslation();
   const [info, setInfo] = useState(null);
+  const [showDiagnostics, setShowDiagnostics] = useState(false);
 
   useEffect(() => {
     fetch(mailflowApiUrl('/version'), { headers: mailflowFetchHeaders() })
@@ -5710,6 +6124,21 @@ function AboutTab() {
         ))}
       </div>
       </>)}
+
+      <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '18px 0 8px 4px' }}>
+        {t('diagnostics.section')}
+      </div>
+      <div style={{ fontSize: 12.5, color: 'var(--text-secondary)', margin: '0 4px 10px', lineHeight: 1.5 }}>
+        {t('diagnostics.blurb')}
+      </div>
+      <button
+        onClick={() => setShowDiagnostics(true)}
+        style={{ padding: '8px 16px', borderRadius: 8, border: '1px solid var(--border)', background: 'transparent', color: 'var(--text-primary)', fontSize: 13, cursor: 'pointer' }}
+      >
+        {t('diagnostics.generateReport')}
+      </button>
+
+      {showDiagnostics && <DiagnosticsReportModal onClose={() => setShowDiagnostics(false)} />}
     </div>
   );
 }
@@ -5741,18 +6170,26 @@ function RulesTab() {
     setRunResult(null);
     setRunError('');
     try {
-      const result = await api.runRules();
-      setRunResult(result);
-      // Rules may have moved messages between folders; tell the message list to re-run
-      // any active search and refresh the folder view so affected messages leave stale
-      // results (a search snapshot does not otherwise update on its own). Fixes #223.
-      window.dispatchEvent(new Event('mailflow:rules-ran'));
-    } catch {
-      setRunError(t('admin.rules.runError'));
-    } finally {
+      // 202: the sweep runs in the background. The rules_run_complete WebSocket event
+      // (useWebSocket.js) toasts the result, refreshes the views, and reaches this panel
+      // via the mailflow:rules-run-complete window event below.
+      await api.runRules();
+    } catch (err) {
+      setRunError(err.message || t('admin.rules.runError'));
       setRunningRules(false);
     }
   }
+
+  useEffect(() => {
+    const onRunComplete = (event) => {
+      const detail = event.detail || {};
+      if (detail.ok === false) setRunError(t('admin.rules.runError'));
+      else setRunResult({ processed: detail.processed, matched: detail.matched });
+      setRunningRules(false);
+    };
+    window.addEventListener('mailflow:rules-run-complete', onRunComplete);
+    return () => window.removeEventListener('mailflow:rules-run-complete', onRunComplete);
+  }, [t]);
 
   useEffect(() => {
     api.getRules()
@@ -5967,8 +6404,13 @@ function RulesTab() {
   function actionSummary(rule) {
     const acts = Array.isArray(rule.actions) ? rule.actions : [];
     if (!acts.length) return '—';
-    const labels = { mark_read: t('admin.rules.actionMarkRead'), star: t('admin.rules.actionStar'), forward: t('admin.rules.actionForward'), archive: t('admin.rules.actionArchive'), delete: t('admin.rules.actionDelete'), move: t('admin.rules.actionMove') };
-    return acts.map(a => labels[a.type] || a.type).join(', ');
+    const labels = { mark_read: t('admin.rules.actionMarkRead'), star: t('admin.rules.actionStar'), forward: t('admin.rules.actionForward'), archive: t('admin.rules.actionArchive'), delete: t('admin.rules.actionDelete'), move: t('admin.rules.actionMove'), set_category: t('admin.rules.actionSetCategory'), notify: t('admin.rules.actionNotify') };
+    // Show the move destination and the category so same-named rules are tellable apart at a glance.
+    return acts.map(a => {
+      if (a.type === 'move' && a.value) return `${labels.move} → ${a.value}`;
+      if (a.type === 'set_category' && a.value) return `${labels.set_category} → ${t(`messageList.categories.${a.value}`)}`;
+      return labels[a.type] || a.type;
+    }).join(', ');
   }
 
   const FIELDS = [
@@ -5988,6 +6430,7 @@ function RulesTab() {
     { value: 'ends_with',    label: t('admin.rules.opEndsWith') },
   ];
   const HEADER_OPERATORS = [...OPERATORS, { value: 'regex', label: t('admin.rules.opRegex') }];
+  const RULE_CATEGORIES = ['primary', 'newsletter', 'promotion', 'automated', 'social'];
   const ACTION_TYPES = [
     { type: 'mark_read', label: t('admin.rules.actionMarkRead') },
     { type: 'star',      label: t('admin.rules.actionStar') },
@@ -5995,6 +6438,8 @@ function RulesTab() {
     { type: 'archive',   label: t('admin.rules.actionArchive') },
     { type: 'delete',    label: t('admin.rules.actionDelete') },
     { type: 'move',      label: t('admin.rules.actionMove') },
+    { type: 'set_category', label: t('admin.rules.actionSetCategory') },
+    { type: 'notify',    label: t('admin.rules.actionNotify') },
   ];
 
   if (formMode) {
@@ -6173,11 +6618,24 @@ function RulesTab() {
                         style={{ ...inputStyle, marginTop: 6, marginLeft: 22 }}
                         value={moveVal}
                         onChange={e => setActionValue('move', e.target.value)}
+                        // The closed control clips long paths; surface the full
+                        // selected path as a tooltip. (A native <option> cannot
+                        // host the pickers' two-tone/hover-scroll label.)
+                        title={moveVal || undefined}
                       >
                         <option value="">{t('admin.rules.actionMoveSelectFolder')}</option>
-                        {movableFolders.map(f => (
-                          <option key={f.path} value={f.path}>{f.name || f.path}</option>
-                        ))}
+                        {movableFolders.map(f => {
+                          // Same ancestor-path display as the move pickers, so
+                          // same-named folders under different parents are
+                          // distinguishable when choosing a rule destination.
+                          const parent = folderParentLabel(f);
+                          const name = f.name || f.path;
+                          return (
+                            <option key={f.path} value={f.path}>
+                              {parent ? `${parent} / ${name}` : name}
+                            </option>
+                          );
+                        })}
                       </select>
                     );
                   }
@@ -6190,6 +6648,24 @@ function RulesTab() {
                     />
                   );
                 })()}
+                {type === 'notify' && (
+                  <div style={{ fontSize: 11, color: 'var(--text-tertiary)', marginLeft: 22, marginTop: 2 }}>
+                    {t('admin.rules.actionNotifyHint')}
+                  </div>
+                )}
+                {type === 'set_category' && checked && (
+                  <select
+                    aria-label={t('admin.rules.actionSetCategory')}
+                    style={{ ...inputStyle, marginTop: 6, marginLeft: 22 }}
+                    value={fd.actions.find(action => action.type === 'set_category')?.value || ''}
+                    onChange={event => setActionValue('set_category', event.target.value)}
+                  >
+                    <option value="">{t('admin.rules.actionSetCategorySelect')}</option>
+                    {RULE_CATEGORIES.map(cat => (
+                      <option key={cat} value={cat}>{t(`messageList.categories.${cat}`)}</option>
+                    ))}
+                  </select>
+                )}
                 {type === 'forward' && checked && (
                   <input
                     type="email"
@@ -6263,6 +6739,11 @@ function RulesTab() {
         </div>
       </div>
 
+      {runningRules && (
+        <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 12 }}>
+          {t('admin.rules.runStarted')}
+        </div>
+      )}
       {runResult && (
         <div style={{ fontSize: 12, color: 'var(--text-secondary)', marginBottom: 12 }}>
           {t('admin.rules.runResult', { matched: runResult.matched, processed: runResult.processed })}
@@ -6465,64 +6946,315 @@ function RulesAndBlockListTab({ initialSubTab }) {
   );
 }
 
+// Mailbox Cleanup: analyze an INBOX for bulk-mail bloat and move a chosen sender's mail to Trash.
+// All analysis is read-only; the destructive step reuses the existing, proven bulkDelete (move to
+// Trash, recoverable) in <=500-id batches. Scope is enforced server-side (own account, INBOX, exact
+// sender), and the operation is idempotent: re-running a cleared sender finds nothing.
+function MailboxCleanupTab() {
+  const { t } = useTranslation();
+  const { accounts } = useStore();
+  const [accountId, setAccountId] = useState(accounts[0]?.id || '');
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [busySender, setBusySender] = useState('');
+  const [progress, setProgress] = useState(null);
+  // Cleanup action for the whole view (#403): Archive is the default and recommended
+  // choice; Trash stays available as an explicit alternative. One selector governs
+  // every sender row, not a per-row pair of buttons.
+  const [action, setAction] = useState('archive');
+  const archiveAvailable = data ? data.archiveAvailable !== false : true;
+  // If the selected account has no archive folder, Archive isn't a usable action —
+  // fall back to Trash so the row button never runs an action the server can't honor.
+  useEffect(() => { if (data && data.archiveAvailable === false) setAction('trash'); }, [data]);
+
+  // Re-fetch the summary/sender data without touching the error banner or the loading
+  // spinner, so a caller that just wants fresh counts (after a cleanup, including a partial
+  // failure) can refresh without clobbering an error it already set.
+  const fetchUsage = useCallback(async (id) => {
+    setData(await api.mailboxUsage(id));
+  }, []);
+
+  const load = useCallback(async (id) => {
+    if (!id) return;
+    setLoading(true); setError('');
+    try { await fetchUsage(id); }
+    catch (e) { setError(e.message); setData(null); }
+    finally { setLoading(false); }
+  }, [fetchUsage]);
+
+  useEffect(() => { if (accountId) load(accountId); }, [accountId, load]);
+
+  // Senders ticked for a batch run; keyed by fromEmail. Only ever read through
+  // `selectedSenders`, so senders that vanish after a refresh drop out on their own.
+  const [selected, setSelected] = useState(() => new Set());
+  const senders = data?.tier1Senders || [];
+  const selectedSenders = senders.filter(s => selected.has(s.fromEmail));
+  const allSelected = senders.length > 0 && selectedSenders.length === senders.length;
+  // The row-button busy marker for a batch run; not a valid fromEmail, so no row matches it.
+  const BATCH = '*';
+  useEffect(() => { setSelected(new Set()); }, [accountId]);
+
+  const toggleSender = (email) => setSelected(prev => {
+    const next = new Set(prev);
+    if (!next.delete(email)) next.add(email);
+    return next;
+  });
+
+  // One confirm and one progress bar for the whole list; each sender is still resolved server-side
+  // (own account, INBOX, exact sender) and moved in <=500-id batches, in sequence.
+  const cleanupSenders = async (list) => {
+    const isArchive = action === 'archive';
+    const labelOf = (s) => (s.fromName ? `${s.fromName} <${s.fromEmail}>` : s.fromEmail);
+    const shown = list.slice(0, 3).map(labelOf).join(', ');
+    const label = list.length > 3 ? `${shown} +${list.length - 3}` : shown;
+    const grandTotal = list.reduce((n, s) => n + s.count, 0);
+    const confirmKey = isArchive ? 'admin.cleanup.confirmArchive' : 'admin.cleanup.confirm';
+    if (!window.confirm(t(confirmKey, { count: grandTotal, sender: label }))) return;
+    setBusySender(list.length === 1 ? list[0].fromEmail : BATCH); setError(''); setProgress({ done: 0, total: grandTotal });
+    try {
+      const runBatch = isArchive ? api.bulkArchive : api.bulkDelete;
+      let done = 0;
+      for (const s of list) {
+        const { ids } = await api.cleanupPreview(accountId, s.fromEmail);
+        for (let i = 0; i < ids.length; i += 500) {
+          const batch = ids.slice(i, i + 500);
+          await runBatch(batch);
+          done += batch.length;
+          setProgress({ done, total: grandTotal });
+        }
+      }
+    } catch (e) { setError(e.message); }
+    finally {
+      // Always refresh counts so the summary reflects what actually got archived or trashed,
+      // even on a partial failure; preserve any error already set (don't route through load()).
+      try { await fetchUsage(accountId); } catch { /* keep the primary error and last-good data */ }
+      setBusySender(''); setProgress(null);
+    }
+  };
+
+  const bloatPct = data && data.inboxTotal ? Math.round((data.bulkTotal / data.inboxTotal) * 100) : 0;
+  const card = { background: 'var(--bg-secondary)', border: '1px solid var(--border-subtle)', borderRadius: 10, padding: 14, marginBottom: 16 };
+  const muted = { fontSize: 12, color: 'var(--text-tertiary)' };
+
+  return (
+    <div>
+      <h2 style={{ fontSize: 18, fontWeight: 600, margin: '0 0 6px' }}>{t('admin.cleanup.title')}</h2>
+      <p style={{ ...muted, marginTop: 0, marginBottom: 16, lineHeight: 1.5 }}>{t('admin.cleanup.intro')}</p>
+
+      {accounts.length > 1 && (
+        <Field label={t('admin.cleanup.account')}>
+          <select value={accountId} disabled={!!busySender} onChange={e => setAccountId(e.target.value)} style={{ ...inputStyle, appearance: 'none' }}>
+            {accounts.map(a => <option key={a.id} value={a.id}>{a.email_address}</option>)}
+          </select>
+        </Field>
+      )}
+
+      {loading && <div style={muted}>{t('common.loading')}</div>}
+      {error && <div style={{ color: 'var(--red, #ef4444)', fontSize: 13, marginBottom: 12 }}>{error}</div>}
+
+      {data && !loading && (
+        <>
+          <div style={card}>
+            <div style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>
+              {t('admin.cleanup.summary', { bulk: data.bulkTotal.toLocaleString(), total: data.inboxTotal.toLocaleString(), pct: bloatPct })}
+            </div>
+          </div>
+
+          <Field label={t('admin.cleanup.action')}>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              {[
+                { key: 'archive', label: t('admin.cleanup.actionArchive'), disabled: !archiveAvailable },
+                { key: 'trash', label: t('admin.cleanup.moveToTrash'), disabled: false },
+              ].map(opt => {
+                const selected = action === opt.key;
+                return (
+                  <button
+                    key={opt.key}
+                    type="button"
+                    disabled={opt.disabled || !!busySender}
+                    onClick={() => setAction(opt.key)}
+                    style={{
+                      padding: '7px 14px', borderRadius: 7, fontSize: 13, fontWeight: 500,
+                      cursor: (opt.disabled || busySender) ? 'not-allowed' : 'pointer',
+                      border: `1px solid ${selected ? 'var(--accent)' : 'var(--border)'}`,
+                      background: selected ? 'var(--accent)' : 'var(--bg-secondary)',
+                      color: selected ? 'var(--accent-text, white)' : 'var(--text-secondary)',
+                      opacity: opt.disabled ? 0.5 : 1,
+                    }}
+                  >
+                    {opt.label}
+                  </button>
+                );
+              })}
+            </div>
+            {!archiveAvailable && (
+              <div style={{ ...muted, marginTop: 8 }}>{t('admin.cleanup.noArchiveFolder')}</div>
+            )}
+          </Field>
+
+          <h3 style={{ fontSize: 14, fontWeight: 600, margin: '0 0 4px' }}>{t('admin.cleanup.tier1Title')}</h3>
+          <p style={{ ...muted, marginTop: 0, marginBottom: 12, lineHeight: 1.5 }}>{t('admin.cleanup.tier1Desc')}</p>
+          {data.tier1Senders.length === 0 ? (
+            <div style={muted}>{t('admin.cleanup.noneFound')}</div>
+          ) : (
+            <div style={{ marginBottom: 20 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '6px 4px', borderBottom: '1px solid var(--border-subtle)' }}>
+                <input
+                  type="checkbox"
+                  id="cleanup-select-all"
+                  checked={allSelected}
+                  disabled={!!busySender}
+                  onChange={() => setSelected(allSelected ? new Set() : new Set(senders.map(s => s.fromEmail)))}
+                />
+                <label htmlFor="cleanup-select-all" style={{ ...muted, flex: 1, cursor: 'pointer' }}>
+                  {t(allSelected ? 'messageList.deselectAll' : 'messageList.selectAll')}
+                </label>
+                <button
+                  type="button"
+                  disabled={!!busySender || selectedSenders.length === 0}
+                  onClick={() => cleanupSenders(selectedSenders)}
+                  style={{
+                    flexShrink: 0, padding: '6px 12px', borderRadius: 7, fontSize: 12, fontWeight: 500,
+                    border: '1px solid var(--border)',
+                    cursor: (busySender || selectedSenders.length === 0) ? 'not-allowed' : 'pointer',
+                    background: action === 'archive' ? 'var(--accent)' : 'var(--amber, #d97706)',
+                    color: action === 'archive' ? 'var(--accent-text, white)' : 'white',
+                    opacity: selectedSenders.length === 0 || (busySender && busySender !== BATCH) ? 0.5 : 1,
+                  }}
+                >
+                  {busySender === BATCH && progress
+                    ? `${progress.done.toLocaleString()}/${progress.total.toLocaleString()}`
+                    : `${t(action === 'archive' ? 'admin.cleanup.archive' : 'admin.cleanup.moveToTrash')} (${selectedSenders.length})`}
+                </button>
+              </div>
+              {data.tier1Senders.map(s => (
+                <div key={s.fromEmail} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '9px 4px', borderBottom: '1px solid var(--border-subtle)' }}>
+                  <input
+                    type="checkbox"
+                    checked={selected.has(s.fromEmail)}
+                    disabled={!!busySender}
+                    onChange={() => toggleSender(s.fromEmail)}
+                    aria-label={s.fromName || s.fromEmail}
+                  />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 13, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.fromName || s.fromEmail}</div>
+                    {s.fromName && <div style={{ ...muted, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s.fromEmail}</div>}
+                  </div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-secondary)', flexShrink: 0 }}>{s.count.toLocaleString()}</div>
+                  <button
+                    type="button"
+                    disabled={!!busySender}
+                    onClick={() => cleanupSenders([s])}
+                    style={{
+                      flexShrink: 0, padding: '6px 12px', borderRadius: 7, fontSize: 12, fontWeight: 500,
+                      border: '1px solid var(--border)', cursor: busySender ? 'not-allowed' : 'pointer',
+                      background: busySender === s.fromEmail
+                        ? 'var(--bg-tertiary)'
+                        : (action === 'archive' ? 'var(--accent)' : 'var(--amber, #d97706)'),
+                      color: busySender === s.fromEmail
+                        ? 'var(--text-secondary)'
+                        : (action === 'archive' ? 'var(--accent-text, white)' : 'white'),
+                      opacity: busySender && busySender !== s.fromEmail ? 0.5 : 1,
+                    }}
+                  >
+                    {busySender === s.fromEmail
+                      ? (progress ? `${progress.done.toLocaleString()}/${progress.total.toLocaleString()}` : '...')
+                      : t(action === 'archive' ? 'admin.cleanup.archive' : 'admin.cleanup.moveToTrash')}
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <h3 style={{ fontSize: 14, fontWeight: 600, margin: '0 0 4px' }}>{t('admin.cleanup.tier2Title')}</h3>
+          <p style={{ ...muted, marginTop: 0, marginBottom: 10, lineHeight: 1.5 }}>{t('admin.cleanup.tier2Desc')}</p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 20 }}>
+            {data.tier2Keywords.filter(k => k.count > 0).map(k => (
+              <span key={k.keyword} style={{ fontSize: 12, padding: '4px 10px', borderRadius: 20, background: 'var(--bg-tertiary)', border: '1px solid var(--border-subtle)', color: 'var(--text-secondary)' }}>
+                {k.keyword} <span style={{ color: 'var(--text-tertiary)' }}>({k.count.toLocaleString()})</span>
+              </span>
+            ))}
+          </div>
+
+          <h3 style={{ fontSize: 14, fontWeight: 600, margin: '0 0 4px' }}>{t('admin.cleanup.tier3Title')}</h3>
+          <p style={{ ...muted, marginTop: 0, lineHeight: 1.5 }}>{t('admin.cleanup.tier3Desc')}</p>
+        </>
+      )}
+    </div>
+  );
+}
+
 const TAB_GROUPS = [
-  { id: 'account-mail', labelKey: 'admin.tabs.groupAccountMail', tabIds: ['accounts', 'notifications', 'rules', 'categories'] },
-  { id: 'display', labelKey: 'admin.tabs.groupDisplay', tabIds: ['appearance', 'shortcuts'] },
-  { id: 'security-integrations', labelKey: 'admin.tabs.groupSecurityIntegrations', tabIds: ['security', 'integrations', 'ai', 'ai-actions', 'plugins'] },
-  { id: 'admin', labelKey: 'admin.tabs.groupAdmin', tabIds: ['users', 'sso'] },
+  { id: 'mail', labelKey: 'admin.tabs.groupMail', tabIds: ['accounts', 'rules', 'categories', 'antispam', 'cleanup'] },
+  { id: 'preferences', labelKey: 'admin.tabs.groupPreferences', tabIds: ['appearance', 'behavior', 'notifications', 'shortcuts', 'security'] },
+  { id: 'ai-extensions', labelKey: 'admin.tabs.groupAiExtensions', tabIds: ['ai-actions', 'ai', 'integrations', 'plugins'] },
+  { id: 'admin', labelKey: 'admin.tabs.groupAdmin', tabIds: ['users', 'sso', 'backup'] },
 ];
 
 const TABS = [
-  // Account & Mail
+  // Mail
   {
     id: 'accounts', labelKey: 'admin.tabs.accounts',
     icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>,
-  },
-  {
-    id: 'notifications', labelKey: 'admin.tabs.notifications',
-    icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 010 7.07"/><path d="M19.07 4.93a10 10 0 010 14.14"/></svg>,
   },
   {
     id: 'rules', labelKey: 'admin.tabs.rules',
     icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>,
   },
   {
-    id: 'categories', labelKey: 'admin.tabs.categories', beta: true,
+    id: 'categories', labelKey: 'admin.tabs.categories',
     icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>,
   },
-  // Display
+  {
+    id: 'antispam', labelKey: 'admin.tabs.antispam',
+    icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3z"/><path d="M19 14l.8 2.2L22 17l-2.2.8L19 20l-.8-2.2L16 17l2.2-.8L19 14z"/><path d="M5 15l.6 1.8L7.5 17l-1.9.7L5 19.5l-.6-1.8L2.5 17l1.9-.7L5 15z"/></svg>,
+  },
+  {
+    id: 'cleanup', labelKey: 'admin.tabs.cleanup', beta: true,
+    icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M19 3l-6 6"/><path d="M14 4l6 6"/><path d="M11 8l-7 7c-1 1-1 3 0 4s3 1 4 0l7-7"/><path d="M6 20l-3-3"/></svg>,
+  },
+  // Preferences
   {
     id: 'appearance', labelKey: 'admin.tabs.appearance',
     icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>,
+  },
+  {
+    id: 'behavior', labelKey: 'admin.tabs.behavior',
+    icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>,
+  },
+  {
+    id: 'notifications', labelKey: 'admin.tabs.notifications',
+    icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 010 7.07"/><path d="M19.07 4.93a10 10 0 010 14.14"/></svg>,
   },
   {
     id: 'shortcuts', labelKey: 'admin.tabs.shortcuts',
     mobileHidden: true,
     icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><rect x="2" y="7" width="6" height="4" rx="1"/><rect x="9" y="7" width="6" height="4" rx="1"/><rect x="16" y="7" width="6" height="4" rx="1"/><rect x="2" y="13" width="9" height="4" rx="1"/><rect x="13" y="13" width="9" height="4" rx="1"/></svg>,
   },
-  // Security & Integrations
   {
     id: 'security', labelKey: 'admin.tabs.security',
     icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
+  },
+  // AI & Extensions
+  {
+    id: 'ai-actions', labelKey: 'admin.tabs.aiActions',
+    icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M15 4V2M15 16v-2M8 9h2M20 9h2M17.8 11.8 19 13M15 9h.01M17.8 6.2 19 5M3 21l9-9M12.2 6.2 11 5"/></svg>,
+  },
+  {
+    id: 'ai', labelKey: 'admin.tabs.ai',
+    adminOnly: true,
+    icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4M19 17v4M3 5h4M17 19h4"/></svg>,
   },
   {
     id: 'integrations', labelKey: 'admin.tabs.integrations',
     icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><circle cx="12" cy="12" r="3"/><path d="M6.343 6.343a8 8 0 000 11.314M17.657 6.343a8 8 0 010 11.314M3 12h1m16 0h1M12 3v1m0 16v1"/></svg>,
   },
   {
-    id: 'ai', labelKey: 'admin.tabs.ai', beta: true,
-    adminOnly: true,
-    icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4M19 17v4M3 5h4M17 19h4"/></svg>,
-  },
-  {
-    id: 'ai-actions', labelKey: 'admin.tabs.aiActions', beta: true,
-    icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M15 4V2M15 16v-2M8 9h2M20 9h2M17.8 11.8 19 13M15 9h.01M17.8 6.2 19 5M3 21l9-9M12.2 6.2 11 5"/></svg>,
-  },
-  {
     id: 'plugins', labelKey: 'admin.tabs.plugins', beta: true,
     icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M6 3v6M18 3v6M6 21v-6M18 21v-6M4 9h16v3a6 6 0 01-6 6h-4a6 6 0 01-6-6V9z"/></svg>,
   },
-  // Admin
+  // Administration
   {
     id: 'users', labelKey: 'admin.tabs.users',
     adminOnly: true,
@@ -6532,6 +7264,11 @@ const TABS = [
     id: 'sso', labelKey: 'admin.tabs.sso',
     adminOnly: true,
     icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>,
+  },
+  {
+    id: 'backup', labelKey: 'admin.tabs.backup',
+    adminOnly: true,
+    icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>,
   },
   // About (ungrouped, pinned to bottom)
   {
@@ -6545,9 +7282,9 @@ function ShortcutsTab() {
   const { t } = useTranslation();
   const { shortcuts, setShortcuts } = useStore();
   const [recording, setRecording] = useState(null); // action name currently being recorded
-  const [pendingConflict, setPendingConflict] = useState(null); // { action: conflictingAction, key }
 
   const effective = getEffectiveShortcuts(shortcuts);
+  const conflicts = getShortcutConflicts(shortcuts);
   const groups = getGroupedActions();
 
   // Listen for key presses while recording
@@ -6560,19 +7297,10 @@ function ShortcutsTab() {
 
       if (e.key === 'Escape') {
         setRecording(null);
-        setPendingConflict(null);
         return;
       }
 
-      const key = (e.ctrlKey || e.metaKey) ? `ctrl+${e.key.toLowerCase()}` : e.key;
-
-      // Detect conflicts with other actions (excluding the one being edited)
-      const conflictEntry = Object.entries(effective).find(([a, k]) => k === key && a !== recording);
-      if (conflictEntry) {
-        setPendingConflict({ action: conflictEntry[0], key });
-      } else {
-        setPendingConflict(null);
-      }
+      const key = shortcutBindingFromEvent(e);
 
       const updated = { ...shortcuts, [recording]: key };
       setShortcuts(updated);
@@ -6580,25 +7308,22 @@ function ShortcutsTab() {
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [recording, effective, shortcuts]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [recording, shortcuts, setShortcuts]);
 
   const clearShortcut = (action) => {
     const updated = { ...shortcuts, [action]: null };
     setShortcuts(updated);
-    setPendingConflict(null);
   };
 
   const resetAction = (action) => {
     const updated = { ...shortcuts };
     delete updated[action];
     setShortcuts(updated);
-    setPendingConflict(null);
   };
 
   const resetAll = () => {
     setShortcuts({});
     setRecording(null);
-    setPendingConflict(null);
   };
 
   const kbdStyle = {
@@ -6681,15 +7406,15 @@ function ShortcutsTab() {
         </button>
       </div>
 
-      {pendingConflict && (
-        <div style={{
+      {conflicts.map(({ key, loser, winner }) => (
+        <div key={`${key}:${loser}`} style={{
           marginBottom: 16, padding: '10px 14px',
           background: 'rgba(234, 179, 8, 0.1)', border: '1px solid rgba(234, 179, 8, 0.4)',
           borderRadius: 7, fontSize: 12, color: 'var(--text-secondary)',
         }}>
-          {t('admin.shortcuts.conflict', { key: pendingConflict.key, action: t(ACTION_DEFS[pendingConflict.action]?.labelKey) })}
+          {t('admin.shortcuts.conflict', { key, action: shortcutActionText(t, winner, 'label') })}
         </div>
-      )}
+      ))}
 
       {Object.entries(groups).map(([groupName, actions]) => (
         <div key={groupName} style={{ marginBottom: 24 }}>
@@ -6700,7 +7425,7 @@ function ShortcutsTab() {
             {t(groupName)}
           </div>
           <div style={{ border: '1px solid var(--border)', borderRadius: 8, overflow: 'hidden' }}>
-            {actions.map(({ action, descriptionKey }, i) => {
+            {actions.map(({ action }, i) => {
               const key = effective[action];
               const isDefault = !(action in shortcuts);
               const isRec = recording === action;
@@ -6716,7 +7441,7 @@ function ShortcutsTab() {
                   }}
                 >
                   <span style={{ flex: 1, fontSize: 13, color: 'var(--text-secondary)' }}>
-                    {t(descriptionKey)}
+                    {shortcutActionText(t, action)}
                   </span>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
                     <button
@@ -7230,6 +7955,10 @@ function SecurityTab() {
       totp_success:  t('admin.security.eventTotpSuccess'),
       totp_fail:     t('admin.security.eventTotpFail'),
       sso_login:     t('admin.security.eventSsoLogin'),
+      admin_password_set: t('admin.security.eventAdminPasswordSet'),
+      admin_user_update:  t('admin.security.eventAdminUserUpdate'),
+      admin_totp_disable: t('admin.security.eventAdminTotpDisable'),
+      admin_user_delete:  t('admin.security.eventAdminUserDelete'),
     };
     return map[type] || type;
   };
@@ -7814,10 +8543,14 @@ function SecurityTab() {
                   {authEvents.map(ev => (
                     <tr key={ev.id} style={{ borderBottom: '1px solid var(--border-subtle, var(--border))' }}>
                       <td style={{ padding: '6px 8px', color: 'var(--text-secondary)', whiteSpace: 'nowrap' }}>
-                        {new Date(ev.created_at).toLocaleString()}
+                        {formatDateTime(ev.created_at)}
                       </td>
                       <td style={{ padding: '6px 8px', color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>
                         {eventLabel(ev.event_type)}
+                        {/* Admin changes to a user: the User column is the account changed, this is who changed it. */}
+                        {ev.actor_username && (
+                          <span style={{ color: 'var(--text-secondary)' }}> {t('admin.security.byActor', { actor: ev.actor_username })}</span>
+                        )}
                       </td>
                       <td style={{ padding: '6px 8px', color: 'var(--text-secondary)', maxWidth: 120, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {ev.username || '—'}
@@ -7964,6 +8697,7 @@ function LinkedIdentitiesSection() {
 function makeSearchIndex(t) {
   const tabLabel = (id) => t(`admin.tabs.${id}`);
   const layoutCrumb = `${tabLabel('appearance')} › ${t('admin.appearance.layout')}`;
+  const behaviorCrumb = tabLabel('behavior');
   const fontsCrumb = `${tabLabel('appearance')} › ${tabLabel('fontsAndLanguage')}`;
   const secCrumb = `${tabLabel('security')} › ${tabLabel('security')}`;
   const privCrumb = `${tabLabel('security')} › ${tabLabel('privacy')}`;
@@ -7971,30 +8705,36 @@ function makeSearchIndex(t) {
     // Accounts
     { label: t('admin.accounts.title'), keywords: ['account', 'email', 'imap', 'smtp', 'gmail', 'yahoo', 'icloud', 'password', 'add account', 'connect'], tab: 'accounts', breadcrumb: tabLabel('accounts') },
     { label: t('admin.accounts.signatureSection'), keywords: ['signature', 'sign off', 'footer', 'alias', 'send as'], tab: 'accounts', breadcrumb: tabLabel('accounts') },
+    { label: t('admin.accounts.autoRecipientsSection'), keywords: ['cc', 'bcc', 'copy', 'carbon copy', 'blind copy', 'always bcc', 'automatic', 'copy to myself'], tab: 'accounts', breadcrumb: tabLabel('accounts') },
     // Rules
     { label: t('admin.rules.title'), keywords: ['rule', 'filter', 'condition', 'action', 'move', 'auto', 'automate', 'inbox rule', 'sort'], tab: 'rules', subtab: 'rules', breadcrumb: `${tabLabel('rules')} › ${t('admin.rules.subTabRules')}` },
     { label: t('admin.rules.subTabBlockList'), keywords: ['block', 'blocked', 'sender', 'blacklist', 'spam', 'domain'], tab: 'rules', subtab: 'block-list', breadcrumb: `${tabLabel('rules')} › ${t('admin.rules.subTabBlockList')}` },
     // Appearance > Theme
     { label: tabLabel('theme'), keywords: ['theme', 'dark', 'light', 'color', 'colour', 'dark mode', 'light mode'], tab: 'appearance', subtab: 'theme', breadcrumb: `${tabLabel('appearance')} › ${tabLabel('theme')}` },
+    { label: t('admin.appearance.darkEmailBodies'), keywords: ['dark email', 'email body', 'dark mode', 'dark message', 'white background'], tab: 'appearance', subtab: 'theme', breadcrumb: `${tabLabel('appearance')} › ${tabLabel('theme')}` },
     // Appearance > Layout
     { label: t('admin.appearance.layout'), keywords: ['layout', 'pane', 'split', 'preview', 'reading pane', 'side by side', 'stacked'], tab: 'appearance', subtab: 'layout', breadcrumb: layoutCrumb },
     { label: t('admin.messageList.scrollingMode'), keywords: ['scroll', 'infinite', 'paginated', 'pagination', 'pages'], tab: 'appearance', subtab: 'layout', breadcrumb: layoutCrumb },
     { label: t('admin.messageList.perPagePaginated'), keywords: ['per page', 'batch', 'messages per page', 'count', '25', '50', '100', '200', 'page size'], tab: 'appearance', subtab: 'layout', breadcrumb: layoutCrumb },
-    { label: t('admin.messageList.hoverQuickActionsMode'), keywords: ['hover', 'quick actions', 'hover buttons', 'row actions'], tab: 'appearance', subtab: 'layout', breadcrumb: layoutCrumb },
+    { label: t('admin.messageList.hoverQuickActionsMode'), keywords: ['hover', 'quick actions', 'hover buttons', 'row actions'], tab: 'appearance', subtab: 'layout', mobileHidden: true, breadcrumb: layoutCrumb },
     {
       label: t('admin.messageList.senderFavicons'),
       keywords: ['sender', 'favicon', 'avatar', 'contact photo', 'website icon', 'logo'],
       tab: 'appearance', subtab: 'layout', breadcrumb: layoutCrumb,
     },
-    { label: t('admin.messageList.swipeActions'), keywords: ['swipe', 'gesture', 'mobile', 'swipe left', 'swipe right', 'touch'], tab: 'appearance', subtab: 'layout', breadcrumb: layoutCrumb },
-    { label: t('admin.messageList.syncFrequency'), keywords: ['sync', 'interval', 'frequency', 'refresh', 'poll', 'check mail', '15s', '30s', '60s'], tab: 'appearance', subtab: 'layout', breadcrumb: layoutCrumb },
-    { label: t('admin.messageList.folderSyncFrequency'), keywords: ['folder', 'sync', 'structure', 'list', 'refresh', 'mailbox', '15 min', '30 min', '1 hour', 'never'], tab: 'appearance', subtab: 'layout', breadcrumb: layoutCrumb },
     { label: t('admin.messageList.threadingMode'), keywords: ['thread', 'conversation', 'grouping', 'threading', 'group'], tab: 'appearance', subtab: 'layout', breadcrumb: layoutCrumb },
-    { label: t('admin.messageList.composeFormat'), keywords: ['compose', 'format', 'rich text', 'plain text', 'html', 'editor'], tab: 'appearance', subtab: 'layout', breadcrumb: layoutCrumb },
-    { label: t('admin.messageList.defaultReplyAction'), keywords: ['reply', 'reply all', 'default reply'], tab: 'appearance', subtab: 'layout', breadcrumb: layoutCrumb },
-    { label: t('admin.messageList.markReadBehavior'), keywords: ['mark read', 'mark as read', 'read delay', 'auto read', 'manual read', 'unread'], tab: 'appearance', subtab: 'layout', breadcrumb: layoutCrumb },
+    // Behavior
+    { label: t('admin.messageList.swipeActions'), keywords: ['swipe', 'gesture', 'mobile', 'swipe left', 'swipe right', 'touch'], tab: 'behavior', breadcrumb: behaviorCrumb },
+    { label: t('admin.messageList.syncFrequency'), keywords: ['sync', 'interval', 'frequency', 'refresh', 'poll', 'check mail', '15s', '30s', '60s'], tab: 'behavior', breadcrumb: behaviorCrumb },
+    { label: t('admin.messageList.folderSyncFrequency'), keywords: ['folder', 'sync', 'structure', 'list', 'refresh', 'mailbox', '15 min', '30 min', '1 hour', 'never'], tab: 'behavior', breadcrumb: behaviorCrumb },
+    { label: t('admin.messageList.composeFormat'), keywords: ['compose', 'format', 'rich text', 'plain text', 'html', 'editor'], tab: 'behavior', breadcrumb: behaviorCrumb },
+    { label: t('admin.messageList.defaultReplyAction'), keywords: ['reply', 'reply all', 'default reply'], tab: 'behavior', breadcrumb: behaviorCrumb },
+    { label: t('admin.messageList.afterRemove'), keywords: ['next message', 'auto advance', 'after delete', 'after archive', 'open next', 'previous message'], tab: 'behavior', breadcrumb: behaviorCrumb },
+    { label: t('admin.messageList.markReadBehavior'), keywords: ['mark read', 'mark as read', 'read delay', 'auto read', 'manual read', 'unread'], tab: 'behavior', breadcrumb: behaviorCrumb },
+    { label: t('admin.messageList.defaultSender'), keywords: ['from', 'sender', 'default sender', 'send from', 'alias', 'identity'], tab: 'behavior', breadcrumb: behaviorCrumb },
+    { label: t('admin.messageList.defaultMailApp'), keywords: ['mailto', 'default app', 'default email', 'protocol handler', 'links'], tab: 'behavior', breadcrumb: behaviorCrumb },
     // Appearance > Fonts & Language
-    { label: t('admin.appearance.language'), keywords: ['language', 'locale', 'french', 'english', 'spanish', 'german', 'deutsch', 'russian', 'chinese', 'italian', 'français', 'español'], tab: 'appearance', subtab: 'fonts', breadcrumb: fontsCrumb },
+    { label: t('admin.appearance.language'), keywords: ['language', 'locale', 'french', 'english', 'spanish', 'german', 'deutsch', 'russian', 'chinese', 'italian', 'czech', 'čeština', 'portuguese', 'português', 'brasil', 'korean', '한국어', 'français', 'español'], tab: 'appearance', subtab: 'fonts', breadcrumb: fontsCrumb },
     { label: t('admin.appearance.fontSize'), keywords: ['font size', 'text size', 'zoom', 'scale', 'accessibility', 'larger text'], tab: 'appearance', subtab: 'fonts', breadcrumb: fontsCrumb },
     { label: t('admin.appearance.typography'), keywords: ['font', 'typography', 'typeface', 'serif', 'sans', 'monospace', 'reading font'], tab: 'appearance', subtab: 'fonts', breadcrumb: fontsCrumb },
     // Integrations
@@ -8022,6 +8762,7 @@ function makeSearchIndex(t) {
     { label: t('admin.systemEmail.tabUsers'), keywords: ['user', 'invite', 'admin', 'role', 'manage users', 'add user'], tab: 'users', adminOnly: true, breadcrumb: tabLabel('users') },
     { label: t('admin.systemEmail.tabEmail'), keywords: ['system email', 'smtp', 'admin email', 'invite email', 'outgoing email'], tab: 'users', adminOnly: true, breadcrumb: tabLabel('users') },
     { label: t('admin.sso.title'), keywords: ['sso', 'oidc', 'single sign on', 'oauth', 'provider', 'identity provider'], tab: 'sso', adminOnly: true, breadcrumb: tabLabel('sso') },
+    { label: t('admin.backup.title'), keywords: ['backup', 'restore', 'export', 'import', 'migrate', 'move server', 'transfer', 'download settings'], tab: 'backup', adminOnly: true, breadcrumb: tabLabel('backup') },
   ];
 }
 
@@ -8136,13 +8877,17 @@ export default function AdminPanel() {
   const tabContent = (
     <>
       {adminTab === 'accounts' && <AccountsTab />}
+      {adminTab === 'antispam' && <SpamSettings />}
       {adminTab === 'rules' && <RulesAndBlockListTab initialSubTab={pendingSubTab} />}
       {adminTab === 'categories' && <CategoriesSection initialSubTab={pendingSubTab} />}
+      {adminTab === 'cleanup' && <MailboxCleanupTab />}
       {adminTab === 'appearance' && <AppearanceTab initialSubTab={pendingSubTab} />}
       {adminTab === 'integrations' && <IntegrationsTab />}
       {adminTab === 'users' && <UsersTab />}
       {adminTab === 'sso' && <SSOTab />}
+      {adminTab === 'backup' && <BackupSettings />}
       {adminTab === 'security' && <SecurityPrivacyTab initialSubTab={pendingSubTab} />}
+      {adminTab === 'behavior' && <BehaviorTab />}
       {adminTab === 'notifications' && <NotificationsTab />}
       {adminTab === 'shortcuts' && !isMobile && <ShortcutsTab />}
       {adminTab === 'ai' && <AISection />}
@@ -8250,14 +8995,14 @@ export default function AdminPanel() {
     >
       <div className="admin-panel admin-window" style={{
         background: 'var(--bg-secondary)', border: '1px solid var(--border)',
-        borderRadius: 16, width: '100%', maxWidth: 680,
+        borderRadius: 16, width: '100%', maxWidth: 740,
         height: '82vh', maxHeight: 700, display: 'flex', overflow: 'hidden',
         boxShadow: 'var(--shadow-modal)',
         animation: 'modal-enter var(--motion-normal) var(--ease-emphasized) both',
       }}>
         {/* Left sidebar */}
         <div style={{
-          width: 180, borderRight: '1px solid var(--border-subtle)',
+          width: 216, borderRight: '1px solid var(--border-subtle)',
           background: 'var(--bg-primary)', padding: '20px 10px',
           display: 'flex', flexDirection: 'column', flexShrink: 0,
         }}>
@@ -8267,7 +9012,10 @@ export default function AdminPanel() {
 
           {/* Scrollable tab list — keeps the Close button pinned even when the tab list is taller
               than the modal (e.g. once several plugins/beta tabs are present). */}
-          <div style={{ flex: 1, minHeight: 0, overflowY: 'auto' }}>
+          {/* overflowX hidden: overflowY:auto would otherwise promote overflow-x to auto too, so a
+              long label in any locale (e.g. German "Tastaturkürzel") would show a horizontal
+              scrollbar. Labels wrap instead of overflowing (see the tab buttons below). */}
+          <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', overflowX: 'hidden' }}>
           {TAB_GROUPS.map((group, gi) => {
             const groupTabs = visibleTabs.filter(tab => group.tabIds.includes(tab.id));
             if (groupTabs.length === 0) return null;
@@ -8275,7 +9023,7 @@ export default function AdminPanel() {
               <div key={group.id} style={{ marginBottom: gi < TAB_GROUPS.length - 1 ? 4 : 0 }}>
                 <div style={{
                   fontSize: 10, fontWeight: 700, color: 'var(--text-secondary)',
-                  letterSpacing: '0.07em', textTransform: 'uppercase',
+                  letterSpacing: '0.07em', textTransform: 'uppercase', overflowWrap: 'anywhere',
                   padding: gi === 0 ? '2px 10px 3px' : '10px 10px 3px',
                   borderTop: gi === 0 ? 'none' : '1px solid var(--border-subtle)',
                   marginTop: gi === 0 ? 0 : 4,
@@ -8300,11 +9048,11 @@ export default function AdminPanel() {
                       onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = 'var(--bg-tertiary)'; }}
                       onMouseLeave={e => { if (!isActive) e.currentTarget.style.background = 'transparent'; }}
                     >
-                      <span style={{ color: isActive ? 'var(--accent)' : 'var(--text-tertiary)' }}>
+                      <span style={{ color: isActive ? 'var(--accent)' : 'var(--text-tertiary)', flexShrink: 0 }}>
                         {tab.icon}
                       </span>
-                      {t(tab.labelKey)}
-                      {tab.beta && <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.06em', padding: '1px 4px', borderRadius: 3, background: 'color-mix(in srgb, var(--accent) 15%, transparent)', color: 'var(--accent)', marginLeft: 'auto' }}>BETA</span>}
+                      <span style={{ flex: 1, minWidth: 0, overflowWrap: 'anywhere' }}>{t(tab.labelKey)}</span>
+                      {tab.beta && <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.06em', padding: '1px 4px', borderRadius: 3, background: 'color-mix(in srgb, var(--accent) 15%, transparent)', color: 'var(--accent)', flexShrink: 0 }}>BETA</span>}
                     </button>
                   );
                 })}
@@ -8330,11 +9078,11 @@ export default function AdminPanel() {
                 onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = 'var(--bg-tertiary)'; }}
                 onMouseLeave={e => { if (!isActive) e.currentTarget.style.background = 'transparent'; }}
               >
-                <span style={{ color: isActive ? 'var(--accent)' : 'var(--text-tertiary)' }}>
+                <span style={{ color: isActive ? 'var(--accent)' : 'var(--text-tertiary)', flexShrink: 0 }}>
                   {tab.icon}
                 </span>
-                {t(tab.labelKey)}
-                {tab.beta && <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.06em', padding: '1px 4px', borderRadius: 3, background: 'color-mix(in srgb, var(--accent) 15%, transparent)', color: 'var(--accent)', marginLeft: 'auto' }}>BETA</span>}
+                <span style={{ flex: 1, minWidth: 0, overflowWrap: 'anywhere' }}>{t(tab.labelKey)}</span>
+                {tab.beta && <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.06em', padding: '1px 4px', borderRadius: 3, background: 'color-mix(in srgb, var(--accent) 15%, transparent)', color: 'var(--accent)', flexShrink: 0 }}>BETA</span>}
               </button>
             );
           })}

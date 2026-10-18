@@ -1,3 +1,7 @@
+// Delimiter and parent-path primitives are shared with the move-picker label
+// and search helpers so the tree and the pickers can never disagree.
+import { folderDelimiter, folderParentPath as folderParent } from './folderDisplay.js';
+
 export function collapsedTooltip(label, collapsed) {
   if (!collapsed) return undefined;
   // An empty title suppresses the browser's own tooltip, so drop the attribute.
@@ -12,17 +16,39 @@ export function activateOnKey(activate) {
   };
 }
 
+export function hasRenderedInbox(folders, {
+  expanded = false,
+  sidebarCollapsed = false,
+  hiddenPaths = [],
+  showingHidden = false,
+} = {}) {
+  if (sidebarCollapsed || !expanded) return false;
+  if (!Array.isArray(folders) || !folders.some(folder => folder?.path === 'INBOX')) {
+    return false;
+  }
+  const isHidden = Array.isArray(hiddenPaths) && hiddenPaths.includes('INBOX');
+  return !isHidden || Boolean(showingHidden);
+}
+
 export const FOLDER_ORDER_DRAG_TYPE = 'application/x-mailflow-folder-order';
 
 function delimiterFor(folders) {
-  return folders.find(folder => (
+  return folderDelimiter(folders.find(folder => (
     typeof folder?.delimiter === 'string' && folder.delimiter
-  ))?.delimiter || '/';
+  )));
 }
 
-function folderParent(path, delimiter) {
-  const index = path.lastIndexOf(delimiter);
-  return index === -1 ? null : path.slice(0, index);
+const ROOT_SPECIAL_USES = new Set([
+  '\\archive',
+  '\\drafts',
+  '\\inbox',
+  '\\junk',
+  '\\sent',
+  '\\trash',
+]);
+
+function isRootSpecialUse(folder) {
+  return ROOT_SPECIAL_USES.has(String(folder?.special_use || '').toLowerCase());
 }
 
 function folderPathsWithAncestors(folders) {
@@ -73,6 +99,31 @@ export function normalizeFolderOrder(folders, savedOrder = []) {
   return [...ranked, ...known.filter(folderPath => !seen.has(folderPath))];
 }
 
+// The unread total a collapsed folder shows (#536): its own count plus every subfolder's, at any
+// depth, so a folder whose new mail sits in its children still says so while they are hidden. A
+// folder the user has hidden is left out with everything under it, as the sidebar leaves it out.
+// Folders without a selectable mailbox (\Noselect, or a parent only implied by a path) have no
+// count of their own. The total is known once any folder in it has been observed, and stale when
+// any count that contributes to it is.
+export function subtreeUnread(node, isHidden = () => false) {
+  let count = 0;
+  let known = false;
+  let stale = false;
+  const visit = (folder, isRoot) => {
+    if (!isRoot && isHidden(folder.path)) return;
+    if (!folder.no_select && folder.counts_known !== false && Number.isFinite(folder.unread_count)) {
+      known = true;
+      if (folder.unread_count > 0) {
+        count += folder.unread_count;
+        if (folder.counts_stale) stale = true;
+      }
+    }
+    for (const child of folder.children || []) visit(child, false);
+  };
+  if (node) visit(node, true);
+  return { count, known, stale };
+}
+
 export function buildFolderTree(folders, savedOrder = []) {
   const safeFolders = Array.isArray(folders) ? folders : [];
   const delimiter = delimiterFor(safeFolders);
@@ -104,7 +155,7 @@ export function buildFolderTree(folders, savedOrder = []) {
   const nodes = Object.values(map).sort((a, b) => a.path.localeCompare(b.path));
   for (const node of nodes) {
     const parentPath = folderParent(node.path, delimiter);
-    if (parentPath && map[parentPath] && parentPath !== node.path) {
+    if (!isRootSpecialUse(node) && parentPath && map[parentPath] && parentPath !== node.path) {
       map[parentPath].children.push(node);
     } else {
       roots.push(node);

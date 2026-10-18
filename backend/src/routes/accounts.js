@@ -1,3 +1,4 @@
+import { publicFolderCounts } from '../services/folderStatus.js';
 import { Router } from 'express';
 import { query } from '../services/db.js';
 import { requireAuth } from '../middleware/auth.js';
@@ -6,8 +7,11 @@ import { encrypt } from '../services/encryption.js';
 import { sanitizeSignature } from '../services/emailSanitizer.js';
 import { validateHost } from '../services/hostValidation.js';
 import { getConnectionPolicy } from '../services/connectionPolicy.js';
+import { normalizeAuthservId } from '../services/spamParser.js';
 import { pluginRegistry } from '../plugins/registry.js';
 import { createKeyedSerializer } from '../utils/keyedSerializer.js';
+import { uuidParam } from '../utils/uuid.js';
+import { normalizeAddressList } from '../utils/addressList.js';
 
 // Serialize an account's reconnect triggers so a rapid settings change (e.g. a
 // gtd_enabled double-toggle) can't fire two overlapping disconnect→connect chains —
@@ -39,17 +43,44 @@ function hasHeaderInjectionChars(str) {
 
 const router = Router();
 router.use(requireAuth);
+// Reject malformed UUID path params with a 400 before they reach a uuid-typed query (else the
+// Postgres cast error surfaces as a 500). Every :id/:aliasId in this router is a UUID.
+// A mailbox's icon (#376): exactly one emoji (a flag, a keycap or a joined sequence such as a
+// family counts as one), or none. Returns { value } with null for none, or { error }.
+const GRAPHEMES = new Intl.Segmenter('en', { granularity: 'grapheme' });
+// The whole of it must be one emoji sequence: a flag (two regional indicators), a keycap, a tag
+// flag (Scotland), or an emoji with an optional skin tone, joined (ZWJ) to more of the same. Only
+// a grapheme count let in an emoji under a pile of combining marks, a letter keycap, invisible tag
+// characters and plain text symbols such as ©.
+const EMOJI = /^(?:\p{Regional_Indicator}{2}|[0-9#*]\uFE0F?\u20E3|\u{1F3F4}[\u{E0020}-\u{E007E}]+\u{E007F}|(?!\p{Regional_Indicator})(?:\p{Emoji_Presentation}|\p{Extended_Pictographic}\uFE0F)\p{Emoji_Modifier}?(?:\u200D\p{Extended_Pictographic}\uFE0F?\p{Emoji_Modifier}?)*)$/u;
+export function normalizeAccountIcon(icon) {
+  if (icon === null || icon === undefined) return { value: null };
+  if (typeof icon !== 'string') return { error: 'icon must be a string' };
+  const value = icon.trim();
+  if (!value) return { value: null };
+  if (value.length > 32 || [...GRAPHEMES.segment(value)].length !== 1 || !EMOJI.test(value)) {
+    return { error: 'icon must be a single emoji' };
+  }
+  return { value };
+}
 
-// Fields safe to return to the client — matches the GET list, excludes credentials and tokens
-const SAFE_FIELDS = [
-  'id', 'name', 'sender_name', 'email_address', 'color', 'protocol',
-  'imap_host', 'imap_port', 'imap_skip_tls_verify',
+router.param('id', uuidParam('id'));
+router.param('aliasId', uuidParam('aliasId'));
+
+// Fields safe to return to the client, and the GET list's columns. Excludes credentials and tokens.
+export const SAFE_FIELDS = [
+  'id', 'name', 'sender_name', 'email_address', 'color', 'icon', 'protocol',
+  'imap_host', 'imap_port', 'imap_tls', 'imap_skip_tls_verify',
   'smtp_host', 'smtp_port', 'smtp_tls',
   'auth_user', 'smtp_auth_user', 'oauth_provider', 'enabled',
   'include_in_unified_inbox',
   'last_sync', 'sync_error', 'sort_order', 'folder_mappings',
-  'signature', 'created_at', 'categorization_enabled',
+  'signature', 'signature_enabled', 'created_at', 'categorization_enabled', 'antispam_enabled',
+  'trusted_authserv_id', 'auto_cc_addresses', 'auto_bcc_addresses',
 ];
+// Columns PUT /:id may write. The settings form sends back what GET returned, so every
+// non-secret one must be in SAFE_FIELDS or saving an unrelated edit would write it as empty.
+export const ACCOUNT_UPDATE_FIELDS = ['name', 'sender_name', 'color', 'icon', 'enabled', 'include_in_unified_inbox', 'auth_user', 'auth_pass', 'sort_order', 'imap_host', 'imap_port', 'imap_tls', 'imap_skip_tls_verify', 'smtp_host', 'smtp_port', 'smtp_tls', 'smtp_auth_user', 'smtp_auth_pass', 'folder_mappings', 'signature', 'signature_enabled', 'categorization_enabled', 'antispam_enabled', 'trusted_authserv_id', 'auto_cc_addresses', 'auto_bcc_addresses'];
 function safeAccount(row) {
   const obj = Object.fromEntries(SAFE_FIELDS.map(k => [k, row[k]]));
   // Sanitize on read so legacy values stored before the write-time sanitizer are safe
@@ -59,11 +90,7 @@ function safeAccount(row) {
 
 router.get('/', async (req, res) => {
   const result = await query(
-    `SELECT id, name, sender_name, email_address, color, protocol, imap_host, imap_port, imap_tls, imap_skip_tls_verify,
-            smtp_host, smtp_port, smtp_tls, auth_user, smtp_auth_user, oauth_provider, enabled,
-            include_in_unified_inbox,
-            last_sync, sync_error, sort_order, folder_mappings, signature, created_at,
-            categorization_enabled
+    `SELECT ${SAFE_FIELDS.join(', ')}
      FROM email_accounts WHERE user_id = $1 ORDER BY sort_order, created_at`,
     [req.session.userId]
   );
@@ -102,15 +129,18 @@ router.get('/', async (req, res) => {
 
 router.post('/', async (req, res) => {
   const {
-    name, sender_name = null, email_address, color = '#6366f1', protocol = 'imap',
+    name, sender_name = null, email_address, color = '#6366f1', icon = null, protocol = 'imap',
     imap_host, imap_port = 993, imap_skip_tls_verify = false,
     smtp_host, smtp_port = 587, smtp_tls = 'STARTTLS',
     auth_user, auth_pass, smtp_auth_user = null, smtp_auth_pass = null,
     oauth_provider, oauth_access_token, oauth_refresh_token,
-    signature = null
+    signature = null, signature_enabled = true
   } = req.body;
 
   if (!name || !email_address) return res.status(400).json({ error: 'Name and email required' });
+  const { value: iconValue, error: iconError } = normalizeAccountIcon(icon);
+  if (iconError) return res.status(400).json({ error: iconError });
+  if (typeof signature_enabled !== 'boolean') return res.status(400).json({ error: 'signature_enabled must be a boolean' });
   if (hasHeaderInjectionChars(name) || hasHeaderInjectionChars(email_address)) {
     return res.status(400).json({ error: 'Name and email address cannot contain control characters' });
   }
@@ -137,15 +167,15 @@ router.post('/', async (req, res) => {
         user_id, name, sender_name, email_address, color, protocol,
         imap_host, imap_port, imap_tls, imap_skip_tls_verify, smtp_host, smtp_port, smtp_tls,
         auth_user, auth_pass, smtp_auth_user, smtp_auth_pass, oauth_provider, oauth_access_token, oauth_refresh_token,
-        signature
-      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21)
+        signature, signature_enabled, icon
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23)
       RETURNING *
     `, [
       req.session.userId, name, sender_name || null, email_address, color, protocol,
       imap_host, imap_port, Number(imap_port) % 1000 === 993, !!imap_skip_tls_verify, smtp_host, smtp_port, smtp_tls,
       auth_user, encrypt(auth_pass), smtp_auth_user || null, encrypt(smtp_auth_pass) || null,
       oauth_provider, encrypt(oauth_access_token), encrypt(oauth_refresh_token),
-      sanitizeSignature(signature) || null
+      sanitizeSignature(signature) || null, signature_enabled !== false, iconValue
     ]);
 
     const account = result.rows[0];
@@ -176,6 +206,14 @@ router.put('/:id', async (req, res) => {
   if ('sender_name' in updates && updates.sender_name && hasHeaderInjectionChars(updates.sender_name)) {
     return res.status(400).json({ error: 'Sender name cannot contain control characters' });
   }
+  if ('signature_enabled' in updates && typeof updates.signature_enabled !== 'boolean') {
+    return res.status(400).json({ error: 'signature_enabled must be a boolean' });
+  }
+  if ('icon' in updates) {
+    const { value, error } = normalizeAccountIcon(updates.icon);
+    if (error) return res.status(400).json({ error });
+    updates.icon = value;
+  }
   const policy = await getConnectionPolicy();
 
   if ('imap_host' in updates && updates.imap_host) {
@@ -201,6 +239,37 @@ router.put('/:id', async (req, res) => {
 
   if ('imap_port' in updates) updates.imap_tls = Number(updates.imap_port) % 1000 === 993;
 
+  // Trusted Authentication-Results authserv-id: store the normalized token, or
+  // NULL to trust nothing (the default). Reject junk before it reaches the DB —
+  // the value is only ever compared against a header token, so a strict shape is
+  // enough (letters/digits plus the hostname punctuation seen in the wild).
+  if ('trusted_authserv_id' in updates) {
+    const rawId = updates.trusted_authserv_id;
+    if (rawId === null || rawId === undefined || String(rawId).trim() === '') {
+      updates.trusted_authserv_id = null;
+    } else if (typeof rawId !== 'string' || rawId.trim().length > 255
+      || !/^[A-Za-z0-9._:/-]+$/.test(rawId.trim())) {
+      return res.status(400).json({
+        error: 'trusted_authserv_id must be a single hostname-like token (letters, digits, ".", "-", "_", "/", ":")',
+      });
+    } else {
+      updates.trusted_authserv_id = normalizeAuthservId(rawId);
+    }
+  }
+
+  try {
+    if ('auto_cc_addresses' in updates) updates.auto_cc_addresses = normalizeAddressList(updates.auto_cc_addresses, 'Automatic Cc');
+    if ('auto_bcc_addresses' in updates) updates.auto_bcc_addresses = normalizeAddressList(updates.auto_bcc_addresses, 'Automatic Bcc');
+  } catch (err) {
+    return res.status(400).json({ error: err.message });
+  }
+  // An address in both lists is refused, not guessed at: it was meant either to be seen (Cc) or hidden (Bcc).
+  if ('auto_cc_addresses' in updates && 'auto_bcc_addresses' in updates) {
+    const bcc = new Set(updates.auto_bcc_addresses.map(a => a.toLowerCase()));
+    const shared = updates.auto_cc_addresses.find(a => bcc.has(a.toLowerCase()));
+    if (shared) return res.status(400).json({ error: `${JSON.stringify(shared)} cannot be in both Automatic Cc and Automatic Bcc` });
+  }
+
   // Let plugins validate the settings fields they own (GTD owns gtd_enabled/gtd_folders) before we
   // touch anything. A plugin may hard-reject the change (return an error response), report per-field
   // sub-values it reset to defaults, and flag whether its change requires a reconnect. The actual
@@ -218,11 +287,10 @@ router.put('/:id', async (req, res) => {
     if (r.requiresReconnect) pluginRequiresReconnect = true;
   }
 
-  const allowed = ['name', 'sender_name', 'color', 'enabled', 'include_in_unified_inbox', 'auth_user', 'auth_pass', 'sort_order', 'imap_host', 'imap_port', 'imap_tls', 'imap_skip_tls_verify', 'smtp_host', 'smtp_port', 'smtp_tls', 'smtp_auth_user', 'smtp_auth_pass', 'folder_mappings', 'signature', 'categorization_enabled'];
   const sets = [];
   const values = [];
   let i = 1;
-  for (const key of allowed) {
+  for (const key of ACCOUNT_UPDATE_FIELDS) {
     if (key in updates) {
       sets.push(`${key} = $${i++}`);
       const value = ((key === 'auth_pass' || key === 'smtp_auth_pass') && updates[key]) ? encrypt(updates[key])
@@ -293,6 +361,10 @@ router.put('/:id', async (req, res) => {
     reconnectQueue(id, () => imapManager.disconnectAccount(id))
       .catch(err => console.error(`Failed to disconnect account ${id} after disable:`, err.message));
   } else if (needsReconnect && updated.protocol === 'imap' && updated.enabled) {
+    // An explicit settings change is how a wrong password gets fixed, so drop any backoff
+    // first. Auth failures back off for hours, and without this the corrected credentials
+    // would sit unused until that expired.
+    imapManager.clearConnectCooldown(id);
     reconnectQueue(id, () =>
       imapManager.disconnectAccount(id)
         .then(() => query('SELECT * FROM email_accounts WHERE id = $1', [id]))
@@ -326,6 +398,10 @@ router.post('/:id/reconnect', async (req, res) => {
   const result = await query('SELECT * FROM email_accounts WHERE id = $1 AND user_id = $2', [id, req.session.userId]);
   if (!result.rows.length) return res.status(404).json({ error: 'Account not found' });
 
+  // An explicit Reconnect is a human saying "try now", so drop any backoff first. Auth
+  // failures back off for up to six hours, and without this the button would answer
+  // { ok: true } while connectAccount early-returned on the cooldown: a silent no-op.
+  imapManager.clearConnectCooldown(id);
   imapManager.connectAccount(result.rows[0]).catch(console.error);
   res.json({ ok: true });
 });
@@ -415,7 +491,9 @@ router.get('/:id/folders', async (req, res) => {
     'SELECT * FROM folders WHERE account_id = $1 ORDER BY path',
     [id]
   );
-  res.json(result.rows);
+  // Freshness depends on how long this account's rotation takes, so every row needs the count.
+  const selectableFolders = result.rows.filter(row => !row.no_select).length;
+  res.json(result.rows.map(row => publicFolderCounts(row, Date.now(), { selectableFolders })));
 });
 
 router.post('/:id/reindex', async (req, res) => {

@@ -1,22 +1,36 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { mailflowApiUrl, mailflowFetchHeaders, mailflowHostChrome } from '../utils/api.js';  // NEXAHUB
+import AccountMark from './AccountMark.jsx';
 import { useTranslation } from 'react-i18next';
 import { useStore } from '../store/index.js';
+import { unreadBadge } from '../utils/unreadBadge.js';
 import { api } from '../utils/api.js';
+import { signOut } from '../utils/signOut.js';
+import { resolveThreadMessages } from '../utils/threadActions.js';
+import { keepDraftsApart } from '../utils/conversationActions.js';
+import { folderDisplayName } from '../utils/folderDisplay.js';
 import {
   activateOnKey,
   buildFolderTree,
+  subtreeUnread,
   collapsedTooltip,
   FOLDER_ORDER_DRAG_TYPE,
   folderDropPosition,
+  hasRenderedInbox,
   resolveFolderOrderDrop,
 } from '../utils/sidebar.js';
 import { useMobile } from '../hooks/useMobile.js';
 import LogoMark from './LogoMark.jsx';
 import ProfileModal from './ProfileModal.jsx';
 import { useUiScale, descale } from '../hooks/useUiScale.js';
+import { SNOOZED_FOLDER } from '../utils/snoozeActions.js';
 
 const ICONS = {
+  snoozed: (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
+      <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+    </svg>
+  ),
   inbox: (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75">
       <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/>
@@ -294,7 +308,7 @@ export default function Sidebar() {
     return () => document.removeEventListener('dragend', clear);
   }, [clearFolderDrag]);
 
-  const handleMsgDrop = useCallback((e, targetFolder) => {
+  const handleMsgDrop = useCallback(async (e, targetFolder) => {
     e.preventDefault();
     setMsgDragTarget(null);
     const raw = e.dataTransfer.getData('application/x-mailflow-message');
@@ -303,28 +317,68 @@ export default function Sidebar() {
     try { payload = JSON.parse(raw); } catch { return; }
     const state = useStore.getState();
     const pool = [...state.messages, ...state.searchResults];
-    const ids = payload.messageIds ?? [payload.messageId];
-    const msgs = ids
-      .map(id => pool.find(m => m.id === id))
-      .filter(m => m != null && m.folder !== targetFolder);
+
+    // `msgs` are the rows the list hides and puts back; `movedIds` are what the server is asked
+    // to move. They are the same thing for ordinary rows and deliberately differ for a thread:
+    // one visible row stands for messages that were never loaded, so the ids come from the
+    // server while the row is the only thing there is to restore.
+    let msgs;
+    let movedIds;
+    if (payload.threadId) {
+      const row = pool.find(m => m.id === payload.messageId);
+      if (!row) return;
+      let threadMsgs;
+      try {
+        // The server decides what a thread contains, never the expansion-time cache — a thread
+        // gains messages while you look at it, and a stale list moves some and strands the rest.
+        // See utils/threadActions.js.
+        threadMsgs = await resolveThreadMessages({
+          message: row,
+          isThreadRow: true,
+          fetchThread: () => api.getThread(payload.threadId, payload.threadFolder, payload.threadUnified),
+        });
+      } catch (err) {
+        console.error('Failed to load thread for move:', err.message);
+        state.addNotification({ title: t('message.moved.failTitle'), body: t('message.moved.failBody') });
+        return;
+      }
+      // A folder path is account-specific, and a thread can span accounts (and always includes
+      // Sent copies), so scope the move to the dragged row's account exactly as the context-menu
+      // move does — the server silently skips messages whose account lacks the destination.
+      movedIds = [...new Set(
+        keepDraftsApart(threadMsgs, row.id).filter(m => m?.account_id === row.account_id).map(m => m.id).filter(Boolean)
+      )];
+      if (!movedIds.length) movedIds = [row.id];
+      msgs = [row];
+    } else {
+      const ids = payload.messageIds ?? [payload.messageId];
+      msgs = ids
+        .map(id => pool.find(m => m.id === id))
+        .filter(m => m != null && m.folder !== targetFolder);
+      movedIds = msgs.map(m => m.id);
+    }
     if (!msgs.length) return;
     msgs.forEach(msg => {
       state.removeMessage(msg.id);
       if (!msg.is_read) state.decrementUnread(msg.account_id);
     });
-    const movedIds = msgs.map(m => m.id);
     let undone = false;
     const timer = setTimeout(async () => {
       if (undone) return;
       try {
         const result = await api.bulkMove(movedIds, targetFolder);
         const movedSet = new Set(result.moved ?? []);
-        const failedMsgs = msgs.filter(m => !movedSet.has(m.id));
+        const failedIds = movedIds.filter(id => !movedSet.has(id));
+        // A thread's single row stands for every id in the move, so any failure puts that row
+        // back. Ordinary rows still restore only the ones that actually failed.
+        const failedMsgs = payload.threadId
+          ? (failedIds.length > 0 ? msgs : [])
+          : msgs.filter(m => !movedSet.has(m.id));
         const s = useStore.getState();
         if (failedMsgs.length > 0) {
           s.restoreMessages(failedMsgs);
           failedMsgs.forEach(m => { if (!m.is_read) s.incrementUnread(m.account_id); });
-          s.addNotification({ title: t('messageList.bulkMoved.failTitle'), body: t('messageList.bulkMoved.failBody', { count: failedMsgs.length }) });
+          s.addNotification({ title: t('messageList.bulkMoved.failTitle'), body: t('messageList.bulkMoved.failBody', { count: failedIds.length }) });
         } else {
           s.recordRecentFolder({ accountId: msgs[0].account_id, path: targetFolder });
         }
@@ -462,29 +516,11 @@ export default function Sidebar() {
     return () => { cancelled = true; };
   }, []);
 
-  const handleLogout = async () => {
-    // The logout response may carry an OIDC end-session URL when the account signed in
-    // through a provider with RP-initiated logout enabled; navigating there also clears
-    // the upstream SSO session. Falls back to /login otherwise. (#310)
-    const res = await api.logout().catch(() => ({}));
-    // Appearance/localization prefs (theme, font, layout, language) are deliberately
-    // NOT cleared: keeping them means the login screen and the next visit retain the
-    // last-used look instead of snapping back to the default dark theme (issue #208).
-    // They are re-synced from the account's server-side preferences after login.
-    // The keys below are mailbox/session state that can reference the previous user's
-    // accounts or folders, so they are cleared on sign-out.
-    [
-      'mailflow_notification_sound', 'mailflow_custom_sound', 'mailflow_custom_sound_name',
-      'mailflow_page_size', 'mailflow_scroll_mode', 'mailflow_sync_interval',
-      'mailflow_threaded_view', 'mailflow_plaintext_email',
-      'mailflow_hover_quick_actions', 'mailflow_swipe_actions',
-      'mailflow_expanded_accounts', 'mailflow_collapsed_folders',
-    ].forEach(k => localStorage.removeItem(k));
-    setUser(null);
-    window.location.href = res?.endSessionUrl || '/login';
-  };
+  // Clears this user's mailbox state and follows the SSO end-session URL when there is one (#310).
+  const handleLogout = () => signOut({ setUser });
 
   const isUnified = selectedAccountId === null;
+  const snoozedCount = useStore(s => s.snoozedCount);
 
   // Focus rename/create inputs when they appear
   useEffect(() => {
@@ -518,7 +554,7 @@ export default function Sidebar() {
       await api.markAllRead(accountId, folder);
       window.dispatchEvent(new CustomEvent('mailflow:refresh'));
       api.getUnreadCounts().then(counts => {
-        useStore.setState({ unreadCounts: counts });
+        useStore.getState().setUnreadCounts(counts);
       }).catch(() => {});
       api.getFolders(accountId).then(f => setFolders(accountId, f)).catch(() => {});
     } catch (err) { console.error('markAllRead failed:', err.message); }
@@ -593,9 +629,11 @@ export default function Sidebar() {
       account: accountLabel,
       onConfirm: async () => {
         try {
+          // The server empties in the background now (202) and broadcasts folder_emptied when
+          // done, so the UI never blocks on a large folder. Show progress; the WebSocket handler
+          // refreshes the view and counts on completion (or reports failure).
           await api.emptyFolder(accountId, folderPath);
-          window.dispatchEvent(new CustomEvent('mailflow:refresh'));
-          api.getFolders(accountId).then(f => setFolders(accountId, f)).catch(() => {});
+          addNotification({ title: t('sidebar.emptying', { name }) });
         } catch (err) {
           addNotification({ title: t('sidebar.emptyFailed'), body: err.message });
         }
@@ -621,7 +659,7 @@ export default function Sidebar() {
       return;
     }
     try {
-      await api.createFolder(creatingFolder.accountId, createName.trim());
+      await api.createFolder(creatingFolder.accountId, createName.trim(), creatingFolder.parentPath);
       const updated = await api.getFolders(creatingFolder.accountId);
       setFolders(creatingFolder.accountId, updated);
       setCreatingFolder(null);
@@ -699,6 +737,10 @@ export default function Sidebar() {
           setCreatingFolder({ accountId, parentPath: folderObj.path });
           setCreateName('');
           if (!expandedAccounts[accountId]) setExpandedAccounts(prev => ({ ...prev, [accountId]: true }));
+          // Un-collapse the target folder so the input isn't hidden with it.
+          if (collapsedFolders.includes(`${accountId}:${folderObj.path}`)) {
+            toggleCollapsedFolder(accountId, folderObj.path);
+          }
         },
       },
       { separator: true },
@@ -801,7 +843,7 @@ export default function Sidebar() {
       {/* Header */}
       <div style={{
         paddingTop: 'calc(var(--sat) + 16px)',
-        paddingBottom: 16, paddingLeft: 12, paddingRight: 12,
+        paddingBottom: 'calc(16px - var(--sat-trim))', paddingLeft: 12, paddingRight: 12,
         display: 'flex', alignItems: 'center',
         justifyContent: 'space-between', borderBottom: '1px solid var(--border-subtle)',
         minHeight: 56, flexShrink: 0,
@@ -857,7 +899,7 @@ export default function Sidebar() {
       {/* Compose button */}
       <div style={{ padding: '12px 10px' }}>
         <button
-          onClick={() => openCompose({ accountId: selectedAccountId || undefined })}
+          onClick={() => openCompose({})}
           className="btn-press"
           style={{
             width: '100%', padding: sidebarCollapsed ? '10px' : '10px 14px',
@@ -876,22 +918,38 @@ export default function Sidebar() {
       </div>
 
       {/* Nav */}
-      <nav style={{ flex: 1, overflow: 'hidden auto', padding: '4px 8px' }}>
+      <nav data-mailbox-sidebar="" style={{ flex: 1, overflow: 'hidden auto', padding: '4px 8px' }}>
         {/* Unified Inbox — only shown with 2+ enabled accounts */}
         {accounts.filter(a => a.enabled).length >= 2 && (
           <NavItem
+            mailboxRow
             icon={ICONS.inbox}
             label={t('sidebar.allInboxes')}
-            active={isUnified && !showContacts}
+            active={isUnified && selectedFolder !== SNOOZED_FOLDER && !showContacts}
             collapsed={sidebarCollapsed}
             badge={unreadCounts.total}
+            badgeStale={!unreadCounts.complete}
             onClick={() => setSelectedAccount(null, 'INBOX')}
+          />
+        )}
+
+        {/* Snoozed (#269): every account's snoozed mail in one place, soonest back first. Shown
+            while something is snoozed, and while it is open, so unsnoozing the last message does
+            not pull it away from under the reader. */}
+        {(snoozedCount > 0 || (isUnified && selectedFolder === SNOOZED_FOLDER)) && (
+          <NavItem
+            mailboxRow
+            icon={ICONS.snoozed}
+            label={t('sidebar.snoozed')}
+            active={isUnified && selectedFolder === SNOOZED_FOLDER && !showContacts}
+            collapsed={sidebarCollapsed}
+            onClick={() => setSelectedAccount(null, SNOOZED_FOLDER)}
           />
         )}
 
         {/* Favorites section */}
         {!sidebarCollapsed && favoriteFolders.length > 0 && (() => {
-          const visibleFaves = favoriteFolders.filter(({ accountId }) => accounts.some(a => a.id === accountId));
+          const visibleFaves = favoriteFolders.filter(({ accountId }) => accounts.some(a => a.id === accountId && a.enabled));
           if (!visibleFaves.length) return null;
           return (
             <>
@@ -905,7 +963,8 @@ export default function Sidebar() {
                 const accountFolders = folders[accountId] || [];
                 const folderObj = accountFolders.find(f => f.path === path);
                 const isActive = selectedAccountId === accountId && selectedFolder === path;
-                const unreadCount = folderObj?.unread_count || 0;
+                const favBadge = unreadBadge({ count: folderObj?.unread_count, known: folderObj?.counts_known !== false,
+                  stale: folderObj?.counts_stale, observedAt: folderObj?.server_counts_at });
                 const isRenamingThis = renamingFav?.accountId === accountId && renamingFav?.path === path;
                 const isDragging = favDragIdx === idx;
                 const isDropTarget = favDropIdx === idx && favDragIdx !== null && favDragIdx !== idx;
@@ -913,6 +972,7 @@ export default function Sidebar() {
                 return (
                   <div
                     key={`${accountId}:${path}`}
+                    data-mailbox-row=""
                     className="no-callout"
                     onDragOver={e => {
                       e.preventDefault();
@@ -1057,16 +1117,16 @@ export default function Sidebar() {
                       />
                     ) : (
                       <span style={{ fontSize: 13, fontWeight: isActive ? 500 : 400, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        {label || folderObj?.name || path.split('/').pop() || path}
+                        {label || (folderObj ? folderDisplayName(folderObj, t, account.folder_mappings, accountFolders) : (path.split('/').pop() || path))}
                       </span>
                     )}
                     <div style={{ display: 'flex', alignItems: 'center', gap: 5, flexShrink: 0 }}>
-                      {unreadCount > 0 && (
-                        <span style={{ fontSize: 10, color: 'var(--text-tertiary)', background: 'var(--bg-elevated)', padding: '1px 5px', borderRadius: 8 }}>
-                          {unreadCount}
+                      {favBadge && (
+                        <span title={favBadge.title} style={{ fontSize: 10, color: 'var(--text-tertiary)', background: 'var(--bg-elevated)', padding: '1px 5px', borderRadius: 8 }}>
+                          {favBadge.text}
                         </span>
                       )}
-                      <div style={{ width: 6, height: 6, borderRadius: '50%', background: account.color, flexShrink: 0 }} />
+                      <AccountMark accountId={account.id} color={account.color} size={6} />
                     </div>
                   </div>
                 );
@@ -1098,35 +1158,48 @@ export default function Sidebar() {
         })()}
 
         {/* Per-account */}
-        {accounts.map(account => {
-          const unread = unreadCounts.byAccount[account.id] || 0;
+        {accounts.filter(account => account.enabled).map(account => {
+          const countSnapshot = unreadCounts.snapshots?.[account.id];
+          const accountBadge = unreadBadge({ count: unreadCounts.byAccount[account.id],
+            known: Number.isFinite(unreadCounts.byAccount[account.id]) && countSnapshot?.known !== false,
+            stale: countSnapshot?.stale, observedAt: countSnapshot?.observedAt, max: 999 });
           const expanded = expandedAccounts[account.id];
           const isSelected = selectedAccountId === account.id;
           const accountFolders = folders[account.id] || [];
+          const accountHiddenPaths = hiddenFolders[account.id] || [];
+          const showingHidden = showHiddenFor.has(account.id);
 
           const selectInbox = () => setSelectedAccount(account.id, 'INBOX');
           const rowLabel = collapsedTooltip(account.email_address, sidebarCollapsed);
+          const hasInbox = hasRenderedInbox(accountFolders, {
+            expanded,
+            sidebarCollapsed,
+            hiddenPaths: accountHiddenPaths,
+            showingHidden,
+          });
+          const isAccountActive = isSelected && selectedFolder === 'INBOX' && !hasInbox;
 
           return (
             <div key={account.id}>
               {/* Only the collapsed row may carry a button role: expanded, it holds
                   the expand toggle, and a button cannot nest inside a button. */}
               <div
+                data-mailbox-row=""
                 style={{
                   display: 'flex', alignItems: 'center', gap: 8,
                   padding: sidebarCollapsed ? '8px' : '7px 10px',
                   borderRadius: 7, cursor: 'pointer',
-                  background: isSelected && selectedFolder === 'INBOX'
-                    ? 'var(--bg-hover)' : 'transparent',
+                  background: isAccountActive ? 'var(--bg-hover)' : 'transparent',
                   transition: 'background 0.1s',
                   justifyContent: sidebarCollapsed ? 'center' : 'flex-start',
+                  margin: '1px 0',
                 }}
                 onMouseEnter={e => {
-                  if (!(isSelected && selectedFolder === 'INBOX'))
+                  if (!isAccountActive)
                     e.currentTarget.style.background = 'var(--bg-tertiary)';
                 }}
                 onMouseLeave={e => {
-                  if (!(isSelected && selectedFolder === 'INBOX'))
+                  if (!isAccountActive)
                     e.currentTarget.style.background = 'transparent';
                 }}
                 onClick={selectInbox}
@@ -1152,9 +1225,7 @@ export default function Sidebar() {
                     {(account.name || account.email_address || '?').charAt(0).toUpperCase()}
                   </div>
                 ) : (
-                  <div style={{
-                    width: 8, height: 8, borderRadius: '50%',
-                    background: account.color, flexShrink: 0,
+                  <AccountMark accountId={account.id} color={account.color} size={8} style={{
                     boxShadow: account.sync_error ? '0 0 0 2px rgba(248,113,113,0.4)' : 'none',
                   }} />
                 )}
@@ -1165,7 +1236,7 @@ export default function Sidebar() {
                       <div style={{
                         fontSize: 13, color: 'var(--text-primary)',
                         whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis',
-                        fontWeight: unread > 0 ? 500 : 400,
+                        fontWeight: accountBadge ? 500 : 400,
                       }}>
                         {account.name}
                       </div>
@@ -1184,13 +1255,13 @@ export default function Sidebar() {
                       )}
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
-                      {unread > 0 && (
-                        <span style={{
+                      {accountBadge && (
+                        <span title={accountBadge.title} style={{
                           fontSize: 11, fontWeight: 600, color: 'white',
                           background: account.color, padding: '1px 6px',
                           borderRadius: 10, minWidth: 20, textAlign: 'center',
                         }}>
-                          {unread > 999 ? '999+' : unread}
+                          {accountBadge.text}
                         </span>
                       )}
                       {/* Expand toggle */}
@@ -1220,10 +1291,14 @@ export default function Sidebar() {
 
                 const createFolderInput = (indent) => (
                   <div style={{
+                    pointerEvents: 'auto',
                     display: 'flex', alignItems: 'center', gap: 8,
                     padding: `6px 10px 6px ${indent}px`, borderRadius: 7,
+                    margin: '1px 0',
                   }}>
-                    <span style={{ color: 'var(--text-tertiary)', flexShrink: 0, display: 'flex' }}>{ICONS.folder}</span>
+                    {/* No folder icon here: at deep indents its footprint squeezes
+                        the input to a sliver, and the indent alone already places
+                        the row among its future siblings. */}
                     <input
                       ref={createInputRef}
                       value={createName}
@@ -1246,9 +1321,6 @@ export default function Sidebar() {
                     </div>
                   </div>
                 );
-
-                const accountHiddenPaths = hiddenFolders[account.id] || [];
-                const showingHidden = showHiddenFor.has(account.id);
 
                 const handleFolderOrderDragStart = (event, path) => {
                   event.stopPropagation();
@@ -1324,11 +1396,20 @@ export default function Sidebar() {
                   ) ? folderDropTarget.position : null;
 
                   return (
-                    <div key={folder.path} style={isHidden ? { opacity: 0.45 } : undefined}>
+                    // The wrapper takes no pointer events of its own. Under fractional display
+                    // scaling (a 175% Windows desktop) row boundaries land on fractional pixels,
+                    // and at that seam this element, which has no drag handling, won the hit
+                    // test: a one-frame "cannot drop" while dragging past. Its interactive
+                    // descendants opt back in.
+                    <div key={folder.path} style={{ pointerEvents: 'none', ...(isHidden ? { opacity: 0.45 } : null) }}>
                       <div
+                        data-mailbox-row={folder.no_select || isHidden ? undefined : ''}
+                        data-mailbox-available={folder.no_select || isHidden ? 'false' : 'true'}
                         style={{
+                          pointerEvents: 'auto',
                           display: 'flex', alignItems: 'center', gap: 6,
                           padding: `6px 10px 6px ${indent}px`, borderRadius: 7,
+                          margin: '1px 0',
                           cursor: isRenaming ? 'default' : 'pointer',
                           background: (msgDragTarget === `${account.id}:${folder.path}`) ? 'var(--accent-dim)' : isFolderSelected ? 'var(--bg-hover)' : 'transparent',
                           transition: 'background 0.1s',
@@ -1361,7 +1442,7 @@ export default function Sidebar() {
                           handleMsgDrop(event, folder.path);
                         }}
                       >
-                        {canReorder && (
+                        {canReorder ? (
                           <span
                             draggable
                             onDragStart={event => handleFolderOrderDragStart(event, folder.path)}
@@ -1378,6 +1459,11 @@ export default function Sidebar() {
                               <circle cx="2" cy="12" r="1.5"/><circle cx="8" cy="12" r="1.5"/>
                             </svg>
                           </span>
+                        ) : !isMobile && (
+                          // Keep single-child rows aligned with siblings that have a
+                          // drag handle — without this spacer the missing handle
+                          // visually cancels the depth indent.
+                          <span style={{ width: 10, flexShrink: 0 }} />
                         )}
                         {/* Chevron toggle for parent folders; invisible spacer for leaf folders to align icons */}
                         {hasChildren ? (
@@ -1425,7 +1511,7 @@ export default function Sidebar() {
                             fontSize: 12, color: 'var(--text-secondary)',
                             flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                           }}>
-                            {folder.name}
+                            {folderDisplayName(folder, t, account.folder_mappings, accountFolders)}
                           </span>
                         )}
 
@@ -1437,22 +1523,32 @@ export default function Sidebar() {
                             <button onClick={() => setRenamingFolder(null)} style={{ background: 'var(--bg-tertiary)', border: 'none', borderRadius: 4, color: 'var(--text-secondary)', padding: '2px 6px', cursor: 'pointer', fontSize: 11 }}>✕</button>
                           </div>
                         ) : (
-                          folder.unread_count > 0 && (
-                            <span style={{ fontSize: 10, color: 'var(--text-tertiary)', background: 'var(--bg-elevated)', padding: '1px 5px', borderRadius: 8, flexShrink: 0 }}>
-                              {folder.unread_count}
-                            </span>
-                          )
+                          (() => {
+                            // Collapsed with subfolders: the total including them (#536).
+                            const rolledUp = hasChildren && !isExpanded;
+                            if (folder.no_select && !rolledUp) return null;
+                            const b = rolledUp
+                              ? unreadBadge(subtreeUnread(node, path => accountHiddenPaths.includes(path)))
+                              : unreadBadge({ count: folder.unread_count, known: folder.counts_known !== false,
+                                stale: folder.counts_stale, observedAt: folder.server_counts_at });
+                            return b && (
+                              <span title={rolledUp ? `${b.title}, including subfolders` : b.title} style={{ fontSize: 10, color: 'var(--text-tertiary)', background: 'var(--bg-elevated)', padding: '1px 5px', borderRadius: 8, flexShrink: 0 }}>
+                                {b.text}
+                              </span>
+                            );
+                          })()
                         )}
                       </div>
 
                       {/* Children — shown when expanded */}
                       {hasChildren && isExpanded && (
-                        <>
-                          {visibleChildren.map(child => renderNode(child, depth + 1, visibleChildren))}
-                          {creatingFolder?.accountId === account.id && creatingFolder?.parentPath === folder.path &&
-                            createFolderInput(BASE_INDENT + (depth + 1) * DEPTH_INDENT)}
-                        </>
+                        visibleChildren.map(child => renderNode(child, depth + 1, visibleChildren))
                       )}
+                      {/* Subfolder-create input — outside the children block so it
+                          also renders on leaf folders (gated inside it, "New
+                          subfolder" on a childless folder silently did nothing). */}
+                      {creatingFolder?.accountId === account.id && creatingFolder?.parentPath === folder.path &&
+                        createFolderInput(BASE_INDENT + (depth + 1) * DEPTH_INDENT)}
                     </div>
                   );
                 };
@@ -1462,7 +1558,7 @@ export default function Sidebar() {
                   ? tree
                   : tree.filter(node => !accountHiddenPaths.includes(node.path));
                 return (
-                  <div>
+                  <div style={{ marginTop: 2 }}>
                     {visibleTree.map(node => renderNode(node, 0, visibleTree))}
                     {/* Show/hide hidden folders toggle */}
                     {accountHiddenPaths.length > 0 && (
@@ -1471,6 +1567,7 @@ export default function Sidebar() {
                         style={{
                           display: 'flex', alignItems: 'center', gap: 6,
                           padding: '4px 10px 4px 26px', borderRadius: 7,
+                          margin: '1px 0',
                           background: 'none', border: 'none', cursor: 'pointer',
                           color: showingHidden ? 'var(--accent)' : 'var(--text-tertiary)',
                           fontSize: 11, width: '100%', transition: 'color 0.1s',
@@ -1496,6 +1593,7 @@ export default function Sidebar() {
                           style={{
                             display: 'flex', alignItems: 'center', gap: 8,
                             padding: '5px 10px 5px 26px', borderRadius: 7,
+                            margin: '1px 0',
                             background: 'none', border: 'none', cursor: 'pointer',
                             color: 'var(--text-tertiary)', fontSize: 11, width: '100%',
                             transition: 'color 0.1s',
@@ -1995,9 +2093,11 @@ export default function Sidebar() {
   );
 }
 
-function NavItem({ icon, label, active, collapsed, badge, onClick }) {
+function NavItem({ icon, label, active, collapsed, badge, badgeStale = false, onClick, mailboxRow = false }) {
+  const navBadge = unreadBadge({ count: badge, stale: badgeStale, max: 999 });
   return (
     <div
+      data-mailbox-row={mailboxRow ? '' : undefined}
       className={active ? 'nav-item nav-item-active' : 'nav-item'}
       onClick={onClick}
       onKeyDown={activateOnKey(onClick)}
@@ -2026,18 +2126,18 @@ function NavItem({ icon, label, active, collapsed, badge, onClick }) {
       {!collapsed && (
         <>
           <span style={{ fontSize: 13, fontWeight: active ? 500 : 400, flex: 1 }}>{label}</span>
-          {badge > 0 && (
-            <span style={{
+          {navBadge && (
+            <span title={navBadge.title} style={{
               fontSize: 11, fontWeight: 600, color: 'var(--accent-text)',
               background: 'var(--accent)', padding: '1px 7px',
               borderRadius: 10, minWidth: 20, textAlign: 'center',
             }}>
-              {badge > 999 ? '999+' : badge}
+              {navBadge.text}
             </span>
           )}
         </>
       )}
-      {collapsed && badge > 0 && (
+      {collapsed && navBadge && (
         <div style={{
           position: 'absolute', top: 6, right: 6,
           width: 7, height: 7, borderRadius: '50%',

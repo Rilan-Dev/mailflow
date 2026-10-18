@@ -447,40 +447,244 @@ export function sectionBadge(count) {
 // email highlight together even though their ids differ. Prefers message_id when BOTH the row
 // and the selection carry one — never matches two null/absent message_ids — and otherwise
 // falls back to exact id equality, which is all a single-copy account (or a row/selection
-// without a message_id) ever needs. Pure and unit-testable.
-export function isSelectedRow(row, selectedId, selectedMid) {
+// without a message_id) ever needs.
+//
+// That identity match is scoped to one account. The copies it is meant to light up together
+// (an INBOX row and its label-folder row, a GTD sidebar entry and the flat list row) always
+// belong to the same account. Two accounts' copies of one email, which the list now renders as
+// two separate rows (#476), share a Message-ID but are separate mail, so matching on the
+// Message-ID alone would highlight both when the user clicked one. When either side's account
+// is unknown the match stays as it was, rather than guessing. Pure and unit-testable.
+export function isSelectedRow(row, selectedId, selectedMid, selectedAccountId) {
   if (!row) return false;
-  if (selectedMid != null && row.message_id != null && row.message_id === selectedMid) return true;
+  if (selectedMid != null && row.message_id != null && row.message_id === selectedMid) {
+    const differentAccount = selectedAccountId != null && row.account_id != null
+      && row.account_id !== selectedAccountId;
+    if (!differentAccount) return true;
+  }
   return row.id != null && row.id === selectedId;
+}
+
+// A stable identity for a message list row: the RFC Message-ID when present, else the (volatile)
+// DB row id. The row's UUID id is regenerated whenever a message is purged and re-inserted
+// (folder move / resync / UID change), so deduplicating a list by id ALONE lets a reindexed
+// message linger under its old id AND reappear under the new one — two rows with the same
+// Message-ID, which the message-list renders as a visible duplicate (and isSelectedRow highlights
+// together). Keying on the Message-ID collapses those; rows without one keep id identity so two
+// distinct id-only rows never merge. Namespaced so a Message-ID can never collide with a UUID.
+// Pure. Mirrors the identity rule in isSelectedRow / pickThreadMessage.
+export function messageIdentity(m) {
+  if (!m) return null;
+  return m.message_id ? `mid:${m.message_id}` : `id:${m.id}`;
+}
+
+// Merge a freshly-fetched page of messages into an existing list, keyed by messageIdentity:
+//  - an incoming row with the SAME DB id as an existing row is dropped (the existing copy may
+//    carry optimistic local-only fields a network refresh lost, e.g. unread_count);
+//  - an incoming row that shares a Message-ID with an existing row but carries a NEW id (the
+//    message was purged+reinserted, regenerating its id) REPLACES that stale row in place, so a
+//    reindexed message never shows as a duplicate and the surviving row is the fresh, clickable one;
+//  - anything genuinely new is appended, de-duplicated within the incoming batch by identity.
+// Returns the original array reference unchanged when nothing was added or replaced, so callers can
+// skip a no-op state update. Pure.
+export function appendMessagesByIdentity(existing, incoming) {
+  const items = (incoming || []).filter(Boolean);
+  if (items.length === 0) return existing;
+
+  const existingIds = new Set(existing.map(m => m.id));
+  // EVERY row index per Message-ID, not just the last one. Since #476 the list can hold one
+  // row per account for a single Message-ID, and a single-index map pointed at whichever
+  // landed last: a reindexed row from any other account then compared itself against the
+  // wrong copy, concluded the two were independent deliveries, and appended instead of
+  // replacing. That is the duplicate #378 exists to stop, and only the last account in the
+  // list happened to behave.
+  const idxByMid = new Map();
+  existing.forEach((m, i) => {
+    if (!m.message_id) return;
+    const seen = idxByMid.get(m.message_id);
+    if (seen) seen.push(i); else idxByMid.set(m.message_id, [i]);
+  });
+
+  let messages = existing;
+  let mutated = false;
+  const additions = [];
+  // Scoped by delivery, not bare identity: two INBOX copies of one email in two different
+  // accounts are separate mail (areIndependentDeliveries) and both must survive the batch.
+  // Any other same-identity pair this lets through is collapsed by the dedupeByIdentity pass
+  // on `additions` below, which applies exactly the same rule.
+  const deliveryKey = m => (m?.folder === 'INBOX' && m?.account_id
+    ? `${messageIdentity(m)}@${m.account_id}`
+    : messageIdentity(m));
+  const takenKeys = new Set(); // deliveries already consumed from the incoming batch
+
+  for (const m of items) {
+    if (existingIds.has(m.id)) continue;   // exact same row already present — keep existing
+    const key = deliveryKey(m);
+    if (takenKeys.has(key)) continue;      // a same-delivery incoming row was already handled
+    takenKeys.add(key);
+    if (m.message_id && idxByMid.has(m.message_id)) {
+      const candidates = idxByMid.get(m.message_id);
+      // The incoming row belongs to ONE delivery, so pick the held row representing that same
+      // delivery. Most specific first, because a loose match that happens to sit earlier in
+      // the list would absorb the replacement and leave the row it should have replaced in
+      // place, which is how a duplicate appears:
+      //   1. same account AND same folder: a reindexed row replacing itself;
+      //   2. same account, other folder: the account's other copy of the message;
+      //   3. account unknown on either side: no better information, old behavior.
+      const pick = predicate => candidates.find(i => predicate(messages[i]));
+      const sameAccountAs = held => held?.account_id && m.account_id && held.account_id === m.account_id;
+      let at = pick(held => sameAccountAs(held) && held.folder === m.folder)
+        ?? pick(sameAccountAs)
+        ?? pick(held => !held?.account_id || !m.account_id);
+      if (at === undefined) {
+        // No copy from this account. If every row already here is an independent delivery,
+        // this is simply another one and gets its own row.
+        if (candidates.every(i => areIndependentDeliveries(messages[i], m))) {
+          additions.push(m);
+          continue;
+        }
+        // Otherwise rank against a copy that is NOT independent of it: the cross-account
+        // Sent twin, which still collapses (#378).
+        at = candidates.find(i => !areIndependentDeliveries(messages[i], m));
+      }
+      const held = messages[at];
+      // Two different things share a Message-ID here, and they need opposite handling.
+      //
+      // SAME account: the row was purged and reinserted, regenerating its id. The held row is
+      // stale and unclickable, so it must be replaced no matter how it compares.
+      //
+      // DIFFERENT accounts, both in INBOX: two independent deliveries of one email. Neither
+      // replaces the other; the incoming copy becomes its own row (#476).
+      //
+      // DIFFERENT accounts otherwise (the cross-account Sent twin): still one message seen from
+      // both ends, so it still collapses. Replacing unconditionally would let whichever merged
+      // last win, which can swap an unread copy for its already-read twin and hide mail the user
+      // has not seen. Rank instead, the way dedupeByIdentity does on full loads, so the paths agree.
+      if (areIndependentDeliveries(held, m)) {
+        additions.push(m);
+        continue;
+      }
+      const sameAccount = !held?.account_id || !m.account_id || held.account_id === m.account_id;
+      if (sameAccount || duplicateRank(m) < duplicateRank(held)) {
+        if (!mutated) { messages = existing.slice(); mutated = true; }
+        messages[at] = m;
+      }
+    } else {
+      additions.push(m);                        // genuinely new
+    }
+  }
+
+  if (!mutated && additions.length === 0) return existing;
+  // Same rule applied within the new rows, so a batch carrying both an INBOX copy and its Sent
+  // twin still contributes one row while two accounts' INBOX copies contribute two.
+  const newRows = dedupeByIdentity(additions);
+  return newRows.length ? [...messages, ...newRows] : messages;
+}
+
+// Collapse a message list so no two rows show the same DELIVERY twice. One email can exist as
+// several DB rows in the places the list draws from: a received copy alongside its Sent twin, an
+// INBOX copy alongside its label-folder copy, or two UIDs sharing a Message-ID in one folder.
+// Those are all one piece of mail to the reader, and every raw list load (setMessages) would
+// otherwise render each of them. This is the render-time guard the identity-aware merges
+// (appendMessagesByIdentity) don't cover.
+//
+// Copies delivered to DIFFERENT accounts are not collapsed: see areIndependentDeliveries, which
+// is where the rule and its reasoning live (#476).
+// Order-preserving; on a collision the INBOX copy wins so the list shows the received message.
+// Null-safe: rows without a Message-ID key on their (unique) id, so distinct ones never merge. Pure.
+// Do these two rows represent two INDEPENDENT deliveries of one email, rather than two views
+// of a single delivery? One email sent to two of your connected accounts arrives in each
+// account's INBOX as its own mailbox item, with its own UID and its own \Seen flag. Reading it
+// in one account does not read it in the other, so collapsing the pair forces the surviving row
+// to misreport one of the two read states, and the unified unread badge (a plain sum of the
+// per-account server counts) then disagrees with the list. Every client whose behavior could be
+// checked against source shows both rows here (#476).
+//
+// Two views of ONE delivery stay collapsed, because there the second row adds no mail:
+//   - a received copy and its Sent twin, which is you emailing yourself from one account to
+//     another and seeing both ends of a single message (#378);
+//   - two UIDs sharing a Message-ID inside one folder, which providers do emit.
+// A row with no account_id has unknown provenance, so it collapses as before rather than
+// being guessed independent.
+export function areIndependentDeliveries(a, b) {
+  if (!a || !b) return false;
+  if (a.folder !== 'INBOX' || b.folder !== 'INBOX') return false;
+  if (!a.account_id || !b.account_id) return false;
+  return a.account_id !== b.account_id;
+}
+
+// Which copy of a duplicated message should represent it in the list. Lower wins.
+//
+// INBOX beats every other folder, as it always has. Within a folder class an UNREAD copy beats
+// a read one: copies of one message that DO still collapse (a Sent twin, a label-folder copy)
+// can carry different \Seen flags, and the order they reach us is arbitrary. Keeping whichever
+// landed first could discard the unread copy and render the message as already read, hiding
+// genuinely unread mail from the default list while it still showed under the unread filter
+// (which excludes the read copy server-side). Copies in two different accounts no longer reach
+// this tie-break at all, because both of them now render (see areIndependentDeliveries).
+export function duplicateRank(m) {
+  const folderRank = m?.folder === 'INBOX' ? 0 : 2;
+  return folderRank + (m?.is_read ? 0 : -1);
+}
+
+export function dedupeByIdentity(list) {
+  const idxByKey = new Map(); // identity -> index in result
+  const result = [];
+  for (const m of list || []) {
+    if (!m) continue;
+    const key = messageIdentity(m);
+    if (!idxByKey.has(key)) {
+      idxByKey.set(key, result.length);
+      result.push(m);
+    } else {
+      const i = idxByKey.get(key);
+      // Independent deliveries are separate mail and both stay. idxByKey keeps pointing at the
+      // first copy, so a later Sent twin still ranks against a real INBOX row rather than
+      // against whichever copy happened to be appended last.
+      if (areIndependentDeliveries(result[i], m)) {
+        result.push(m);
+        continue;
+      }
+      // Strict improvement only, so an exact tie keeps the earlier row and order stays stable.
+      if (duplicateRank(m) < duplicateRank(result[i])) result[i] = m;
+    }
+  }
+  return result;
+}
+
+// Filter `incoming` to the messages whose stable identity is not already present in `existing`.
+// Used by restore/undo so a message the network refresh already brought back — possibly under a
+// regenerated id, matched via Message-ID — is not re-added as a duplicate. Pure.
+//
+// Presence is judged per account. Since #476 the list can hold one row per account for a single
+// Message-ID, and a bare Message-ID key made Undo a no-op: archive one account's copy, press
+// Undo, and the other account's copy answered "already present". A row with no account keys on
+// the Message-ID alone, as before.
+export function missingByIdentity(existing, incoming) {
+  const key = m => `${messageIdentity(m)}\u0000${m.account_id ?? ''}`;
+  const present = new Set(existing.map(key));
+  return (incoming || []).filter(m => m && !present.has(key(m)));
 }
 
 // Choose which message of a thread a deep-link should open, given the thread's rows and
 // the head's RFC message_id. Prefers the row whose message_id matches — that identity is
 // stable across a purge+reinsert, whereas the row PK is not — then the newest row, then
 // the first. Rows without an id (nothing to open) are ignored. Pure and unit-testable.
-export function pickThreadMessage(messages, messageId) {
+//
+// Since #476 the thread also holds other accounts' copies of the same mail, under the same
+// message_ids, so with accountId the choice is made among that account's rows (its copy of the
+// head, then its newest row) and among every account's only when the thread holds none of its own.
+// The message opened is parked, and in one account's view the conversation pane acts for a parked
+// message's own account (ReadingPane), so the account opened decides whose mail the pane acts on.
+export function pickThreadMessage(messages, messageId, accountId = null) {
   const list = Array.isArray(messages) ? messages.filter(m => m && m.id) : [];
   if (list.length === 0) return null;
-  const byMid = messageId && list.find(m => m.message_id === messageId);
+  const own = accountId ? list.filter(m => m.account_id === accountId) : [];
+  const pool = own.length ? own : list;
+  const byMid = messageId && pool.find(m => m.message_id === messageId);
   if (byMid) return byMid;
-  return list.reduce((newest, m) =>
-    (new Date(m.date || 0) >= new Date(newest.date || 0) ? m : newest), list[0]);
-}
-
-// Classify (add a state label) / unclassify (strip one) a message. Classify COPIES into
-// the state's label folder; the message stays put (no optimistic removal/undo — it does
-// not leave INBOX), so both just fire the API call and poke the GTD sections store to reconverge
-// instead of waiting on the WS event. Deps injected (like openDeepLinkMessage) so the call
-// is unit-testable; mirrors the GTD display callers' classify/remove handlers.
-export async function classifyThread(id, state, { gtdClassify, addNotification, scheduleGtdSectionsFetch, t }) {
-  try {
-    await gtdClassify(id, state);
-    scheduleGtdSectionsFetch();
-    addNotification({ title: t('gtd.classified'), body: t(`gtd.state.${state}`) });
-  } catch (err) {
-    console.error('GTD classify failed:', err.message);
-    addNotification({ title: t('gtd.classifyFailed'), body: t(`gtd.state.${state}`) });
-  }
+  return pool.reduce((newest, m) =>
+    (new Date(m.date || 0) >= new Date(newest.date || 0) ? m : newest), pool[0]);
 }
 
 export async function unclassifyThread(id, state, { gtdUnclassify, addNotification, scheduleGtdSectionsFetch, t }) {
@@ -490,7 +694,8 @@ export async function unclassifyThread(id, state, { gtdUnclassify, addNotificati
     addNotification({ title: t('gtd.removed'), body: t(`gtd.state.${state}`) });
   } catch (err) {
     console.error('GTD unclassify failed:', err.message);
-    addNotification({ title: t('gtd.removeFailed'), body: t(`gtd.state.${state}`) });
+    // 409: the GTD folder holds the message's only copy, so removing the label would delete it.
+    addNotification({ title: t('gtd.removeFailed'), body: err.status === 409 ? t('gtd.onlyCopy') : t(`gtd.state.${state}`) });
   }
 }
 
@@ -512,9 +717,12 @@ let _deepLinkSeq = 0;
 // warns, self-heals the snapshot via onMiss (a sections refetch), and retries once by
 // resolving the row's thread and matching the stable message_id. thread/getThread/onMiss
 // are optional so a bare (id, {getMessage,...}) call still degrades gracefully.
+//
+// singleAccountView: the row was clicked in one account's view, where a GTD row is that
+// account's (the sections are fetched for it). Recovery then opens only that account's mail.
 export async function openDeepLinkMessage(id, {
   getMessage, setThreadMessages, setSelectedMessage,
-  thread, getThread, onMiss,
+  thread, getThread, onMiss, singleAccountView = false,
 } = {}) {
   const seq = ++_deepLinkSeq;
   const open = (msg) => {
@@ -542,7 +750,14 @@ export async function openDeepLinkMessage(id, {
   if (getThread && thread?.thread_key) {
     try {
       const { messages } = await getThread(thread.thread_key);
-      const msg = pickThreadMessage(messages, thread.message_id);
+      const msg = pickThreadMessage(messages, thread.message_id, thread.account_id);
+      // Another account's copy is chosen only when the thread holds none of the row account's
+      // mail. Opened in one account's view, the pane would act for that other account from this
+      // account's GTD row (#476), so there is nothing here to open.
+      if (msg && singleAccountView && thread.account_id && msg.account_id !== thread.account_id) {
+        console.warn(`GTD deep-link: thread ${thread.thread_key} holds no message of account ${thread.account_id}; not opening another account's copy`);
+        return null;
+      }
       if (msg) return open(msg);
     } catch {
       // Best-effort; the onMiss refetch still refreshes the ids for the next click.

@@ -11,11 +11,15 @@ services:
       args:
         VITE_BUILD_SHA: ${GIT_SHA:-dev}
         VITE_EMAIL_DIV_RENDER: ${VITE_EMAIL_DIV_RENDER:-false}
+        NGINX_BASE: ${NGINX_BASE:-nginx:alpine}
     container_name: mailflow-frontend
     restart: unless-stopped
     ports:
       - "${APP_PORT:-443}:443"
       - "${APP_HTTP_PORT:-80}:80"
+    environment:
+      # off: HTTP on port 80 only, behind your own TLS-terminating proxy (#516).
+      NGINX_TLS: ${NGINX_TLS:-}
     volumes:
       - ./certs:/etc/nginx/ssl
     depends_on:
@@ -55,6 +59,13 @@ services:
       VAPID_PUBLIC_KEY: ${VAPID_PUBLIC_KEY:-}
       VAPID_PRIVATE_KEY: ${VAPID_PRIVATE_KEY:-}
       VAPID_SUBJECT: ${VAPID_SUBJECT:-}
+      IMAP_MAX_PERSISTENT_PER_HOST: ${IMAP_MAX_PERSISTENT_PER_HOST:-}
+      TRUST_PROXY_HOPS: ${TRUST_PROXY_HOPS:-}
+      # The image proxy's cache of fitted images: per user, at most this many MB, kept for a month.
+      IMAGE_CACHE_DIR: /var/cache/mailflow/images
+      IMAGE_CACHE_MAX_MB: ${IMAGE_CACHE_MAX_MB:-512}
+    volumes:
+      - image_cache:/var/cache/mailflow/images
     depends_on:
       postgres:
         condition: service_healthy
@@ -139,6 +150,7 @@ services:
 volumes:
   postgres_data:
   redis_data:
+  image_cache:
   caddy_data:
   caddy_config:
 

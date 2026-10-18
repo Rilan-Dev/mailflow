@@ -36,7 +36,7 @@ If you contribute code, please read the [Contributor License Agreement](CLA.md).
 - **Attachments** — send and receive file attachments across all accounts
 - **Multiple layouts** — classic, compact, wide reader, vertical split, and more
 - **Multiple themes** — dark, light, and several color schemes; custom CSS field for per-user style overrides
-- **Multi-language UI** — English, French, Spanish, Italian, German, Russian, and Simplified Chinese
+- **Multi-language UI** — English, French, Spanish, Italian, German, Russian, Simplified Chinese, Polish, Czech, Brazilian Portuguese, and Korean
 - **Full-text search** — across all connected accounts simultaneously
 - **Real-time notifications** — WebSocket-powered new-mail toasts and web push notifications
 - **PWA** — installable as a desktop or mobile app with push notification support
@@ -72,14 +72,17 @@ groups threads into five states, each backed by a real IMAP folder — so the la
 are just server-side folders that sync to every mail client and survive MailFlow
 itself:
 
-- **Todo** / **Someday** — things you need to act on; the label clears itself once you reply.
-- **Watch** / **Delegated** — things you're waiting on; the label clears itself once the other party replies.
-- **Reference** — kept until you remove it by hand.
+- **Todo** / **Someday** — things you need to act on; the label clears itself once your latest non-draft reply is sent.
+- **Watch** / **Delegated** — things you're waiting on; kept until you remove the label or mark the thread done.
+- **Reference** — kept until you remove the label or mark the thread done.
 
 Label the selected thread from the keyboard — **t** for Todo, **w** for Watch,
-**d** for Delegated (all remappable in the keyboard-shortcut settings) — or from the
-context menu, which also covers Someday and Reference. Each state's folder name is
-configurable per account, and accounts with GTD off behave exactly as before.
+**d** for Delegated, **v** for Reference, **b** for Someday, and **Shift+E** for Done
+(all remappable in the keyboard-shortcut settings) — or from the context menu. Each state's folder name is
+configurable per account. Applying a GTD state preserves every member in the target before removing the
+thread's old GTD copies. Inbox and ordinary labels remain intact. A state switch
+ends pending Undo windows; an initial classification still offers Undo when supported. Accounts
+with GTD off behave exactly as before.
 
 ---
 
@@ -156,6 +159,7 @@ MailFlow will be available on port 443 (HTTPS, self-signed certificate) and port
 |---|---|---|
 | `APP_PORT` | `443` | HTTPS port |
 | `APP_HTTP_PORT` | `80` | HTTP port |
+| `NGINX_TLS` | `on` | `off` stops serving HTTPS on `APP_PORT` (see below) |
 
 **Optional — automatic HTTPS via Let's Encrypt:** set `DOMAIN` and `ACME_EMAIL` in `.env`, download the HTTPS overlay, then restart:
 
@@ -166,7 +170,9 @@ docker compose -f docker-compose.yml -f docker-compose.https.yml --profile https
 
 This adds a Caddy reverse proxy that handles certificate issuance and renewal automatically. Requires Docker Compose 2.21+, a public domain with DNS pointing at the server, and ports 80/443 open.
 
-**Optional — behind your own reverse proxy:** point your proxy at port 80. Set `APP_HTTP_PORT` in `.env` if you need a different host port. Your proxy should forward `X-Forwarded-Proto: https` so that session cookies are marked Secure correctly.
+**Optional — behind your own reverse proxy:** point your proxy at port 80. Set `APP_HTTP_PORT` in `.env` if you need a different host port. Your proxy should forward `X-Forwarded-Proto: https` so that session cookies are marked Secure correctly. To stop MailFlow's nginx serving HTTPS on port 443 and generating a certificate, set `NGINX_TLS=off` in `.env`. This needs a writable `/etc/nginx/conf.d`, so on a read-only filesystem mount a certificate in `/etc/nginx/ssl` instead. The `--profile https` setup always keeps HTTPS on, because Caddy connects to it.
+
+If clients can reach MailFlow only through your proxy, also set `TRUST_PROXY_HOPS=2` in `.env`, so the login rate limit sees each client's address rather than the proxy's. Docker publishes `APP_PORT` and `APP_HTTP_PORT` on every interface, and firewalls such as ufw do not filter them, so first bind both to an address only your proxy can reach, for example `APP_HTTP_PORT=127.0.0.1:8080` and `APP_PORT=127.0.0.1:8443` for a proxy on the same host. Without that, leave `TRUST_PROXY_HOPS` unset: a client that connects directly could choose the address it is rate-limited and logged under. If your `docker-compose.yml` has no `TRUST_PROXY_HOPS` line, download it again with the first command in step 1, or the setting never reaches the backend.
 
 ### 4. Create your admin account
 
@@ -232,7 +238,9 @@ First build takes 2–3 minutes. MailFlow will be available on port 443 (HTTPS, 
 docker compose -f docker-compose.yml -f docker-compose.https.yml --profile https up -d --build
 ```
 
-**Optional — behind your own reverse proxy:** point your proxy at port 80. Your proxy should forward `X-Forwarded-Proto: https` so that session cookies are marked Secure correctly.
+**Optional — behind your own reverse proxy:** point your proxy at port 80. Your proxy should forward `X-Forwarded-Proto: https` so that session cookies are marked Secure correctly. To stop MailFlow's nginx serving HTTPS on port 443 and generating a certificate, set `NGINX_TLS=off` in `.env`. This needs a writable `/etc/nginx/conf.d`, so on a read-only filesystem mount a certificate in `/etc/nginx/ssl` instead. The `--profile https` setup always keeps HTTPS on, because Caddy connects to it.
+
+If clients can reach MailFlow only through your proxy, also set `TRUST_PROXY_HOPS=2` in `.env`, so the login rate limit sees each client's address rather than the proxy's. Docker publishes `APP_PORT` and `APP_HTTP_PORT` on every interface, and firewalls such as ufw do not filter them, so first bind both to an address only your proxy can reach, for example `APP_HTTP_PORT=127.0.0.1:8080` and `APP_PORT=127.0.0.1:8443` for a proxy on the same host. Without that, leave `TRUST_PROXY_HOPS` unset: a client that connects directly could choose the address it is rate-limited and logged under.
 
 ### 4. Create your admin account
 
@@ -340,7 +348,7 @@ sudo cp /opt/mailflow/contrib/nginx.conf /etc/nginx/sites-available/mailflow
 
 Open `/etc/nginx/sites-available/mailflow` and replace `/path/to/mailflow/frontend/dist` with `/opt/mailflow/frontend/dist`.
 
-The provided config listens on port 80 for use behind a TLS-terminating reverse proxy (Nginx/Caddy/Traefik). If you want nginx to terminate TLS directly, uncomment the HTTPS server block in the file and set your certificate paths. A quick self-signed cert:
+The provided config listens on port 80 for use behind a TLS-terminating reverse proxy (Nginx/Caddy/Traefik). If clients can reach nginx only through that proxy, set `TRUST_PROXY_HOPS=2` in `.env`, so the login rate limit sees each client's address rather than the proxy's. With the proxy on the same host, you can ensure that by changing `listen 80;` to `listen 127.0.0.1:8080;` and pointing the proxy there. Without that, leave `TRUST_PROXY_HOPS` unset: a client that connects to nginx directly could choose the address it is rate-limited and logged under. If you want nginx to terminate TLS directly, uncomment the HTTPS server block in the file and set your certificate paths. A quick self-signed cert:
 
 ```bash
 sudo mkdir -p /etc/ssl/mailflow
@@ -527,6 +535,18 @@ git pull && \
 
 ## Backup and Restore
 
+Settings → Backup (admin only) downloads a backup of the installation's data: users, email accounts, rules, contacts, settings, plugin data and antispam training. Cached mail is downloaded again from the mail servers after a restore, unless **Include cached mail** is on, which adds the local copy of every synced message to the file. Without it, the newest unread messages in each inbox arrive as new mail after a restore, so inbox rules, forwarding included, run on them again.
+
+The file does not hold what is set in `.env`. A new server needs the same `ENCRYPTION_KEY`, and the same VAPID keys and OAuth client settings if they are set there; with new VAPID keys, push notifications stop until each browser subscribes again.
+
+The file holds password hashes, pending invite links and the accounts' credentials. The credentials are encrypted with `ENCRYPTION_KEY`; the rest is readable, and so is every message when cached mail is included, so keep the file safe.
+
+Restoring replaces everything on the server with the file's contents, then MailFlow restarts. Docker, pm2 and the systemd unit in `contrib/` start it again; a MailFlow started by hand has to be started again the same way. Anyone whose account is not in the backup is signed out, and the passwords are the ones in the backup. A backup restores only on a MailFlow version with the same database schema as the one that made it; releases with no migration between them share one. To move to a version with a newer schema, restore the backup on the version that made it, then update, so the update converts its data as usual.
+
+If your own reverse proxy sits in front of MailFlow, let `/api/admin/backup` through without a request size limit, without buffering and with long timeouts, as `frontend/nginx.conf` does. A native install set up before this version needs that location copied from `contrib/nginx.conf` into its nginx config.
+
+The database can also be copied as-is with a dump:
+
 ```bash
 # Backup database
 docker exec mailflow-postgres pg_dump -U mailflow mailflow \
@@ -616,7 +636,8 @@ MailFlow is free and open source. If it's useful to you, consider supporting dev
 ### GitHub Sponsors
 
 <!-- SPONSORS-START -->
-<a href="https://github.com/MikeScanlan5" title="MikeScanlan5"><img src="https://avatars.githubusercontent.com/u/44779151?s=64&u=e7dfabc231fa876f879e63b4cd1c897036751467&v=4" width="48" height="48" alt="MikeScanlan5" style="border-radius:50%;margin:4px"></a>
+<a href="https://github.com/phillip9933" title="phillip9933"><img src="https://avatars.githubusercontent.com/u/19641186?s=64&u=f5eed97c62db0fed8c5274adcf7fd750e42bcd93&v=4" width="48" height="48" alt="phillip9933" style="border-radius:50%;margin:4px"></a>
+<a href="https://github.com/chip-well" title="chip-well"><img src="https://avatars.githubusercontent.com/u/80933507?s=64&u=a1ab1fc07b1cf5a6822453c007abfe24a581a420&v=4" width="48" height="48" alt="chip-well" style="border-radius:50%;margin:4px"></a>
 <!-- SPONSORS-END -->
 
 ---

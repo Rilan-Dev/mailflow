@@ -245,7 +245,6 @@ describe('API-key provider regression', () => {
       messages: [{ role: 'user', content: 'Hi' }],
       max_tokens: 12,
       stream: false,
-      think: false,
     });
   });
 
@@ -254,6 +253,60 @@ describe('API-key provider regression', () => {
     const { provider } = factory({ initial: { ...legacy, apiKey: null }, fetchFn });
     await provider.completeText([{ role: 'user', content: 'Hi' }]);
     expect(fetchFn.mock.calls[0][1].headers).not.toHaveProperty('Authorization');
+  });
+
+  it('surfaces the finish reason when a real completion returns null content', async () => {
+    // Reasoning model: all output went to reasoning, content is null (#401).
+    const fetchFn = vi.fn().mockResolvedValue(jsonResponse({
+      choices: [{ finish_reason: 'length', message: { content: null, reasoning_content: 'thinking…' } }],
+    }));
+    const { provider } = factory({ initial: legacy, fetchFn });
+    const err = await provider.completeText([{ role: 'user', content: 'Hi' }], { maxTokens: 5 }).catch((e) => e);
+    expect(err).toBeInstanceOf(Error);
+    expect(err.status).toBe(502);
+    expect(err.expose).toBe(true);
+    expect(err.message).toMatch(/empty completion \(finish_reason: length\)/);
+  });
+
+  it('rejects a malformed completion with no choices', async () => {
+    const fetchFn = vi.fn().mockResolvedValue(jsonResponse({ notChoices: true }));
+    const { provider } = factory({ initial: legacy, fetchFn });
+    const err = await provider.completeText([{ role: 'user', content: 'Hi' }]).catch((e) => e);
+    expect(err.message).toMatch(/invalid completion/);
+    expect(err.expose).toBe(true);
+  });
+
+  it('exposes provider HTTP errors with their status and detail', async () => {
+    const fetchFn = vi.fn().mockResolvedValue(jsonResponse({ error: { message: 'bad model' } }, 400));
+    const { provider } = factory({ initial: legacy, fetchFn });
+    const err = await provider.completeText([{ role: 'user', content: 'Hi' }]).catch((e) => e);
+    expect(err.status).toBe(502);
+    expect(err.expose).toBe(true);
+    expect(err.message).toMatch(/AI provider error \(400\).*bad model/);
+  });
+
+  it('passes the connection test when a reasoning model returns empty content', async () => {
+    // The exact #401 case: null content + finish_reason "length" must not fail
+    // the connection test, and the test must use the small allowEmpty budget.
+    const fetchFn = vi.fn().mockResolvedValue(jsonResponse({
+      choices: [{ finish_reason: 'length', message: { content: null, reasoning_content: 'reasoning…' } }],
+    }));
+    const { provider } = factory({ initial: legacy, fetchFn });
+    await expect(provider.testAiProvider()).resolves.toEqual({ ok: true });
+    expect(JSON.parse(fetchFn.mock.calls[0][1].body).max_tokens).toBe(16);
+  });
+
+  it('passes the connection test against a provider that rejects unknown fields', async () => {
+    // OpenAI answers an unknown top-level field with a 400 instead of ignoring it.
+    const known = new Set(['model', 'messages', 'max_tokens', 'stream']);
+    const fetchFn = vi.fn(async (_url, init) => {
+      const unknown = Object.keys(JSON.parse(init.body)).find((key) => !known.has(key));
+      return unknown
+        ? jsonResponse({ error: { message: `Unrecognized request argument supplied: ${unknown}` } }, 400)
+        : jsonResponse({ choices: [{ message: { content: 'ok' } }] });
+    });
+    const { provider } = factory({ initial: legacy, fetchFn });
+    await expect(provider.testAiProvider()).resolves.toEqual({ ok: true });
   });
 
   it('keeps the provider timeout active while reading the response body', async () => {
@@ -311,6 +364,45 @@ describe('API-key provider regression', () => {
     controller.abort();
     await expect(iterator.next()).rejects.toThrow(/aborted/i);
     expect(cancelled).toBe(true);
+  });
+
+  // The base URL's host is checked when it is saved; a redirect would reach one never checked.
+  it('does not follow a redirect from the provider', async () => {
+    const fetchFn = vi.fn().mockResolvedValue(new Response(null, { status: 307, headers: { Location: 'http://10.0.0.5/v1/chat/completions' } }));
+    const { provider } = factory({ initial: legacy, fetchFn });
+    const err = await provider.completeText([{ role: 'user', content: 'Hi' }]).catch((e) => e);
+    expect(fetchFn.mock.calls[0][1].redirect).toBe('manual');
+    expect(err.status).toBe(502);
+    expect(err.expose).toBe(true);
+    expect(err.message).toMatch(/redirected the request \(307\)/);
+    const streamFn = vi.fn().mockResolvedValue(new Response(null, { status: 302, headers: { Location: 'http://10.0.0.5/' } }));
+    const streaming = factory({ initial: legacy, fetchFn: streamFn }).provider;
+    await expect(collect(streaming.streamChat([{ role: 'user', content: 'Hi' }]))).rejects.toThrow(/redirected the request \(302\)/);
+    expect(streamFn.mock.calls[0][1].redirect).toBe('manual');
+  });
+
+  it("never reaches a redirect's target with Node's own fetch", async () => {
+    const http = await import('node:http');
+    const hits = [];
+    const target = http.createServer((req, res) => { hits.push(req.headers.authorization); res.end('{}'); });
+    await new Promise(r => target.listen(0, '127.0.0.1', r));
+    const origin = http.createServer((req, res) => {
+      res.writeHead(307, { Location: `http://127.0.0.1:${target.address().port}/v1/chat/completions` });
+      res.end();
+    });
+    await new Promise(r => origin.listen(0, '127.0.0.1', r));
+    try {
+      const { provider } = factory({
+        initial: { ...legacy, baseUrl: `http://127.0.0.1:${origin.address().port}/v1` },
+        fetchFn: (...args) => fetch(...args),
+      });
+      const err = await provider.completeText([{ role: 'user', content: 'Hi' }]).catch((e) => e);
+      expect(err.message).toMatch(/redirected the request \(307\)/);
+      expect(hits).toEqual([]);
+    } finally {
+      origin.close();
+      target.close();
+    }
   });
 
   it('bounds non-2xx provider errors without exposing the configured key', async () => {

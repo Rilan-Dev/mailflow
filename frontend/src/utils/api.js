@@ -102,7 +102,8 @@ async function request(method, path, body, extraHeaders) {
       window.dispatchEvent(new CustomEvent('mailflow:session_expired'));
     }
     const err = await res.json().catch(() => ({ error: 'Request failed' }));
-    throw new Error(err.error || 'Request failed');
+    // The status rides along so a caller can tell a refusal (409) from a failure.
+    throw Object.assign(new Error(err.error || 'Request failed'), { status: res.status });
   }
   return res.json();
 }
@@ -175,14 +176,32 @@ export async function streamAiChat(messages, { signal, onDelta } = {}) {
   }
 }
 
-function getMessageBody(id, remoteImages = false) {
-  const key = `${id}:${remoteImages ? 'remote' : 'blocked'}`;
+// `original`: inline images as sent, not fitted for reading (backend services/inlineImageFit.js),
+// for a forward.
+function getMessageBody(id, remoteImages = false, { original = false } = {}) {
+  const key = `${id}:${remoteImages ? 'remote' : 'blocked'}${original ? ':original' : ''}`;
   const existing = messageBodyRequests.get(key);
   if (existing) return existing;
-  const promise = request('GET', `/mail/messages/${id}/body${remoteImages ? '?remoteImages=1' : ''}`)
+  const params = [remoteImages && 'remoteImages=1', original && 'original=1'].filter(Boolean).join('&');
+  const promise = request('GET', `/mail/messages/${id}/body${params ? `?${params}` : ''}`)
     .finally(() => messageBodyRequests.delete(key));
   messageBodyRequests.set(key, promise);
   return promise;
+}
+
+// Sign-out must not hang here: getRegistration(), not serviceWorker.ready, because ready
+// never settles when the worker failed to register; and unsubscribe() is not awaited,
+// because it can wait on the push service.
+async function endPushSubscription() {
+  let sub;
+  try {
+    const reg = await navigator.serviceWorker?.getRegistration();
+    sub = await reg?.pushManager?.getSubscription();
+  } catch {
+    return null;
+  }
+  sub?.unsubscribe().catch(() => {});
+  return sub?.endpoint ?? null;
 }
 
 export const api = {
@@ -195,7 +214,12 @@ export const api = {
   // Auth
   login: (username, password) => request('POST', '/auth/login', { username, password }),
   register: (username, password, inviteToken) => request('POST', '/auth/register', { username, password, inviteToken }),
-  logout: () => request('POST', '/auth/logout'),
+  // A push subscription outlives the session, so sign-out ends this browser's and names
+  // its endpoint for the server to delete.
+  logout: async () => {
+    const pushEndpoint = await endPushSubscription();
+    return request('POST', '/auth/logout', pushEndpoint ? { pushEndpoint } : undefined);
+  },
   lock: () => request('POST', '/auth/lock'),
   unlock: async (pin) => {
     // Custom (not request()) so we can read the lockout flag on failure: after too many
@@ -209,6 +233,10 @@ export const api = {
     const data = await res.json().catch(() => ({}));
     if (res.ok) return data;
     if (data.signedOut) {
+      // A lockout signs out without api.logout(), and the session is already gone, so only
+      // the browser's subscription can be ended here. Once it is, the push service answers
+      // the next send with 404/410, which prunes the row.
+      await endPushSubscription();
       window.dispatchEvent(new CustomEvent('mailflow:session_expired'));
       const e = new Error('signed_out'); e.signedOut = true; throw e;
     }
@@ -221,6 +249,18 @@ export const api = {
   resetPassword: (token, password) => request('POST', '/auth/reset-password', { token, password }),
   getPreferences: () => request('GET', '/auth/preferences'),
   savePreferences: (prefs) => request('PATCH', '/auth/preferences', prefs),
+  // The same write, but issued while the page is going away. keepalive lets the browser
+  // finish the request after the document is gone; an ordinary fetch is cancelled and the
+  // setting is lost, then overwritten by the older server value on the next load. Bypasses
+  // request() deliberately: there is no point parsing a response nobody will see, and the
+  // 401/423 events it dispatches cannot be acted on during unload.
+  savePreferencesOnExit: (prefs) => fetch(BASE + '/auth/preferences', {
+    method: 'PATCH',
+    credentials: 'include',
+    keepalive: true,
+    headers: { 'Content-Type': 'application/json', [CSRF_HEADER]: CSRF_VALUE },
+    body: JSON.stringify(prefs),
+  }),
   updateProfile: (data) => request('PATCH', '/auth/profile', data),
   uploadAvatar: (avatar) => request('POST', '/auth/avatar', { avatar }),
   deleteAvatar: () => request('DELETE', '/auth/avatar'),
@@ -250,6 +290,7 @@ export const api = {
     updateUser: (id, data) => request('PATCH', `/admin/users/${id}`, data),
     deleteUser: (id) => request('DELETE', `/admin/users/${id}`),
     disableUserTotp: (id) => request('POST', `/admin/users/${id}/totp/disable`),
+    setUserPassword: (id, password) => request('POST', `/admin/users/${id}/password`, { password }),
     getSettings: () => request('GET', '/admin/settings'),
     updateSettings: (data) => request('PATCH', '/admin/settings', data),
     getInvites: (params) => request('GET', '/admin/invites' + (params ? '?' + new URLSearchParams(params) : '')),
@@ -260,6 +301,60 @@ export const api = {
     testSystemEmail: () => request('POST', '/admin/system-email/test'),
     deleteSystemEmail: () => request('DELETE', '/admin/system-email'),
     getAuthEvents: (params) => request('GET', '/admin/auth-events?' + new URLSearchParams(params)),
+    checkBackup: (scope) => request('GET', `/admin/backup/check?scope=${encodeURIComponent(scope)}`),
+    backupUrl: (scope) => `${BASE}/admin/backup?scope=${encodeURIComponent(scope)}`,
+    // The file streams up and the server streams progress lines back, one JSON object per
+    // line, ending with the result. Resolves with that result. An error with `lost` set means
+    // the connection ended before the server said how the restore went.
+    restoreBackup: async (file, onProgress) => {
+      const lost = cause => { const e = new Error(cause?.message || 'Connection lost'); e.lost = true; return e; };
+      let res;
+      try {
+        res = await fetch(`${BASE}/admin/backup/restore`, {
+          method: 'POST',
+          credentials: 'include',
+          headers: { [CSRF_HEADER]: CSRF_VALUE, 'Content-Type': 'application/gzip' },
+          body: file,
+        });
+      } catch (err) {
+        throw lost(err);
+      }
+      if (!res.ok) {
+        if (res.status === 423) window.dispatchEvent(new CustomEvent('mailflow:locked'));
+        if (res.status === 401) window.dispatchEvent(new CustomEvent('mailflow:session_expired'));
+        const err = await res.json().catch(() => ({ error: 'Request failed' }));
+        const e = new Error(err.error || 'Request failed'); e.status = res.status; throw e;
+      }
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+      for (let done = false; !done;) {
+        let chunk;
+        try {
+          chunk = await reader.read();
+        } catch (err) {
+          throw lost(err);
+        }
+        done = chunk.done;
+        buffer += done ? decoder.decode() : decoder.decode(chunk.value, { stream: true });
+        let at;
+        while ((at = buffer.indexOf('\n')) >= 0) {
+          const line = buffer.slice(0, at).trim();
+          buffer = buffer.slice(at + 1);
+          if (!line) continue;
+          let entry;
+          try {
+            entry = JSON.parse(line);
+          } catch (err) {
+            throw lost(err);
+          }
+          if (entry.error) throw new Error(entry.error);
+          if (entry.ok) return entry;
+          if (onProgress) onProgress(entry);
+        }
+      }
+      throw lost();
+    },
     oidc: {
       getProviders: () => request('GET', '/admin/oidc'),
       createProvider: (data) => request('POST', '/admin/oidc', data),
@@ -302,21 +397,29 @@ export const api = {
     return request('GET', `/mail/resolve-message?${qs}`);
   },
   getMessageBody,
+  // The id rides in the query string, not the path: GitHub's Message-IDs contain slashes, which
+  // some reverse proxies reject when encoded in a path (#509).
   getThread: (threadId, folder, unified = false) => {
-    const qs = new URLSearchParams();
+    const qs = new URLSearchParams({ id: threadId });
     if (folder) qs.set('folder', folder);
     if (unified) qs.set('unified', 'true');
-    const query = qs.size ? `?${qs}` : '';
-    return request('GET', `/mail/thread/${encodeURIComponent(threadId)}${query}`);
+    return request('GET', `/mail/thread?${qs}`);
   },
   bulkRead: (ids, read) => request('POST', '/mail/messages/bulk-read', { ids, read }),
+  bulkStar: (ids, starred) => request('POST', '/mail/messages/bulk-star', { ids, starred }),
   markStarred: (id, starred) => request('PATCH', `/mail/messages/${id}/star`, { starred }),
   markAllRead: (accountId, folder) => request('POST', '/mail/mark-all-read', { accountId, folder }),
   deleteMessage: (id) => request('DELETE', `/mail/messages/${id}`),
   bulkDelete: (ids) => request('POST', '/mail/messages/bulk-delete', { ids }),
   bulkMove: (ids, folder) => request('POST', '/mail/messages/bulk-move', { ids, folder }),
+  copyMessage: (id, folder) => request('POST', `/mail/messages/${encodeURIComponent(id)}/copy`, { folder }),
   bulkArchive: (ids) => request('POST', '/mail/messages/bulk-archive', { ids }),
   getUnreadCounts: () => request('GET', '/mail/unread-counts'),
+
+  // Mailbox cleanup (read-only analysis; actual cleanup reuses bulkDelete above).
+  mailboxUsage: (accountId) => request('GET', `/mail/mailbox-usage?accountId=${encodeURIComponent(accountId)}`),
+  cleanupPreview: (accountId, fromEmail) =>
+    request('GET', `/mail/cleanup-preview?accountId=${encodeURIComponent(accountId)}&fromEmail=${encodeURIComponent(fromEmail)}`),
 
   // Antispam (v0.1) — manual user feedback.
   // markSpam moves the message to the account's spam/junk folder and
@@ -326,7 +429,14 @@ export const api = {
   markHam:  (id) => request('POST', `/mail/messages/${id}/ham`),
 
   getMessageHeaders: (id) => request('GET', `/mail/messages/${id}/headers`),
+  getMessageBcc: (id) => request('GET', `/mail/messages/${id}/bcc`),
   snoozeMessage: (id, until) => request('POST', `/mail/messages/${id}/snooze`, { until }),
+  // The Snoozed view (#269): change when a snoozed message comes back, or bring it back now.
+  changeSnooze: (id, until) => request('PATCH', `/mail/messages/${id}/snooze`, { until }),
+  unsnoozeMessage: (id) => request('POST', `/mail/messages/${id}/unsnooze`),
+
+  // Sanitized diagnostics report (server-owned sections; scoped to the user).
+  diagnosticsReport: (salt) => request('POST', '/diagnostics/report', { salt }),
 
   // Integrations
   getIntegrations: () => request('GET', '/integrations'),
@@ -406,7 +516,16 @@ export const api = {
   reorderRules:(ids)      => request('PATCH',  '/rules/reorder', { ids }),
   runRules:    (accountId) => request('POST',  '/rules/run', accountId ? { accountId } : {}),
 
+  // Undo send: a send held on the server for the undo window (backend/src/services/sendHold.js)
+  getSendStatus: (id) => request('GET',  `/mail/send/${encodeURIComponent(id)}`),
+  cancelSend:    (id) => request('POST', `/mail/send/${encodeURIComponent(id)}/cancel`),
+
   // Drafts
+  getReplyDraftIndicators: (ids, scope = {}) => request('POST', '/mail/reply-drafts/indicators', { ids, ...scope }),
+  getReplyDraft: (id, options = {}) => {
+    const params = new URLSearchParams(Object.entries(options).filter(([, value]) => value !== undefined));
+    return request('GET', `/mail/messages/${encodeURIComponent(id)}/reply-draft?${params}`);
+  },
   saveDraft:   (data)              => request('POST',   '/mail/draft', data),
   deleteDraft: (accountId, uid, folder) =>
     request('DELETE', `/mail/draft/${uid}?accountId=${encodeURIComponent(accountId)}&folder=${encodeURIComponent(folder)}`),
@@ -441,6 +560,8 @@ export const api = {
 
   // Manual category override for a single message
   setMessageCategory: (id, category) => request('PATCH', `/mail/messages/${id}/category`, { category }),
+  // "Always for this sender/domain" (#490): saves a set_category rule and recategorizes that sender's inbox mail.
+  setSenderCategory: (messageId, scope, category, name) => request('POST', '/rules/sender-category', { messageId, scope, category, name }),
 
   // Trigger unsubscribe for a newsletter message
   unsubscribeMessage: (id) => request('POST', `/mail/messages/${id}/unsubscribe`),
@@ -465,6 +586,7 @@ export const api = {
     return request('GET', `/gtd/sections${qs ? '?' + qs : ''}`);
   },
   gtdClassify: (messageId, state) => request('POST', '/gtd/classify', { messageId, state }),
+  gtdUndoClassify: (undoToken) => request('POST', '/gtd/classify/undo', undoToken),
   gtdUnclassify: (messageId, state) => request('DELETE', '/gtd/classify', { messageId, state }),
   // GTD "done": strip the row's label(s) for these states, mark read, archive the INBOX
   // copy. id is the rail head's row id (its label-folder copy); the server resolves the

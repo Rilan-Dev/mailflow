@@ -1,5 +1,6 @@
 import pg from 'pg';
 import { encrypt, isEncrypted } from './encryption.js';
+import { recordDb } from './performanceMetrics.js';
 
 const { Pool } = pg;
 
@@ -36,6 +37,15 @@ const defaultPool = new Pool({
   options: '-c statement_timeout=30000',
 });
 
+// pg removes failed idle clients itself, then emits on the pool. Without a
+// listener, a database restart throws an uncaught error and kills the API.
+// NEXAHUB: attach to the default pool directly (the exported `pool` is a proxy
+// to whichever tenant is active; tenant pools attach their own handler where
+// they are created -- see the host's tenantPool.ts).
+defaultPool.on('error', err => {
+  console.error('Idle PostgreSQL connection error:', err.message);
+});
+
 // A proxy rather than a re-export, so `pool.connect()` in routes/auth.js, routes/oidc.js
 // and services/migrations.js reaches the current tenant's pool without those files
 // changing. NEXAHUB.
@@ -48,7 +58,16 @@ export const pool = new Proxy({}, {
 });
 
 export async function query(text, params) {
-  return activePool().query(text, params);  // NEXAHUB: tenant-scoped
+  // Time the query for the performance baseline (behavior-neutral). This is the
+  // single top-level DB chokepoint; transaction clients (withTransaction) are not
+  // timed here. process.hrtime avoids clock-skew and is ~nanosecond overhead.
+  // NEXAHUB: tenant-scoped through activePool().
+  const start = process.hrtime.bigint();
+  try {
+    return await activePool().query(text, params);
+  } finally {
+    recordDb(Number(process.hrtime.bigint() - start) / 1e6);
+  }
 }
 
 // Run fn(client) inside a serializable transaction. Commits on success, rolls

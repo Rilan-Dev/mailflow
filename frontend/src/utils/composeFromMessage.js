@@ -1,9 +1,29 @@
+import { pickReplyAlias } from './replyAlias.js';
+import { api } from './api.js';
+
+export function initialComposeFocus({ isReply = false, isForward = false } = {}) {
+  return isReply && !isForward ? 'editor' : 'to';
+}
+
+export function isComposeSendShortcut(event) {
+  return event?.key === 'Enter' && !event.repeat && !event.shiftKey && !event.altKey
+    && (!!event.ctrlKey !== !!event.metaKey);
+}
+
 function parseAddressField(raw) {
   try {
     const arr = Array.isArray(raw) ? raw : JSON.parse(raw || '[]');
     return arr.map(a => a.name ? `${a.name} <${a.email}>` : a.email).filter(Boolean).join(', ');
   } catch { return ''; }
 }
+
+// The quote header of a reply or forward is HTML, and the names, addresses and subject in it
+// come from the message, which the sender wrote. Unescaped, "Ann <ann@x.com>" lost its address
+// (read as a tag), and a display name could carry markup, such as a remote image that loaded in
+// the composer and travelled on in the reply. The plain-text quote keeps them as written.
+const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (c) => ({
+  '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
+}[c]));
 
 export async function openReplyFromMessage(message, { accounts, openCompose, getMessageBody, replyAll = false }) {
   const replyToArr = Array.isArray(message.reply_to)
@@ -21,25 +41,16 @@ export async function openReplyFromMessage(message, { accounts, openCompose, get
     ...(myAccount?.aliases || []).map(al => al.email.toLowerCase()),
   ]);
 
-  const replyAliasId = (() => {
-    const aliases = myAccount?.aliases || [];
-    if (!aliases.length) return null;
-    try {
-      const toArr = Array.isArray(message.to_addresses)
-        ? message.to_addresses
-        : JSON.parse(message.to_addresses || '[]');
-      const ccArr = Array.isArray(message.cc_addresses)
-        ? message.cc_addresses
-        : JSON.parse(message.cc_addresses || '[]');
-      const allEmails = [...toArr, ...ccArr].map(t => t.email?.toLowerCase()).filter(Boolean);
-      const fromEmail = (message.from_email || '').toLowerCase();
-      const match = aliases.find(al => {
-        const aliasEmail = al.email.toLowerCase();
-        return allEmails.includes(aliasEmail) || fromEmail === aliasEmail;
-      });
-      return match ? match.id : null;
-    } catch { return null; }
-  })();
+  // Delivered-To first, then the same To/Cc/From scan this used to do inline. Replying
+  // from the list and from the reading pane must choose the same alias, and the pane's
+  // version was the one that had been fixed.
+  const replyAliasId = pickReplyAlias({
+    aliases: myAccount?.aliases || [],
+    deliveryAddresses: message.delivery_addresses,
+    toAddresses: message.to_addresses,
+    ccAddresses: message.cc_addresses,
+    fromEmail: message.from_email,
+  });
 
   const allRecipients = (() => {
     try {
@@ -68,8 +79,10 @@ export async function openReplyFromMessage(message, { accounts, openCompose, get
   const quotedText = replyBody?.text
     ? `\n\n---\nOn ${replyDate}, ${replyFromStr} wrote:\n${replyBody.text.split('\n').map(l => '> ' + l).join('\n')}`
     : '';
+  // Quoted as shown, images through MailFlow's proxy, so opening the composer never loads them
+  // from the sender; ComposeModal puts the email's own references back when it saves or sends.
   const quotedBodyHtml = replyBody?.html
-    ? `<div style="border-left:3px solid var(--border,#ccc);padding-left:12px;margin-top:12px;color:var(--text-secondary,#666)"><p style="margin:0 0 6px;font-size:12px">On ${replyDate}, ${replyFromStr} wrote:</p>${replyBody.html}</div>`
+    ? `<div style="border-left:3px solid var(--border,#ccc);padding-left:12px;margin-top:12px;color:var(--text-secondary,#666)"><p style="margin:0 0 6px;font-size:12px">On ${escapeHtml(replyDate)}, ${escapeHtml(replyFromStr)} wrote:</p>${replyBody.html}</div>`
     : null;
 
   openCompose({
@@ -87,11 +100,16 @@ export async function openReplyFromMessage(message, { accounts, openCompose, get
     isReplyAll: replyAll,
     originalFrom: sender,
     allRecipients,
+    threadId: message.thread_id,
   });
 }
 
 export async function openForwardFromMessage(message, { openCompose, getMessageBody }) {
-  const fwdBody = await getMessageBody(message.id).catch(() => null);
+  let fwdBody = await getMessageBody(message.id).catch(() => null);
+  // Large inline images are fitted for reading; a recipient gets them as they were sent.
+  if (fwdBody?.inlineImagesFitted) {
+    fwdBody = await api.getMessageBody(message.id, Boolean(fwdBody.remoteImagesProxied), { original: true }).catch(() => fwdBody);
+  }
   const fwdDate = message.date ? new Date(message.date).toLocaleString() : '';
   const fwdSafeName = (message.from_name || '').replace(/[\r\n]+/g, ' ');
   const fwdFromStr = fwdSafeName
@@ -103,7 +121,7 @@ export async function openForwardFromMessage(message, { openCompose, getMessageB
 
   const fwdText = `\n\n---------- Forwarded message ----------\nFrom: ${fwdFromStr}\nDate: ${fwdDate}\nSubject: ${safeSubject}${toStr ? `\nTo: ${toStr}` : ''}${ccStr ? `\nCc: ${ccStr}` : ''}\n\n${fwdBody?.text || ''}`;
   const fwdHtml = fwdBody?.html
-    ? `<div style="border-left:3px solid var(--border,#ccc);padding-left:12px;margin-top:12px;color:var(--text-secondary,#666)"><p style="margin:0 0 6px;font-size:12px">---------- Forwarded message ----------<br>From: ${fwdFromStr}<br>Date: ${fwdDate}<br>Subject: ${safeSubject}${toStr ? `<br>To: ${toStr}` : ''}${ccStr ? `<br>Cc: ${ccStr}` : ''}</p>${fwdBody.html}</div>`
+    ? `<div style="border-left:3px solid var(--border,#ccc);padding-left:12px;margin-top:12px;color:var(--text-secondary,#666)"><p style="margin:0 0 6px;font-size:12px">---------- Forwarded message ----------<br>From: ${escapeHtml(fwdFromStr)}<br>Date: ${escapeHtml(fwdDate)}<br>Subject: ${escapeHtml(safeSubject)}${toStr ? `<br>To: ${escapeHtml(toStr)}` : ''}${ccStr ? `<br>Cc: ${escapeHtml(ccStr)}` : ''}</p>${fwdBody.html}</div>`
     : null;
 
   openCompose({
@@ -120,5 +138,26 @@ export async function openForwardFromMessage(message, { openCompose, getMessageB
       type: att.type || 'application/octet-stream',
       size: att.size || 0,
     })),
+  });
+}
+
+// "Forward as attachment" (#466): the original goes as an .eml attachment with every header
+// intact, which is what abuse desks such as SpamCop and IT teams need; an inline forward keeps
+// only the body. The server fetches the raw source at send time, so its size is not known here.
+export function openForwardAsAttachmentFromMessage(message, { openCompose }) {
+  const subject = (message.subject || '').replace(/[\r\n]+/g, ' ');
+  openCompose({
+    subject: subject.startsWith('Fwd:') ? subject : `Fwd: ${subject}`,
+    body: '',
+    accountId: message.account_id,
+    isForward: true,
+    forwardedAttachments: [{
+      messageId: message.id,
+      asMessage: true,
+      // Named as the server will name it: a slash or backslash in the subject becomes "_".
+      filename: `${subject.trim().replace(/[/\\]/g, '_') || 'message'}.eml`,
+      type: 'message/rfc822',
+      size: null,
+    }],
   });
 }

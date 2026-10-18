@@ -3,16 +3,18 @@ import { useTranslation } from 'react-i18next';
 import { useStore } from '../store/index.js';
 import { useMobile } from '../hooks/useMobile.js';
 import { THEMES } from '../themes.js';
+import { api } from '../utils/api.js';
+import { labelPickerOptions, pickerNavigationDirection, executeLabelChoice } from '../utils/labelPicker.js';
 
 const THEME_NAMES = Object.keys(THEMES);
 
-function buildActions({ t, openCompose, setSelectedAccount, setShowAdmin, setAdminTab, theme, setTheme, accounts, selectedAccountId }) {
+function buildActions({ t, openCompose, setSelectedAccount, setShowAdmin, setAdminTab, theme, setTheme, accounts }) {
   const actions = [
     {
       id: 'compose',
       label: t('commandPalette.actions.compose'),
       icon: <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>,
-      run: () => openCompose({ accountId: selectedAccountId || undefined }),
+      run: () => openCompose({}),
     },
     {
       id: 'inbox',
@@ -51,7 +53,9 @@ function buildActions({ t, openCompose, setSelectedAccount, setShowAdmin, setAdm
     actions.push({
       id: `account:${a.id}`,
       label: t('commandPalette.actions.accountInbox', { name: a.name }),
-      icon: <span style={{ width: 15, height: 15, borderRadius: '50%', background: a.color || '#6366f1', display: 'inline-block', flexShrink: 0 }} />,
+      icon: a.icon
+        ? <span style={{ fontSize: 15, lineHeight: 1, width: 15, display: 'inline-block', textAlign: 'center', flexShrink: 0 }}>{a.icon}</span>
+        : <span style={{ width: 15, height: 15, borderRadius: '50%', background: a.color || '#6366f1', display: 'inline-block', flexShrink: 0 }} />,
       run: () => setSelectedAccount(a.id, 'INBOX'),
     });
   }
@@ -59,17 +63,29 @@ function buildActions({ t, openCompose, setSelectedAccount, setShowAdmin, setAdm
   return actions;
 }
 
-export default function CommandPalette({ open, onClose }) {
+export default function CommandPalette({ open, onClose, labelPickerMessage = null }) {
   const { t } = useTranslation();
   const isMobile = useMobile();
-  const { openCompose, setSelectedAccount, setShowAdmin, setAdminTab, theme, setTheme, accounts, selectedAccountId } = useStore();
+  const { openCompose, setSelectedAccount, setShowAdmin, setAdminTab, theme, setTheme,
+    accounts, folders, addNotification } = useStore();
   const [query, setQuery] = useState('');
   const [activeIdx, setActiveIdx] = useState(0);
   const [listScrolled, setListScrolled] = useState(false);
   const inputRef = useRef(null);
   const listRef = useRef(null);
+  const busyRef = useRef(false);
 
-  const actions = buildActions({ t, openCompose, setSelectedAccount, setShowAdmin, setAdminTab, theme, setTheme, accounts, selectedAccountId });
+  const pickerAccount = accounts.find(account => account.id === labelPickerMessage?.account_id);
+  const actions = labelPickerMessage
+    ? labelPickerOptions(folders[labelPickerMessage.account_id], pickerAccount, labelPickerMessage.folder)
+      .map(choice => ({
+        id: `label:${choice.path}`,
+        label: t('commandPalette.labelPicker.copyTo', { folder: choice.label, defaultValue: 'Copy to {{folder}}' }),
+        icon: <span style={{ width: 15, textAlign: 'center' }}>◇</span>,
+        run: () => executeLabelChoice(labelPickerMessage, choice,
+          { getThread: api.getThread, copyMessage: api.copyMessage }),
+      }))
+    : buildActions({ t, openCompose, setSelectedAccount, setShowAdmin, setAdminTab, theme, setTheme, accounts });
 
   const filtered = query.trim()
     ? actions.filter(a => a.label.toLowerCase().includes(query.toLowerCase()))
@@ -85,22 +101,37 @@ export default function CommandPalette({ open, onClose }) {
 
   useEffect(() => { setActiveIdx(0); }, [query]);
 
-  const runAction = useCallback((action) => {
-    action.run();
-    onClose();
-  }, [onClose]);
+  const runAction = useCallback(async (action) => {
+    if (busyRef.current) return;
+    busyRef.current = true;
+    try {
+      await action.run();
+      onClose();
+    } catch (error) {
+      addNotification({ title: t('commandPalette.labelPicker.error', { defaultValue: 'Could not label message' }), body: error.message });
+    } finally {
+      busyRef.current = false;
+    }
+  }, [onClose, addNotification, t]);
 
   const handleKeyDown = (e) => {
-    if (e.key === 'ArrowDown') {
+    const direction = labelPickerMessage ? pickerNavigationDirection(e) :
+      e.key === 'ArrowDown' ? 1 : e.key === 'ArrowUp' ? -1 : 0;
+    if (direction > 0) {
       e.preventDefault();
-      setActiveIdx(i => Math.min(i + 1, filtered.length - 1));
-    } else if (e.key === 'ArrowUp') {
+      e.stopPropagation();
+      setActiveIdx(i => Math.min(i + 1, Math.max(0, filtered.length - 1)));
+    } else if (direction < 0) {
       e.preventDefault();
+      e.stopPropagation();
       setActiveIdx(i => Math.max(i - 1, 0));
     } else if (e.key === 'Enter') {
       e.preventDefault();
+      e.stopPropagation();
       if (filtered[activeIdx]) runAction(filtered[activeIdx]);
     } else if (e.key === 'Escape') {
+      e.preventDefault();
+      e.stopPropagation();
       onClose();
     }
   };
@@ -146,7 +177,7 @@ export default function CommandPalette({ open, onClose }) {
             value={query}
             onChange={e => setQuery(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder={t('commandPalette.placeholder')}
+            placeholder={labelPickerMessage ? t('commandPalette.labelPicker.placeholder', { defaultValue: 'Copy or label selected message…' }) : t('commandPalette.placeholder')}
             style={{
               flex: 1, background: 'none', border: 'none', outline: 'none',
               color: 'var(--text-primary)', fontSize: 15,

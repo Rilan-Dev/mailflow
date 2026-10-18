@@ -4,53 +4,12 @@ import { useStore } from '../store/index.js';
 import { api } from '../utils/api.js';
 import { installCapacitorNativeBridge } from '../utils/capacitorNativeBridge.js';
 import { playNotificationSound } from '../utils/notificationSounds.js';
-import { pendingMarkReadMap } from '../utils/pendingReads.js';
-import { updateFaviconBadge } from '../themes.js';
-import { dispatchPluginWsMessage, dispatchPluginReconnect } from '../plugins/events.js';
 import { accountAffectsUnifiedInbox } from '../utils/unifiedInbox.js';
+import { dispatchPluginWsMessage, dispatchPluginReconnect } from '../plugins/events.js';
+import { recordDiagEvent } from '../utils/diagEvents.js';
 
-// Compute the correct favicon count given unread counts and the currently
-// selected account. Reads selectedAccountId from the store directly so this
-// can be called outside React's render cycle.
-function _faviconCount(counts) {
-  const { selectedAccountId } = useStore.getState();
-  return selectedAccountId ? (counts.byAccount[selectedAccountId] ?? 0) : counts.total;
-}
-
-// Apply a fresh server count, guarding against double-adjustment of in-flight
-// mark-read operations.
-//
-// Since /unread-counts now queries messages directly, the DB reflects a
-// mark-read as soon as the PATCH's UPDATE commits — which happens well before
-// IMAP flag work finishes and before the HTTP response returns. This means
-// pendingMarkReadMap can lag the DB by hundreds of milliseconds, and naively
-// subtracting it from the server count would undercount by one per in-flight read.
-//
-// Guard: only subtract pending reads when the server count is still at least
-// (current optimistic + pending size). If the server count is already lower,
-// the DB has applied those reads and subtracting again would double-count.
 function _applyServerCounts(counts) {
-  if (pendingMarkReadMap.size > 0) {
-    const state = useStore.getState();
-    const current = state.unreadCounts;
-    const pendingUnifiedCount = [...pendingMarkReadMap.values()]
-      .filter(accountId => accountAffectsUnifiedInbox(state.accounts, accountId))
-      .length;
-    if (counts.total >= current.total + pendingUnifiedCount) {
-      // Server hasn't incorporated in-flight reads yet — subtract them.
-      const byAccount = { ...counts.byAccount };
-      for (const accountId of pendingMarkReadMap.values()) {
-        if (byAccount[accountId] > 0) byAccount[accountId]--;
-      }
-      const total = Math.max(0, counts.total - pendingUnifiedCount);
-      useStore.setState({ unreadCounts: { total, byAccount } });
-    } else {
-      // DB already applied the reads — use the authoritative count directly.
-      useStore.setState({ unreadCounts: counts });
-    }
-  } else {
-    useStore.setState({ unreadCounts: counts });
-  }
+  useStore.getState().setUnreadCounts(counts);
 }
 
 async function _forwardNativeNewMailNotification(notification) {
@@ -75,6 +34,10 @@ let backfillRefreshTimer = null;
 let flagCountRefreshTimer = null;
 const BACKOFF_BASE = 1000;
 const BACKOFF_MAX = 30000;
+// How long a socket must stay open before the backoff starts over. One the server accepts and then
+// closes at once (an address other than APP_URL is refused, 1008) otherwise reset it on every open
+// and was retried every second or two, each retry refetching the message list.
+const STABLE_MS = 10000;
 
 export function useWebSocket() {
   const { t } = useTranslation();
@@ -97,6 +60,7 @@ export function useWebSocket() {
     if (wsRef.current && wsRef.current.readyState !== WebSocket.CLOSED) {
       wsRef.current.onclose = null;  // prevent old socket's close from scheduling another reconnect
       clearInterval(wsRef.current._pingInterval);
+      clearTimeout(wsRef.current._stableTimer);
       wsRef.current.close();
     }
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
@@ -114,7 +78,7 @@ export function useWebSocket() {
     ws.onopen = () => {
       const wasReconnect = hasConnectedBefore.current;
       hasConnectedBefore.current = true;
-      reconnectAttempt.current = 0;
+      ws._stableTimer = setTimeout(() => { reconnectAttempt.current = 0; }, STABLE_MS);
       ws._lastActivity = Date.now();
       // Ping every 30s. If no message (including the server's pong) has arrived in ~2.5 intervals,
       // the socket is half-open — common after sleep/network blips, where onclose never fires and
@@ -130,9 +94,10 @@ export function useWebSocket() {
       ws._pingInterval = pingInterval;
       // On reconnect, catch up on any messages that arrived during the outage
       if (wasReconnect) {
+        recordDiagEvent({ category: 'ws', type: 'reconnect' });
         window.dispatchEvent(new CustomEvent('mailflow:refresh'));
         api.getUnreadCounts().then(counts => {
-          useStore.setState({ unreadCounts: counts });
+          useStore.getState().setUnreadCounts(counts);
         }).catch(() => {});
         // A plugin's rail/derived data can drift during the outage — events fired while the socket
         // was down are lost, not buffered. Let each activated plugin resync (GTD refetches its
@@ -151,6 +116,7 @@ export function useWebSocket() {
 
     ws.onclose = (event) => {
       clearInterval(ws._pingInterval);
+      clearTimeout(ws._stableTimer);
       if (!mountedRef.current || NO_RECONNECT_CODES.has(event.code)) return;
       const attempt = reconnectAttempt.current;
       const delay = Math.min(BACKOFF_BASE * 2 ** attempt, BACKOFF_MAX);
@@ -178,32 +144,38 @@ export function useWebSocket() {
         const alertCount = data.alertCount ?? count;
         const isInbox = !folder || folder === 'INBOX';
 
-        if (messages && messages.length > 0) {
-          // In-app notifications and sounds are inbox-only — non-inbox folder syncs
-          // (Archive, Spam, on-demand syncs) should not trigger alerts for old mail.
-          // Also skipped when all messages were silenced by a mark_read rule (alertCount === 0).
-          if (isInbox && alertCount > 0) {
-            const latest = alertMessages[0];
-            const notification = {
-              type: 'new_mail',
-              accountId,
-              folder: folder || 'INBOX',
-              messageId: latest.id,
-              message: latest,
-              title: latest.fromName || latest.fromEmail || t('notifications.newMessage'),
-              body: latest.subject || t('common.noSubject'),
-              count: alertCount,
-            };
+        // Note: no raw folder name here — a custom folder name would be identifying,
+        // and the scrub net only catches emails/IPs/tokens. isInbox is the safe signal.
+        recordDiagEvent({ category: 'event', type: 'new_messages', accountId, isInbox, count, alertCount });
 
-            if (document.visibilityState === 'visible') {
-              addNotification(notification);
-              const { notificationSound, customSoundDataUrl } = useStore.getState();
-              playNotificationSound(notificationSound, customSoundDataUrl);
-            }
+        // In-app notifications and sounds are inbox-only — non-inbox folder syncs
+        // (Archive, Spam, on-demand syncs) should not trigger alerts for old mail.
+        // Also skipped when all messages were silenced by a mark_read rule (alertCount === 0).
+        // An alert can come with no new Inbox mail at all: mail a "Notify me" rule filed
+        // elsewhere (#588), which is opened in the folder it went to.
+        if (isInbox && alertCount > 0 && alertMessages?.length) {
+          const latest = alertMessages[0];
+          const notification = {
+            type: 'new_mail',
+            accountId,
+            folder: latest.folder || folder || 'INBOX',
+            messageId: latest.id,
+            message: latest,
+            title: latest.fromName || latest.fromEmail || t('notifications.newMessage'),
+            body: latest.subject || t('common.noSubject'),
+            count: alertCount,
+          };
 
-            _forwardNativeNewMailNotification(notification);
+          if (document.visibilityState === 'visible') {
+            addNotification(notification);
+            const { notificationSound, customSoundDataUrl } = useStore.getState();
+            playNotificationSound(notificationSound, customSoundDataUrl);
           }
 
+          _forwardNativeNewMailNotification(notification);
+        }
+
+        if (messages && messages.length > 0) {
           // Refresh the message list when the affected folder is visible
           const store = useStore.getState();
           const isRelevant =
@@ -216,35 +188,24 @@ export function useWebSocket() {
           }
         }
 
-        // Refresh unread counts from the server. Messages are fully inserted in the
-        // DB by the time new_messages fires, so this returns the authoritative count
-        // and corrects any optimistic delta that exists_hint applied earlier.
-        // Also handles periodic syncs that have no preceding exists_hint.
+        // Fetch the latest independently observed server count.
         if (isInbox) {
           api.getUnreadCounts().then(_applyServerCounts).catch(() => {});
         }
         break;
       }
 
-      case 'exists_hint': {
-        // Optimistic unread increment: fired immediately when the IMAP server
-        // signals new mail, before the full fetch+insert cycle completes.
-        // The subsequent new_messages event will correct the count to the
-        // authoritative server value.
-        const { accountId, delta } = data;
-        const counts = useStore.getState().unreadCounts;
-        const byAccount = { ...counts.byAccount };
-        byAccount[accountId] = (byAccount[accountId] || 0) + delta;
-        const total = accountAffectsUnifiedInbox(useStore.getState().accounts, accountId)
-          ? counts.total + delta
-          : counts.total;
-        const newCounts = { total, byAccount };
-        useStore.setState({ unreadCounts: newCounts });
-        // Update favicon immediately — do not wait for React's render cycle.
-        // With a pre-cached base this is synchronous (no image load round-trip).
-        updateFaviconBadge(_faviconCount(newCounts));
+      case 'exists_hint':
+        // EXISTS reports membership, not UNSEEN. The status observer supplies badges.
         break;
-      }
+
+      case 'folder_counts':
+        api.getUnreadCounts().then(_applyServerCounts).catch(() => {});
+        if (useStore.getState().folders[data.accountId]) {
+          api.getFolders(data.accountId)
+            .then(f => useStore.getState().setFolders(data.accountId, f)).catch(() => {});
+        }
+        break;
 
       case 'account_connected': {
         updateAccount(data.accountId, { sync_error: null });
@@ -331,10 +292,47 @@ export function useWebSocket() {
         break;
       }
 
+      case 'drafts_changed': {
+        // A Drafts folder gained or lost a draft: synced from another client (which saves it
+        // read, so no new_messages), or saved, discarded or sent from another tab or device.
+        // The Inbox re-checks its reply-draft markers; the visible list does not reload.
+        useStore.getState().invalidateReplyDrafts();
+        break;
+      }
+
+      case 'folder_emptied': {
+        // Background empty finished (see mail.js /folders/empty). Toast the outcome and refresh
+        // the view and counts either way — on failure the messages are still on the server and
+        // should reappear.
+        addNotification({ title: data.ok ? t('sidebar.emptied') : t('sidebar.emptyFailed') });
+        window.dispatchEvent(new CustomEvent('mailflow:refresh'));
+        window.dispatchEvent(new CustomEvent('mailflow:sync_done'));
+        api.getUnreadCounts().then(_applyServerCounts).catch(() => {});
+        if (data.accountId && useStore.getState().folders[data.accountId]) {
+          api.getFolders(data.accountId).then(f => setFolders(data.accountId, f)).catch(() => {});
+        }
+        break;
+      }
+
+      case 'rules_run_complete': {
+        // Background "Run rules on inbox" finished (see rules.js /run). Toast the outcome,
+        // hand the counts to the settings panel if it is open, and refresh views and
+        // counts — rules move messages between folders.
+        addNotification({
+          title: data.ok === false
+            ? t('admin.rules.runError')
+            : t('admin.rules.runResult', { matched: data.matched, processed: data.processed }),
+        });
+        window.dispatchEvent(new CustomEvent('mailflow:rules-run-complete', { detail: data }));
+        window.dispatchEvent(new Event('mailflow:rules-ran'));
+        api.getUnreadCounts().then(_applyServerCounts).catch(() => {});
+        break;
+      }
+
       case 'snooze_wakeup': {
         window.dispatchEvent(new CustomEvent('mailflow:refresh'));
         api.getUnreadCounts().then(counts => {
-          useStore.setState({ unreadCounts: counts });
+          useStore.getState().setUnreadCounts(counts);
         }).catch(() => {});
         break;
       }

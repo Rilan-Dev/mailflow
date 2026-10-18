@@ -28,6 +28,10 @@ const AI_LANGUAGE_NAMES = {
   fr: 'French',
   it: 'Italian',
   zhCN: 'Simplified Chinese',
+  pl: 'Polish',
+  cs: 'Czech',
+  ptBR: 'Brazilian Portuguese',
+  ko: 'Korean',
 };
 
 export function aiLanguageInstruction(language) {
@@ -38,11 +42,18 @@ export function aiLanguageInstruction(language) {
 }
 
 function serviceError(res, error, fallback = 'Request failed') {
-  const status = Number.isInteger(error?.status) && error.status >= 400 && error.status < 600
+  let status = Number.isInteger(error?.status) && error.status >= 400 && error.status < 600
     ? error.status
     : 500;
-  const message = status >= 500 ? fallback : error.message;
-  return res.status(status).json({ error: message });
+  // A 401 from a service is the AI provider rejecting its stored credential, not the
+  // MailFlow session, and the frontend signs the user out on any 401 outside /auth/.
+  if (status === 401) status = 409;
+  // Client errors (4xx) and provider errors explicitly marked safe to expose
+  // carry their real message; other 5xx fall back to a generic message. Always
+  // log server-side on 5xx so the reason is recoverable even when it's hidden.
+  const expose = status < 500 || error?.expose === true;
+  if (status >= 500) console.error(`${fallback}:`, error?.message || error);
+  return res.status(status).json({ error: expose ? error.message : fallback });
 }
 
 function owner(req) {

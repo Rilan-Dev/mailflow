@@ -7,6 +7,7 @@
     "add": "Hinzufügen",
     "remove": "Entfernen",
     "copy": "Kopieren",
+    "copyFailed": "Kopieren fehlgeschlagen. Text markieren und manuell kopieren.",
     "back": "Zurück",
     "undo": "Rückgängig",
     "view": "Ansehen",
@@ -88,9 +89,12 @@
       "tooShort": "Das Passwort muss mindestens 8 Zeichen lang sein",
       "doneDesc": "Dein Passwort wurde aktualisiert. Du kannst dich jetzt anmelden.",
       "backToLogin": "← Zurück zur Anmeldung"
-    }
+    },
+    "showPassword": "Passwort anzeigen",
+    "hidePassword": "Passwort verbergen"
   },
   "compose": {
+    "unsupportedDraftFrom": "Wähle einen eingerichteten Absender, bevor du diesen Entwurf speicherst oder sendest.",
     "newMessage": "Neue Nachricht",
     "reply": "Antworten",
     "replyAll": "Allen antworten",
@@ -106,9 +110,11 @@
     "bccPh": "bcc@example.com",
     "bodyPh": "Nachricht schreiben…",
     "send": "Senden",
+    "insertSignature": "Signatur einfügen",
     "sendTooltip": "Senden (Ctrl+Eingabe)",
     "sending": "Wird gesendet…",
     "discard": "Verwerfen",
+    "discardFailed": "Der Entwurf konnte nicht gelöscht werden. Versuchen Sie es erneut.",
     "saveDraft": "Entwurf speichern",
     "savingDraft": "Wird gespeichert…",
     "draftSaved": "Entwurf gespeichert",
@@ -139,12 +145,28 @@
     "sent": {
       "title": "Nachricht gesendet",
       "noCopy": "Gesendet, aber nicht im Ordner Gesendet gespeichert",
+      "someRejected": "Der Mailserver hat die Zustellung an {{addresses}} abgelehnt.",
       "action": "Anzeigen"
+    },
+    "undoSend": {
+      "sending": "„{{subject}}“ wird gesendet…",
+      "undone": "Senden rückgängig gemacht",
+      "reopenLater": "Sie wird wieder geöffnet, sobald Sie die Nachricht schließen, an der Sie gerade schreiben",
+      "notSent": "Ihre Nachricht wurde nicht gesendet",
+      "lost": "Der Server wurde vor dem Senden neu gestartet, die Nachricht wurde nicht zugestellt.",
+      "unknown": "Es konnte nicht bestätigt werden, ob Ihre Nachricht gesendet wurde",
+      "unknownBody": "Prüfen Sie den Ordner Gesendet, bevor Sie sie erneut senden.",
+      "reopen": "Wieder öffnen",
+      "tooLate": "Zu spät zum Rückgängigmachen: Die Nachricht wird bereits gesendet",
+      "undoFailed": "Rückgängigmachen nicht möglich: keine Antwort vom Server"
     },
     "toolbar": {
       "removeTable": "Tabelle entfernen",
+      "typography": "Typografie",
       "textColor": "Textfarbe",
       "removeColor": "Farbe entfernen",
+      "customColor": "Eigene Farbe…",
+      "noColor": "Keine Farbe",
       "insertImage": "Bild einfügen",
       "minimize": "Minimieren",
       "maximize": "Maximieren",
@@ -167,7 +189,8 @@
       "aiApply": "Übernehmen",
       "aiDismiss": "Verwerfen",
       "aiGenerating": "Wird erstellt…",
-      "aiError": "KI-Fehler: {{message}}"
+      "aiError": "KI-Fehler: {{message}}",
+      "aiTooLong": "Dieser Entwurf hat {{count}} Zeichen, mehr als die {{max}}, die die KI verarbeiten kann. Kürzen Sie ihn oder entfernen Sie den zitierten Text und versuchen Sie es erneut."
     },
     "priority": "Priorität",
     "priorityHigh": "Hohe Priorität",
@@ -191,15 +214,27 @@
     "selectToRead": "Nachricht auswählen zum Lesen",
     "noSubject": "(kein Betreff)",
     "to": "An:",
+    "via": "über",
+    "forwardedFrom": "Ursprünglicher Absender (laut {{service}}):",
     "attachment_one": "{{count}} Anhang",
     "attachment_other": "{{count}} Anhänge",
     "loadingError": "Nachrichteninhalt konnte nicht geladen werden",
     "noContent": "Kein Nachrichteninhalt gefunden.",
     "remoteImagesBlocked": "Externe Bilder wurden blockiert.",
     "loadImages": "Bilder laden",
+    "trackersBlocked_one": "{{count}} Tracker blockiert",
+    "trackersBlocked_other": "{{count}} Tracker blockiert",
+    "trackersBlockedHint": "Bilder, die dem Absender das Öffnen dieser E-Mail melden, wurden nicht geladen.",
     "allowSender": "Immer erlauben von {{email}}",
     "allowDomain": "Immer erlauben von @{{domain}}",
     "downloading": "Wird heruntergeladen…",
+    "attachmentRisk": {
+      "block": "Gefährlicher Dateityp (.{{ext}}) – kann Code auf Ihrem Computer ausführen",
+      "warn": "Riskanter Dateityp (.{{ext}}) – kann Makros oder eine gefälschte Anmeldeseite enthalten",
+      "notice": "Archiv – Inhalt kann nicht geprüft werden",
+      "doubleExt": "Versteckte Erweiterung: .{{ext}} – der echte Typ ist der letzte",
+      "armed": "{{label}} — erneut klicken, um trotzdem herunterzuladen"
+    },
     "downloadAll": "Alle herunterladen",
     "reply": "Antworten",
     "replyAll": "Allen antworten",
@@ -208,7 +243,13 @@
     "archive": "Archivieren",
     "star": "Markieren",
     "delete": "Löschen",
+    "downloadEml": "Als .eml herunterladen",
     "print": "Drucken",
+    "showDark": "Dunkel anzeigen",
+    "showOriginal": "Originalfarben anzeigen",
+    "cannotShowDark": "Diese E-Mail kann nicht dunkel angezeigt werden, ohne dass Text schwer lesbar wird",
+    "printConversation": "Unterhaltung drucken",
+    "preparingPrint": "Druck wird vorbereitet…",
     "more": "Mehr",
     "summarize": "Zusammenfassen",
     "summary": "Zusammenfassung",
@@ -216,6 +257,7 @@
     "aiActions": "KI-Aktionen",
     "manageAiActions": "Aktionen verwalten…",
     "aiRegenerate": "Neu generieren",
+    "aiTruncated": "Basiert auf den ersten {{percent}} % dieser E-Mail. Der Rest war zu lang für die KI.",
     "aiExpand": "Erweitern",
     "aiCollapse": "Einklappen",
     "aiCopy": "Kopieren",
@@ -227,17 +269,27 @@
       "failTitle": "Archivierung fehlgeschlagen",
       "failBody": "Nachricht konnte nicht archiviert werden.",
       "noFolderTitle": "Kein Archivordner",
-      "noFolderBody": "Kein Archivordner für dieses Konto konfiguriert. In Einstellungen → Konten → Ordnerzuordnungen festlegen."
+      "noFolderBody": "Kein Archivordner für dieses Konto konfiguriert. In Einstellungen → Konten → Ordnerzuordnungen festlegen.",
+      "conversationTitle": "Konversation archiviert",
+      "nothingFromAccount": "In dieser Konversation gibt es nichts von diesem Konto zu archivieren",
+      "otherAccountMessage": "Nichts archiviert: Die geöffnete Nachricht gehört zu einem anderen Konto",
+      "otherAccountDraft": "Nichts archiviert: Der geöffnete Entwurf gehört zu einem anderen Konto"
     },
     "moved": {
       "title": "Nachricht verschoben",
       "failTitle": "Verschieben fehlgeschlagen",
-      "failBody": "Nachricht konnte nicht verschoben werden."
+      "failBody": "Nachricht konnte nicht verschoben werden.",
+      "conversationTitle": "Konversation verschoben",
+      "nothingFromAccount": "In dieser Konversation gibt es nichts von diesem Konto zu verschieben",
+      "otherAccountDraft": "Nichts verschoben: Der geöffnete Entwurf gehört zu einem anderen Konto"
     },
     "snoozed": {
       "title": "Nachricht zurückgestellt",
       "failTitle": "Zurückstellen fehlgeschlagen",
-      "failBody": "Diese Nachricht konnte nicht zurückgestellt werden."
+      "failBody": "Diese Nachricht konnte nicht zurückgestellt werden.",
+      "conversationTitle": "Konversation zurückgestellt",
+      "nothingFromAccount": "In dieser Konversation gibt es nichts von diesem Konto zurückzustellen",
+      "nothingInConversation": "In dieser Konversation gibt es nichts zurückzustellen"
     },
     "whitelistFail": {
       "title": "Einstellung konnte nicht gespeichert werden",
@@ -256,9 +308,46 @@
       "button": "Mit KI klassifizieren",
       "done": "Klassifiziert als {{category}}",
       "error": "KI-Klassifizierung fehlgeschlagen."
+    },
+    "preview": {
+      "open": "Vorschau",
+      "label": "Vorschau von {{name}}",
+      "position": "{{current}} von {{total}}",
+      "download": "Herunterladen",
+      "print": "Drucken",
+      "preparingPrint": "Wird vorbereitet… {{done}}/{{total}}",
+      "close": "Schließen",
+      "zoomIn": "Vergrößern",
+      "zoomOut": "Verkleinern",
+      "fit": "An Bildschirm anpassen",
+      "previous": "Vorheriger Anhang",
+      "next": "Nächster Anhang",
+      "failed": "Diese Datei konnte nicht angezeigt werden.",
+      "unsupported": "Diese Datei scheint kein gültiges PDF oder Bild zu sein und wird daher hier nicht angezeigt.",
+      "password": "Dieses PDF ist passwortgeschützt. Geben Sie das Passwort ein, um es zu öffnen.",
+      "passwordLabel": "PDF-Passwort",
+      "passwordSubmit": "Öffnen",
+      "passwordIncorrect": "Falsches Passwort. Versuchen Sie es erneut."
+    },
+    "unsnoozed": {
+      "title": "Zurückgeholt",
+      "failTitle": "Zurückholen fehlgeschlagen",
+      "failBody": "Die E-Mail bleibt zurückgestellt. Bitte erneut versuchen."
+    },
+    "snoozeChanged": {
+      "title": "Zurückgestellt bis {{when}}",
+      "failTitle": "Zeitpunkt konnte nicht geändert werden",
+      "failBody": "Der bisherige Zeitpunkt bleibt. Bitte erneut versuchen."
     }
   },
   "messageList": {
+    "replyDraftChanged": "Der Antwortentwurf wurde geändert. Öffne ihn erneut.",
+    "replyDraftKeepCurrent": "Speichere die aktuelle Nachricht und kläre ihre Anhänge, bevor du diesen Entwurf öffnest.",
+    "replyDraftUnavailable": "Dieser Antwortentwurf ist nicht mehr verfügbar.",
+    "replyDraftCancelled": "Das Öffnen des Antwortentwurfs wurde abgebrochen, weil sich die Auswahl oder das Nachrichtenfenster geändert hat. Bitte erneut öffnen.",
+    "replyDraftRetry": "Antwortentwurf erneut suchen",
+    "openReplyDraft": "Antwortentwurf öffnen",
+    "replyDraft": "Antwortentwurf",
     "search": "Suchen…",
     "unread": "Ungelesen",
     "showAll": "Alle anzeigen",
@@ -270,6 +359,8 @@
     "messagesPerPage": "Nachrichten pro Seite",
     "selectAll": "Alle auswählen",
     "deselectAll": "Alle abwählen",
+    "starSelected": "Mit Stern versehen",
+    "unstarSelected": "Stern entfernen",
     "markReadSelected": "Als gelesen markieren",
     "markUnreadSelected": "Als ungelesen markieren",
     "archiveSelected": "Auswahl archivieren",
@@ -289,7 +380,13 @@
       "title": "Nachricht gelöscht",
       "body": "In den Papierkorb verschoben.",
       "failTitle": "Löschen fehlgeschlagen",
-      "failBody": "Nachricht konnte nicht gelöscht werden."
+      "failBody": "Nachricht konnte nicht gelöscht werden.",
+      "conversationTitle": "Konversation gelöscht",
+      "nothingFromAccount": "In dieser Konversation gibt es nichts von diesem Konto zu löschen"
+    },
+    "draftBcc": {
+      "failTitle": "Entwurf schreibgeschützt geöffnet",
+      "failBody": "Die Bcc-Empfänger konnten nicht vom Mailserver gelesen werden, und ein Speichern ohne sie würde sie löschen. Bitte gleich erneut versuchen."
     },
     "bulkDeleted": {
       "title_one": "{{count}} Nachricht gelöscht",
@@ -325,7 +422,9 @@
     "pullToSync": "Zum Synchronisieren ziehen",
     "releaseToSync": "Loslassen zum Synchronisieren",
     "noSearchResults": "Keine Ergebnisse gefunden",
+    "searching": "Suche läuft…",
     "noSearchResultsDesc": "Keine Treffer für {{query}}",
+    "searchFailed": "Suche fehlgeschlagen",
     "clearSearch": "Suche löschen",
     "searchHelp": {
       "title": "Suchoperatoren",
@@ -353,7 +452,38 @@
       "promotion": "Werbung",
       "automated": "Automatisch",
       "social": "Sozial"
-    }
+    },
+    "categoryAlways": {
+      "done": "E-Mails von {{value}} landen jetzt in {{category}}",
+      "doneBody": "Als Posteingangsregel gespeichert; bereits empfangene Mails im Posteingang wurden ebenfalls aktualisiert.",
+      "failed": "Die Kategorie für diesen Absender konnte nicht gespeichert werden"
+    },
+    "changeLayout": "Layout ändern",
+    "layouts": {
+      "focused": {
+        "label": "Fokussiert",
+        "description": "Minimale Listenspalte, maximaler Lesebereich"
+      },
+      "compact": {
+        "label": "Kompakt",
+        "description": "Dichte Zeilen — mehr Nachrichten auf einmal"
+      },
+      "comfortable": {
+        "label": "Komfortabel",
+        "description": "Großzügige Zeilen mit viel Abstand zum Überfliegen"
+      },
+      "wide": {
+        "label": "Breit",
+        "description": "Breite Liste zeigt längere Betreffs und Vorschauen"
+      },
+      "vertical": {
+        "label": "Vertikale Teilung",
+        "description": "Nachrichtenliste über dem Lesebereich"
+      }
+    },
+    "snoozedUntil": "Zurückgestellt bis {{when}}",
+    "snoozedEmpty": "Nichts zurückgestellt",
+    "snoozedEmptyDesc": "Zurückgestellte E-Mails warten hier, bis sie wiederkommen."
   },
   "lockScreen": {
     "subtitle": "Gib deine PIN zum Entsperren ein",
@@ -408,8 +538,11 @@
     "renameFailed": "Umbenennen fehlgeschlagen",
     "deleteFailed": "Löschen fehlgeschlagen",
     "emptyFailed": "Leeren fehlgeschlagen",
+    "emptying": "„{{name}}” wird geleert…",
+    "emptied": "Ordner geleert",
     "backToAccounts": "Zurück zu Konten",
-    "updateAvailable": "Update verfügbar: v{{version}}"
+    "updateAvailable": "Update verfügbar: v{{version}}",
+    "snoozed": "Zurückgestellt"
   },
   "contextMenu": {
     "find": "Suchen",
@@ -423,6 +556,7 @@
     "reply": "Antworten",
     "replyAll": "Allen antworten",
     "forward": "Weiterleiten",
+    "forwardAsAttachment": "Als Anhang weiterleiten",
     "moveToFolder": "Verschieben",
     "archive": "Archivieren",
     "snooze": {
@@ -430,10 +564,13 @@
       "threeHours": "In 3 Stunden",
       "tomorrowMorning": "Morgen früh",
       "nextWeek": "Nächste Woche",
-      "custom": "Benutzerdefiniert..."
+      "custom": "Benutzerdefiniert...",
+      "change": "Zeitpunkt ändern",
+      "unsnooze": "Zurückholen"
     },
     "copySubject": "Betreff kopieren",
     "copySender": "Absenderadresse kopieren",
+    "copyLink": "Link kopieren",
     "viewHeaders": "Vollständige Kopfzeilen anzeigen",
     "delete": "Löschen",
     "headers": {
@@ -452,12 +589,20 @@
       "search": "Ordner suchen…"
     },
     "categorize": "Kategorisieren als…",
+    "categoryAlwaysSender": "Immer für diesen Absender",
+    "categoryAlwaysDomain": "Immer für diese Domain",
+    "categoryAlwaysFor": "Immer für {{value}}",
     "createRule": "Regel aus Nachricht erstellen",
     "addToBlockList": "Zur Blockliste hinzufügen",
     "markAsSpam": "Als Spam markieren",
     "markAsHam": "Als kein Spam markieren"
   },
   "commandPalette": {
+    "labelPicker": {
+      "copyTo": "Nach {{folder}} kopieren",
+      "error": "Nachricht konnte nicht etikettiert werden",
+      "placeholder": "Ausgewählte Nachricht kopieren oder mit Label versehen…"
+    },
     "placeholder": "Aktionen suchen…",
     "noResults": "Keine Aktionen gefunden",
     "hint": {
@@ -479,6 +624,11 @@
     "customizeHint": "Kürzel anpassen unter Einstellungen → Tastaturkürzel",
     "closeHint": "? oder Esc zum Schließen drücken",
     "then": "dann",
+    "browserMailboxFallback": "Im Browser: g und dann 1–9 öffnet ein sichtbares Postfach; g und dann l öffnet die Ordnerauswahl.",
+    "visibleMailbox": {
+      "label": "Sichtbares Postfach {{number}}",
+      "description": "Sichtbares Postfach {{number}} öffnen"
+    },
     "groups": {
       "composeSearch": "Verfassen & Suche",
       "navigation": "Navigation",
@@ -486,6 +636,30 @@
       "gtd": "GTD"
     },
     "actions": {
+      "toggleLeftSidebar": {
+        "label": "Linke Seitenleiste umschalten",
+        "description": "Linke Seitenleiste ein- oder ausblenden"
+      },
+      "openLabelPicker": {
+        "label": "Ordnerauswahl öffnen",
+        "description": "Ausgewählte Nachricht in einen Ordner kopieren"
+      },
+      "replyAllFromSelection": {
+        "label": "Allen antworten",
+        "description": "Allen Empfängern der ausgewählten Nachricht antworten"
+      },
+      "markUnread": {
+        "label": "Als ungelesen markieren",
+        "description": "Ausgewählte Nachricht als ungelesen markieren"
+      },
+      "unsubscribe": {
+        "label": "Abmelden",
+        "description": "Von der ausgewählten Mailingliste abmelden"
+      },
+      "loadRemoteImages": {
+        "label": "Externe Bilder laden",
+        "description": "Bilder in der ausgewählten Nachricht laden"
+      },
       "compose": {
         "label": "Verfassen",
         "description": "Neues Fenster zum Verfassen öffnen"
@@ -546,6 +720,10 @@
         "label": "Nachricht auswählen",
         "description": "Aktuelle Nachricht an- oder abwählen"
       },
+      "undoAction": {
+        "label": "Letzte Aktion rückgängig machen",
+        "description": "Macht das letzte Archivieren, Löschen, Verschieben oder Spam-Markieren rückgängig, solange der Hinweis angezeigt wird"
+      },
       "printMessage": {
         "label": "Drucken",
         "description": "Die aktuelle Nachricht drucken"
@@ -561,6 +739,15 @@
       "gtdDelegated": {
         "label": "Als Delegiert markieren",
         "description": "Die ausgewählte Nachricht als Delegiert einordnen"
+      },
+      "gtdReference": {
+        "description": "Ausgewählte Nachricht als Referenz einordnen"
+      },
+      "gtdSomeday": {
+        "description": "Ausgewählte Nachricht als Irgendwann einordnen"
+      },
+      "gtdDone": {
+        "description": "Ausgewählte GTD-Nachricht abschließen"
       },
       "toggleRightSidebar": {
         "label": "Rechte Seitenleiste umschalten",
@@ -600,9 +787,35 @@
     "errorProcess": "Bild konnte nicht verarbeitet werden."
   },
   "admin": {
+    "cleanup": {
+      "title": "Postfach aufräumen",
+      "intro": "Finde Massen-Mails, die deinen Posteingang überfüllen, und räume auf. Wähle, ob du sie archivierst (bleiben erhalten und durchsuchbar) oder in den Papierkorb verschiebst (wiederherstellbar, bis du ihn leerst).",
+      "account": "Konto",
+      "summary": "{{bulk}} von {{total}} Posteingangs-Nachrichten sind Massen-E-Mails ({{pct}}%).",
+      "tier1Title": "Größte Massenabsender",
+      "tier1Desc": "Das sind die Newsletter- und Marketing-Absender mit dem höchsten Volumen in deinem Posteingang. Wird einer bearbeitet, wird die gesamte Posteingangs-Mail dieses Absenders mit der gewählten Aktion verarbeitet.",
+      "noneFound": "Keine Massenabsender gefunden.",
+      "moveToTrash": "In den Papierkorb",
+      "confirm": "Alle {{count}} Posteingangs-Nachrichten von {{sender}} in den Papierkorb verschieben? Sie lassen sich aus dem Papierkorb wiederherstellen, bis Sie ihn leeren.",
+      "tier2Title": "Häufige Werbebegriffe",
+      "tier2Desc": "Suchen Sie nach diesen Begriffen, um den Rest selbst zu prüfen und zu löschen. Sie betreffen viele Absender, überfliegen Sie die Ergebnisse also vor dem Löschen.",
+      "tier3Title": "Den Rest aufräumen",
+      "tier3Desc": "Für alles Übrige nach Absender oder Stichwort suchen, alle auswählen und löschen. Löschungen wandern zuerst in den Papierkorb, Sie können also prüfen, bevor Sie ihn leeren.",
+      "action": "Aufräum-Aktion",
+      "actionArchive": "Archivieren (empfohlen)",
+      "archive": "Archivieren",
+      "confirmArchive": "Alle {{count}} Posteingangs-Nachrichten von {{sender}} archivieren? Sie bleiben in deinem Archiv-Ordner und weiterhin durchsuchbar.",
+      "noArchiveFolder": "Dieses Konto hat keinen Archiv-Ordner, daher ist nur In den Papierkorb verschieben verfügbar."
+    },
     "title": "Einstellungen",
     "close": "Schließen",
+    "behavior": {
+      "reading": "Lesen",
+      "writing": "Schreiben",
+      "sync": "Synchronisierung"
+    },
     "tabs": {
+      "cleanup": "Aufräumen",
       "accounts": "Konten",
       "appearance": "Darstellung",
       "notifications": "Benachrichtigungen",
@@ -617,13 +830,16 @@
       "about": "Über",
       "ai": "KI-Assistent",
       "aiActions": "KI-Aktionen",
+      "antispam": "Antispam",
       "categories": "Kategorien",
       "rules": "Regeln",
-      "groupAccountMail": "Konto und Mail",
-      "groupDisplay": "Anzeige",
-      "groupSecurityIntegrations": "Sicherheit und Integrationen",
+      "groupMail": "Mail",
+      "groupPreferences": "Präferenzen",
+      "groupAiExtensions": "KI und Erweiterungen",
       "groupAdmin": "Administration",
-      "plugins": "Plugins"
+      "behavior": "Verhalten",
+      "plugins": "Plugins",
+      "backup": "Sicherung"
     },
     "accounts": {
       "title": "E-Mail-Konten",
@@ -636,6 +852,10 @@
       "editTitle": "Konto bearbeiten",
       "addTitle": "Konto hinzufügen",
       "color": "Kontofarbe",
+      "icon": "Symbol",
+      "iconNone": "Keins (Farbpunkt)",
+      "iconCustom": "Oder ein Emoji eingeben",
+      "iconHint": "Wird anstelle des Farbpunkts angezeigt.",
       "displayName": "Anzeigename",
       "displayNamePh": "z. B. Privates Gmail",
       "senderName": "Absendername",
@@ -662,6 +882,9 @@
       "smtpAuthUserPh": "Wie Benutzername oben",
       "smtpAuthPass": "SMTP-Passwort",
       "signatureSection": "Signatur",
+      "signatureEnabledDefault": "Signatur standardmäßig anzeigen",
+      "autoRecipientsSection": "Automatische Cc- und Bcc-Empfänger",
+      "autoRecipientsDesc": "Diese Adressen werden jeder neuen Nachricht, Antwort und Weiterleitung, die Sie über dieses Konto oder seine Aliasse schreiben, als normale Empfänger hinzugefügt, die Sie wieder entfernen können. Mehrere Adressen durch Kommas trennen.",
       "saveChanges": "Änderungen speichern",
       "addAccount": "Konto hinzufügen",
       "saving": "Wird gespeichert…",
@@ -685,6 +908,15 @@
       "categorizationSection": "E-Mail-Kategorisierung",
       "categorizationEnabled": "Posteingang-Kategorisierung aktivieren",
       "categorizationEnabledDesc": "Eingehende E-Mails in Kategorie-Tabs einteilen. Standardmäßig deaktiviert.",
+      "antispamSection": "Antispam",
+      "antispamEnabled": "Antispam für dieses Konto aktivieren",
+      "antispamEnabledDesc": "Eingehende Nachrichten werden automatisch klassifiziert; Spam mit hoher Konfidenz wird in den Junk-Ordner verschoben.",
+      "trustedAuthservLabel": "Vertrauenswürdige Authentication-Results-ID",
+      "trustedAuthservPlaceholder": "mx.example.com",
+      "trustedAuthservDesc": "Nur Authentication-Results-Header, die von dieser ID geschrieben wurden, werden berücksichtigt. Leer lassen, um alle zu ignorieren — ein nicht vertrauenswürdiger Header kann jedes Ergebnis behaupten, auch ein Pass.",
+      "trustedAuthservDetected": "In Ihren letzten Nachrichten gesehen (zum Übernehmen klicken):",
+      "trustedAuthservDetectedNone": "Noch keine Daten — Nachrichten werden geprüft, sobald Antispam für dieses Konto aktiv ist.",
+      "trustedAuthservWarn": "Vertrauen Sie nur einer ID, die Sie als empfangenden Server Ihres Anbieters erkennen.",
       "enabledGlobally": "Global aktiviert"
     },
     "folderMappings": {
@@ -727,6 +959,8 @@
     "appearance": {
       "title": "Darstellung",
       "description": "Ein Farbdesign für die Oberfläche auswählen",
+      "darkEmailBodies": "Dunkle E-Mail-Inhalte",
+      "darkEmailBodiesDesc": "In einem dunklen Design auch HTML-E-Mails dunkel anzeigen: mit dem eigenen dunklen Design des Absenders, wenn es eines gibt, sonst von MailFlow umgefärbt. Eine E-Mail bleibt wie gesendet, wenn sie das verlangt oder wenn Text dunkel schwer lesbar würde. Jede Nachricht lässt sich einzeln umschalten.",
       "typography": "Typografie",
       "typographyDescription": "Eine Schriftpaarung für die Oberfläche auswählen",
       "typographyLoading": "Schriften werden geladen…",
@@ -747,6 +981,7 @@
       "customCssSaved": "Gespeichert"
     },
     "messageList": {
+      "autoOpenReplyDrafts": "Gespeicherte Antworten beim Auswählen von Posteingangsnachrichten automatisch öffnen",
       "title": "Nachrichtenliste",
       "senderFavicons": "Absender-Favicons",
       "senderFaviconsDesc": "Website-Symbole für Absender ohne Kontaktfoto anzeigen. An Twenty Icons wird nur die Domain des Absenders gesendet, niemals die vollständige E-Mail-Adresse.",
@@ -784,11 +1019,44 @@
       "threadingOffDesc": "Jede Nachricht einzeln angezeigt",
       "threadingOn": "An",
       "threadingOnDesc": "Antworten in Gesprächen gruppiert",
+      "threadingPane": "Lesebereich",
+      "threadingPaneDesc": "Die gesamte Unterhaltung wird zusammen geöffnet",
       "composeFormat": "Verfassungsformat",
       "composeRichText": "Rich Text",
       "composeRichTextDesc": "Sendet HTML — unterstützt Formatierung und gestaltete Signaturen",
       "composePlainText": "Klartext",
       "composePlainTextDesc": "Keine HTML-Formatierung — maximale Kompatibilität",
+      "defaultReplyAction": "Standard-Antwortoption",
+      "defaultReply": "Antworten",
+      "defaultReplyDesc": "Die Schaltfläche Antworten sendet nur an den Absender",
+      "defaultReplyAll": "Allen antworten",
+      "defaultReplyAllDesc": "Die Schaltfläche Antworten sendet an alle Empfänger",
+      "defaultSender": "Standardabsender",
+      "defaultSenderDesc": "Von welcher Adresse neue Nachrichten gesendet werden, unabhängig davon, welches Konto Sie gerade ansehen. Antworten und Weiterleitungen verwenden immer das Konto, das die Nachricht empfangen hat.",
+      "defaultSenderLastUsed": "Zuletzt verwendetes Konto",
+      "afterRemove": "Nach dem Löschen oder Archivieren",
+      "afterRemoveNext": "Nächste Nachricht öffnen",
+      "afterRemoveNextDesc": "Die Nachricht unter der entfernten öffnen.",
+      "afterRemovePrevious": "Vorherige Nachricht öffnen",
+      "afterRemovePreviousDesc": "Die Nachricht über der entfernten öffnen.",
+      "afterRemoveList": "Zurück zur Liste",
+      "afterRemoveListDesc": "Den Lesebereich leer lassen.",
+      "afterRemoveMobile": "Auf dem Smartphone geht es immer zurück zur Liste.",
+      "markReadBehavior": "Als gelesen markieren",
+      "markReadImmediate": "Sofort",
+      "markReadImmediateDesc": "E-Mails sofort als gelesen markieren, sobald sie geöffnet werden.",
+      "markReadDelay": "Nach einer Verzögerung",
+      "markReadDelayDesc": "E-Mails nach einer bestimmten Anzeigezeit als gelesen markieren.",
+      "markReadManual": "Manuell",
+      "markReadManualDesc": "E-Mails niemals automatisch als gelesen markieren. Schaltfläche \"Als gelesen markieren\" verwenden.",
+      "defaultMailApp": "Standard-E-Mail-App",
+      "defaultMailAppDesc": "MailFlow in diesem Browser mailto:-Links öffnen lassen. Der Browser fragt zur Bestätigung nach. Funktioniert in Firefox und Chrome/Edge; unter iOS nicht verfügbar.",
+      "defaultMailAppBtn": "MailFlow registrieren",
+      "defaultMailAppOk": "Bestätigen Sie die Abfrage im Browser, um abzuschließen.",
+      "defaultMailAppError": "Ihr Browser hat die Anfrage blockiert.",
+      "markReadDelayLabel": "Verzögerung",
+      "markReadDelaySeconds": "{{count}} Sekunde",
+      "markReadDelaySeconds_other": "{{count}} Sekunden",
       "hoverQuickActionsMode": "Schnellaktionen beim Hover",
       "hoverQuickActionsOff": "Aus",
       "hoverQuickActionsOffDesc": "Schnellaktionen ausblenden, bis das Kontextmenü oder Tastenkürzel verwendet werden.",
@@ -808,27 +1076,7 @@
       "gravatarOff": "Aus",
       "gravatarOffDesc": "Privat — kontaktiert keine Drittanbieter.",
       "gravatarOn": "Ein",
-      "gravatarOnDesc": "Absenderfotos von Gravatar laden — teilt gehashte Absenderadressen mit einem Drittanbieter.",
-      "defaultReplyAll": "Allen antworten",
-      "defaultReplyDesc": "Die Schaltfläche Antworten sendet nur an den Absender",
-      "defaultReplyAction": "Standard-Antwortoption",
-      "defaultReply": "Antworten",
-      "defaultReplyAllDesc": "Die Schaltfläche Antworten sendet an alle Empfänger",
-      "markReadBehavior": "Als gelesen markieren",
-      "markReadImmediate": "Sofort",
-      "markReadImmediateDesc": "E-Mails sofort als gelesen markieren, sobald sie geöffnet werden.",
-      "markReadDelay": "Nach einer Verzögerung",
-      "markReadDelayDesc": "E-Mails nach einer bestimmten Anzeigezeit als gelesen markieren.",
-      "markReadManual": "Manuell",
-      "markReadManualDesc": "E-Mails niemals automatisch als gelesen markieren. Schaltfläche \"Als gelesen markieren\" verwenden.",
-      "defaultMailApp": "Standard-E-Mail-App",
-      "defaultMailAppDesc": "MailFlow in diesem Browser mailto:-Links öffnen lassen. Der Browser fragt zur Bestätigung nach. Funktioniert in Firefox und Chrome/Edge; unter iOS nicht verfügbar.",
-      "defaultMailAppBtn": "MailFlow registrieren",
-      "defaultMailAppOk": "Bestätigen Sie die Abfrage im Browser, um abzuschließen.",
-      "defaultMailAppError": "Ihr Browser hat die Anfrage blockiert.",
-      "markReadDelayLabel": "Verzögerung",
-      "markReadDelaySeconds": "{{count}} Sekunde",
-      "markReadDelaySeconds_other": "{{count}} Sekunden"
+      "gravatarOnDesc": "Absenderfotos von Gravatar laden — teilt gehashte Absenderadressen mit einem Drittanbieter."
     },
     "notifications": {
       "title": "Benachrichtigungen",
@@ -918,6 +1166,11 @@
       "eventTotpSuccess": "2FA bestätigt",
       "eventTotpFail": "Fehlgeschlagene 2FA",
       "eventSsoLogin": "SSO-Anmeldung",
+      "eventAdminPasswordSet": "Passwort gesetzt",
+      "eventAdminUserUpdate": "Konto bearbeitet",
+      "eventAdminTotpDisable": "2FA deaktiviert",
+      "eventAdminUserDelete": "Konto gelöscht",
+      "byActor": "von {{actor}}",
       "qrCodeAlt": "QR-Code",
       "mailPolicyTitle": "Verbindungsrichtlinie für Mailserver",
       "mailPolicyDesc": "Legt fest, welche Verbindungstypen Benutzer konfigurieren dürfen. Für öffentlich zugängliche Instanzen deaktivieren.",
@@ -961,7 +1214,7 @@
       "description": "Auf eine Tastenkombination klicken, um sie neu zuzuweisen. Esc drücken, um die Aufnahme abzubrechen.",
       "resetAll": "Alle auf Standard zurücksetzen",
       "recording": "Taste drücken…",
-      "conflict": "Taste {{key}} war bereits {{action}} zugewiesen — neu zugewiesen.",
+      "conflict": "Taste {{key}} ist mehreren Aktionen zugewiesen. {{action}} hat Vorrang.",
       "resetDefault": "Auf Standard zurücksetzen",
       "remove": "Kürzel entfernen",
       "footer": "Überall in der App ? drücken, um die aktuelle Kürzelbeschreibung zu sehen."
@@ -1003,7 +1256,25 @@
       "deleteConfirmLabel": "Benutzer löschen",
       "disable2faConfirmTitle": "2FA für „{{username}}” deaktivieren?",
       "disable2faConfirmBody": "Dies entfernt die Anforderung der Authenticator-App. Der Benutzer kann sie selbst wieder aktivieren.",
-      "disable2faConfirmLabel": "2FA deaktivieren"
+      "disable2faConfirmLabel": "2FA deaktivieren",
+      "lastSeen": "Zuletzt aktiv {{when}}",
+      "neverSeen": "Nie angemeldet",
+      "edit": "Bearbeiten",
+      "editTitle": "{{username}} bearbeiten",
+      "username": "Benutzername",
+      "usernameHint": "Wird für die Anmeldung bei MailFlow verwendet.",
+      "recoveryEmail": "Wiederherstellungs-E-Mail",
+      "recoveryEmailHint": "Erhält den Link „Passwort vergessen?“. Leer lassen, um sie zu entfernen.",
+      "newPassword": "Neues Passwort",
+      "newPasswordHint": "Leer lassen, um das aktuelle zu behalten. Beim Speichern eines neuen wird der Benutzer auf allen Geräten abgemeldet.",
+      "newPasswordHintSelf": "Leer lassen, um das aktuelle zu behalten. Ihre anderen Geräte werden abgemeldet; dieses bleibt angemeldet.",
+      "confirmPassword": "Neues Passwort bestätigen",
+      "passwordTooShort": "Das Passwort muss mindestens 8 Zeichen lang sein.",
+      "passwordMismatch": "Die Passwörter stimmen nicht überein.",
+      "usernameTaken": "Dieser Benutzername ist bereits vergeben.",
+      "invalidEmail": "Diese E-Mail-Adresse ist ungültig.",
+      "saveFailed": "Speichern fehlgeschlagen: {{message}}",
+      "passwordNotSet": "Die anderen Änderungen wurden gespeichert, aber das Passwort wurde nicht gesetzt: {{message}}"
     },
     "ai": {
       "title": "KI-Assistent",
@@ -1212,7 +1483,9 @@
       "adminGroupClaimDesc": "Name des JWT-Claims, der die Gruppen des Benutzers enthält (z. B. groups). Leer lassen, um gruppenbasierte Admin-Zuweisung zu deaktivieren.",
       "adminGroupValue": "Admin-Gruppenwert",
       "adminGroupValuePh": "mailflow-admins",
-      "adminGroupValueDesc": "Der Gruppenname, der Admin-Zugriff gewährt. Benutzer in dieser Gruppe werden bei jeder SSO-Anmeldung zu Admins; Benutzer, die nicht in dieser Gruppe sind, verlieren den Admin-Zugriff."
+      "adminGroupValueDesc": "Der Gruppenname, der Admin-Zugriff gewährt. Benutzer in dieser Gruppe werden bei jeder SSO-Anmeldung zu Admins; Benutzer, die nicht in dieser Gruppe sind, verlieren den Admin-Zugriff.",
+      "loginMatchClaim": "Bestehende Konten zuordnen über",
+      "loginMatchClaimDesc": "OIDC-Claim, der mit dem Benutzernamen jedes MailFlow-Kontos abgeglichen wird, wenn eine SSO-Anmeldung erstmals mit einem bestehenden Konto verknüpft wird (Bereitstellungsmodus „Nur bei bestehenden Konten anmelden“). Standard ist email. Verwenden Sie preferred_username, upn usw. für Identitätsanbieter, deren Benutzernamen keine E-Mail-Adressen sind – nur wenn Ihr Anbieter garantiert, dass der Claim eindeutig und nicht vom Benutzer änderbar ist."
     },
     "integrations": {
       "title": "Integrationen",
@@ -1259,6 +1532,32 @@
         "deviceCodeDeclined": "Autorisierung wurde abgelehnt.",
         "deviceCodeError": "Ein Fehler ist aufgetreten. Bitte erneut versuchen.",
         "deviceCodeCancel": "Abbrechen"
+      },
+      "google": {
+        "title": "Gmail / Google Workspace",
+        "description": "OAuth2 für Gmail- und Google-Workspace-Postfächer — erforderlich, wenn ein Administrator App-Passwörter deaktiviert hat",
+        "configured": "Konfiguriert",
+        "notConfigured": "Nicht konfiguriert",
+        "redirecting": "Weiterleitung…",
+        "connect": "Google-Konto verbinden",
+        "setupTitle": "Einrichtung des Google-Cloud-OAuth-Clients",
+        "step1": "Öffnen Sie console.cloud.google.com und wählen (oder erstellen) Sie ein Projekt. Melden Sie sich bei einer Workspace-Domain mit einem Konto dieser Domain an, damit das Projekt zur Organisation gehört",
+        "step2": "APIs & Dienste → Bibliothek → Gmail API aktivieren",
+        "step3": "OAuth-Zustimmungsbildschirm → Nutzertyp festlegen und den Bereich https://mail.google.com/ hinzufügen",
+        "step4": "Anmeldedaten → Anmeldedaten erstellen → OAuth-Client-ID → Webanwendung, und die unten angezeigte Weiterleitungs-URI hinzufügen",
+        "scopeNote": "https://mail.google.com/ ist ein eingeschränkter Bereich. Wählen Sie den Nutzertyp „Intern“, wenn das Projekt zu einer Workspace-Organisation gehört: keine Überprüfung nötig und Aktualisierungstokens laufen nicht ab. „Extern“ im Testmodus funktioniert sofort, aber Google widerruft Aktualisierungstokens nach 7 Tagen, sodass Konten wöchentlich neu verbunden werden müssen.",
+        "clientId": "Client-ID",
+        "clientIdPh": "xxxxxxxx.apps.googleusercontent.com",
+        "clientSecret": "Clientschlüssel",
+        "clientSecretPh": "GOCSPX-…",
+        "redirectUri": "Weiterleitungs-URI",
+        "redirectUriNote": "Diese muss exakt einer autorisierten Weiterleitungs-URI des OAuth-Clients entsprechen. Vorschlag: {{uri}}",
+        "save": "Konfiguration speichern",
+        "savedNote": "Konfiguration gespeichert. Klicken Sie auf „Google-Konto verbinden“, um zu autorisieren.",
+        "connectedNote": "Google-Konto erfolgreich verbunden! Siehe Tab „Konten“.",
+        "userNoteConfigured": "Ihr Administrator hat die Google-Anmeldung eingerichtet. Verbinden Sie unten Ihr Gmail- oder Google-Workspace-Konto.",
+        "userNoteNotConfigured": "Die Google-Anmeldung wurde noch nicht von einem Administrator eingerichtet. Bitte wenden Sie sich an Ihren Administrator.",
+        "remove": "Entfernen"
       },
       "todoist": {
         "title": "Todoist",
@@ -1352,6 +1651,10 @@
       "actionMove": "In Ordner verschieben",
       "actionForward": "Weiterleiten an",
       "actionForwardPlaceholder": "empfaenger@example.com",
+      "actionSetCategory": "Kategorie festlegen",
+      "actionNotify": "Benachrichtigen",
+      "actionNotifyHint": "Auch benachrichtigen, wenn die Regel die E-Mail verschiebt oder als gelesen markiert.",
+      "actionSetCategorySelect": "Kategorie auswählen…",
       "nameLabel": "Regelname",
       "editButton": "Bearbeiten",
       "deleteConfirm": "Diese Regel löschen?",
@@ -1359,6 +1662,7 @@
       "runButton": "Regeln auf Posteingang anwenden",
       "running": "Wird ausgeführt…",
       "runResult": "Fertig — {{matched}} von {{processed}} Nachrichten abgeglichen",
+      "runStarted": "Läuft im Hintergrund – Sie werden benachrichtigt, sobald es fertig ist",
       "runError": "Fehler beim Ausführen der Regeln",
       "formTitleEdit": "Regel bearbeiten",
       "fieldTo": "An",
@@ -1415,6 +1719,29 @@
       "autoLockOff": "Aus",
       "autoLockMin": "{{n}} Min."
     },
+    "backup": {
+      "title": "Sicherung und Wiederherstellung",
+      "intro": "Eine Sicherung enthält die Daten dieses MailFlow: Benutzer, E-Mail-Konten, Regeln, Kontakte, Einstellungen, Plugin-Daten und Antispam-Training. Zwischengespeicherte E-Mails werden nach einer Wiederherstellung erneut von Ihren Mailservern geladen, sofern Sie sie nicht einschließen. Was in .env steht, enthält die Datei nicht: Ein neuer Server braucht denselben ENCRYPTION_KEY und, falls dort gesetzt, dieselben VAPID-Schlüssel und OAuth-Client-Einstellungen.",
+      "sensitive": "Die Datei enthält Passwort-Hashes, offene Einladungslinks und die Zugangsdaten Ihrer Konten. Die Zugangsdaten sind mit dem ENCRYPTION_KEY dieses Servers verschlüsselt, der Rest ist lesbar, ebenso jede Nachricht, wenn zwischengespeicherte E-Mails enthalten sind. Bewahren Sie die Datei sicher auf. Sie lässt sich nur auf einem Server wiederherstellen, der denselben Schlüssel verwendet.",
+      "includeMail": "Zwischengespeicherte E-Mails einschließen",
+      "includeMailDesc": "Sichert zusätzlich die lokale Kopie jeder synchronisierten Nachricht, wodurch die Datei deutlich größer wird. Ohne sie lädt eine Wiederherstellung die E-Mails erneut herunter, und die neuesten ungelesenen Nachrichten jedes Posteingangs treffen als neue E-Mails ein: Posteingangsregeln laufen erneut darüber, auch Weiterleitungen. Die Wahl gilt für jede Sicherung, bis Sie sie ändern.",
+      "includeMailSaveError": "Die Einstellung konnte nicht gespeichert werden.",
+      "create": "Sicherung herunterladen",
+      "restoreTitle": "Sicherung wiederherstellen",
+      "restoreIntro": "Beim Wiederherstellen werden alle Benutzer, Konten, Einstellungen und zwischengespeicherten Nachrichten auf diesem Server durch den Inhalt der Datei ersetzt. MailFlow startet anschließend neu. Wer kein Konto in der Sicherung hat, wird abgemeldet, und es gelten die Passwörter aus der Sicherung.",
+      "versionNote": "Eine Sicherung lässt sich nur mit einer MailFlow-Version wiederherstellen, die dasselbe Datenbankschema hat wie die Version, die sie erstellt hat. Ist das Schema dieser Version neuer, stellen Sie die Sicherung mit der Version wieder her, die sie erstellt hat, und aktualisieren dann.",
+      "chooseFile": "Sicherungsdatei auswählen",
+      "restore": "Wiederherstellen…",
+      "confirmWarn": "Alles auf diesem Server wird durch {{name}} ersetzt. Das lässt sich nicht rückgängig machen.",
+      "confirmYes": "Wiederherstellen und neu starten",
+      "restoring": "Wird wiederhergestellt… geschriebene Zeilen: {{rows}}",
+      "done": "Wiederherstellung abgeschlossen. MailFlow startet neu; diese Seite wird neu geladen, sobald es wieder erreichbar ist.",
+      "restartTimeout": "MailFlow ist nach zwei Minuten noch nicht wieder erreichbar. Starten Sie es neu und laden Sie diese Seite dann neu.",
+      "failed": "Wiederherstellung fehlgeschlagen: {{message}}",
+      "downloadFailed": "Die Sicherung konnte nicht gestartet werden.",
+      "connectionLost": "Die Verbindung ist während der Wiederherstellung abgebrochen, daher ist das Ergebnis unbekannt. Diese Seite wird neu geladen, sobald MailFlow wieder antwortet; prüfen Sie dann, ob Ihre Daten wiederhergestellt wurden.",
+      "tooLarge": "Die Datei ist größer, als der Proxy vor MailFlow zulässt."
+    },
     "plugins": {
       "title": "Plugins",
       "description": "Aktivieren oder deaktivieren Sie optionale Funktionen für Ihr Konto. Ein aktiviertes Plugin fügt eigene Einstellungen und Oberflächen hinzu.",
@@ -1438,7 +1765,71 @@
     "failHamTitle": "Als kein Spam markieren fehlgeschlagen",
     "failBody": "Der Mailserver hat die Verschiebung abgelehnt.",
     "failHamBody": "Der Mailserver hat die Verschiebung abgelehnt.",
-    "failBodyBulk": "{{count}} Nachrichten konnten nicht verschoben werden."
+    "failBodyBulk": "{{count}} Nachrichten konnten nicht verschoben werden.",
+    "title": "Antispam",
+    "subtitle": "Per-Benutzer ML-Spamfilter. Wird durch manuelles Spam/Kein-Spam-Feedback trainiert; neue Nachrichten werden automatisch klassifiziert, wenn pro Konto aktiviert.",
+    "saved": "Einstellungen gespeichert",
+    "resetAllDone": "Trainingdaten zurückgesetzt — {{n}} Datensätze gelöscht",
+    "retrainDone": "Neutraining abgeschlossen — {{n}} Benutzer verarbeitet",
+    "retrainBusy": "Ein Retrain läuft bereits — er wird von selbst abgeschlossen",
+    "statusTitle": "Modellstatus",
+    "statusHelp": "Das Modell ist pro Benutzer und über alle Konten geteilt. Unter 50 Trainingdatensätzen werden nur die eingebauten Regeln verwendet.",
+    "statMaturity": "Reifegrad",
+    "statRecords": "Trainingdatensätze",
+    "statVersion": "Modellversion",
+    "statLastTrained": "Zuletzt trainiert",
+    "statDecay": "Decay-Fenster",
+    "never": "nie",
+    "days": "Tage",
+    "maturity": {
+      "mature": "Ausgereift",
+      "fresh": "Frisch",
+      "insufficient": "Unzureichend"
+    },
+    "masterEnable": "Antispam aktivieren",
+    "masterEnableHelp": "Hauptschalter für die automatische Klassifizierung. Jedes Konto hat zusätzlich seinen eigenen Schalter.",
+    "perAccountHint": "Schalter pro Konto: Konten → Konto auswählen → Antispam-Abschnitt.",
+    "thresholdsTitle": "Schwellenwerte",
+    "thresholdsHelp": "Höhere Werte = weniger Fehlalarme, aber mehr Spam kommt durch.",
+    "spamThreshold": "Spam-Schwelle",
+    "autoMoveThreshold": "Auto-Verschieben-Schwelle",
+    "save": "Speichern",
+    "decayTitle": "Training-Decay",
+    "decayHelp": "Ältere Trainingdaten werden mit dieser Halbwertszeit abgewertet (7–365 Tage).",
+    "dangerTitle": "Gefahrenzone",
+    "retrainNow": "Jetzt neu trainieren",
+    "resetConfirmWarn": "Dies ist irreversibel: Alle Trainingdaten werden gelöscht.",
+    "resetConfirmYes": "Ja, Trainingdaten löschen",
+    "resetAll": "Alle Trainingdaten zurücksetzen",
+    "deletionsTitle": "Letzte Löschungen",
+    "deleteScope": {
+      "per_account": "Ein Konto",
+      "all": "Alle Konten"
+    },
+    "records": "Datensätze",
+    "howItWorks": "So funktioniert es: Ihre manuellen Als-Spam/Nicht-Spam-Entscheidungen trainieren das Modell. Automatisch klassifizierte Nachrichten trainieren es nie erneut. Regeln sind immer aktiv; das ML-Modell kommt ab 50+ Datensätzen dazu.",
+    "badgeLabel": "SPAM-INDEX",
+    "badgeTitle": "Automatisch als Spam klassifiziert — klicken für Details",
+    "explainTitle": "Warum wurde dies als Spam markiert?",
+    "explainVerdict": "Ergebnis",
+    "explainMethod": "Methode",
+    "explainConfidence": "Konfidenz",
+    "verdict": {
+      "spam": "Spam",
+      "ham": "Kein Spam",
+      "unsure": "Unsicher"
+    },
+    "method": {
+      "rules": "Regeln",
+      "blended": "Regeln + ML"
+    },
+    "rulesFiredTitle": "Ausgelöste Regeln",
+    "noRulesFired": "Keine Regeln ausgelöst",
+    "mlTokensTitle": "Wichtigste Token",
+    "noMlTokens": "Keine ML-Token",
+    "conversationMovedToSpam": "Konversation in Spam verschoben",
+    "nothingFromAccount": "In dieser Konversation gibt es nichts von diesem Konto als Spam zu markieren",
+    "nothingInConversation": "In dieser Konversation gibt es nichts als Spam zu markieren"
   },
   "contacts": {
     "title": "Kontakte",
@@ -1480,7 +1871,6 @@
     "carddavBadge": "Von CardDAV synchronisiert"
   },
   "todoist": {
-    "betaLabel": "Beta",
     "title": "Todoist-Aufgabe erstellen",
     "taskTitle": "Aufgabentitel",
     "taskTitlePh": "Was muss erledigt werden?",
@@ -1519,8 +1909,10 @@
     "removeFrom": "Aus {{state}} entfernen",
     "classified": "Label angewendet",
     "classifyFailed": "Label konnte nicht angewendet werden",
+    "undoFailed": "Label konnte nicht rückgängig gemacht werden",
     "removed": "Label entfernt",
     "removeFailed": "Label konnte nicht entfernt werden",
+    "onlyCopy": "Dies ist die einzige Kopie der Nachricht. Das Entfernen der Markierung würde sie löschen. Archivieren oder verschieben Sie sie stattdessen.",
     "done": "Als erledigt markieren",
     "doneFailed": "Konnte nicht als erledigt markiert werden",
     "doneArchiveFailed": "Als erledigt markiert, aber Archivieren fehlgeschlagen – noch im Posteingang",
@@ -1535,5 +1927,26 @@
   "window": {
     "minimize": "Minimieren",
     "close": "Schließen"
+  },
+  "diagnostics": {
+    "section": "Diagnose",
+    "blurb": "Ein bereinigter Bericht, den du zur Fehlersuche teilen kannst. Er enthält keine E-Mail-Adressen, Namen, Nachrichteninhalte oder geheimen Daten.",
+    "generateReport": "Diagnosebericht erstellen",
+    "title": "Diagnosebericht",
+    "includes": "Enthält: App-Versionen, deine Umgebung, Anzahl pro Konto und Ordner, Kategorien von Synchronisierungsfehlern und Serverstatus. Konto-IDs und benutzerdefinierte Ordnernamen werden durch einmalige Hashes ersetzt.",
+    "excludes": "Ausgeschlossen: E-Mail-Adressen, Namen, Betreffzeilen, Nachrichteninhalte, Passwörter sowie API-Schlüssel oder -Tokens.",
+    "download": "JSON herunterladen",
+    "copied": "Bericht kopiert",
+    "copyFailed": "Kopieren fehlgeschlagen",
+    "generating": "Bericht wird erstellt…",
+    "error": "Bericht konnte nicht erstellt werden."
+  },
+  "folders": {
+    "inbox": "Posteingang",
+    "sent": "Gesendet",
+    "drafts": "Entwürfe",
+    "trash": "Papierkorb",
+    "spam": "Spam",
+    "archive": "Archiv"
   }
 }

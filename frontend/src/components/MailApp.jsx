@@ -1,20 +1,27 @@
 import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import InboxReplyDraftObserver from './InboxReplyDraftObserver.js';
 import { useStore } from '../store/index.js';
 import { api } from '../utils/api.js';
 import { useWebSocket } from '../hooks/useWebSocket.js';
 import { useMobile } from '../hooks/useMobile.js';
 import { LAYOUTS } from '../layouts.js';
 import { updateFaviconBadge } from '../themes.js';
+import { installResumeRefresh } from '../utils/resumeRefresh.js';
 import { shortcutBus } from '../utils/shortcutBus.js';
-import { setPending, pendingMarkReadMap, completedMarkReadMap } from '../utils/pendingReads.js';
-import { buildKeyMap, buildModKeyMap, getEffectiveShortcuts, getGroupedActions, parseModKey, modLabel, SPECIAL_KEYS, SPECIAL_KEY_LABELS } from '../utils/defaultShortcuts.js';
+import { dispatchHoveredGtdShortcut } from '../utils/gtdHoveredRow.js';
+import { runMailboxShortcut, canRunMailboxShortcut, browserShortcutFallback } from '../utils/visibleMailboxes.js';
+import { canRunSelectedAction, canRunGlobalAction } from '../utils/shortcutApplicability.js';
+import { selectedPickerMessage } from '../utils/labelPicker.js';
+import { applyMarkRead } from '../utils/markRead.js';
+import { buildKeyMap, resolveShortcutAction, shortcutActionText, getEffectiveShortcuts, getGroupedActions, parseModKey, modLabel, SPECIAL_KEYS, SPECIAL_KEY_LABELS } from '../utils/defaultShortcuts.js';
 import Sidebar from './Sidebar.jsx';
 import MessageList from './MessageList.jsx';
-import MessagePane from './MessagePane.jsx';
+import ReadingPane from './ReadingPane.jsx';
 import NotificationToasts from './NotificationToasts.jsx';
 import CommandPalette from './CommandPalette.jsx';
 import { usePluginSlot, PluginRuntime } from '../plugins/PluginSlot.jsx';
+import { takePendingDeepLink, watchPendingDeepLink } from '../utils/pendingDeepLink.js';
 
 const ContactsPage = lazy(() => import('./ContactsPage.jsx'));
 const WindowLayer  = lazy(() => import('./WindowLayer.jsx'));
@@ -22,34 +29,6 @@ const WindowLayer  = lazy(() => import('./WindowLayer.jsx'));
 const ComposeModal = lazy(() => import('./ComposeModal.jsx'));
 const AdminPanel   = lazy(() => import('./AdminPanel.jsx'));
 const ElectronNotificationBridge = lazy(() => import('./ElectronNotificationBridge.jsx'));
-
-// Read + atomically clear the deep-link the service worker persisted on a
-// notification tap (shared IndexedDB store 'mailflow-nav'). Fully guarded so any
-// storage error resolves to null instead of throwing.
-function takePendingDeepLink() {
-  return new Promise((resolve) => {
-    let settled = false;
-    const done = (v) => { if (!settled) { settled = true; resolve(v); } };
-    try {
-      const open = indexedDB.open('mailflow-nav', 1);
-      open.onupgradeneeded = () => { try { open.result.createObjectStore('kv'); } catch { /* store already exists */ } };
-      open.onerror = () => done(null);
-      open.onblocked = () => done(null);
-      open.onsuccess = () => {
-        try {
-          const db = open.result;
-          const tx = db.transaction('kv', 'readwrite');
-          const store = tx.objectStore('kv');
-          const getReq = store.get('pending_deeplink');
-          getReq.onsuccess = () => { if (getReq.result != null) store.delete('pending_deeplink'); };
-          tx.oncomplete = () => { const v = getReq.result ?? null; db.close(); done(v); };
-          tx.onerror = () => { db.close(); done(null); };
-          tx.onabort = () => { db.close(); done(null); };
-        } catch { done(null); }
-      };
-    } catch { done(null); }
-  });
-}
 
 const lazyFallback = (
   <div style={{ position: 'fixed', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
@@ -61,7 +40,7 @@ export default function MailApp() {
   const { t } = useTranslation();
   const {
     setAccounts, setUnreadCounts, showAdmin,
-    setShowAdmin, setAdminTab, composing, sidebarCollapsed, layout,
+    setShowAdmin, setAdminTab, composing, composeSession, sidebarCollapsed, layout,
     unreadCounts, selectedAccountId, openCompose, setSelectedAccount,
     shortcuts, selectedMessageId, setSelectedMessage,
     mobileSidebarOpen, setMobileSidebarOpen, addNotification,
@@ -100,12 +79,6 @@ export default function MailApp() {
 
   const scale = fontSize / 100;
   const hasNativeBridge = Boolean(window.mailflowNative || window.Capacitor?.isNativePlatform?.());
-  const [vpSize, setVpSize] = useState({ w: window.innerWidth, h: window.innerHeight });
-  useEffect(() => {
-    const update = () => setVpSize({ w: window.innerWidth, h: window.innerHeight });
-    window.addEventListener('resize', update);
-    return () => window.removeEventListener('resize', update);
-  }, []);
 
   useEffect(() => {
     const onVisible = () => {
@@ -119,6 +92,9 @@ export default function MailApp() {
 
   const [showShortcutHelp, setShowShortcutHelp] = useState(false);
   const [paletteOpen, setPaletteOpen] = useState(false);
+  const [labelPickerMessage, setLabelPickerMessage] = useState(null);
+  const labelPickerRef = useRef(null);
+  useEffect(() => { labelPickerRef.current = labelPickerMessage; }, [labelPickerMessage]);
   const isMobile = useMobile();
   const sidebarDragRef = useRef(null);
   const sidebarResizeRef = useRef(null);
@@ -313,25 +289,10 @@ export default function MailApp() {
         // selectAndMarkRead — so mark it read here too. Mirrors that logic exactly,
         // including the pending-read guard that stops a concurrent sync from
         // reverting the optimistic flag. Respects the user's manual-mark preference.
-        const st = useStore.getState();
-        if (msg.is_read || st.markReadBehavior === 'manual') return;
-        st.updateMessage(msg.id, { is_read: true });
-        st.decrementUnread(msg.account_id);
-        st.adjustCategoryCount(msg.category, -1);
-        setPending(msg.id, msg.account_id);
-        api.bulkRead([msg.id], true)
-          .then(() => {
-            pendingMarkReadMap.delete(msg.id);
-            completedMarkReadMap.set(msg.id, msg.account_id);
-            setTimeout(() => completedMarkReadMap.delete(msg.id), 10000);
-          })
-          .catch(e => {
-            console.error('Deep-link markRead failed:', e.message);
-            st.updateMessage(msg.id, { is_read: false });
-            st.incrementUnread(msg.account_id);
-            st.adjustCategoryCount(msg.category, 1);
-            pendingMarkReadMap.delete(msg.id);
-          });
+        // A deep-link is an explicit open, so it marks read immediately rather than
+        // honoring markReadDelay, but it still respects the manual preference.
+        if (useStore.getState().markReadBehavior === 'manual') return;
+        applyMarkRead(msg);
       })
       .catch(err => console.warn('Deep link message not found:', err.message));
   }, [setSelectedMessage]);
@@ -339,15 +300,15 @@ export default function MailApp() {
   // Consume the deep-link the SW persisted on a notification tap: read+clear it,
   // then open the message. IndexedDB is the reliable channel on iOS (postMessage can
   // be missed on a focus-with-reload, openWindow's URL is ignored on cold launch).
-  const consumePendingDeepLink = useCallback(() => {
-    takePendingDeepLink().then((url) => {
-      if (!url) return;
-      try {
-        const id = new URL(url, window.location.origin).searchParams.get('m');
-        if (id) openDeepLinkMessage(id);
-      } catch { /* ignore a malformed persisted deep-link */ }
-    });
+  const openPendingDeepLink = useCallback((url) => {
+    try {
+      const id = new URL(url, window.location.origin).searchParams.get('m');
+      if (id) openDeepLinkMessage(id);
+    } catch { /* ignore a malformed persisted deep-link */ }
   }, [openDeepLinkMessage]);
+  const consumePendingDeepLink = useCallback(() => {
+    takePendingDeepLink().then((url) => { if (url) openPendingDeepLink(url); });
+  }, [openPendingDeepLink]);
 
   // On load: open a deep-linked message from ?m= (Chromium honors openWindow) or a
   // stored id, plus any target the SW persisted for a notification tap.
@@ -363,10 +324,17 @@ export default function MailApp() {
   }, [openDeepLinkMessage, consumePendingDeepLink]);
 
   // A notification tap that returns to a backgrounded app (the achievable iOS case)
-  // fires visibilitychange; the SW also nudges via postMessage. Both just consume the
-  // persisted target — read+clear is atomic, so whichever runs first wins.
+  // fires visibilitychange; the SW also nudges via postMessage. Both consume the
+  // persisted target — read+clear is atomic, so whichever runs first wins. iOS can bring
+  // the app forward before the SW has stored the target, so coming to the front keeps
+  // checking for a few seconds (watchPendingDeepLink, #589).
   useEffect(() => {
-    const onVisible = () => { if (document.visibilityState === 'visible') consumePendingDeepLink(); };
+    let stopWatch = null;
+    const onVisible = () => {
+      if (document.visibilityState !== 'visible') return;
+      stopWatch?.();
+      stopWatch = watchPendingDeepLink({ open: openPendingDeepLink });
+    };
     document.addEventListener('visibilitychange', onVisible);
     let onSwMessage;
     if ('serviceWorker' in navigator) {
@@ -376,10 +344,11 @@ export default function MailApp() {
       navigator.serviceWorker.addEventListener('message', onSwMessage);
     }
     return () => {
+      stopWatch?.();
       document.removeEventListener('visibilitychange', onVisible);
       if (onSwMessage) navigator.serviceWorker.removeEventListener('message', onSwMessage);
     };
-  }, [consumePendingDeepLink]);
+  }, [consumePendingDeepLink, openPendingDeepLink]);
 
   // PWA mailto: handler (manifest protocol_handlers → /?mailto=<encoded mailto: URL>).
   // Parse the mailto and open a pre-filled compose window. Runs once on mount; a no-op
@@ -402,7 +371,6 @@ export default function MailApp() {
       // the HTML editor and can't inject markup.
       const bodyText = mt.searchParams.get('body') || '';
       openCompose({
-        accountId: useStore.getState().selectedAccountId || undefined,
         to: [...splitAddrs(mt.pathname, true), ...splitAddrs(mt.searchParams.get('to'), false)],
         cc: splitAddrs(mt.searchParams.get('cc'), false),
         bcc: splitAddrs(mt.searchParams.get('bcc'), false),
@@ -438,11 +406,41 @@ export default function MailApp() {
         .then(setUnreadCounts)
         .catch(console.error);
     };
+    const refreshFolders = () => {
+      const state = useStore.getState();
+      for (const accountId of Object.keys(state.folders)) {
+        api.getFolders(accountId).then(f => useStore.getState().setFolders(accountId, f)).catch(() => {});
+      }
+    };
     refreshCounts();
-    // 5-minute fallback poll — WebSocket sync_complete events handle the common case;
-    // this covers stale counts when the WebSocket is temporarily disconnected.
-    const interval = setInterval(refreshCounts, 300000);
-    return () => clearInterval(interval);
+    // Also expire stale indicators when the socket is unavailable.
+    const interval = setInterval(() => { refreshCounts(); refreshFolders(); }, 60000);
+
+    // Resynchronise the moment the tab comes back, rather than waiting for a timer that was
+    // frozen while it was away. Without this the LIST can show a pre-sleep snapshot while the
+    // counts, which are polled and pushed from more places, are already current — so the badge
+    // says 2 and the list shows nothing unread, which reads as the unread count lying.
+    //
+    // This deliberately reuses mailflow:refresh, the signal the socket-down fallback already
+    // dispatches and MessageList already listens for, instead of adding a second reload path.
+    // What counts as a resume, and collapsing the burst of signals one resume produces, lives
+    // in utils/resumeRefresh.js with its tests.
+    const stopResume = installResumeRefresh({
+      doc: document, win: window,
+      shouldSkip: () => useStore.getState().isLocked,
+      onResync: () => {
+        refreshCounts();
+        refreshFolders();
+        window.dispatchEvent(new CustomEvent('mailflow:refresh'));
+      },
+    });
+
+    window.addEventListener('mailflow:counts_refresh', refreshCounts);
+    return () => {
+      clearInterval(interval);
+      stopResume();
+      window.removeEventListener('mailflow:counts_refresh', refreshCounts);
+    };
   }, [setAccounts, setUnreadCounts, setTodoistConnected]);
 
   // WebSocket-independent periodic refresh of the open message list, at the user's chosen sync
@@ -535,11 +533,10 @@ export default function MailApp() {
   useEffect(() => {
     if (isMobile) return;
     const keyMap    = buildKeyMap(shortcuts);
-    const modKeyMap = buildModKeyMap(shortcuts);
     // Keys that are prefixes of two-key sequences (e.g. 'g' for 'gi').
     // Special keys like 'Delete' have length > 1 but are single keypresses — exclude them.
     const prefixKeys = new Set(
-      Object.keys(keyMap).filter(k => k.length > 1 && !SPECIAL_KEYS.has(k)).map(k => k[0])
+      [...Object.keys(keyMap).filter(k => k.length > 1 && !SPECIAL_KEYS.has(k)).map(k => k[0]), 'g']
     );
 
     let pendingKey   = null;
@@ -550,18 +547,30 @@ export default function MailApp() {
       if (pendingTimer) { clearTimeout(pendingTimer); pendingTimer = null; }
     };
 
+    const canRun = (action) => {
+      if (!canRunGlobalAction(action, { rightSidebarApplicable })) return false;
+      if (!canRunSelectedAction(action, useStore.getState())) return false;
+      if (action === 'toggleLeftSidebar' || /^goVisibleMailbox[1-9]$/.test(action)) {
+        return canRunMailboxShortcut(action, document.querySelector('[data-mailbox-sidebar]'));
+      }
+      return true;
+    };
+
+    const dispatchAction = action => {
+      if (!dispatchHoveredGtdShortcut(action, useStore.getState())) shortcutBus.emit(action);
+    };
+
     const handler = (e) => {
       // Never intercept when the compose modal or admin panel is open, or an input is focused
-      if (composingRef.current || showAdminRef.current) return;
+      if (composingRef.current || showAdminRef.current || paletteOpenRef.current) return;
       const tag = e.target.tagName;
       if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || e.target.isContentEditable) return;
-      // Modifier combos: emit registered actions, pass everything else through
-      if (e.ctrlKey || e.metaKey) {
-        const action = modKeyMap[e.key.toLowerCase()];
-        if (action) { e.preventDefault(); shortcutBus.emit(action); }
+      // The registry resolves the exact modifier set, including shifted punctuation.
+      if (e.ctrlKey || e.metaKey || e.altKey || e.shiftKey) {
+        const action = resolveShortcutAction(e, shortcuts);
+        if (action && canRun(action)) { e.preventDefault(); dispatchAction(action); }
         return;
       }
-      if (e.altKey) return;
 
       const key = e.key;
 
@@ -580,10 +589,11 @@ export default function MailApp() {
 
       // Check the keymap first — bound actions take priority, including special
       // keys like Delete that would otherwise be skipped below.
-      const action = keyMap[resolved];
-      if (action) {
+      const action = resolved.length > 1 && !SPECIAL_KEYS.has(resolved)
+        ? keyMap[resolved] || browserShortcutFallback(resolved) : resolveShortcutAction(e, shortcuts);
+      if (action && canRun(action)) {
         e.preventDefault();
-        shortcutBus.emit(action);
+        dispatchAction(action);
         return;
       }
 
@@ -613,11 +623,11 @@ export default function MailApp() {
       document.removeEventListener('keydown', handler);
       clearPending();
     };
-  }, [shortcuts, isMobile]); // Re-build key map only when shortcuts or device type changes
+  }, [shortcuts, isMobile, rightSidebarApplicable]);
 
   // Subscribe to global actions that MailApp owns
   useEffect(() => {
-    const onCompose   = () => openCompose({ accountId: useStore.getState().selectedAccountId || undefined });
+    const onCompose   = () => openCompose({});
     const onGoInbox   = () => setSelectedAccount(null, 'INBOX');
     const onShowHelp  = () => { if (!isMobile) setShowShortcutHelp(v => !v); };
 
@@ -639,6 +649,27 @@ export default function MailApp() {
     return () => shortcutBus.off('toggleRightSidebar', onToggleRightSidebar);
   }, [rightSidebarApplicable, toggleRightSidebarHidden]);
 
+  useEffect(() => {
+    const openPicker = () => {
+      const message = selectedPickerMessage(useStore.getState());
+      if (!message) return;
+      setLabelPickerMessage(message);
+      setPaletteOpen(true);
+    };
+    shortcutBus.on('openLabelPicker', openPicker);
+    return () => shortcutBus.off('openLabelPicker', openPicker);
+  }, []);
+
+  useEffect(() => {
+    const actions = ['toggleLeftSidebar', ...Array.from({ length: 9 }, (_, i) => `goVisibleMailbox${i + 1}`)];
+    const handlers = actions.map(action => {
+      const handler = () => runMailboxShortcut(action, useStore.getState(), document.querySelector('[data-mailbox-sidebar]'));
+      shortcutBus.on(action, handler);
+      return [action, handler];
+    });
+    return () => handlers.forEach(([action, handler]) => shortcutBus.off(action, handler));
+  }, []);
+
   // Close help overlay on Escape
   useEffect(() => {
     if (!showShortcutHelp) return;
@@ -650,7 +681,10 @@ export default function MailApp() {
   // Cmd+K / Ctrl+K opens command palette
   useEffect(() => {
     const handler = (e) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      if (e.defaultPrevented || composingRef.current || showAdminRef.current || labelPickerRef.current) return;
+      if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target?.tagName) || e.target?.isContentEditable) return;
+      if ((e.metaKey || e.ctrlKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() === 'k'
+          && !resolveShortcutAction(e, useStore.getState().shortcuts)) {
         e.preventDefault();
         setPaletteOpen(v => !v);
       }
@@ -696,12 +730,13 @@ export default function MailApp() {
     }}>
     <div style={{
       display: 'flex',
-      width: scale !== 1 ? `${(vpSize.w / scale).toFixed(2)}px` : '100%',
-      height: scale !== 1 ? `${(vpSize.h / scale).toFixed(2)}px` : '100%',
+      // Sized in CSS from the 100dvh parent: an innerHeight read on resize is stale during
+      // a rotation in an iOS home-screen app, and the sidebar's bottom fell off screen.
+      width: scale !== 1 ? `calc(100% / ${scale})` : '100%',
+      height: scale !== 1 ? `calc(100% / ${scale})` : '100%',
       ...(scale !== 1 && {
         transform: `scale(${scale})`,
         transformOrigin: 'top left',
-        '--app-height': `${(vpSize.h / scale).toFixed(2)}px`,
       }),
       overflow: 'hidden',
       background: 'var(--bg-primary)',
@@ -751,7 +786,7 @@ export default function MailApp() {
             <MessageList />
           </div>
           <div style={{ flex: 1, display: !showContacts && selectedMessageId ? 'flex' : 'none', overflow: 'hidden', height: '100%' }}>
-            <MessagePane />
+            <ReadingPane />
           </div>
         </>
       ) : (
@@ -774,6 +809,8 @@ export default function MailApp() {
             flex: 1, display: 'flex', overflow: 'hidden',
             minWidth: 0, flexDirection: currentLayout.direction,
             height: '100%',
+            // A standalone PWA draws under the status bar; the sidebar header already clears it.
+            paddingTop: 'var(--sat)',
           }}>
             {/* Keep all three mounted so scroll/state survive navigation. */}
             <div style={{ display: showContacts ? 'flex' : 'none', flex: 1, minWidth: 0, overflow: 'hidden', height: '100%' }}>
@@ -793,7 +830,7 @@ export default function MailApp() {
                   onMouseLeave={e => { e.currentTarget.style.background = 'var(--border-subtle)'; }}
                 />
               )}
-              <MessagePane />
+              <ReadingPane />
               {/* Generic right-sidebar column, populated from the content seam above. */}
               {currentLayout.direction === 'row' && rightSidebarContent != null && (
                 <>
@@ -857,14 +894,16 @@ export default function MailApp() {
         </>
       )}
 
-      <Suspense fallback={lazyFallback}>{composing && <ComposeModal />}</Suspense>
+      <InboxReplyDraftObserver />
+      <Suspense fallback={lazyFallback}>{composing && <ComposeModal key={composeSession} />}</Suspense>
       <Suspense fallback={lazyFallback}>{showAdmin && <AdminPanel />}</Suspense>
       {/* Detached message windows (#219) — desktop only. */}
       {!isMobile && <Suspense fallback={null}><WindowLayer /></Suspense>}
       <Suspense fallback={null}>{hasNativeBridge && <ElectronNotificationBridge />}</Suspense>
       <NotificationToasts />
       <PluginRuntime />
-      <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} />
+      <CommandPalette open={paletteOpen} labelPickerMessage={labelPickerMessage}
+        onClose={() => { setPaletteOpen(false); setLabelPickerMessage(null); }} />
 
       {/* Keyboard shortcut help overlay — toggled by the '?' key */}
       {showShortcutHelp && (
@@ -956,12 +995,12 @@ function ShortcutHelpOverlay({ shortcuts, onClose }) {
               <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>
                 {t(groupName)}
               </div>
-              {actions.map(({ action, descriptionKey }) => (
+              {actions.map(({ action }) => (
                 <div key={action} style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                   padding: '5px 0', borderBottom: '1px solid var(--border-subtle)',
                 }}>
-                  <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{t(descriptionKey)}</span>
+                  <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{shortcutActionText(t, action)}</span>
                   {keyBadge(effective[action])}
                 </div>
               ))}
@@ -969,6 +1008,9 @@ function ShortcutHelpOverlay({ shortcuts, onClose }) {
           ))}
         </div>
 
+        <div style={{ marginTop: 8, fontSize: 11, color: 'var(--text-tertiary)', textAlign: 'center' }}>
+          {t('shortcuts.browserMailboxFallback', { defaultValue: 'In a browser: g then 1–9 opens a visible mailbox; g then l opens the label picker.' })}
+        </div>
         <div style={{ marginTop: 8, fontSize: 11, color: 'var(--text-tertiary)', textAlign: 'center' }}>
           {t('shortcuts.customizeHint')} &nbsp;·&nbsp; {t('shortcuts.closeHint')}
         </div>

@@ -1,7 +1,41 @@
 // Run with: node --test src/utils/defaultShortcuts.test.js
 import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
-import { buildKeyMap, buildModKeyMap } from './defaultShortcuts.js';
+import { buildKeyMap, buildModKeyMap, getShortcutConflicts, resolveShortcutAction, shortcutBindingFromEvent } from './defaultShortcuts.js';
+
+const keyEvent = (key, modifiers = {}) => ({ key, ctrlKey: false, metaKey: false, shiftKey: false, altKey: false, ...modifiers });
+
+describe('general shortcut resolution', () => {
+  it('registers message and mailbox actions without default collisions', (t) => {
+    const warn = t.mock.method(console, 'warn', () => {});
+    const plain = buildKeyMap();
+    const modified = buildModKeyMap();
+    for (const [key, action] of Object.entries({ u: 'markUnread', i: 'loadRemoteImages', f: 'forward', '?': 'showHelp', '#': 'delete' })) assert.equal(plain[key], action);
+    for (const [key, action] of Object.entries({ 'shift+u': 'unsubscribe', enter: 'replyAllFromSelection', '\\': 'toggleLeftSidebar', l: 'openLabelPicker' })) assert.equal(modified[key], action);
+    for (let n = 1; n <= 9; n++) assert.equal(modified[String(n)], `goVisibleMailbox${n}`);
+    assert.equal(warn.mock.callCount(), 0);
+  });
+
+  it('matches exact modifiers and shifted punctuation', () => {
+    assert.equal(resolveShortcutAction(keyEvent('U', { ctrlKey: true, shiftKey: true })), 'unsubscribe');
+    assert.equal(resolveShortcutAction(keyEvent('Enter', { ctrlKey: true })), 'replyAllFromSelection');
+    assert.equal(resolveShortcutAction(keyEvent('\\', { ctrlKey: true })), 'toggleLeftSidebar');
+    assert.equal(resolveShortcutAction(keyEvent('?', { shiftKey: true })), 'showHelp');
+    assert.equal(resolveShortcutAction(keyEvent('#', { shiftKey: true })), 'delete');
+    assert.equal(resolveShortcutAction(keyEvent('e', { ctrlKey: true })), null);
+    assert.equal(resolveShortcutAction(keyEvent('Enter', { ctrlKey: true, shiftKey: true })), null);
+    assert.equal(resolveShortcutAction(keyEvent('r', { shiftKey: true })), null);
+    assert.equal(resolveShortcutAction(keyEvent('f', { altKey: true })), null);
+    assert.equal(resolveShortcutAction(keyEvent('f', { metaKey: true })), null);
+  });
+
+  it('keeps user overrides and deterministic last-writer wins', () => {
+    assert.equal(resolveShortcutAction(keyEvent('z'), { forward: 'z' }), 'forward');
+    assert.equal(resolveShortcutAction(keyEvent('f'), { forward: 'z' }), null);
+    assert.equal(resolveShortcutAction(keyEvent('p', { ctrlKey: true, shiftKey: true }), { forward: 'ctrl+shift+p' }), 'forward');
+    assert.equal(resolveShortcutAction(keyEvent('u'), { archive: 'u', delete: 'u' }), 'delete');
+  });
+});
 
 describe('buildKeyMap', () => {
   it('does not warn when no overrides are given (defaults have no collisions)', (t) => {
@@ -37,8 +71,9 @@ describe('buildKeyMap', () => {
 describe('buildModKeyMap', () => {
   it('does not warn when no overrides are given (defaults have no collisions)', (t) => {
     const warn = t.mock.method(console, 'warn', () => {});
-    buildModKeyMap();
+    const map = buildModKeyMap();
     assert.equal(warn.mock.callCount(), 0);
+    assert.equal(map.z, 'undoAction');
   });
 
   it('warns and keeps last-writer-wins when an override collides on a modifier+key', (t) => {
@@ -47,7 +82,7 @@ describe('buildModKeyMap', () => {
     const map = buildModKeyMap({ toggleStar: 'ctrl+p' });
     assert.equal(warn.mock.callCount(), 1);
     const [message] = warn.mock.calls[0].arguments;
-    assert.match(message, /"p"/);
+    assert.match(message, /"ctrl\+p"/);
     assert.match(message, /"toggleStar"/);
     assert.match(message, /"printMessage"/);
     assert.equal(map.p, 'printMessage', 'later action (printMessage) should win');
@@ -62,5 +97,43 @@ describe('buildModKeyMap', () => {
     assert.equal(modMap['/'], 'toggleRightSidebar', 'ctrl+/ resolves to the right-sidebar toggle');
     assert.equal(keyMap['/'], 'focusSearch', 'bare / stays the search key (separate map)');
     assert.equal(warn.mock.callCount(), 0);
+  });
+});
+
+describe('modifier shortcuts', () => {
+  it('binds GTD Done to Shift+E while leaving Firefox Ctrl+Shift+E available', () => {
+    assert.equal(resolveShortcutAction({ key: 'E', ctrlKey: true, shiftKey: true }), null);
+    assert.equal(resolveShortcutAction({ key: 'e', ctrlKey: true, shiftKey: false }), null);
+    assert.equal(resolveShortcutAction({ key: 'E', ctrlKey: false, shiftKey: true }), 'gtdDone');
+    assert.equal(resolveShortcutAction(keyEvent('E', { ctrlKey: true, shiftKey: true }), { gtdDone: 'ctrl+shift+e' }), 'gtdDone');
+  });
+
+  it('reports the final winner of a full modifier collision before dispatch', (t) => {
+    const warn = t.mock.method(console, 'warn', () => {});
+    const overrides = { toggleStar: 'ctrl+p' };
+    assert.deepEqual(getShortcutConflicts(overrides), [{ key: 'ctrl+p', loser: 'toggleStar', winner: 'printMessage' }]);
+    buildKeyMap(overrides);
+    assert.equal(warn.mock.callCount(), 1);
+    const action = resolveShortcutAction(keyEvent('p', { ctrlKey: true }), overrides);
+    assert.equal(action, 'printMessage');
+    assert.equal(warn.mock.callCount(), 1);
+    assert.match(warn.mock.calls[0].arguments[0], /toggleStar.*printMessage/);
+  });
+
+  it('keeps Ctrl+P and Ctrl+Shift+P separate and records the full modifier set', (t) => {
+    const warn = t.mock.method(console, 'warn', () => {});
+    const overrides = { toggleStar: 'ctrl+shift+p' };
+    assert.deepEqual(getShortcutConflicts(overrides), []);
+    buildModKeyMap(overrides);
+    assert.equal(warn.mock.callCount(), 0);
+    assert.equal(resolveShortcutAction(keyEvent('p', { ctrlKey: true }), overrides), 'printMessage');
+    assert.equal(resolveShortcutAction(keyEvent('P', { ctrlKey: true, shiftKey: true }), overrides), 'toggleStar');
+    assert.equal(shortcutBindingFromEvent(keyEvent('E', { ctrlKey: true, shiftKey: true })), 'ctrl+shift+e');
+  });
+
+  it('treats modifier order and case as the same binding', () => {
+    assert.deepEqual(getShortcutConflicts({ toggleStar: 'shift+ctrl+U' }), [
+      { key: 'ctrl+shift+u', loser: 'unsubscribe', winner: 'toggleStar' },
+    ]);
   });
 });
