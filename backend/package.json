@@ -6,8 +6,8 @@
     "node": ">=22 <23"
   },
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "node --watch src/index.js",
+    "start": "node api.js && node src/index.js",
+    "dev": "node api.js && node --watch src/index.js",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "eslint src --max-warnings 0",
