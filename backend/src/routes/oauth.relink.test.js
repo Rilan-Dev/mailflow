@@ -9,6 +9,11 @@ const mocks = vi.hoisted(() => ({
 // oauth.js imports imapManager from ../index.js, which has heavy load-time side
 // effects (Redis connect, migrations). Mock it so importing oauth.js is inert.
 vi.mock('../index.js', () => ({ imapManager: mocks.imapManager }));
+// NEXAHUB: the integration seam routes the same imapManager through
+// services/imapManagerRef.js (a lazy proxy) so importing a route does not boot the
+// standalone server. Mock the ref the same way; upstream's mock of ../index.js stays
+// so the file diffs cleanly against the upstream original.
+vi.mock('../services/imapManagerRef.js', () => ({ imapManager: mocks.imapManager }));
 vi.mock('../services/db.js', () => ({ query: vi.fn(), withTransaction: mocks.withTransaction }));
 vi.mock('../services/encryption.js', () => ({ encrypt: (v) => v, decrypt: (v) => v }));
 // Verifying a real id_token would need the provider's published signing keys.

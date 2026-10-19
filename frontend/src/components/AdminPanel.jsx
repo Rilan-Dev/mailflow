@@ -49,7 +49,7 @@ import SpamSettings from './SpamSettings.jsx';
 import BackupSettings from './BackupSettings.jsx';
 
 // ─── Shared field component ───────────────────────────────────────────────────
-function Field({ label, required, children }) {
+export function Field({ label, required, children }) {
   return (
     <div style={{ marginBottom: 14 }}>
       <label style={{ display: 'block', fontSize: 12, color: 'var(--text-secondary)', marginBottom: 5 }}>
@@ -1803,7 +1803,7 @@ function ChoiceChips({ options, isActive, onSelect, wrap = false }) {
 }
 
 // An on/off setting: its name and what it does, with a switch on the right.
-function ToggleRow({ label, desc, checked, onChange, disabled = false }) {
+export function ToggleRow({ label, desc, checked, onChange, disabled = false }) {
   return (
     <div style={{
       display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 16,
@@ -7277,6 +7277,36 @@ const TABS = [
   },
 ];
 
+// ─── Extension tabs ──────────────────────────────────────────────────────────
+// For embedding hosts. AdminPanel renders MailFlow's own settings, but a host that
+// embeds this UI (NexaHub) also has first-party settings that standalone MailFlow
+// does not (channel accounts, workspace preferences, provider secrets, ...).
+// Instead of the host maintaining a second, parallel settings window, it registers
+// those sections here and they render inside this panel: in the rail (under `group`,
+// or pinned above the Close button when groupless), in the mobile tab bar, in the
+// search index, and with the same open/close behaviour as the built-in tabs.
+// `id` must not collide with a built-in tab id; registering the same id twice
+// replaces the previous registration. Extension labels are literal strings, since
+// the host is not required to extend MailFlow's locale files.
+const extensionTabs = new Map();
+
+export function registerAdminTabs(...tabs) {
+  for (const tab of tabs) {
+    if (!tab || typeof tab.id !== 'string' || !tab.id || typeof tab.component !== 'function') {
+      throw new Error('registerAdminTabs: each tab needs a string id and a React component');
+    }
+    extensionTabs.set(tab.id, { group: null, keywords: [], label: tab.id, ...tab });
+  }
+}
+
+export function unregisterAdminTab(id) {
+  extensionTabs.delete(id);
+}
+
+function allTabs() {
+  return extensionTabs.size ? [...TABS, ...extensionTabs.values()] : TABS;
+}
+
 // ─── Shortcuts Tab ───────────────────────────────────────────────────────────
 function ShortcutsTab() {
   const { t } = useTranslation();
@@ -8763,6 +8793,10 @@ function makeSearchIndex(t) {
     { label: t('admin.systemEmail.tabEmail'), keywords: ['system email', 'smtp', 'admin email', 'invite email', 'outgoing email'], tab: 'users', adminOnly: true, breadcrumb: tabLabel('users') },
     { label: t('admin.sso.title'), keywords: ['sso', 'oidc', 'single sign on', 'oauth', 'provider', 'identity provider'], tab: 'sso', adminOnly: true, breadcrumb: tabLabel('sso') },
     { label: t('admin.backup.title'), keywords: ['backup', 'restore', 'export', 'import', 'migrate', 'move server', 'transfer', 'download settings'], tab: 'backup', adminOnly: true, breadcrumb: tabLabel('backup') },
+    // Extension tabs registered by an embedding host (see registerAdminTabs).
+    ...[...extensionTabs.values()].map(tab => ({
+      label: tab.label, keywords: tab.keywords, tab: tab.id, breadcrumb: tab.label,
+    })),
   ];
 }
 
@@ -8801,7 +8835,7 @@ export default function AdminPanel() {
   const { t } = useTranslation();
   const { setShowAdmin, adminTab, setAdminTab, user, fontSize } = useStore();
   const isMobile = useMobile();
-  const visibleTabs = TABS.filter(tab => (!tab.adminOnly || user?.isAdmin) && (!tab.mobileHidden || !isMobile));
+  const visibleTabs = allTabs().filter(tab => (!tab.adminOnly || user?.isAdmin) && (!tab.mobileHidden || !isMobile));
 
   const tabScrollRef = useRef(null);
   const [tabRightOverflow, setTabRightOverflow] = useState(false);
@@ -8894,6 +8928,10 @@ export default function AdminPanel() {
       {adminTab === 'ai-actions' && <AiActionsTab />}
       {adminTab === 'plugins' && <PluginsSection onNavigate={navigateTo} />}
       {adminTab === 'about' && <AboutTab />}
+      {/* Extension tabs registered by an embedding host (see registerAdminTabs). */}
+      {[...extensionTabs.values()].map(tab => (
+        adminTab === tab.id ? <tab.component key={tab.id} /> : null
+      ))}
     </>
   );
 
@@ -8957,7 +8995,7 @@ export default function AdminPanel() {
                 }}
               >
                 <span style={{ display: 'flex', opacity: adminTab === tab.id && !searchResults ? 1 : 0.7 }}>{tab.icon}</span>
-                {t(tab.labelKey)}
+                {tab.labelKey ? t(tab.labelKey) : tab.label}
                 {tab.beta && <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.06em', padding: '1px 4px', borderRadius: 3, background: adminTab === tab.id && !searchResults ? 'rgba(255,255,255,0.25)' : 'color-mix(in srgb, var(--accent) 15%, transparent)', color: adminTab === tab.id && !searchResults ? '#fff' : 'var(--accent)' }}>BETA</span>}
               </button>
             ))}
@@ -9019,7 +9057,8 @@ export default function AdminPanel() {
               scrollbar. Labels wrap instead of overflowing (see the tab buttons below). */}
           <div style={{ flex: 1, minHeight: 0, overflowY: 'auto', overflowX: 'hidden' }}>
           {TAB_GROUPS.map((group, gi) => {
-            const groupTabs = visibleTabs.filter(tab => group.tabIds.includes(tab.id));
+            const groupTabs = visibleTabs.filter(tab => group.tabIds.includes(tab.id)
+              || extensionTabs.get(tab.id)?.group === group.id);
             if (groupTabs.length === 0) return null;
             return (
               <div key={group.id} style={{ marginBottom: gi < TAB_GROUPS.length - 1 ? 4 : 0 }}>
@@ -9053,7 +9092,7 @@ export default function AdminPanel() {
                       <span style={{ color: isActive ? 'var(--accent)' : 'var(--text-tertiary)', flexShrink: 0 }}>
                         {tab.icon}
                       </span>
-                      <span style={{ flex: 1, minWidth: 0, overflowWrap: 'anywhere' }}>{t(tab.labelKey)}</span>
+                      <span style={{ flex: 1, minWidth: 0, overflowWrap: 'anywhere' }}>{tab.labelKey ? t(tab.labelKey) : tab.label}</span>
                       {tab.beta && <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.06em', padding: '1px 4px', borderRadius: 3, background: 'color-mix(in srgb, var(--accent) 15%, transparent)', color: 'var(--accent)', flexShrink: 0 }}>BETA</span>}
                     </button>
                   );
@@ -9083,7 +9122,7 @@ export default function AdminPanel() {
                 <span style={{ color: isActive ? 'var(--accent)' : 'var(--text-tertiary)', flexShrink: 0 }}>
                   {tab.icon}
                 </span>
-                <span style={{ flex: 1, minWidth: 0, overflowWrap: 'anywhere' }}>{t(tab.labelKey)}</span>
+                <span style={{ flex: 1, minWidth: 0, overflowWrap: 'anywhere' }}>{tab.labelKey ? t(tab.labelKey) : tab.label}</span>
                 {tab.beta && <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: '0.06em', padding: '1px 4px', borderRadius: 3, background: 'color-mix(in srgb, var(--accent) 15%, transparent)', color: 'var(--accent)', flexShrink: 0 }}>BETA</span>}
               </button>
             );
