@@ -55,10 +55,14 @@
     "path_license_provenance": "PENDING",
     "redistribution_clearance": "PENDING",
     "path_disposition_summary": {
-      "total_blobs": 1350,
-      "classified": 287,
-      "unclassified": 1063,
-      "note": "146/147 upstream changed/new blobs received first-pass review; one binary PKCS#12 test fixture remains pending byte-level certificate/provenance review. Three unchanged frontend HTML-sink dependencies were added to the current security trace."
+      "source_blobs": 1354,
+      "classified": 282,
+      "unclassified": 1072,
+      "unchanged_exact_path_sha_mode_matches": 1341,
+      "changed_existing_paths_reset_to_unclassified": 9,
+      "new_paths_reset_to_unclassified": 4,
+      "carry_forward_mismatches": 0,
+      "note": "See extraction/manifests/path-disposition-delta-audit-2026-10-19.md. Classification is not license clearance."
     },
     "security_static_trace": "PARTIAL_NOT_CLOSED",
     "latest_manifest_verifier": {
