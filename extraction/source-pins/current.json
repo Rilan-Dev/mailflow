@@ -30,7 +30,7 @@
   "state": {
     "phase": "PHASE 2 - IMMUTABLE SOURCE SNAPSHOT AND VERIFICATION",
     "source_copy_authorized": true,
-    "verification_status": "NEW SNAPSHOT CAPTURE SHA CHECKS PASSED; FULL CURRENT-PIN INVENTORY VERIFICATION PENDING; HISTORICAL 35067FC SNAPSHOT HAS A CONFIRMED BLOB/MANIFEST MISMATCH",
+    "verification_status": "CURRENT c1c4469 SNAPSHOT EXACT PATH/MODE/BLOB/TREE MATCH PASS VIA GITHUB GIT OBJECT API; LOCAL NODE VERIFIER NOT RUN (EXECUTION ENVIRONMENT CANNOT RESOLVE GITHUB); HISTORICAL 35067FC SNAPSHOT HAS A CONFIRMED BLOB/MANIFEST MISMATCH",
     "baseline_type": "IMMUTABLE_UPSTREAM_SNAPSHOT",
     "status": "WORKSPACE_RECOVERY_PR_OPEN; CURRENT SNAPSHOT c1c4469 CAPTURED; FULL VERIFICATION AND CAPABILITY/LICENSE CLOSURE OPEN"
   },
@@ -74,6 +74,20 @@
       "stored_snapshot_blob": "ce8681f8ac50c0ecc9eab6a9edfcbabe8d7d1500",
       "run_url": "https://github.com/Rilan-Dev/mailflow/actions/runs/39207353893",
       "disposition": "DO_NOT_MODIFY_EXISTING_SNAPSHOT_IN_PLACE; preserve as incident, verify c1c4469 current pin independently, then create a separately identified repair snapshot if historical snapshot repair is needed"
-    }
+    },
+    "current_pin_tree_comparison": {
+      "method": "GitHub Git object API recursive tree compared entry-by-entry with the pinned source-tree manifest",
+      "branch_head": "7016404aad85747faf7f796220e0de50984e7bb0",
+      "snapshot_commit": "c1c446914dc031feb331993c9da339cc524809d5",
+      "root_tree": "c3c54d9440f25c204368a0bafbbee836e05deb5f",
+      "manifest_entries": 1501,
+      "snapshot_entries": 1501,
+      "missing_paths": 0,
+      "extra_paths": 0,
+      "blob_mode_tree_mismatches": 0,
+      "result": "PASS",
+      "limitation": "The requested node extraction/tools/verify-inventory.mjs command could not be run in a real checkout here because the execution environment could not resolve github.com. Run the repository verifier in GitHub Actions or a real checkout."
+    },
+    "local_node_verifier": "PENDING"
   }
 }
