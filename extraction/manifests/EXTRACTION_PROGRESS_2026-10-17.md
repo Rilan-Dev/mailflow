@@ -115,3 +115,12 @@
 ## Update — 2026-10-17 — HTML sink inventory
 - Mapped React HTML sinks and compose/signature/print/iframe paths in security trace. OIDC native fetch remains a network-policy closure blocker.
 - Current path register 287 classified / 1,063 unclassified; delta review 146/147, one binary fixture pending.
+
+
+## Recovery and current snapshot verification — 2026-10-19
+- Found that the repository's current `main` is now `49b417dd8331865a9e9e99f3c417271232a43d40`, a direct child of upstream `35067fc...`; the extraction workspace is absent from that tree. Recovery PR #4 is open as draft: https://github.com/Rilan-Dev/mailflow/pull/4. Its single commit adds only `extraction/`, `source-extraction-agent/` and four extraction-specific workflows on top of current main, preserving the latest app files and root AGENTS.md.
+- Current pin `c1c446914dc031feb331993c9da339cc524809d5`: independent GitHub Git-object API comparison checked all 1,501 manifest entries against the pinned snapshot tree; 1,501 actual entries, 0 missing, 0 extra, 0 path/type/mode/SHA mismatches, and root tree `c3c54d9440f25c204368a0bafbbee836e05deb5f` matches. This is an exact snapshot identity PASS via the GitHub object API.
+- Local `node extraction/tools/verify-inventory.mjs` has not been run: the execution container cannot resolve github.com to clone a checkout. Run that exact command in CI/a real checkout before merging the recovery PR.
+- Historical `35067fc...` snapshot has a confirmed mismatch: manifest/upstream expects `268170402e354267054a0d31dd420aa885ce55ee` for `frontend/tailwind.config.js`, while stored snapshot blob is `ce8681f8ac50c0ecc9eab6a9edfcbabe8d7d1500`. Incident record: `extraction/manifests/snapshot-integrity-incident-2026-10-19.md`. Do not overwrite that historical path; treat it as integrity FAIL and separately repair/reconstruct if required.
+- Upstream snapshot automation failed to create a PR because repository Actions settings prohibit Actions from creating/approving pull requests. The GitHub API-created recovery PR is open; an authorized repository maintainer must enable the appropriate Actions PR permission or use a permitted manual review route.
+- Capability closure, per-path license/provenance, redistribution clearance and host integration remain open. No extraction PASS claim.
