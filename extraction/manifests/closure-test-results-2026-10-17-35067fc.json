@@ -1,0 +1,188 @@
+{
+  "schema_version": "1.0.0",
+  "recorded_at": "2026-10-17",
+  "source_pin": {
+    "repository": "maathimself/mailflow",
+    "commit": "35067fc2876d50980f1a8a3b8ea72b5467b69f60",
+    "tree": "a2a82b50b8a1ac24a273e55dc0f9418aefdfed17",
+    "snapshot": "extraction/snapshots/35067fc2876d50980f1a8a3b8ea72b5467b69f60/source"
+  },
+  "suites": [
+    {
+      "name": "Backend auth, OAuth/OIDC, host validation, safe fetch, image proxy and email sanitizer",
+      "workflow_run": 39034509010,
+      "url": "https://github.com/Rilan-Dev/mailflow/actions/runs/39034509010",
+      "result": "SUCCESS",
+      "files_passed": 14,
+      "files_skipped": 0,
+      "tests_passed": 375,
+      "tests_skipped": 0,
+      "failures": 0
+    },
+    {
+      "name": "Frontend image proxy",
+      "workflow_run": 39034509010,
+      "url": "https://github.com/Rilan-Dev/mailflow/actions/runs/39034509010",
+      "result": "SUCCESS",
+      "files_passed": 1,
+      "files_skipped": 0,
+      "tests_passed": 4,
+      "tests_skipped": 0,
+      "failures": 0
+    },
+    {
+      "name": "Frontend email HTML sinks, sandbox CSP and app-origin image policy",
+      "workflow_run": 39034509010,
+      "url": "https://github.com/Rilan-Dev/mailflow/actions/runs/39034509010",
+      "result": "SUCCESS",
+      "files_passed": 6,
+      "files_skipped": 0,
+      "tests_passed": 121,
+      "tests_skipped": 0,
+      "failures": 0
+    },
+    {
+      "name": "IMAP/SMTP, account lifecycle, drafts, mailbox mutations, attachments and send reliability",
+      "workflow_run": 39034548854,
+      "url": "https://github.com/Rilan-Dev/mailflow/actions/runs/39034548854",
+      "result": "SUCCESS",
+      "files_passed": 42,
+      "files_skipped": 1,
+      "tests_passed": 777,
+      "tests_skipped": 10,
+      "failures": 0,
+      "notes": [
+        "One Vitest file was skipped; 10 tests skipped.",
+        "Expected failure-path logs appeared in tests, including mocked provider/database failures. All executed assertions passed."
+      ]
+    },
+    {
+      "id": "imap-smtp-account-lifecycle",
+      "run": 39037515886,
+      "url": "https://github.com/Rilan-Dev/mailflow/actions/runs/39037515886",
+      "result": "PASS",
+      "test_files_passed": 42,
+      "test_files_skipped": 1,
+      "tests_passed": 777,
+      "tests_skipped": 10,
+      "failures": 0,
+      "scope": "Pinned snapshot; account API, IMAP/SMTP transport, inbox mutations, drafts, send reliability, attachments, remote images and sync/recovery. IMAP draft-ingest tests skipped; no live provider integration."
+    }
+  ],
+  "aggregate": {
+    "file_runs": 64,
+    "files_passed": 63,
+    "files_skipped": 1,
+    "tests_passed": 1277,
+    "tests_skipped": 10,
+    "failures": 0,
+    "imap_smtp_account_lifecycle": {
+      "run": 39037515886,
+      "passed": 777,
+      "skipped": 10,
+      "failed": 0,
+      "files_passed": 42,
+      "files_skipped": 1
+    }
+  },
+  "verification_boundaries": {
+    "snapshot_integrity": "PASS; latest completed full verifier run https://github.com/Rilan-Dev/mailflow/actions/runs/39034971662; a fresh run is pending after the workflow command correction",
+    "selected_security_and_transport_tests": "PASS",
+    "full_backend_suite": "PASS: 2,804 passed / 41 skipped across 172 backend test files; lint, plugin-boundary lint, syntax and production dependency audit passed in run 39034971662",
+    "full_frontend_suite": "PASS: 3,142 passed / 0 skipped / 0 failed; lint, production build and production dependency audit passed in run 39034971662",
+    "native_android_electron_builds": "PARTIAL: Electron Node tests passed in full frontend suite; Android web build/Capacitor sync passed; Gradle unit tests/debug APK pending on run 39035662163; Electron packaging not run.",
+    "capability_closure": "NOT_CLOSED",
+    "path_license_and_provenance": "IN_PROGRESS",
+    "redistribution_clearance": "PENDING",
+    "extraction_pass": "NOT_CLAIMED; Android build pending, capability closure and licensing/provenance remain open",
+    "postgres_migrations": "PASS: PostgreSQL 17; all 66 migrations; second run idempotent; 32 tables, 97 indexes and 282 constraints in run 39034971662"
+  },
+  "full_verification": {
+    "workflow_run": 39034971662,
+    "url": "https://github.com/Rilan-Dev/mailflow/actions/runs/39034971662",
+    "result": "PARTIAL",
+    "jobs": {
+      "snapshot_inventory_verifier": "PASS",
+      "backend_lint_plugin_boundary_syntax_tests_and_production_audit": "PASS",
+      "frontend_lint_tests_production_build_and_production_audit": "PASS",
+      "postgres17_clean_install_66_migrations_idempotent_rerun": "PASS",
+      "android_web_build_and_capacitor_sync": "PASS",
+      "android_gradle_unit_tests_and_debug_apk": "FAILED_BEFORE_GRADLE_START_PERMISSION_DENIED_EXIT_126"
+    },
+    "failure_analysis": "Pinned frontend/packages/android/gradlew has mode 100644, preserved to maintain snapshot identity. A later workflow edit invoked bash ./gradlew but its run was cancelled before jobs started; Android Gradle unit tests/debug APK remain unverified. Do not describe the correction as passed.",
+    "corrected_run": {
+      "id": 39035662163,
+      "url": "https://github.com/Rilan-Dev/mailflow/actions/runs/39035662163",
+      "status": "CANCELLED_BEFORE_JOBS_STARTED; no Android Gradle result was produced"
+    },
+    "previous_attempts": [
+      {
+        "run": 39034971662,
+        "result": "BACKEND_FRONTEND_POSTGRES_VERIFIER_PASS; ANDROID FAILED BEFORE GRADLE START, EXIT 126"
+      },
+      {
+        "run": 39035228359,
+        "result": "BACKEND_FRONTEND_POSTGRES_VERIFIER_PASS; ANDROID STILL RAN OLD ./gradlew COMMAND AND FAILED BEFORE GRADLE START"
+      },
+      {
+        "run": 39035265386,
+        "result": "CANCELLED_BEFORE_JOBS_STARTED"
+      }
+    ],
+    "full_backend": {
+      "run": 39034971662,
+      "result": "PASS",
+      "test_files_passed": 166,
+      "test_files_skipped": 6,
+      "tests_passed": 2804,
+      "tests_skipped": 41,
+      "failures": 0,
+      "lint": "PASS",
+      "plugin_boundary_lint": "PASS",
+      "syntax_check": "PASS",
+      "production_dependency_audit": "PASS"
+    },
+    "full_frontend": {
+      "run": 39034971662,
+      "result": "PASS",
+      "test_count": 3142,
+      "tests_passed": 3142,
+      "tests_skipped": 0,
+      "failures": 0,
+      "top_level_suites": 330,
+      "lint": "PASS",
+      "production_build": "PASS",
+      "production_dependency_audit": "PASS",
+      "electron_node_tests": "INCLUDED_IN_NPM_TEST"
+    },
+    "postgres_migrations": {
+      "run": 39034971662,
+      "result": "PASS",
+      "postgres_version": 17,
+      "migrations_applied": 66,
+      "idempotent_rerun": "PASS",
+      "tables": 32,
+      "indexes": 97,
+      "constraints": 282
+    },
+    "security_trace_update": {
+      "path": "extraction/manifests/security-transport-database-trace-2026-10-17.md",
+      "status": "PARTIAL_STATIC_TRACE",
+      "commit": "8e17efb4919f4df774fa76340c45ed43e45f9571",
+      "finding": "OIDC discovery/token use native fetch after validation rather than safeFetch's connection-pinned dispatcher; DNS rebinding/redirect target policy remains an open closure item."
+    },
+    "path_classification": {
+      "path": "extraction/manifests/path-dispositions-2026-10-17-35067fc.json",
+      "classified": 183,
+      "unclassified": 1167,
+      "status": "PARTIAL; all newly reviewed security paths remain license-unreviewed"
+    },
+    "latest_inventory_verifier": {
+      "run": 39037551680,
+      "url": "https://github.com/Rilan-Dev/mailflow/actions/runs/39037551680",
+      "result": "PASS",
+      "job": "Exact pinned snapshot and manifest verifier",
+      "note": "This verifier pass preceded the newest capability-manifest update; run 39037683681 is queued to reverify the latest manifests."
+    }
+  }
+}

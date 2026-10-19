@@ -1,0 +1,1521 @@
+{
+  "schema_version": "1.0.0",
+  "source_pin": {
+    "repository": "maathimself/mailflow",
+    "commit": "35067fc2876d50980f1a8a3b8ea72b5467b69f60",
+    "tree": "a2a82b50b8a1ac24a273e55dc0f9418aefdfed17"
+  },
+  "created_at": "2026-10-17",
+  "status": "PARTIAL_DELTA_REVIEW_BINARY_FIXTURE_PENDING_SECURITY_MAIL_SCHEMA_PARTIAL_LICENSE_OPEN",
+  "summary": {
+    "capability_count": 16,
+    "closed": 0,
+    "partial_traces": 14,
+    "not_started": 2,
+    "source_blobs": 1350,
+    "unclassified_paths": 1063,
+    "initially_classified_paths": 287,
+    "classification_note": "287 paths have current-pin role/evidence classifications; 1 changed/new binary fixture and 1,062 other source paths remain UNCLASSIFIED. License/provenance remains open."
+  },
+  "dimensions": [
+    "first_party_imports_and_callers",
+    "data_schema_and_migrations",
+    "configuration_and_runtime",
+    "authorization_and_security",
+    "side_effects_retries_idempotency_and_recovery",
+    "ui_routes_and_interaction_states",
+    "tests_and_negative_cases",
+    "external_dependency_and_native_tool_closure",
+    "path_level_license_and_provenance"
+  ],
+  "capabilities": [
+    {
+      "id": "mail-transport-sync",
+      "name": "IMAP/SMTP transport and account synchronization",
+      "priority": 2,
+      "status": "PARTIAL_STATIC_TRACE_TEST_SLICE_PASS_NOT_CLOSED",
+      "source_paths": [
+        {
+          "path": "backend/src/services/imapManager.js",
+          "blob_sha": "dd0633bf265ca3cafe9f216948a65ef5d6f72754",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/imapError.js",
+          "blob_sha": "1720d51bdddc4f60b5c4bdadf6345e26b93ecfd3",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/accounts.js",
+          "blob_sha": "895cba74951171846d151147abb96cc266931b45",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/send.js",
+          "blob_sha": "2184a60715f14280e2ba475f081de2f52cc99d8d",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/draft.js",
+          "blob_sha": "49a4cabe76208ac330a270084e14ebe185a0bf7a",
+          "exists": true
+        },
+        {
+          "path": "backend/package.json",
+          "blob_sha": "7317eb730ec7d303067dffaf8b7f71ca75da5482",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/smtpTransport.js",
+          "blob_sha": "83691125aa09b4d2dba84a7ae2f4c72307421ea7",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/connectionPolicy.js",
+          "blob_sha": "bf7a4b54efbbc518c9fa4b583c01e7acc8ef1475",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/encryption.js",
+          "blob_sha": "6bd260832f82fbdaffde4e545ef2fa834877a7ec",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/db.js",
+          "blob_sha": "a3527cf3d0252efb831cffadf0860ac74247bb2e",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/userSessions.js",
+          "blob_sha": "01caeac68cadba55fa638aef52fe3a36bb081438",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/mail.js",
+          "blob_sha": "d20a0f293c155b54780967c047ed621a0c3af28d",
+          "exists": true
+        }
+      ],
+      "test_paths": [
+        {
+          "path": "backend/src/services/imapManager.test.js",
+          "blob_sha": "0d6b5a5963402b9af45489fd96551c7ae43907c0",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/imapMoveFallback.test.js",
+          "blob_sha": "6aecc2bfbc3546b3d27463e67912f119b99dffda",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/smtpTransport.test.js",
+          "blob_sha": "a1497b616a65bd9058daffdc88900519daa80eb8",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/accounts.aliases.test.js",
+          "blob_sha": "6b62a612f093ddd25b90be51e8b54ab93509c1ce",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/accounts.columns.test.js",
+          "blob_sha": "86d430af3a27816dc83354c28a54297cf12a572a",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/accounts.unifiedInbox.test.js",
+          "blob_sha": "b36bc787c5ea0f405a79a03d4f531db5edbf2e02",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/imapManager.newMailDuringSync.test.js",
+          "blob_sha": "f1132f5935dbd1a9f57f012bfd7dd3d398264e11",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/imapManager.snoozeWake.test.js",
+          "blob_sha": "eeb1d0c985c40a4048457825cd61199a00638157",
+          "exists": true
+        }
+      ],
+      "dimensions": {
+        "first_party_imports_and_callers": "PARTIAL_STATIC_TRACE",
+        "data_schema_and_migrations": "PARTIAL_STATIC_TRACE",
+        "configuration_and_runtime": "PARTIAL_STATIC_TRACE",
+        "authorization_and_security": "PARTIAL_STATIC_TRACE",
+        "side_effects_retries_idempotency_and_recovery": "PARTIAL_STATIC_TRACE",
+        "tests_and_negative_cases": "PASS: 42 test files / 777 tests passed; 1 file / 10 tests skipped in run 39037515886. Full backend suite also passed in 39034971662. No real IMAP/SMTP server integration proven.",
+        "external_dependency_and_native_tool_closure": "PARTIAL_MANIFEST_IDENTIFIED",
+        "path_level_license_and_provenance": "UNREVIEWED",
+        "ui_routes_and_interaction_states": "NOT_STARTED"
+      },
+      "next_action": "Trace all account fields/credential encryption and migration constraints, execution-time host resolution for IMAP and SMTP, connect/sync state transitions, concurrency and exponential backoff, UIDVALIDITY/checkpoint/reconciliation, account disable/delete cleanup and UI reconnect/error states. Selected test run 39037515886 passed 777 tests (10 skipped); no live mail-server integration was exercised."
+    },
+    {
+      "id": "message-ingestion-rendering",
+      "name": "Message parsing, sanitization, body storage and rendering",
+      "priority": 3,
+      "status": "PARTIAL_STATIC_TRACE_TEST_SLICE_PASS_NOT_CLOSED",
+      "source_paths": [
+        {
+          "path": "backend/src/services/messageParser.js",
+          "blob_sha": "787f21f3a7c8aa5d501dfeb18885dc75854078a4",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/emailSanitizer.js",
+          "blob_sha": "846a6497643b1147863e9c2a8f4de94b1a03c27f",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/messageBodyStore.js",
+          "blob_sha": "44b4807914c9de3ce523d1abb50d6dd92382aa43",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/mail.js",
+          "blob_sha": "d20a0f293c155b54780967c047ed621a0c3af28d",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/components/MessagePane.jsx",
+          "blob_sha": "05376cf03b831c9ffd43796e654ecd9f949c64dd",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/utils/scopeEmailCss.js",
+          "blob_sha": "bbad42f0508fe670e7a50320a23822ab2e28c317",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/utils/emailStyleRegistry.js",
+          "blob_sha": "3587abbaebbfe864472fe05fcc7baecb883c659d",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/imapManager.js",
+          "blob_sha": "dd0633bf265ca3cafe9f216948a65ef5d6f72754",
+          "exists": true
+        }
+      ],
+      "test_paths": [
+        {
+          "path": "backend/src/services/messageParser.headers.test.js",
+          "blob_sha": "8a39a45869a8a34e443c276271e1ea99a0c55776",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/emailSanitizer.test.js",
+          "blob_sha": "79a9b1cadc816ca918b827838d1718e378347e77",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/emailSanitizer.trackers.test.js",
+          "blob_sha": "e24a0dc0b3300f5d5b878a0d1b156ddd8f0b46bb",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/mail.remoteImages.test.js",
+          "blob_sha": "f08612977d64c483b80d25ab30076b00ce13e305",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/mail.cidCache.test.js",
+          "blob_sha": "e11fcd7fd9d425e40084f33729c106989e2f37ad",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/mail.rawEml.test.js",
+          "blob_sha": "e007e06801f126b7fe411e464cb2891609d19412",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/mail.attachmentsZip.test.js",
+          "blob_sha": "9a67dbf028ceb5d1a7c387309b2b4da45e394619",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/mail.bodyRefusal.test.js",
+          "blob_sha": "fafddaa9646ce1ee4fcd02153bfcc888a150d07e",
+          "exists": true
+        }
+      ],
+      "dimensions": {
+        "first_party_imports_and_callers": "PARTIAL_STATIC_TRACE",
+        "data_schema_and_migrations": "NOT_STARTED",
+        "configuration_and_runtime": "NOT_STARTED",
+        "authorization_and_security": "PARTIAL_STATIC_TRACE",
+        "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
+        "tests_and_negative_cases": "PASS: selected IMAP/SMTP/account lifecycle suite run 39037515886 includes message/draft/send tests; 777 passed, 10 skipped; full backend/frontend suites have separate passing evidence. Real provider/server integration remains unverified.",
+        "external_dependency_and_native_tool_closure": "NOT_STARTED",
+        "path_level_license_and_provenance": "UNREVIEWED",
+        "ui_routes_and_interaction_states": "PARTIAL_STATIC_TRACE"
+      },
+      "next_action": "Close MIME parsing edge cases, body cache consistency, CID refetch/recovery, attachments metadata versus fetched content, inline images, sanitization/rendering sinks and sync reconciliation against a real mail server."
+    },
+    {
+      "id": "image-proxy-privacy",
+      "name": "Remote image proxy and tracking protection",
+      "priority": 1,
+      "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED",
+      "source_paths": [
+        {
+          "path": "backend/src/services/imageProxy.js",
+          "blob_sha": "4570f9f03f7c5883c4e9f4843e4e63f501396b30",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/safeFetch.js",
+          "blob_sha": "dd0f0973b515131c88ff9afab640d58f1720a8f1",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/mail.js",
+          "blob_sha": "d20a0f293c155b54780967c047ed621a0c3af28d",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/utils/imageProxy.js",
+          "blob_sha": "933c3cb7ab2780d7fd5eaf530c67b8913697074e",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/utils/remoteImagePolicy.js",
+          "blob_sha": "3cdb2b77d6696a3604a4715f1062cbfad63eaff2",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/utils/frameLazyImages.js",
+          "blob_sha": "aab965475440601c522aa82163476ec03df13d24",
+          "exists": true
+        }
+      ],
+      "test_paths": [
+        {
+          "path": "backend/src/services/imageProxy.test.js",
+          "blob_sha": "cf7c3d90b09efa40ecb0911c15cddefc2074abec",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/utils/imageProxy.test.js",
+          "blob_sha": "9bb485616ebba234e4f3a100ea61d36cb8707bc4",
+          "exists": true
+        }
+      ],
+      "dimensions": {
+        "first_party_imports_and_callers": "PARTIAL_STATIC_TRACE",
+        "data_schema_and_migrations": "NOT_STARTED",
+        "configuration_and_runtime": "NOT_STARTED",
+        "authorization_and_security": "PARTIAL_STATIC_TRACE",
+        "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
+        "tests_and_negative_cases": "SELECTED BACKEND AND FRONTEND IMAGE POLICY TESTS PASSED; FULL CALLER COVERAGE PENDING",
+        "external_dependency_and_native_tool_closure": "NOT_STARTED",
+        "path_level_license_and_provenance": "NOT_STARTED",
+        "ui_routes_and_interaction_states": "PARTIAL_STATIC_TRACE"
+      },
+      "next_action": "Trace all image proxy callers, per-user cache isolation, lazy frame rewrites, remote image allow/block state and redirect behavior; complete response header/body limiter tests."
+    },
+    {
+      "id": "auth-and-identity",
+      "name": "Session auth, OAuth/OIDC, MFA and account recovery",
+      "priority": 1,
+      "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED",
+      "source_paths": [
+        {
+          "path": "backend/src/index.js",
+          "blob_sha": "24c4a8b060d49760dc22e998673b609cbb8c57ab",
+          "exists": true
+        },
+        {
+          "path": "backend/src/middleware/auth.js",
+          "blob_sha": "e2e38cfbf8111705a04b0357d4b4be5b01f1bf09",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/auth.js",
+          "blob_sha": "35e41f494440dfdc412ad47bb463f32039c69bb5",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/oauth.js",
+          "blob_sha": "c8e6821501bbf622ca953ae2d1861753b4cc6bd5",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/oidc.js",
+          "blob_sha": "ef6ef1fd15cf5f6594f72a6e835f24be8cc236b7",
+          "exists": true
+        }
+      ],
+      "test_paths": [
+        {
+          "path": "backend/src/middleware/auth.test.js",
+          "blob_sha": "a30c27148c41b4da0fdeefe68fc56203c56165ca",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/oauth.refresh.test.js",
+          "blob_sha": "6e234619dea52d2460deb6a99ad7a2b5d7cdd509",
+          "exists": true
+        }
+      ],
+      "dimensions": {
+        "first_party_imports_and_callers": "PARTIAL_STATIC_TRACE",
+        "data_schema_and_migrations": "NOT_STARTED",
+        "configuration_and_runtime": "NOT_STARTED",
+        "authorization_and_security": "PARTIAL_STATIC_TRACE",
+        "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
+        "tests_and_negative_cases": "SELECTED AUTH/OAUTH/OIDC/SSRF/SANITIZER SUITE PASSED (375 TESTS); FULL SECURITY CLOSURE PENDING",
+        "external_dependency_and_native_tool_closure": "NOT_STARTED",
+        "path_level_license_and_provenance": "NOT_STARTED",
+        "ui_routes_and_interaction_states": "NOT_STARTED"
+      },
+      "next_action": "Trace all auth endpoints, session/Redis/WebSocket invalidation, reset-token consumption, MFA lifecycle and migrations; execute auth/OAuth/OIDC tests in a checkout."
+    },
+    {
+      "id": "database-schema",
+      "name": "PostgreSQL persistence and ordered migrations",
+      "priority": 2,
+      "status": "PARTIAL_STATIC_TRACE_MIGRATIONS_MAPPED_NOT_CLOSED",
+      "source_paths": [
+        {
+          "path": "backend/src/services/db.js",
+          "blob_sha": "a3527cf3d0252efb831cffadf0860ac74247bb2e",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0001_baseline.sql",
+          "blob_sha": "bbe2b20ebe0d9f4b8f0d63d6563ed57ffa026a1a",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0066_email_accounts_icon.sql",
+          "blob_sha": "281f462c7960225156cc01b1dc18d80f9194b21f",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/migrations.js",
+          "blob_sha": "38fc9a20d9a239123fad1ee075255fd7658b6d5d",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0002_subject_threading.sql",
+          "blob_sha": "973d8533345fc8214d41e49ab1b4d6dd5f7fa8af",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0003_sender_name.sql",
+          "blob_sha": "4d04f7f70df845918b1def640d439bba373cf927",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0004_internal_auth_setting.sql",
+          "blob_sha": "a3724c5c30ba986efd731f894004586c98d2df6f",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0005_auth_events.sql",
+          "blob_sha": "5c8cade482b3c8fd16bcbe10e00e89206856dc0a",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0006_threaded_query_indexes.sql",
+          "blob_sha": "d8afa2efcac97a1f0b7d34f0183af46ea0c25a14",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0007_thread_paging_index.sql",
+          "blob_sha": "f32359226eece02ac51ad94a01681fc847db3ead",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0008_search_indexes.sql",
+          "blob_sha": "64e6f728ec02abb4643534eecdb170945b7099d6",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0009_thread_key_column.sql",
+          "blob_sha": "4ee132ecdf92adf5fc70617bb3f0778548ebf046",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0010_inbox_rules.sql",
+          "blob_sha": "64d0fbe0ddc79a0d7b5164d3e10d688e3f7c929b",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0011_message_id_dedup_index.sql",
+          "blob_sha": "856a71d27c871756865d1526f93493b95c5f5732",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0012_oidc_allow_insecure.sql",
+          "blob_sha": "ac4c343e7e95c719628351beafd0ea770a6b47a3",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0013_block_list.sql",
+          "blob_sha": "28eb2bda74435795d9c0a9d46ab67d1bdd43f4db",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0014_account_allow_private_host.sql",
+          "blob_sha": "e02d0df86fba5f2d7ca9ddc9e7b467b05c80470b",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0015_contacts.sql",
+          "blob_sha": "ec1307bf5fde7d4f89c902bd42bd4cc379729ff9",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0016_is_bulk.sql",
+          "blob_sha": "04c5b03aba2fd9bf869cdf85521004e475cb8ac4",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0017_contacts_v2.sql",
+          "blob_sha": "6e389af61a8f77414336811ffd2dc1e0f8db21cb",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0018_contacts_search_indexes.sql",
+          "blob_sha": "c1af37f799eea7b957a3c7b944c39240f2f0a1b0",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0019_user_integrations.sql",
+          "blob_sha": "0c77f49c7fa41aa95968dd9797e4ea0863ffc3aa",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0020_mfa_device_trust.sql",
+          "blob_sha": "a3f41cf17a97b554b525e1935dc7fd1b97e30495",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0021_spam_training.sql",
+          "blob_sha": "01a2693bdb3df2b46ad87838d199cdd9d1e94a7e",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0022_password_reset_tokens.sql",
+          "blob_sha": "334f3e269746bb76da5fc4c70403743dc4ddf0e1",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0023_message_categories.sql",
+          "blob_sha": "874f0b6daac9d4cfb133527ac3d42807648f5c74",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0024_category_improvements.sql",
+          "blob_sha": "80e2c8bfda29fc5442f9fe35ded1b5b54eaf12fb",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0025_unsubscribe_state.sql",
+          "blob_sha": "7eda87a51e57457c6ff0925bc154e7ff2c40b7d1",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0026_oidc_admin_group_claim.sql",
+          "blob_sha": "06de5aa5bbe8eb50d42e4585df0423eac52f5cbc",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0027_carddav_client.sql",
+          "blob_sha": "dfeaa894827b62c0171a261b2644a309a52f54a4",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0028_folder_highestmodseq.sql",
+          "blob_sha": "13e6fe636b91371945c62255050d24436f39c443",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0029_oauth_public_client.sql",
+          "blob_sha": "5f35afbf24974402dc7263c57cfeb3dd07ce10f6",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0030_gtd.sql",
+          "blob_sha": "fc3689fa676e370dbd73dd8f9615dee210394608",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0031_gtd_gist.sql",
+          "blob_sha": "9782951007e91c9a0445ed0c8f684d2c0404c30c",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0032_gtd_pets.sql",
+          "blob_sha": "5e7fe447720965f47a527bc29d5d29b87c0bd528",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0033_gtd_pets_custom.sql",
+          "blob_sha": "752303690d7268f071f6315cb5cd4bca8173a561",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0034_lock_pin.sql",
+          "blob_sha": "8f0e67dfb739be1ae2ea84e7ce9ab2fe4dcb05e9",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0035_oidc_rp_initiated_logout.sql",
+          "blob_sha": "cc1616af5ebc18cbf553af93b54436e361df62cb",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0036_unified_inbox_accounts.sql",
+          "blob_sha": "f17ce1d134635eaacc3096f99c13eeee6be42e23",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0037_message_delivery_addresses.sql",
+          "blob_sha": "0970dce289c652e0e08d30eeea3f5d582ebba6c4",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0038_ai_codex_oauth.sql",
+          "blob_sha": "934036d22fbd09679546a455dbfa0b2d2bdd68e2",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0039_inbox_rule_forwards.sql",
+          "blob_sha": "8fb9c38ad2d064a41f6aea0cb9b232321ce25d10",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0040_smtp_separate_auth.sql",
+          "blob_sha": "020cc1565f6ec74f45c785b5eaae0ed3ca962314",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0041_plugin_data.sql",
+          "blob_sha": "cfb6753258b450dc2da1d8f8be284292ced08af2",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0042_grandfather_gtd_plugin.sql",
+          "blob_sha": "ff402780e4516dd4c2c15e8a1db77a46d2132379",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0043_drop_gtd_pets.sql",
+          "blob_sha": "78e893527303a67707ac2218e07b8afc8314eb70",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0044_message_plugin_annotations.sql",
+          "blob_sha": "9a3769746f8266b937504fdabc675901a68f0ab1",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0045_plugin_account_config.sql",
+          "blob_sha": "02eb705dd7651279e69173f9f4fa5a4df51776d5",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0046_drop_legacy_gtd_columns.sql",
+          "blob_sha": "82555b8935bbbe506c9d592e1f9463318e4ea35b",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0047_folder_no_select.sql",
+          "blob_sha": "3a4364c7125281447a03fe7dbdaf334cf9f51d8b",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0048_snippet_attempted_at.sql",
+          "blob_sha": "272c207ca5638a6a6b23674647cf09c5747c6216",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0049_oidc_login_match_claim.sql",
+          "blob_sha": "1dc116fcacb49f82b103e3c063da8e2d8440e28d",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0050_message_sender.sql",
+          "blob_sha": "ee9c81fc3f5fd836d931cd7db4f198ed390c017a",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0051_folder_server_status.sql",
+          "blob_sha": "ddac5c51833ce293a21bda17ed7ac467db0770a5",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0052_spam_training_features.sql",
+          "blob_sha": "464bd51cf3fb96ecfd004267fcff48530ea4c25f",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0053_spam_models.sql",
+          "blob_sha": "47f86727c89dd913e0060cc0598480724ef555fc",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0054_email_accounts_antispam_enabled.sql",
+          "blob_sha": "43ce0866c95c1a0cccb2cabbde2976d55f81576a",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0055_spam_training_deletions.sql",
+          "blob_sha": "a48fcd14af4167104076e00b74e06bce85517035",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0056_email_accounts_trusted_authserv_id.sql",
+          "blob_sha": "26eceb1f0ad9f6cf922484273378891bef231544",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0057_split_subject_merged_threads.sql",
+          "blob_sha": "bcfba63c0bde5b8b10c3b52ff171541938da1108",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0058_unfetchable_uids.sql",
+          "blob_sha": "b28320fcc60542420ca4585705d746df508c154c",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0059_message_forwarded_from.sql",
+          "blob_sha": "8c7fa9de2f9bd7d60a8e7c1192519e57f6d2b4e4",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0060_thread_id_index_covers_deleted.sql",
+          "blob_sha": "eaafa56e53833fd189c58021b474ba67560f9684",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0061_message_bcc_addresses.sql",
+          "blob_sha": "e769c81bdc209d29cb07e2d12ec6869e4d4a3bbd",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0062_email_accounts_auto_recipients.sql",
+          "blob_sha": "9b335bafd78804daca6b99b946ad737fad7587bd",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0063_user_last_seen.sql",
+          "blob_sha": "8e715093f8668885f3381b4281b88bfbd0f58d8c",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0064_auth_events_actor.sql",
+          "blob_sha": "bf68f53a082c229de3ff4be15a371c2f68843499",
+          "exists": true
+        },
+        {
+          "path": "backend/migrations/0065_email_accounts_signature_enabled.sql",
+          "blob_sha": "93390137d7f1302c695e68d1ee986c1c914cb2b4",
+          "exists": true
+        }
+      ],
+      "test_paths": [],
+      "dimensions": {
+        "first_party_imports_and_callers": "PARTIAL_STATIC_TRACE",
+        "data_schema_and_migrations": "PARTIAL_STATIC_TRACE: all 66 migrations classified and domains/runtime consumers summarized; 32 tables/97 indexes/282 constraints observed from clean PostgreSQL 17 run; per-column caller/query-plan/upgrade closure open",
+        "configuration_and_runtime": "PARTIAL_STATIC_TRACE",
+        "authorization_and_security": "PARTIAL_STATIC_TRACE",
+        "side_effects_retries_idempotency_and_recovery": "PARTIAL_STATIC_TRACE",
+        "tests_and_negative_cases": "PASS: PostgreSQL 17 clean install applied 66 migrations and idempotent rerun passed in run 39034971662; legacy-state upgrade and failure recovery tests remain open",
+        "external_dependency_and_native_tool_closure": "NOT_STARTED",
+        "path_level_license_and_provenance": "UNREVIEWED",
+        "ui_routes_and_interaction_states": "NOT_STARTED"
+      },
+      "next_action": "Complete table/column/index/constraint/FK inventory across migrations 0001-0066; map every SQL caller and generated query fragment; test representative upgrades from legacy contacts/GTD/thread/spam schemas, concurrent-index failure recovery, query plans and user/account deletion cleanup. PostgreSQL 17 clean install + idempotent rerun passed in run 39034971662; this is not full SQL runtime closure."
+    },
+    {
+      "id": "plugin-boundary",
+      "name": "Plugin API, activation, registry and storage boundary",
+      "priority": 3,
+      "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED",
+      "source_paths": [
+        {
+          "path": "backend/src/plugins/README.md",
+          "blob_sha": "e5a5abb83d7bfddf766ef6af7513247db5dfa75f",
+          "exists": true
+        },
+        {
+          "path": "backend/src/plugins/api.js",
+          "blob_sha": "b22623582fe0f8ad00687d05718d12fabcca3f33",
+          "exists": true
+        },
+        {
+          "path": "backend/src/plugins/registry.js",
+          "blob_sha": "b2ad424e595344e80a69df8cd1e74769a1eefffa",
+          "exists": true
+        },
+        {
+          "path": "backend/src/plugins/activation.js",
+          "blob_sha": "2c85079fcc957b288cfbbbbf774c79d99eb5e073",
+          "exists": true
+        },
+        {
+          "path": "backend/eslint.plugins-boundary.js",
+          "blob_sha": "037c159b84a5d6f0b8556ef1647f511be28d8364",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/inboxRules.js",
+          "blob_sha": "e995df298ba502c2b8db5cc8baa79086f80bce96",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/spamPipeline.js",
+          "blob_sha": "35e24b0162610b0e6af1203995c4a5a7a16e1f28",
+          "exists": true
+        }
+      ],
+      "test_paths": [
+        {
+          "path": "backend/src/plugins/activation.test.js",
+          "blob_sha": "a988354e6fe5e66b7df3814c0b5841daaae7b9cf",
+          "exists": true
+        },
+        {
+          "path": "backend/src/plugins/registry.test.js",
+          "blob_sha": "53c68e4a11ad3b00f4d936006bf3914a8f8dfba4",
+          "exists": true
+        }
+      ],
+      "dimensions": {
+        "first_party_imports_and_callers": "PARTIAL_STATIC_TRACE",
+        "data_schema_and_migrations": "PARTIAL_STATIC_TRACE",
+        "configuration_and_runtime": "PARTIAL_STATIC_TRACE",
+        "authorization_and_security": "PARTIAL_STATIC_TRACE",
+        "side_effects_retries_idempotency_and_recovery": "PARTIAL_STATIC_TRACE",
+        "tests_and_negative_cases": "PASS: FULL BACKEND/FRONTEND TEST SUITES IN RUN 39034971662; DB-SPECIFIC OPTIONAL TESTS MAY REQUIRE A DB",
+        "external_dependency_and_native_tool_closure": "PARTIAL_MANIFEST_IDENTIFIED; BUNDLED PLUGIN DEPENDENCIES/PROVENANCE OPEN",
+        "path_level_license_and_provenance": "UNREVIEWED",
+        "ui_routes_and_interaction_states": "PARTIAL_STATIC_TRACE"
+      },
+      "next_action": "Enumerate all registry hook call sites and hook context, timeout/error isolation, plugin activation cache invalidation, account/user deletion, plugin-owned data migration and bundled dependency license/provenance."
+    },
+    {
+      "id": "frontend-app",
+      "name": "Web application shell, state and routing",
+      "priority": 4,
+      "status": "CANDIDATE_NOT_CLOSED",
+      "source_paths": [
+        {
+          "path": "frontend/src/App.jsx",
+          "blob_sha": "ae2328e7c89fb3df5bb27e943a901dc4f8fc7483",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/store/index.js",
+          "blob_sha": "519a700e1bd973a82867539a85d7d205a0a7de7b",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/components/MailApp.jsx",
+          "blob_sha": "c7fdf2822f51d6e583a57b70b3df92cf0283f2b5",
+          "exists": true
+        },
+        {
+          "path": "frontend/package.json",
+          "blob_sha": "0f560cbf59bac05a6be03ff08608ece57a9fed7c",
+          "exists": true
+        }
+      ],
+      "test_paths": [
+        {
+          "path": "frontend/src/App.render.test.js",
+          "blob_sha": "054b7e721b2cf2bdffbc36d72365ebab55cb122d",
+          "exists": true
+        }
+      ],
+      "dimensions": {
+        "first_party_imports_and_callers": "NOT_STARTED",
+        "data_schema_and_migrations": "NOT_STARTED",
+        "configuration_and_runtime": "NOT_STARTED",
+        "authorization_and_security": "NOT_STARTED",
+        "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
+        "tests_and_negative_cases": "NOT_STARTED",
+        "external_dependency_and_native_tool_closure": "NOT_STARTED",
+        "path_level_license_and_provenance": "NOT_STARTED",
+        "ui_routes_and_interaction_states": "NOT_STARTED"
+      },
+      "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
+    },
+    {
+      "id": "compose-and-send",
+      "name": "Compose, reply, forward, drafts, attachments and SMTP routing",
+      "priority": 4,
+      "status": "PARTIAL_STATIC_TRACE_TEST_SLICE_PASS_NOT_CLOSED",
+      "source_paths": [
+        {
+          "path": "frontend/src/components/ComposeModal.jsx",
+          "blob_sha": "5303edc5d83f7b7690efdc605fc58b5961004cf8",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/utils/composeFromMessage.js",
+          "blob_sha": "d63fe90afaec35a718e09cc1d2054ee2b9beeef0",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/send.js",
+          "blob_sha": "2184a60715f14280e2ba475f081de2f52cc99d8d",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/draft.js",
+          "blob_sha": "49a4cabe76208ac330a270084e14ebe185a0bf7a",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/components/ComposeModal.jsx",
+          "blob_sha": "5303edc5d83f7b7690efdc605fc58b5961004cf8",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/components/SignatureEditor.jsx",
+          "blob_sha": "504c4acccd64464bf83636cdec6ca1467edf150c",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/utils/appEmailHtml.js",
+          "blob_sha": "9a87890c4e55bb5d60494558a1945dad3e4b256a",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/smtpTransport.js",
+          "blob_sha": "83691125aa09b4d2dba84a7ae2f4c72307421ea7",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/emailSanitizer.js",
+          "blob_sha": "846a6497643b1147863e9c2a8f4de94b1a03c27f",
+          "exists": true
+        }
+      ],
+      "test_paths": [
+        {
+          "path": "frontend/src/components/ComposeModal.render.test.js",
+          "blob_sha": "bbb6132c984c0460a02d20312955083ad827ec0d",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/components/ComposeModal.replyDraft.test.js",
+          "blob_sha": "90237e74285eea041854cced670870b7ebd3197f",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/components/ComposeModal.signatureToggle.test.js",
+          "blob_sha": "e04dd739759c16a1c9c4397c789fddfe78916460",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/draft.lookup.test.js",
+          "blob_sha": "1ffa89897e8cab7f0300ed3d014fb29631def9ad",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/send.undo.test.js",
+          "blob_sha": "31b3cbbde742ad2882620eeea26824f0bb4aea68",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/send.reliability.test.js",
+          "blob_sha": "1996c04c14b28cf9820f33ba5849dc809e9437ea",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/send.forwardedMessages.test.js",
+          "blob_sha": "fd43dbffb8d48284e018ab71945a071edd1f71c7",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/send.forwarded.test.js",
+          "blob_sha": "28450e0e9547d7ec2bf3e26c22d13317f9736e54",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/send.textPart.test.js",
+          "blob_sha": "94744564bbbf4efc607d2c68bee51976c2c2ee93",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/send.gmailSent.test.js",
+          "blob_sha": "37570937f240774354490cb1cc200c7d295e8fd7",
+          "exists": true
+        }
+      ],
+      "dimensions": {
+        "first_party_imports_and_callers": "PARTIAL_STATIC_TRACE",
+        "data_schema_and_migrations": "NOT_STARTED",
+        "configuration_and_runtime": "NOT_STARTED",
+        "authorization_and_security": "PARTIAL_STATIC_TRACE",
+        "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
+        "tests_and_negative_cases": "PASS: selected IMAP/SMTP/account lifecycle suite run 39037515886 includes message/draft/send tests; 777 passed, 10 skipped; full backend/frontend suites have separate passing evidence. Real provider/server integration remains unverified.",
+        "external_dependency_and_native_tool_closure": "NOT_STARTED",
+        "path_level_license_and_provenance": "UNREVIEWED",
+        "ui_routes_and_interaction_states": "PARTIAL_STATIC_TRACE"
+      },
+      "next_action": "Close draft/attachment/inline-image closure, SMTP transport live behavior, provider-specific draft semantics, delivery idempotency and post-delivery failure recovery, retry boundaries, compose loading/empty/error states and native-client flows."
+    },
+    {
+      "id": "search-and-unified-inbox",
+      "name": "Cross-account search and unified inbox scope",
+      "priority": 4,
+      "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED",
+      "source_paths": [
+        {
+          "path": "backend/src/routes/search.js",
+          "blob_sha": "292f9da119eba5f9de7dc3602c420f476afd7e0a",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/unifiedInbox.js",
+          "blob_sha": "e8ef1efe89184e8e8f66f52ff0b70e5ec35187c4",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/messageService.js",
+          "blob_sha": "8247bee67c4b0f9f2a9d925df2cea899a8208b51",
+          "exists": true
+        }
+      ],
+      "test_paths": [
+        {
+          "path": "backend/src/services/messageService.test.js",
+          "blob_sha": "3b3dae3217452cd6023c14e90915e8d937bcea52",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/search.test.js",
+          "blob_sha": "3ef54c764c68fe3e3facdb0a6d40d7c84da8e240",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/search.unifiedInbox.test.js",
+          "blob_sha": "256a81c6618965ee1d801ad0b5a780eca829932a",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/unifiedInbox.test.js",
+          "blob_sha": "8eebf4d076b863d061dba0b59493aa69dea26b75",
+          "exists": true
+        }
+      ],
+      "dimensions": {
+        "first_party_imports_and_callers": "PARTIAL_STATIC_TRACE",
+        "data_schema_and_migrations": "PARTIAL_STATIC_TRACE; MESSAGE/ACCOUNT/FOLDER/CONTACT/SNOOZE QUERY MAP INITIAL",
+        "configuration_and_runtime": "PARTIAL_STATIC_TRACE",
+        "authorization_and_security": "PARTIAL_STATIC_TRACE",
+        "side_effects_retries_idempotency_and_recovery": "PARTIAL_STATIC_TRACE",
+        "tests_and_negative_cases": "PASS: FULL BACKEND SUITE; POSTGRESQL-SPECIFIC MESSAGE SERVICE TESTS MAY REQUIRE A CONFIGURED DB",
+        "external_dependency_and_native_tool_closure": "FIRST-PARTY SQL CAPABILITY; DATABASE/POSTGRESQL RUNTIME CLOSURE OPEN",
+        "path_level_license_and_provenance": "UNREVIEWED",
+        "ui_routes_and_interaction_states": "PARTIAL_STATIC_TRACE"
+      },
+      "next_action": "Prove all search/list/count/autocomplete callers use authenticated enabled-account scope; check Trash, snoozed, disabled/unified flags; map search/thread indexes to query plans and run PostgreSQL-only message-service tests with DB enabled."
+    },
+    {
+      "id": "contacts-carddav",
+      "name": "Contacts, CardDAV and vCard synchronization",
+      "priority": 4,
+      "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED",
+      "source_paths": [
+        {
+          "path": "backend/src/routes/contacts.js",
+          "blob_sha": "c84f9c0f74335f367299449e9d67c22071d9e8da",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/carddav.js",
+          "blob_sha": "7516d58a9b8606c04af5c20ad009a6ac369c6c7b",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/carddavClient.js",
+          "blob_sha": "7eed7e1a7abf5c10b29c50941146bc2d4c84b266",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/carddavSync.js",
+          "blob_sha": "6fd4f0dd8b182cac618a5b0105677fc7fe14005f",
+          "exists": true
+        },
+        {
+          "path": "backend/src/utils/vcard.js",
+          "blob_sha": "67fa3f7cafdd226469eab79da4a25f7dbcdf911e",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/components/ContactsPage.jsx",
+          "blob_sha": "55b1719c3865d57295508bd5b1d041f552bd6ab6",
+          "exists": true
+        }
+      ],
+      "test_paths": [
+        {
+          "path": "backend/src/services/carddavClient.test.js",
+          "blob_sha": "1fd18141c5d22fcbadde40a89130d8392b1c3919",
+          "exists": true
+        },
+        {
+          "path": "backend/src/utils/vcard.test.js",
+          "blob_sha": "6e61586cc776ad0c6ae682093d9f291c07e1b75c",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/contacts.photo.test.js",
+          "blob_sha": "759f84bb53aa39fc023043d3bfb1d435b7bb119d",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/carddav.auth.test.js",
+          "blob_sha": "3b49b5c3ce5af3a29170c1533581f7e27dad96fb",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/carddavClient.multiget.test.js",
+          "blob_sha": "5a93314d4e5ffd1a701273cf7bbb2c608780298c",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/carddavSync.test.js",
+          "blob_sha": "65976e54ff9844a298a9d525be9cc127377dd5e6",
+          "exists": true
+        }
+      ],
+      "dimensions": {
+        "first_party_imports_and_callers": "PARTIAL_STATIC_TRACE",
+        "data_schema_and_migrations": "PARTIAL_STATIC_TRACE: ADDRESS_BOOKS/CONTACTS/USER_INTEGRATIONS AND MIGRATIONS 0015-0018/0027",
+        "configuration_and_runtime": "PARTIAL_STATIC_TRACE",
+        "authorization_and_security": "PARTIAL_STATIC_TRACE",
+        "side_effects_retries_idempotency_and_recovery": "PARTIAL_STATIC_TRACE",
+        "tests_and_negative_cases": "PASS: FULL BACKEND/FRONTEND TEST SUITES IN RUN 39034971662; DB-SPECIFIC OPTIONAL TESTS MAY REQUIRE A DB",
+        "external_dependency_and_native_tool_closure": "PARTIAL: REMOTE CARDDAV SERVER, SAFE FETCH/HOST POLICY AND VCard INTEROP",
+        "path_level_license_and_provenance": "UNREVIEWED",
+        "ui_routes_and_interaction_states": "PARTIAL_STATIC_TRACE"
+      },
+      "next_action": "Close DAV redirects/credential forwarding, ETag/sync-token semantics, scheduler overlap/cancellation, duplicate/conflict merge modes, vCard/photo size/MIME limits, private-host policy at every request and user-delete cleanup."
+    },
+    {
+      "id": "rules-categorization",
+      "name": "Inbox rules, sender blocks, categories and spam training",
+      "priority": 4,
+      "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED",
+      "source_paths": [
+        {
+          "path": "backend/src/routes/rules.js",
+          "blob_sha": "c6214a7a9e8f41cd640ed3e2c2487765727c8f71",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/categorizer.js",
+          "blob_sha": "a98ab8a88f97c642d257961fd6aca33298254423",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/spamPipeline.js",
+          "blob_sha": "35e24b0162610b0e6af1203995c4a5a7a16e1f28",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/inboxRules.js",
+          "blob_sha": "e995df298ba502c2b8db5cc8baa79086f80bce96",
+          "exists": true
+        }
+      ],
+      "test_paths": [
+        {
+          "path": "backend/src/routes/rules.test.js",
+          "blob_sha": "3cbd3c658a26fe949c7f93cd2991204ed3916cea",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/rules.run.test.js",
+          "blob_sha": "c9c3fe0588e91f6a380df4e83008b21272c46680",
+          "exists": true
+        },
+        {
+          "path": "backend/src/routes/rules.senderCategory.test.js",
+          "blob_sha": "3e06c64728eb1c45774db85f17d6ae613686c4e0",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/inboxRules.test.js",
+          "blob_sha": "8c4672da452895a6812d69fbc79f8f323c07b8d1",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/categorizer.test.js",
+          "blob_sha": "3cb77770adb0f267d46f1e4a53496c819b3931dd",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/spamPipeline.test.js",
+          "blob_sha": "7734904077b0b72a5ca43128feff5dfa3f7ead9c",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/spamRules.test.js",
+          "blob_sha": "84bc95facafb6103f1b47eb97c6bc83c28a75f9c",
+          "exists": true
+        }
+      ],
+      "dimensions": {
+        "first_party_imports_and_callers": "PARTIAL_STATIC_TRACE",
+        "data_schema_and_migrations": "PARTIAL_STATIC_TRACE: INBOX_RULES, RULE_FORWARDS, CATEGORY SOURCES, SPAM TRAINING/MODELS",
+        "configuration_and_runtime": "PARTIAL_STATIC_TRACE",
+        "authorization_and_security": "PARTIAL_STATIC_TRACE",
+        "side_effects_retries_idempotency_and_recovery": "PARTIAL_STATIC_TRACE",
+        "tests_and_negative_cases": "PASS: FULL BACKEND/FRONTEND TEST SUITES IN RUN 39034971662; DB-SPECIFIC OPTIONAL TESTS MAY REQUIRE A DB",
+        "external_dependency_and_native_tool_closure": "PARTIAL: IMAP ACTIONS, AI PROVIDER, SPAM MODEL DEPENDENCIES",
+        "path_level_license_and_provenance": "UNREVIEWED",
+        "ui_routes_and_interaction_states": "PARTIAL_STATIC_TRACE"
+      },
+      "next_action": "Trace rule sweeps across live sync/backfill, regex worst-case bounds, action retry/idempotency, IMAP move failures, AI categorization outage behavior, spam model/training deletion semantics and per-account cleanup."
+    },
+    {
+      "id": "ai-assistant",
+      "name": "AI provider configuration, thread summarization and draft assistance",
+      "priority": 4,
+      "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED",
+      "source_paths": [
+        {
+          "path": "backend/src/routes/ai.js",
+          "blob_sha": "28d2f334b0e379a68ccf47f04c84facc8c091751",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/aiProvider.js",
+          "blob_sha": "d5d40c77bc9369daab6e696fe7288049743a2270",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/openaiCodexAuth.js",
+          "blob_sha": "d2539a2fffd6fc9efe9104a01e0de1b208fb9f29",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/aiActions.js",
+          "blob_sha": "d1d9625e5c3155f5a07f3934aac7dc84e5cc66a0",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/aiResults.js",
+          "blob_sha": "f22e744333d916de7b06618735652ba71f017b42",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/aiHttp.js",
+          "blob_sha": "29404fdeb01962fe4b85182c45e22fbe89502687",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/hooks/useAiActions.js",
+          "blob_sha": "b322f52dedd4cebf7b169cf43c50dfc06c06df80",
+          "exists": true
+        }
+      ],
+      "test_paths": [
+        {
+          "path": "backend/src/routes/ai.test.js",
+          "blob_sha": "71c3365bf1a851c00250b622703ca12df9c4170a",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/aiActions.test.js",
+          "blob_sha": "f6e5b900ae26e88dd596bfa5aaea156edf1a7288",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/hooks/useAiActions.test.js",
+          "blob_sha": "a124eb0547be1327f3590623b2482163feb0fec0",
+          "exists": true
+        }
+      ],
+      "dimensions": {
+        "first_party_imports_and_callers": "PARTIAL_STATIC_TRACE",
+        "data_schema_and_migrations": "PARTIAL_STATIC_TRACE",
+        "configuration_and_runtime": "PARTIAL_STATIC_TRACE",
+        "authorization_and_security": "PARTIAL_STATIC_TRACE",
+        "side_effects_retries_idempotency_and_recovery": "PARTIAL_STATIC_TRACE",
+        "tests_and_negative_cases": "PASS: FULL BACKEND/FRONTEND TEST SUITES IN RUN 39034971662; DB-SPECIFIC OPTIONAL TESTS MAY REQUIRE A DB",
+        "external_dependency_and_native_tool_closure": "PARTIAL: PROVIDER-SPECIFIC HTTP/OAUTH/CODEX AUTH; NETWORK/REDIRECT POLICY REVIEW OPEN",
+        "path_level_license_and_provenance": "UNREVIEWED",
+        "ui_routes_and_interaction_states": "PARTIAL_STATIC_TRACE"
+      },
+      "next_action": "Audit each provider's URL validation, redirects, response bounds, abort/cancel semantics, secret redaction, credential storage/rotation, prompt/data exposure and AI usage/errors from both routes and categorizer."
+    },
+    {
+      "id": "notifications-realtime",
+      "name": "WebSocket, push and notification actions",
+      "priority": 4,
+      "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED",
+      "source_paths": [
+        {
+          "path": "backend/src/services/websocket.js",
+          "blob_sha": "4afeddb4a7bb60aac23313ca99d4eb163f409778",
+          "exists": true
+        },
+        {
+          "path": "backend/src/services/pushNotifications.js",
+          "blob_sha": "be663d9552e73442d1e7ed39ed7fc870abeb8450",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/hooks/useWebSocket.js",
+          "blob_sha": "59a9d3369a34dcba8566674747bf87001160b28d",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/hooks/usePushNotifications.js",
+          "blob_sha": "2f3f675ac34b7ccd3b8721b43e7445838a09e3d5",
+          "exists": true
+        }
+      ],
+      "test_paths": [
+        {
+          "path": "backend/src/services/websocket.test.js",
+          "blob_sha": "8c9d27af76913b3904e9215b5f3b0b9334c3a173",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/hooks/useWebSocket.backoff.test.js",
+          "blob_sha": "e836a91014cce552534b98731ab1e73c902ae169",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/hooks/useWebSocket.counts.test.js",
+          "blob_sha": "506fce1d24b0f1ee94744798467a3dab30cec33a",
+          "exists": true
+        },
+        {
+          "path": "frontend/src/hooks/useWebSocket.notify.test.js",
+          "blob_sha": "d19a6ce1708ef48289b3c3d9abee121c84d5882c",
+          "exists": true
+        }
+      ],
+      "dimensions": {
+        "first_party_imports_and_callers": "PARTIAL_STATIC_TRACE",
+        "data_schema_and_migrations": "PARTIAL_STATIC_TRACE",
+        "configuration_and_runtime": "PARTIAL_STATIC_TRACE",
+        "authorization_and_security": "PARTIAL_STATIC_TRACE",
+        "side_effects_retries_idempotency_and_recovery": "PARTIAL_STATIC_TRACE",
+        "tests_and_negative_cases": "PASS: FULL BACKEND/FRONTEND TEST SUITES IN RUN 39034971662; DB-SPECIFIC OPTIONAL TESTS MAY REQUIRE A DB",
+        "external_dependency_and_native_tool_closure": "PARTIAL: REDIS SESSION, WEBSOCKET TRANSPORT, WEB-PUSH/VAPID AND NATIVE NOTIFICATION ACTIONS",
+        "path_level_license_and_provenance": "UNREVIEWED",
+        "ui_routes_and_interaction_states": "PARTIAL_STATIC_TRACE"
+      },
+      "next_action": "Verify established socket auth revocation on logout/lock/session expiry, cross-user event isolation, reconnect storms, push payload privacy, VAPID key rotation, stale endpoint races and native notification action lifecycle."
+    },
+    {
+      "id": "electron-desktop",
+      "name": "Electron desktop shell, notifications and navigation security",
+      "priority": 4,
+      "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED",
+      "source_paths": [
+        {
+          "path": "frontend/packages/electron/main.cjs",
+          "blob_sha": "e4a7b1f3265543756b9959b58b7195135b0b2d69",
+          "exists": true
+        },
+        {
+          "path": "frontend/packages/electron/preload.cjs",
+          "blob_sha": "c75cf421ff4d65b7567e61f268f7ee306371299b",
+          "exists": true
+        },
+        {
+          "path": "frontend/packages/electron/security.cjs",
+          "blob_sha": "0a98e4af5e047f3b54b23042ae3fecc5da0b8281",
+          "exists": true
+        },
+        {
+          "path": "frontend/packages/electron/mailApi.cjs",
+          "blob_sha": "5f5974f824079fe09212314afa71898788425045",
+          "exists": true
+        }
+      ],
+      "test_paths": [
+        {
+          "path": "frontend/packages/electron/security.test.cjs",
+          "blob_sha": "25ea9d49cd6fc6e4cc67b412c61aece5ce94da23",
+          "exists": true
+        },
+        {
+          "path": "frontend/packages/electron/mailApi.test.cjs",
+          "blob_sha": "8ac64cf79883f7e68e0c166738fd78a87ca50029",
+          "exists": true
+        }
+      ],
+      "dimensions": {
+        "first_party_imports_and_callers": "NOT_STARTED",
+        "data_schema_and_migrations": "NOT_STARTED",
+        "configuration_and_runtime": "NOT_STARTED",
+        "authorization_and_security": "NOT_STARTED",
+        "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
+        "tests_and_negative_cases": "PASS: Electron Node test files executed as part of full frontend npm test; packaging/build and runtime smoke test pending",
+        "external_dependency_and_native_tool_closure": "NOT_STARTED",
+        "path_level_license_and_provenance": "NOT_STARTED",
+        "ui_routes_and_interaction_states": "NOT_STARTED"
+      },
+      "next_action": "Trace main/preload/mailApi IPC allowlist, navigation/window-open policy, notification lifecycle and app packaging; run packaged Electron build/smoke test."
+    },
+    {
+      "id": "android-mobile",
+      "name": "Android background sync, native bridge and notification actions",
+      "priority": 4,
+      "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED",
+      "source_paths": [
+        {
+          "path": "frontend/packages/android/app/src/main/java/sh/mailflow/app/MailFlowBackgroundSync.java",
+          "blob_sha": "517c4a15bf345bbb35da2d34f393e10e9f2d0206",
+          "exists": true
+        },
+        {
+          "path": "frontend/packages/android/app/src/main/java/sh/mailflow/app/MailFlowNativePlugin.java",
+          "blob_sha": "4851cfa27eb4344db33d5f61ce839a24af0abcb4",
+          "exists": true
+        },
+        {
+          "path": "frontend/packages/android/app/src/main/java/sh/mailflow/app/NativeSecurity.java",
+          "blob_sha": "edd0fc10c0f7fb5ec8dd8bcc864ff28a5c31418c",
+          "exists": true
+        },
+        {
+          "path": "frontend/packages/android/app/src/main/java/sh/mailflow/app/MailFlowNotificationActionWorker.java",
+          "blob_sha": "166f33f4d0c41706973e3aa6263b06fe3b84a914",
+          "exists": true
+        }
+      ],
+      "test_paths": [
+        {
+          "path": "frontend/packages/android/app/src/test/java/sh/mailflow/app/NativeSecurityTest.java",
+          "blob_sha": "11097a233ee8a632cb9a4d3dc82652d6ab5feeeb",
+          "exists": true
+        },
+        {
+          "path": "frontend/packages/android/app/src/test/java/sh/mailflow/app/MailFlowNotificationActionWorkerTest.java",
+          "blob_sha": "9581d330c8f4c607df57163f724408a062c9a155",
+          "exists": true
+        }
+      ],
+      "dimensions": {
+        "first_party_imports_and_callers": "NOT_STARTED",
+        "data_schema_and_migrations": "NOT_STARTED",
+        "configuration_and_runtime": "PARTIAL: frontend production bundle and Capacitor Android sync passed; Gradle compile/test pending after wrapper invocation fix",
+        "authorization_and_security": "NOT_STARTED",
+        "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
+        "tests_and_negative_cases": "PENDING: corrected Gradle wrapper run https://github.com/Rilan-Dev/mailflow/actions/runs/39035265386",
+        "external_dependency_and_native_tool_closure": "NOT_STARTED",
+        "path_level_license_and_provenance": "NOT_STARTED",
+        "ui_routes_and_interaction_states": "NOT_STARTED"
+      },
+      "next_action": "Inspect corrected Gradle run; if it fails, classify actual dependency/SDK/build failure without altering pinned source modes; then trace native plugin/background sync permissions and notification actions."
+    },
+    {
+      "id": "deployment-and-release",
+      "name": "Docker deployment, CI and application release packaging",
+      "priority": 4,
+      "status": "CANDIDATE_NOT_CLOSED",
+      "source_paths": [
+        {
+          "path": "docker-compose.yml",
+          "blob_sha": "f546da93d75fb2a2333a43d3f80d5be400dbb16c",
+          "exists": true
+        },
+        {
+          "path": "backend/Dockerfile",
+          "blob_sha": "61908fc7d75fbc9d575f871001aa0cc1b0486db0",
+          "exists": true
+        },
+        {
+          "path": "frontend/Dockerfile",
+          "blob_sha": "303bd15e08c871df4c58f2768928b32e158de2aa",
+          "exists": true
+        },
+        {
+          "path": ".github/workflows/ci.yml",
+          "blob_sha": "24aef57f8bba6327cc20d026966d69da28b4f4fb",
+          "exists": true
+        },
+        {
+          "path": ".github/workflows/publish-apps.yml",
+          "blob_sha": "8ff9bf9482665b218b1e1d902d815a6524a4316f",
+          "exists": true
+        },
+        {
+          "path": ".github/workflows/publish.yml",
+          "blob_sha": "ca42f2f732bc04b0291a37da408a646e275b2807",
+          "exists": true
+        }
+      ],
+      "test_paths": [],
+      "dimensions": {
+        "first_party_imports_and_callers": "NOT_STARTED",
+        "data_schema_and_migrations": "NOT_STARTED",
+        "configuration_and_runtime": "NOT_STARTED",
+        "authorization_and_security": "NOT_STARTED",
+        "side_effects_retries_idempotency_and_recovery": "NOT_STARTED",
+        "tests_and_negative_cases": "NOT_STARTED",
+        "external_dependency_and_native_tool_closure": "NOT_STARTED",
+        "path_level_license_and_provenance": "NOT_STARTED",
+        "ui_routes_and_interaction_states": "NOT_STARTED"
+      },
+      "next_action": "Trace actual call sites and transitive first-party imports; map schema/config/security/UI/test dependencies and record evidence before closure."
+    }
+  ],
+  "evidence": [
+    {
+      "kind": "security_transport_database_trace",
+      "path": "extraction/manifests/security-transport-database-trace-2026-10-17.md",
+      "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED"
+    },
+    {
+      "kind": "postgres_schema_runtime_map",
+      "path": "extraction/manifests/postgres-schema-runtime-map-2026-10-17.md",
+      "status": "INITIAL_SCHEMA_MAP_NOT_CLOSED"
+    },
+    {
+      "kind": "closure_test_results",
+      "path": "extraction/manifests/closure-test-results-2026-10-17-35067fc.json",
+      "status": "SELECTED_SECURITY_AND_TRANSPORT_TESTS_PASSED; FULL_VERIFICATION_PENDING"
+    },
+    {
+      "kind": "frontend_html_sink_trace",
+      "path": "extraction/manifests/security-transport-database-trace-2026-10-17.md",
+      "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED"
+    },
+    {
+      "kind": "full_snapshot_verification",
+      "path": "extraction/manifests/closure-test-results-2026-10-17-35067fc.json",
+      "status": "BACKEND_FRONTEND_POSTGRES_PASS; ANDROID_GRADLE_CORRECTED_RUN_PENDING"
+    },
+    {
+      "kind": "reusable_capability_runtime_trace",
+      "path": "extraction/manifests/reusable-capability-runtime-trace-2026-10-17.md",
+      "status": "PARTIAL_STATIC_TRACE_NOT_CLOSED"
+    },
+    {
+      "kind": "full_snapshot_verification",
+      "path": "extraction/manifests/closure-test-results-2026-10-17-35067fc.json",
+      "status": "BACKEND_FRONTEND_POSTGRES_PASS; ANDROID_GRADLE_CORRECTED_RUN_PENDING"
+    },
+    {
+      "kind": "imap_smtp_account_lifecycle_tests",
+      "run": 39037515886,
+      "url": "https://github.com/Rilan-Dev/mailflow/actions/runs/39037515886",
+      "result": "PASS",
+      "files_passed": 42,
+      "files_skipped": 1,
+      "tests_passed": 777,
+      "tests_skipped": 10,
+      "failures": 0
+    }
+  ]
+}

@@ -1,0 +1,521 @@
+import { publicFolderCounts } from '../services/folderStatus.js';
+import { Router } from 'express';
+import { query } from '../services/db.js';
+import { requireAuth } from '../middleware/auth.js';
+import { imapManager } from '../index.js';
+import { encrypt } from '../services/encryption.js';
+import { sanitizeSignature } from '../services/emailSanitizer.js';
+import { validateHost } from '../services/hostValidation.js';
+import { getConnectionPolicy } from '../services/connectionPolicy.js';
+import { normalizeAuthservId } from '../services/spamParser.js';
+import { pluginRegistry } from '../plugins/registry.js';
+import { createKeyedSerializer } from '../utils/keyedSerializer.js';
+import { uuidParam } from '../utils/uuid.js';
+import { normalizeAddressList } from '../utils/addressList.js';
+
+// Serialize an account's reconnect triggers so a rapid settings change (e.g. a
+// gtd_enabled double-toggle) can't fire two overlapping disconnect→connect chains —
+// connectAccount's in-progress guard would drop the second and leave the GTD sync
+// tick armed inconsistently with the final DB value. Queued per account id.
+const reconnectQueue = createKeyedSerializer();
+
+const ALLOWED_IMAP_PORTS = new Set([143, 993]);
+const ALLOWED_SMTP_PORTS = new Set([465, 587]);
+
+function validatePort(port, allowed) {
+  const n = Number(port);
+  if (!Number.isInteger(n) || n < 1 || n > 65535) {
+    return `Port ${port} is not a valid port number`;
+  }
+  // When private/local hosts are explicitly allowed (e.g. Proton Mail Bridge on 1143/1025),
+  // skip the whitelist — the operator has already opted into unrestricted host access.
+  if (process.env.ALLOW_PRIVATE_IMAP_HOSTS === 'true') return null;
+  if (!allowed.has(n)) {
+    return `Port ${port} is not allowed. Allowed: ${[...allowed].join(', ')}`;
+  }
+  return null;
+}
+
+// Reject strings that contain characters that could inject extra email headers.
+function hasHeaderInjectionChars(str) {
+  return typeof str === 'string' && /[\r\n\0]/.test(str);
+}
+
+const router = Router();
+router.use(requireAuth);
+// Reject malformed UUID path params with a 400 before they reach a uuid-typed query (else the
+// Postgres cast error surfaces as a 500). Every :id/:aliasId in this router is a UUID.
+// A mailbox's icon (#376): exactly one emoji (a flag, a keycap or a joined sequence such as a
+// family counts as one), or none. Returns { value } with null for none, or { error }.
+const GRAPHEMES = new Intl.Segmenter('en', { granularity: 'grapheme' });
+// The whole of it must be one emoji sequence: a flag (two regional indicators), a keycap, a tag
+// flag (Scotland), or an emoji with an optional skin tone, joined (ZWJ) to more of the same. Only
+// a grapheme count let in an emoji under a pile of combining marks, a letter keycap, invisible tag
+// characters and plain text symbols such as ©.
+const EMOJI = /^(?:\p{Regional_Indicator}{2}|[0-9#*]\uFE0F?\u20E3|\u{1F3F4}[\u{E0020}-\u{E007E}]+\u{E007F}|(?!\p{Regional_Indicator})(?:\p{Emoji_Presentation}|\p{Extended_Pictographic}\uFE0F)\p{Emoji_Modifier}?(?:\u200D\p{Extended_Pictographic}\uFE0F?\p{Emoji_Modifier}?)*)$/u;
+export function normalizeAccountIcon(icon) {
+  if (icon === null || icon === undefined) return { value: null };
+  if (typeof icon !== 'string') return { error: 'icon must be a string' };
+  const value = icon.trim();
+  if (!value) return { value: null };
+  if (value.length > 32 || [...GRAPHEMES.segment(value)].length !== 1 || !EMOJI.test(value)) {
+    return { error: 'icon must be a single emoji' };
+  }
+  return { value };
+}
+
+router.param('id', uuidParam('id'));
+router.param('aliasId', uuidParam('aliasId'));
+
+// Fields safe to return to the client, and the GET list's columns. Excludes credentials and tokens.
+export const SAFE_FIELDS = [
+  'id', 'name', 'sender_name', 'email_address', 'color', 'icon', 'protocol',
+  'imap_host', 'imap_port', 'imap_tls', 'imap_skip_tls_verify',
+  'smtp_host', 'smtp_port', 'smtp_tls',
+  'auth_user', 'smtp_auth_user', 'oauth_provider', 'enabled',
+  'include_in_unified_inbox',
+  'last_sync', 'sync_error', 'sort_order', 'folder_mappings',
+  'signature', 'signature_enabled', 'created_at', 'categorization_enabled', 'antispam_enabled',
+  'trusted_authserv_id', 'auto_cc_addresses', 'auto_bcc_addresses',
+];
+// Columns PUT /:id may write. The settings form sends back what GET returned, so every
+// non-secret one must be in SAFE_FIELDS or saving an unrelated edit would write it as empty.
+export const ACCOUNT_UPDATE_FIELDS = ['name', 'sender_name', 'color', 'icon', 'enabled', 'include_in_unified_inbox', 'auth_user', 'auth_pass', 'sort_order', 'imap_host', 'imap_port', 'imap_tls', 'imap_skip_tls_verify', 'smtp_host', 'smtp_port', 'smtp_tls', 'smtp_auth_user', 'smtp_auth_pass', 'folder_mappings', 'signature', 'signature_enabled', 'categorization_enabled', 'antispam_enabled', 'trusted_authserv_id', 'auto_cc_addresses', 'auto_bcc_addresses'];
+function safeAccount(row) {
+  const obj = Object.fromEntries(SAFE_FIELDS.map(k => [k, row[k]]));
+  // Sanitize on read so legacy values stored before the write-time sanitizer are safe
+  if (obj.signature) obj.signature = sanitizeSignature(obj.signature);
+  return obj;
+}
+
+router.get('/', async (req, res) => {
+  const result = await query(
+    `SELECT ${SAFE_FIELDS.join(', ')}
+     FROM email_accounts WHERE user_id = $1 ORDER BY sort_order, created_at`,
+    [req.session.userId]
+  );
+
+  // Attach aliases to each account in one query
+  const accountIds = result.rows.map(a => a.id);
+  let aliasMap = {};
+  if (accountIds.length) {
+    const aliasResult = await query(
+      `SELECT id, account_id, name, email, reply_to, signature, created_at
+       FROM account_aliases WHERE account_id = ANY($1) ORDER BY created_at`,
+      [accountIds]
+    );
+    for (const alias of aliasResult.rows) {
+      if (!aliasMap[alias.account_id]) aliasMap[alias.account_id] = [];
+      aliasMap[alias.account_id].push(alias);
+    }
+  }
+
+  // Let plugins re-attach their own account-scoped fields (GTD: gtd_enabled/gtd_folders, no longer
+  // columns) so the client sees them as before. Each enrichAccount handler returns a field patch.
+  const enriched = await Promise.all(result.rows.map(async (a) => {
+    const patches = await pluginRegistry.collectHook('enrichAccount', { account: a });
+    return {
+      ...a,
+      ...Object.assign({}, ...patches),
+      signature: a.signature ? sanitizeSignature(a.signature) : a.signature,
+      aliases: (aliasMap[a.id] || []).map(alias => ({
+        ...alias,
+        signature: alias.signature ? sanitizeSignature(alias.signature) : alias.signature,
+      })),
+    };
+  }));
+  res.json(enriched);
+});
+
+router.post('/', async (req, res) => {
+  const {
+    name, sender_name = null, email_address, color = '#6366f1', icon = null, protocol = 'imap',
+    imap_host, imap_port = 993, imap_skip_tls_verify = false,
+    smtp_host, smtp_port = 587, smtp_tls = 'STARTTLS',
+    auth_user, auth_pass, smtp_auth_user = null, smtp_auth_pass = null,
+    oauth_provider, oauth_access_token, oauth_refresh_token,
+    signature = null, signature_enabled = true
+  } = req.body;
+
+  if (!name || !email_address) return res.status(400).json({ error: 'Name and email required' });
+  const { value: iconValue, error: iconError } = normalizeAccountIcon(icon);
+  if (iconError) return res.status(400).json({ error: iconError });
+  if (typeof signature_enabled !== 'boolean') return res.status(400).json({ error: 'signature_enabled must be a boolean' });
+  if (hasHeaderInjectionChars(name) || hasHeaderInjectionChars(email_address)) {
+    return res.status(400).json({ error: 'Name and email address cannot contain control characters' });
+  }
+  if (sender_name && hasHeaderInjectionChars(sender_name)) {
+    return res.status(400).json({ error: 'Sender name cannot contain control characters' });
+  }
+
+  const policy = await getConnectionPolicy();
+
+  if (imap_host) {
+    const err = (await validateHost(imap_host, { allowPrivate: policy.allowPrivateHosts }))
+      || (!policy.allowNonstandardPorts && validatePort(imap_port, ALLOWED_IMAP_PORTS));
+    if (err) return res.status(400).json({ error: `IMAP: ${err}` });
+  }
+  if (smtp_host) {
+    const err = (await validateHost(smtp_host, { allowPrivate: policy.allowPrivateHosts }))
+      || (!policy.allowNonstandardPorts && validatePort(smtp_port, ALLOWED_SMTP_PORTS));
+    if (err) return res.status(400).json({ error: `SMTP: ${err}` });
+  }
+
+  try {
+    const result = await query(`
+      INSERT INTO email_accounts (
+        user_id, name, sender_name, email_address, color, protocol,
+        imap_host, imap_port, imap_tls, imap_skip_tls_verify, smtp_host, smtp_port, smtp_tls,
+        auth_user, auth_pass, smtp_auth_user, smtp_auth_pass, oauth_provider, oauth_access_token, oauth_refresh_token,
+        signature, signature_enabled, icon
+      ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23)
+      RETURNING *
+    `, [
+      req.session.userId, name, sender_name || null, email_address, color, protocol,
+      imap_host, imap_port, Number(imap_port) % 1000 === 993, !!imap_skip_tls_verify, smtp_host, smtp_port, smtp_tls,
+      auth_user, encrypt(auth_pass), smtp_auth_user || null, encrypt(smtp_auth_pass) || null,
+      oauth_provider, encrypt(oauth_access_token), encrypt(oauth_refresh_token),
+      sanitizeSignature(signature) || null, signature_enabled !== false, iconValue
+    ]);
+
+    const account = result.rows[0];
+
+    // Immediately try to connect — needs full credentials from DB row
+    if (protocol === 'imap') {
+      imapManager.connectAccount(account).catch(console.error);
+    }
+
+    res.json(safeAccount(account));
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to add account' });
+  }
+});
+
+router.put('/:id', async (req, res) => {
+  const { id } = req.params;
+  const updates = req.body;
+
+  // Verify ownership.
+  const check = await query('SELECT id FROM email_accounts WHERE id = $1 AND user_id = $2', [id, req.session.userId]);
+  if (!check.rows.length) return res.status(404).json({ error: 'Account not found' });
+
+  if ('name' in updates && hasHeaderInjectionChars(updates.name)) {
+    return res.status(400).json({ error: 'Name cannot contain control characters' });
+  }
+  if ('sender_name' in updates && updates.sender_name && hasHeaderInjectionChars(updates.sender_name)) {
+    return res.status(400).json({ error: 'Sender name cannot contain control characters' });
+  }
+  if ('signature_enabled' in updates && typeof updates.signature_enabled !== 'boolean') {
+    return res.status(400).json({ error: 'signature_enabled must be a boolean' });
+  }
+  if ('icon' in updates) {
+    const { value, error } = normalizeAccountIcon(updates.icon);
+    if (error) return res.status(400).json({ error });
+    updates.icon = value;
+  }
+  const policy = await getConnectionPolicy();
+
+  if ('imap_host' in updates && updates.imap_host) {
+    const err = await validateHost(updates.imap_host, { allowPrivate: policy.allowPrivateHosts });
+    if (err) return res.status(400).json({ error: `IMAP: ${err}` });
+  }
+  if ('imap_port' in updates && updates.imap_port !== undefined && updates.imap_port !== null) {
+    if (!policy.allowNonstandardPorts) {
+      const err = validatePort(updates.imap_port, ALLOWED_IMAP_PORTS);
+      if (err) return res.status(400).json({ error: `IMAP: ${err}` });
+    }
+  }
+  if ('smtp_host' in updates && updates.smtp_host) {
+    const err = await validateHost(updates.smtp_host, { allowPrivate: policy.allowPrivateHosts });
+    if (err) return res.status(400).json({ error: `SMTP: ${err}` });
+  }
+  if ('smtp_port' in updates && updates.smtp_port !== undefined && updates.smtp_port !== null) {
+    if (!policy.allowNonstandardPorts) {
+      const err = validatePort(updates.smtp_port, ALLOWED_SMTP_PORTS);
+      if (err) return res.status(400).json({ error: `SMTP: ${err}` });
+    }
+  }
+
+  if ('imap_port' in updates) updates.imap_tls = Number(updates.imap_port) % 1000 === 993;
+
+  // Trusted Authentication-Results authserv-id: store the normalized token, or
+  // NULL to trust nothing (the default). Reject junk before it reaches the DB —
+  // the value is only ever compared against a header token, so a strict shape is
+  // enough (letters/digits plus the hostname punctuation seen in the wild).
+  if ('trusted_authserv_id' in updates) {
+    const rawId = updates.trusted_authserv_id;
+    if (rawId === null || rawId === undefined || String(rawId).trim() === '') {
+      updates.trusted_authserv_id = null;
+    } else if (typeof rawId !== 'string' || rawId.trim().length > 255
+      || !/^[A-Za-z0-9._:/-]+$/.test(rawId.trim())) {
+      return res.status(400).json({
+        error: 'trusted_authserv_id must be a single hostname-like token (letters, digits, ".", "-", "_", "/", ":")',
+      });
+    } else {
+      updates.trusted_authserv_id = normalizeAuthservId(rawId);
+    }
+  }
+
+  try {
+    if ('auto_cc_addresses' in updates) updates.auto_cc_addresses = normalizeAddressList(updates.auto_cc_addresses, 'Automatic Cc');
+    if ('auto_bcc_addresses' in updates) updates.auto_bcc_addresses = normalizeAddressList(updates.auto_bcc_addresses, 'Automatic Bcc');
+  } catch (err) {
+    return res.status(400).json({ error: err.message });
+  }
+  // An address in both lists is refused, not guessed at: it was meant either to be seen (Cc) or hidden (Bcc).
+  if ('auto_cc_addresses' in updates && 'auto_bcc_addresses' in updates) {
+    const bcc = new Set(updates.auto_bcc_addresses.map(a => a.toLowerCase()));
+    const shared = updates.auto_cc_addresses.find(a => bcc.has(a.toLowerCase()));
+    if (shared) return res.status(400).json({ error: `${JSON.stringify(shared)} cannot be in both Automatic Cc and Automatic Bcc` });
+  }
+
+  // Let plugins validate the settings fields they own (GTD owns gtd_enabled/gtd_folders) before we
+  // touch anything. A plugin may hard-reject the change (return an error response), report per-field
+  // sub-values it reset to defaults, and flag whether its change requires a reconnect. The actual
+  // write of a plugin's fields happens in persistAccountSettings below (into the plugin's own store,
+  // not a column). This is the generic account-scoped settings surface; core knows nothing
+  // GTD-specific here.
+  const settingsResults = await pluginRegistry.collectHook('validateAccountSettings', {
+    updates, accountId: id,
+  });
+  const rejectedByField = {};
+  let pluginRequiresReconnect = false;
+  for (const r of settingsResults) {
+    if (r.error) return res.status(r.error.status).json(r.error.body);
+    if (r.rejected) Object.assign(rejectedByField, r.rejected);
+    if (r.requiresReconnect) pluginRequiresReconnect = true;
+  }
+
+  const sets = [];
+  const values = [];
+  let i = 1;
+  for (const key of ACCOUNT_UPDATE_FIELDS) {
+    if (key in updates) {
+      sets.push(`${key} = $${i++}`);
+      const value = ((key === 'auth_pass' || key === 'smtp_auth_pass') && updates[key]) ? encrypt(updates[key])
+        : (key === 'smtp_auth_user' || key === 'smtp_auth_pass') ? (updates[key] || null)
+        : (key === 'signature') ? sanitizeSignature(updates[key]) || null
+        : (key === 'include_in_unified_inbox') ? !!updates[key]
+        : updates[key];
+      values.push(value);
+    }
+  }
+
+  // Write the core columns (if any changed), then let plugins persist their own owned fields into
+  // their stores (GTD: gtd_enabled/gtd_folders → plugin_account_config). A request may touch ONLY
+  // plugin fields (e.g. the GTD enable toggle), in which case there are no core columns to write —
+  // re-read the row for the response base instead of running an empty UPDATE.
+  let updated;
+  if (sets.length) {
+    values.push(id);
+    const result = await query(
+      `UPDATE email_accounts SET ${sets.join(', ')} WHERE id = $${i} RETURNING *`,
+      values
+    );
+    updated = result.rows[0];
+  } else {
+    const reread = await query('SELECT * FROM email_accounts WHERE id = $1', [id]);
+    updated = reread.rows[0];
+  }
+
+  // Persist plugin-owned fields into their own stores; each returns { patch } (the saved values) to
+  // echo back on the response so the client sees them as if they were columns.
+  const persistResults = await pluginRegistry.collectHook('persistAccountSettings', {
+    accountId: id, updates,
+  });
+  const pluginPatch = {};
+  let pluginPersisted = false;
+  for (const r of persistResults) {
+    if (r?.patch) { Object.assign(pluginPatch, r.patch); pluginPersisted = true; }
+  }
+
+  if (!sets.length && !pluginPersisted) return res.status(400).json({ error: 'No valid fields to update' });
+
+  const payload = { ...safeAccount(updated), ...pluginPatch };
+  // Surface any plugin-rejected field sub-values (e.g. GTD folder paths reset to defaults) so the
+  // settings form can flag them. Keyed by field name as the client expects.
+  if (rejectedByField.gtd_folders) payload.gtd_folders_rejected = rejectedByField.gtd_folders;
+  res.json(payload);
+
+  // Sync live IMAP state after DB update (fire-and-forget, non-fatal). Core reconnect triggers
+  // are the connection/credential/host fields; a plugin can also require a reconnect for its own
+  // field change (GTD: a gtd_enabled toggle re-arms the tick, a folder remap backfills the newly
+  // designated folder) via validateAccountSettings' requiresReconnect.
+  const isDisabling = 'enabled' in updates && !updates.enabled;
+  const needsReconnect = !isDisabling && (
+    'enabled' in updates ||
+    'auth_user' in updates ||
+    'auth_pass' in updates ||
+    'imap_host' in updates ||
+    'imap_port' in updates ||
+    'imap_tls' in updates ||
+    'imap_skip_tls_verify' in updates ||
+    pluginRequiresReconnect
+  );
+
+  // Both branches queue through the per-account serializer so overlapping settings
+  // changes (e.g. a rapid gtd_enabled double-toggle) apply their connection-state
+  // effects in order, never as two overlapping chains.
+  if (isDisabling) {
+    reconnectQueue(id, () => imapManager.disconnectAccount(id))
+      .catch(err => console.error(`Failed to disconnect account ${id} after disable:`, err.message));
+  } else if (needsReconnect && updated.protocol === 'imap' && updated.enabled) {
+    // An explicit settings change is how a wrong password gets fixed, so drop any backoff
+    // first. Auth failures back off for hours, and without this the corrected credentials
+    // would sit unused until that expired.
+    imapManager.clearConnectCooldown(id);
+    reconnectQueue(id, () =>
+      imapManager.disconnectAccount(id)
+        .then(() => query('SELECT * FROM email_accounts WHERE id = $1', [id]))
+        .then(r => { if (r.rows.length) return imapManager.connectAccount(r.rows[0]); })
+    ).catch(err => console.error(`Failed to reconnect account ${id} after update:`, err.message));
+  }
+});
+
+router.delete('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const check = await query('SELECT id FROM email_accounts WHERE id = $1 AND user_id = $2', [id, req.session.userId]);
+    if (!check.rows.length) return res.status(404).json({ error: 'Account not found' });
+
+    // Delete from DB first (cascades to messages and folders immediately).
+    // Disconnect IMAP afterward — fire-and-forget so a slow server logout
+    // doesn't block the response.
+    await query('DELETE FROM email_accounts WHERE id = $1', [id]);
+    imapManager.disconnectAccount(id).catch(err =>
+      console.error(`Disconnect error after delete for ${id}:`, err.message)
+    );
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('Account delete error:', err);
+    res.status(500).json({ error: 'Failed to delete account' });
+  }
+});
+
+router.post('/:id/reconnect', async (req, res) => {
+  const { id } = req.params;
+  const result = await query('SELECT * FROM email_accounts WHERE id = $1 AND user_id = $2', [id, req.session.userId]);
+  if (!result.rows.length) return res.status(404).json({ error: 'Account not found' });
+
+  // An explicit Reconnect is a human saying "try now", so drop any backoff first. Auth
+  // failures back off for up to six hours, and without this the button would answer
+  // { ok: true } while connectAccount early-returned on the cooldown: a silent no-op.
+  imapManager.clearConnectCooldown(id);
+  imapManager.connectAccount(result.rows[0]).catch(console.error);
+  res.json({ ok: true });
+});
+
+// ── Alias CRUD ─────────────────────────────────────────────────────────────
+
+router.get('/:id/aliases', async (req, res) => {
+  const { id } = req.params;
+  const check = await query('SELECT id FROM email_accounts WHERE id = $1 AND user_id = $2', [id, req.session.userId]);
+  if (!check.rows.length) return res.status(404).json({ error: 'Account not found' });
+
+  const result = await query(
+    'SELECT id, account_id, name, email, reply_to, signature, created_at FROM account_aliases WHERE account_id = $1 ORDER BY created_at',
+    [id]
+  );
+  res.json(result.rows.map(alias => ({
+    ...alias,
+    signature: alias.signature ? sanitizeSignature(alias.signature) : alias.signature,
+  })));
+});
+
+router.post('/:id/aliases', async (req, res) => {
+  const { id } = req.params;
+  const { name, email, reply_to, signature } = req.body;
+  if (!name || !email) return res.status(400).json({ error: 'Name and email required' });
+  if (hasHeaderInjectionChars(name) || hasHeaderInjectionChars(email) || hasHeaderInjectionChars(reply_to)) {
+    return res.status(400).json({ error: 'Fields cannot contain control characters' });
+  }
+
+  const check = await query('SELECT id FROM email_accounts WHERE id = $1 AND user_id = $2', [id, req.session.userId]);
+  if (!check.rows.length) return res.status(404).json({ error: 'Account not found' });
+
+  const result = await query(
+    'INSERT INTO account_aliases (account_id, name, email, reply_to, signature) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+    [id, name, email, reply_to || null, sanitizeSignature(signature) || null]
+  );
+  pluginRegistry.runHook('onAccountIdentityChanged', { accountId: id }).catch(err => console.warn('onAccountIdentityChanged hook failed:', err.message));
+  res.json(result.rows[0]);
+});
+
+router.put('/:id/aliases/:aliasId', async (req, res) => {
+  const { id, aliasId } = req.params;
+  const { name, email, reply_to, signature } = req.body;
+  if (!name || !email) return res.status(400).json({ error: 'Name and email required' });
+  if (hasHeaderInjectionChars(name) || hasHeaderInjectionChars(email) || hasHeaderInjectionChars(reply_to)) {
+    return res.status(400).json({ error: 'Fields cannot contain control characters' });
+  }
+
+  const check = await query(
+    `SELECT a.id, a.account_id FROM account_aliases a
+     JOIN email_accounts e ON a.account_id = e.id
+     WHERE a.id = $1 AND e.user_id = $2 AND e.id = $3`,
+    [aliasId, req.session.userId, id]
+  );
+  if (!check.rows.length) return res.status(404).json({ error: 'Alias not found' });
+
+  const result = await query(
+    'UPDATE account_aliases SET name = $1, email = $2, reply_to = $3, signature = $4 WHERE id = $5 RETURNING *',
+    [name, email, reply_to || null, sanitizeSignature(signature) || null, aliasId]
+  );
+  pluginRegistry.runHook('onAccountIdentityChanged', { accountId: check.rows[0].account_id }).catch(err => console.warn('onAccountIdentityChanged hook failed:', err.message));
+  res.json(result.rows[0]);
+});
+
+router.delete('/:id/aliases/:aliasId', async (req, res) => {
+  const { id, aliasId } = req.params;
+
+  const check = await query(
+    `SELECT a.id, a.account_id FROM account_aliases a
+     JOIN email_accounts e ON a.account_id = e.id
+     WHERE a.id = $1 AND e.user_id = $2 AND e.id = $3`,
+    [aliasId, req.session.userId, id]
+  );
+  if (!check.rows.length) return res.status(404).json({ error: 'Alias not found' });
+
+  await query('DELETE FROM account_aliases WHERE id = $1', [aliasId]);
+  pluginRegistry.runHook('onAccountIdentityChanged', { accountId: check.rows[0].account_id }).catch(err => console.warn('onAccountIdentityChanged hook failed:', err.message));
+  res.json({ ok: true });
+});
+
+router.get('/:id/folders', async (req, res) => {
+  const { id } = req.params;
+  const check = await query('SELECT id FROM email_accounts WHERE id = $1 AND user_id = $2', [id, req.session.userId]);
+  if (!check.rows.length) return res.status(404).json({ error: 'Account not found' });
+
+  const result = await query(
+    'SELECT * FROM folders WHERE account_id = $1 ORDER BY path',
+    [id]
+  );
+  // Freshness depends on how long this account's rotation takes, so every row needs the count.
+  const selectableFolders = result.rows.filter(row => !row.no_select).length;
+  res.json(result.rows.map(row => publicFolderCounts(row, Date.now(), { selectableFolders })));
+});
+
+router.post('/:id/reindex', async (req, res) => {
+  try {
+    const result = await query(
+      "SELECT * FROM email_accounts WHERE id = $1 AND user_id = $2 AND enabled = true AND protocol = 'imap'",
+      [req.params.id, req.session.userId]
+    );
+    if (!result.rows.length) return res.status(404).json({ error: 'Account not found' });
+
+    const account = result.rows[0];
+    const alreadyRunning = imapManager.backfillAllRunning.has(account.id);
+    if (!alreadyRunning) {
+      imapManager.backfillAllFolders(account).catch(err =>
+        console.error(`Manual reindex error for ${account.email_address}:`, err.message)
+      );
+    }
+    res.json({ ok: true, alreadyRunning });
+  } catch (err) {
+    console.error('POST /accounts/:id/reindex error:', err.message);
+    res.status(500).json({ error: 'Failed to start reindex' });
+  }
+});
+
+export default router;

@@ -1,0 +1,69 @@
+name: MailFlow upstream source snapshot
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 */6 * * *"
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/mailflow-source-snapshot.yml"
+      - "extraction/tools/capture-upstream-snapshot.mjs"
+      - "extraction/tools/verify-inventory.mjs"
+      - "extraction/source-pins/current.json"
+      - "extraction/manifests/path-dispositions-*.json"
+      - "extraction/manifests/source-tree-*.json"
+      - "extraction/manifests/capability-closure-*.json"
+      - "extraction/manifests/architecture-map-*.json"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: mailflow-upstream-source-snapshot
+  cancel-in-progress: false
+
+jobs:
+  capture:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the extraction workspace
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch current upstream main outside the working tree
+        id: upstream
+        run: |
+          git clone --depth=1 https://github.com/maathimself/mailflow.git "$RUNNER_TEMP/upstream-source"
+          commit=$(git -C "$RUNNER_TEMP/upstream-source" rev-parse HEAD)
+          echo "upstream_commit=$commit" >> "$GITHUB_OUTPUT"
+
+      - name: Capture immutable source snapshot and regenerate inventories
+        run: node extraction/tools/capture-upstream-snapshot.mjs "$RUNNER_TEMP/upstream-source"
+
+      - name: Verify inventory and exact copied source blobs
+        run: node extraction/tools/verify-inventory.mjs
+
+      - name: Create or update a reviewable upstream snapshot PR
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: automation/mailflow-upstream-snapshot
+          delete-branch: false
+          add-paths: |
+            extraction/source-pins/current.json
+            extraction/manifests/source-tree-*.json
+            extraction/manifests/path-dispositions-*.json
+            extraction/snapshots/**
+          commit-message: "chore(extraction): capture MailFlow upstream ${{ steps.upstream.outputs.upstream_commit }}"
+          title: "chore(extraction): capture MailFlow upstream ${{ steps.upstream.outputs.upstream_commit }}"
+          body: |
+            Automated, reviewable snapshot update from the live `maathimself/mailflow` main branch.
+
+            - Captures source into a new commit-addressed immutable snapshot.
+            - Runs exact blob/tree/file-set/mode/symlink verification before proposing changes.
+            - Does not auto-merge upstream source or clear license/provenance.
+            - Review source delta, license notices, path dispositions, and capability closure before merging.
+          draft: false
