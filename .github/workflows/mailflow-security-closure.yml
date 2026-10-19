@@ -1,0 +1,93 @@
+name: MailFlow security closure tests
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/mailflow-security-closure.yml"
+      - "extraction/snapshots/35067fc2876d50980f1a8a3b8ea72b5467b69f60/source/backend/**"
+      - "extraction/snapshots/35067fc2876d50980f1a8a3b8ea72b5467b69f60/source/frontend/**"
+      - "extraction/manifests/security-closure-2026-10-17-35067fc.json"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mailflow-security-closure-tests
+  cancel-in-progress: false
+
+jobs:
+  backend-security-tests:
+    name: Backend auth, outbound-fetch and sanitizer tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: extraction/snapshots/35067fc2876d50980f1a8a3b8ea72b5467b69f60/source/backend/package-lock.json
+      - name: Install pinned backend dependencies
+        working-directory: extraction/snapshots/35067fc2876d50980f1a8a3b8ea72b5467b69f60/source/backend
+        run: npm ci
+      - name: Run auth, OAuth/OIDC, host validation, safe fetch, image proxy and sanitizer tests
+        working-directory: extraction/snapshots/35067fc2876d50980f1a8a3b8ea72b5467b69f60/source/backend
+        run: >-
+          npx vitest run
+          src/middleware/auth.test.js
+          src/routes/auth.forgotPassword.test.js
+          src/routes/auth.logout.test.js
+          src/routes/auth.me.test.js
+          src/routes/oauth.refresh.test.js
+          src/routes/oidc.privateIssuer.test.js
+          src/routes/oidc.endsession.test.js
+          src/routes/oidc.match.test.js
+          src/services/hostValidation.test.js
+          src/services/safeFetch.test.js
+          src/services/imageProxy.test.js
+          src/services/emailSanitizer.test.js
+          src/services/emailSanitizer.trackers.test.js
+          src/services/emailSanitizer.parse5Error.test.js
+
+  frontend-image-proxy-test:
+    name: Frontend image proxy tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: extraction/snapshots/35067fc2876d50980f1a8a3b8ea72b5467b69f60/source/frontend/package-lock.json
+      - name: Install pinned frontend dependencies
+        working-directory: extraction/snapshots/35067fc2876d50980f1a8a3b8ea72b5467b69f60/source/frontend
+        run: npm ci
+      - name: Run image proxy tests
+        working-directory: extraction/snapshots/35067fc2876d50980f1a8a3b8ea72b5467b69f60/source/frontend
+        run: node --test src/utils/imageProxy.test.js
+
+  frontend-email-render-security-tests:
+    name: Frontend email HTML sinks and image policy tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: extraction/snapshots/35067fc2876d50980f1a8a3b8ea72b5467b69f60/source/frontend/package-lock.json
+      - name: Install pinned frontend dependencies
+        working-directory: extraction/snapshots/35067fc2876d50980f1a8a3b8ea72b5467b69f60/source/frontend
+        run: npm ci
+      - name: Test sandboxed email frame, app-origin sanitization, image policy and HTML renderers
+        working-directory: extraction/snapshots/35067fc2876d50980f1a8a3b8ea72b5467b69f60/source/frontend
+        run: >-
+          node --test
+          src/components/MessageBodyView.csp.test.js
+          src/components/MessageBodyView.render.test.js
+          src/components/ComposeModal.imageProxy.render.test.js
+          src/components/ComposeModal.render.test.js
+          src/components/MessagePane.render.test.js
+          src/utils/appEmailHtml.test.js
+          src/utils/imageProxy.test.js

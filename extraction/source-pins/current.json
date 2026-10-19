@@ -1,0 +1,97 @@
+{
+  "schema_version": "1.0.0",
+  "source": {
+    "repository": "https://github.com/maathimself/mailflow",
+    "repository_full_name": "maathimself/mailflow",
+    "branch": "main",
+    "commit": "c1c446914dc031feb331993c9da339cc524809d5",
+    "tree": "c3c54d9440f25c204368a0bafbbee836e05deb5f",
+    "commit_url": "https://github.com/maathimself/mailflow/commit/c1c446914dc031feb331993c9da339cc524809d5",
+    "tree_url": "https://github.com/maathimself/mailflow/tree/c1c446914dc031feb331993c9da339cc524809d5",
+    "captured_at": "2026-10-19T06:00:12.220Z",
+    "capture_method": "Git object database; recursive ls-tree and exact blob extraction",
+    "tree_truncated": false,
+    "entry_count": 1501,
+    "blob_count": 1354,
+    "directory_count": 147,
+    "gitlink_count": 0
+  },
+  "license": {
+    "primary": "AGPL-3.0",
+    "commercial_license_present": true,
+    "cla_present": true,
+    "review_required": true,
+    "notes": [
+      "README declares AGPL-3.0 and a separate commercial license.",
+      "Retain provenance and license notices.",
+      "Classify per-path licenses and third-party provenance before reuse."
+    ]
+  },
+  "state": {
+    "phase": "PHASE 2 - IMMUTABLE SOURCE SNAPSHOT AND VERIFICATION",
+    "source_copy_authorized": true,
+    "verification_status": "CURRENT c1c4469 SNAPSHOT EXACT PATH/MODE/BLOB/TREE MATCH PASS VIA GITHUB GIT OBJECT API; LOCAL NODE VERIFIER NOT RUN (EXECUTION ENVIRONMENT CANNOT RESOLVE GITHUB); HISTORICAL 35067FC SNAPSHOT HAS A CONFIRMED BLOB/MANIFEST MISMATCH",
+    "baseline_type": "IMMUTABLE_UPSTREAM_SNAPSHOT",
+    "status": "WORKSPACE_RECOVERY_PR_OPEN; CURRENT SNAPSHOT c1c4469 CAPTURED; FULL VERIFICATION AND CAPABILITY/LICENSE CLOSURE OPEN"
+  },
+  "manifest_paths": {
+    "tree": "extraction/manifests/source-tree-2026-10-19-c1c4469.json",
+    "dispositions": "extraction/manifests/path-dispositions-2026-10-19-c1c4469.json",
+    "snapshot": "extraction/snapshots/c1c446914dc031feb331993c9da339cc524809d5/source"
+  },
+  "verification": {
+    "workflow_url": "https://github.com/Rilan-Dev/mailflow/actions/runs/39207353893",
+    "workflow_result": "FAIL_ON_PREVIOUS_WORKSPACE_PIN_35067FC_NOT_EVIDENCE_FOR_CURRENT_C1C4469_PIN",
+    "verified_at": "2026-10-17T12:06:01Z",
+    "source_blob_count": 1350,
+    "source_blob_sha_failures": 0,
+    "snapshot_file_set": "PASS",
+    "file_modes_and_symlinks": "PASS",
+    "reconstructed_root_tree_sha": "a2a82b50b8a1ac24a273e55dc0f9418aefdfed17",
+    "reconstructed_nested_tree_count": 147,
+    "gitlink_count": 0,
+    "git_lfs_pointer_count": 0,
+    "capability_closure": "PARTIAL_STATIC_TRACE_NOT_CLOSED",
+    "path_license_provenance": "PENDING",
+    "redistribution_clearance": "PENDING",
+    "path_disposition_summary": {
+      "source_blobs": 1354,
+      "classified": 282,
+      "unclassified": 1072,
+      "unchanged_exact_path_sha_mode_matches": 1341,
+      "changed_existing_paths_reset_to_unclassified": 9,
+      "new_paths_reset_to_unclassified": 4,
+      "carry_forward_mismatches": 0,
+      "note": "See extraction/manifests/path-disposition-delta-audit-2026-10-19.md. Classification is not license clearance."
+    },
+    "security_static_trace": "PARTIAL_NOT_CLOSED",
+    "latest_manifest_verifier": {
+      "workflow_url": "https://github.com/Rilan-Dev/mailflow/actions/runs/39039116102",
+      "workflow_result": "stale_for_latest_security_sink_classifications",
+      "note": "Run was triggered before the latest security sink path additions; workflow now includes path-disposition changes, so a fresh run should verify the latest register."
+    },
+    "integrity_incident": {
+      "discovered_at": "2026-10-19",
+      "prior_pin_commit": "35067fc2876d50980f1a8a3b8ea72b5467b69f60",
+      "path": "frontend/tailwind.config.js",
+      "expected_upstream_blob": "268170402e354267054a0d31dd420aa885ce55ee",
+      "stored_snapshot_blob": "ce8681f8ac50c0ecc9eab6a9edfcbabe8d7d1500",
+      "run_url": "https://github.com/Rilan-Dev/mailflow/actions/runs/39207353893",
+      "disposition": "DO_NOT_MODIFY_EXISTING_SNAPSHOT_IN_PLACE; preserve as incident, verify c1c4469 current pin independently, then create a separately identified repair snapshot if historical snapshot repair is needed"
+    },
+    "current_pin_tree_comparison": {
+      "method": "GitHub Git object API recursive tree compared entry-by-entry with the pinned source-tree manifest",
+      "branch_head": "7016404aad85747faf7f796220e0de50984e7bb0",
+      "snapshot_commit": "c1c446914dc031feb331993c9da339cc524809d5",
+      "root_tree": "c3c54d9440f25c204368a0bafbbee836e05deb5f",
+      "manifest_entries": 1501,
+      "snapshot_entries": 1501,
+      "missing_paths": 0,
+      "extra_paths": 0,
+      "blob_mode_tree_mismatches": 0,
+      "result": "PASS",
+      "limitation": "The requested node extraction/tools/verify-inventory.mjs command could not be run in a real checkout here because the execution environment could not resolve github.com. Run the repository verifier in GitHub Actions or a real checkout."
+    },
+    "local_node_verifier": "PENDING"
+  }
+}
