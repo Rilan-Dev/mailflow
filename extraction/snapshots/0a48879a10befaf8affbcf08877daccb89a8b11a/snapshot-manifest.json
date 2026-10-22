@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0.0",
+  "source": {
+    "repository": "maathimself/mailflow",
+    "commit": "0a48879a10befaf8affbcf08877daccb89a8b11a",
+    "tree": "c3b9e6e05d5ef66c2dd402c3a5a1173d6672c063"
+  },
+  "captured_at": "2026-10-22T21:43:27.292Z",
+  "snapshot_path": "extraction/snapshots/0a48879a10befaf8affbcf08877daccb89a8b11a/source",
+  "tree_manifest": "extraction/manifests/source-tree-2026-10-22-0a48879.json",
+  "disposition_manifest": "extraction/manifests/path-dispositions-2026-10-22-0a48879.json",
+  "entry_count": 1542,
+  "blob_count": 1395,
+  "directory_count": 147,
+  "gitlink_count": 0,
+  "exact_blob_checks": {
+    "checked": 1395,
+    "failed": 0
+  },
+  "license": {
+    "primary_declared": "AGPL-3.0",
+    "commercial_license_notice_present": true,
+    "cla_notice_present": true,
+    "per_path_provenance_review": "PENDING",
+    "redistribution_review": "PENDING"
+  },
+  "status": "EXACT_GIT_BLOB_SNAPSHOT_CAPTURED",
+  "not_a_claim_of": [
+    "complete capability closure",
+    "per-path license clearance",
+    "host-integration readiness",
+    "extraction PASS"
+  ]
+}

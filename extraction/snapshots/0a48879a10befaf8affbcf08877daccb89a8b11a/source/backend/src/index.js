@@ -1,0 +1,337 @@
+import express from 'express';
+import 'express-async-errors'; // route a rejected async handler to the error middleware (Express 4 doesn't)
+import session from 'express-session';
+import cors from 'cors';
+import { corsExceptDav } from './middleware/corsExceptDav.js';
+import { createServer } from 'http';
+import { readFileSync } from 'fs';
+import RedisStore from 'connect-redis';
+import 'dotenv/config';
+import { redisClient } from './services/redis.js';
+import { parseTrustProxyHops } from './utils/trustProxy.js';
+import { buildSessionOptions } from './utils/sessionConfig.js';
+import { mountBodyParsers } from './middleware/bodyParsers.js';
+
+import sendRoutes from './routes/send.js';
+import draftRoutes from './routes/draft.js';
+import oauthRoutes from './routes/oauth.js';
+import integrationsRoutes, { loadIntegrationConfigs } from './routes/integrations.js';
+import authRoutes from './routes/auth.js';
+import accountRoutes from './routes/accounts.js';
+import mailRoutes from './routes/mail.js';
+import searchRoutes from './routes/search.js';
+import adminRoutes from './routes/admin.js';
+import totpRoutes from './routes/totp.js';
+import oidcApiRouter, { oidcBrowserRouter } from './routes/oidc.js';
+import rulesRoutes from './routes/rules.js';
+import blockListRoutes from './routes/blockList.js';
+import contactsRoutes from './routes/contacts.js';
+import todoistRoutes from './routes/todoist.js';
+import aiRoutes from './routes/ai.js';
+import categoriesRoutes from './routes/categories.js';
+import { pluginRegistry } from './plugins/registry.js';
+import { loadBundledPlugins } from './plugins/loadPlugins.js';
+import { setMailEngine } from './plugins/mailEngine.js';
+import pluginsRoutes from './routes/plugins.js';
+import senderFaviconsRoutes from './routes/senderFavicons.js';
+import diagnosticsRoutes from './routes/diagnostics.js';
+import backupRoutes from './routes/backup.js';
+import spamRoutes, { accountSpamRouter } from './routes/spam.js';
+import carddavRouter from './routes/carddav.js';
+import carddavAccountRouter from './routes/carddavAccount.js';
+import { startCardavScheduler } from './services/carddavSync.js';
+import { start as startSpamScheduler } from './services/spamScheduler.js';
+import { encryptExistingCredentials, query } from './services/db.js';
+import { runMigrations } from './services/migrations.js';
+import { parseVCard } from './utils/vcard.js';
+import { reloadAuthSettings } from './services/authLimiter.js';
+import { createWebSocketServer, setupWebSocket } from './services/websocket.js';
+import { ImapManager } from './services/imapManager.js';
+import { getUpdateStatus } from './services/updateCheck.js';
+import { recordHttp } from './services/performanceMetrics.js';
+import { flushHeldSends } from './services/sendHold.js';
+
+const packageMeta = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf-8'));
+let buildMeta = {};
+try {
+  buildMeta = JSON.parse(readFileSync(new URL('../build-meta.json', import.meta.url), 'utf-8'));
+} catch {
+  // Local dev runs may not have build metadata yet.
+}
+export const APP_VERSION = (process.env.APP_VERSION || buildMeta.version || packageMeta.version).replace(/^v[.]?/, '');
+
+const app = express();
+// Trust the nginx reverse proxy so req.secure reflects HTTPS correctly.
+// Without this, express-session sees HTTP (from nginx) and refuses to set
+// the Secure cookie, meaning the session cookie is never sent to the browser.
+// The hop count also decides req.ip, which keys the login rate limit.
+const trustProxyHops = parseTrustProxyHops(process.env.TRUST_PROXY_HOPS);
+if (trustProxyHops === null) {
+  console.error(`FATAL: TRUST_PROXY_HOPS must be a whole number of at least 1 (the reverse proxies in front of the backend, counting nginx), got "${process.env.TRUST_PROXY_HOPS}". Exiting.`);
+  process.exit(1);
+}
+app.set('trust proxy', trustProxyHops);
+const httpServer = createServer(app);
+const wss = createWebSocketServer(httpServer);
+
+// Redis — connect the shared client before any route or session middleware uses it.
+await redisClient.connect();
+
+// Fail fast if required secrets are missing
+if (!process.env.SESSION_SECRET || process.env.SESSION_SECRET.length < 32) {
+  console.error('FATAL: SESSION_SECRET must be set and at least 32 characters. Exiting.');
+  process.exit(1);
+}
+if (!process.env.DB_PASSWORD) {
+  console.error('FATAL: DB_PASSWORD must be set. Exiting.');
+  process.exit(1);
+}
+if (!process.env.ENCRYPTION_KEY || process.env.ENCRYPTION_KEY.length !== 64) {
+  console.error('FATAL: ENCRYPTION_KEY must be set and exactly 64 hex characters (32 bytes). Generate one with: openssl rand -hex 32');
+  process.exit(1);
+}
+// APP_URL is required in production: without it every browser WebSocket connection
+// is rejected (websocket.js closes connections that send an Origin header when
+// ALLOWED_ORIGIN is null), and OIDC redirect URIs become malformed.
+if (process.env.NODE_ENV === 'production' && !process.env.APP_URL) {
+  console.error('FATAL: APP_URL must be set in production (e.g. https://mail.example.com). WebSocket connections and OIDC depend on it.');
+  process.exit(1);
+}
+
+// Session — options live in utils/sessionConfig.js so they can be exercised by tests.
+const sessionMiddleware = session(
+  buildSessionOptions(new RedisStore({ client: redisClient }), process.env.SESSION_SECRET)
+);
+
+// Not for /carddav, whose own OPTIONS answer tells contact apps it serves address books.
+app.use(corsExceptDav(cors({
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  credentials: true
+})));
+
+// Performance baseline: time the full request lifecycle and record it under the
+// matched route *pattern* (never the concrete URL, so no ids/PII and bounded
+// cardinality). Registered early so body-parse/session/routing are all included;
+// req.route is populated by the time 'finish' fires. Behavior-neutral.
+app.use((req, res, next) => {
+  const start = process.hrtime.bigint();
+  res.on('finish', () => {
+    const ms = Number(process.hrtime.bigint() - start) / 1e6;
+    const pattern = typeof req.route?.path === 'string'
+      ? (req.baseUrl || '') + req.route.path
+      : (req.baseUrl || 'unmatched'); // fall back to the mount, never req.path (unbounded)
+    recordHttp(`${req.method} ${pattern || '/'}`, ms, res.statusCode >= 500);
+  });
+  next();
+});
+
+// Security headers on every response
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('Referrer-Policy', 'same-origin');
+  next();
+});
+// Body parsers live in middleware/bodyParsers.js so they can be exercised by tests. The larger
+// limits are for signed-in requests only, so those paths load the session there first.
+mountBodyParsers(app, sessionMiddleware);
+app.use(sessionMiddleware);
+
+// CSRF defense-in-depth for the cookie-authenticated /api surface. A mutating
+// request must carry a custom header that a cross-site <form> cannot set and a
+// cross-origin fetch cannot send without a CORS preflight — which the CORS policy
+// above restricts to FRONTEND_URL. SameSite=lax cookies are the primary defense;
+// this closes same-site/subdomain and legacy-browser gaps. The external DAV server
+// (/carddav) and OAuth flows (/oauth) are mounted outside /api and use their own
+// auth, so they are intentionally not gated here.
+const CSRF_SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
+app.use('/api', (req, res, next) => {
+  if (CSRF_SAFE_METHODS.has(req.method)) return next();
+  if (req.get('X-Requested-With')) return next();
+  return res.status(403).json({ error: 'Missing required X-Requested-With header' });
+});
+
+// Screen-lock enforcement (#235). A locked session may only reach the endpoints
+// needed to render the lock screen, unlock, or sign out; everything else returns
+// 423 Locked until the PIN is verified (routes/auth.js sets req.session.locked).
+// Matches the full path (minus query) so it can't fail open on mount-relative paths.
+const LOCK_ALLOWED = new Set(['/api/auth/unlock', '/api/auth/logout', '/api/auth/me', '/api/health', '/api/version']);
+app.use('/api', (req, res, next) => {
+  if (req.session?.locked && !LOCK_ALLOWED.has(req.originalUrl.split('?')[0])) {
+    return res.status(423).json({ error: 'Locked', locked: true });
+  }
+  next();
+});
+
+// Make imap manager available globally
+export const imapManager = new ImapManager(wss);
+app.set('imapManager', imapManager);
+// Hand the mail engine to the plugin platform so plugin-api capabilities (labels, archive,
+// broadcast) can be bound to it without any plugin importing the mail engine or this entry file.
+setMailEngine(imapManager);
+
+// Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/auth/oidc', oidcApiRouter);
+app.use('/auth/oidc', oidcBrowserRouter);
+app.use('/oauth', oauthRoutes);
+app.use('/api/integrations', integrationsRoutes);
+app.use('/api/accounts', accountRoutes);
+// Per-account antispam GDPR reset (mounted before the generic /api/accounts
+// router's own :id routes to avoid path shadowing; shares the namespace).
+app.use('/api/accounts', accountSpamRouter);
+app.use('/api/spam', spamRoutes);
+app.use('/api/mail', mailRoutes);
+app.use('/api/mail', sendRoutes);
+app.use('/api/mail', draftRoutes);
+app.use('/api/search', searchRoutes);
+app.use('/api/admin/backup', backupRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/totp', totpRoutes);
+app.use('/api/rules', rulesRoutes);
+app.use('/api/block-list', blockListRoutes);
+app.use('/api/contacts', contactsRoutes);
+app.use('/api/todoist', todoistRoutes);
+app.use('/api/carddav', carddavAccountRouter);
+app.use('/api', aiRoutes);
+app.use('/api', categoriesRoutes);
+// Tier-1 plugin routers, mounted via the plugin registry (see src/plugins/). Registered
+// here — before the unauthenticated /api/health and /api/version probes below — so a
+// plugin's router-level auth can't intercept them. GTD is the first such plugin; its
+// router mounts at /api/gtd exactly as before.
+loadBundledPlugins();
+// Platform API: list registered plugins + per-user activation (must be after loadBundledPlugins).
+app.use('/api/plugins', pluginsRoutes);
+for (const plugin of pluginRegistry.list()) {
+  if (plugin.router) app.use(plugin.router.base, plugin.router.handler);
+}
+app.use('/api/sender-favicons', senderFaviconsRoutes);
+app.use('/api/diagnostics', diagnosticsRoutes);
+
+// CardDAV server — body is read lazily inside each handler via rawBody()
+app.use('/carddav', carddavRouter);
+// RFC 6764 well-known redirect — handle all methods so PROPFIND probes also redirect
+app.all('/.well-known/carddav', (req, res) => res.redirect(308, '/carddav/'));
+
+app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
+app.get('/api/version', (_req, res) => res.json({ version: APP_VERSION, sha: process.env.BUILD_SHA || 'dev' }));
+// Server-side update check (#261). Cached in updateCheck.js so repeated hits never
+// re-query GitHub; the browser only talks to MailFlow. Never throws into the response.
+app.get('/api/update', async (_req, res) => {
+  try { res.json(await getUpdateStatus(APP_VERSION)); }
+  catch { res.json({ current: APP_VERSION, latest: null, updateAvailable: false, disabled: false }); }
+});
+
+// Catch unhandled errors thrown (or rejected) inside async route handlers.
+// The `express-async-errors` import above patches Express 4 to forward async
+// rejections here; without both pieces, a thrown DB error hangs the request.
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, _next) => {
+  console.error('Unhandled route error:', err);
+  if (res.headersSent) return;
+  res.status(500).json({ error: 'Internal server error' });
+});
+
+// WebSocket
+setupWebSocket(wss, sessionMiddleware, imapManager);
+
+// Run pending schema migrations then start
+await runMigrations();
+
+// One-time backfill: populate photo_data from existing vcard column for contacts
+// that were synced before CardDAV PUT started persisting photo_data.
+async function backfillContactPhotos() {
+  const { rows } = await query(
+    `SELECT id, vcard FROM contacts WHERE vcard IS NOT NULL AND photo_data IS NULL`
+  );
+  if (!rows.length) return;
+
+  let count = 0;
+  for (const row of rows) {
+    const parsed = parseVCard(row.vcard);
+    if (!parsed.photoData) continue;
+    await query('UPDATE contacts SET photo_data = $1 WHERE id = $2', [parsed.photoData, row.id]);
+    count++;
+  }
+  if (count > 0) console.log(`Backfilled contact photos for ${count} contact(s)`);
+}
+await backfillContactPhotos();
+
+// Load configurable auth rate limit values from DB (seeded by migration above).
+await reloadAuthSettings();
+
+// Encrypt any plaintext credentials left in the DB from before this feature was added
+await encryptExistingCredentials();
+
+// Load OAuth integration configs from DB into process.env
+await loadIntegrationConfigs();
+
+// Start background snooze watcher — polls every 60 seconds to restore snoozed messages
+imapManager.startSnoozeWatcher();
+
+// Schedule periodic CardDAV contact sync for any connected accounts.
+startCardavScheduler();
+
+// Nightly anti-spam model retrains, staggered per-user across 24h.
+startSpamScheduler();
+
+// Re-connect all enabled IMAP accounts on startup with bounded concurrency so a
+// large user base doesn't hammer IMAP servers and the DB connection pool at once.
+try {
+  const startupResult = await query(
+    "SELECT DISTINCT user_id FROM email_accounts WHERE enabled = true AND protocol = 'imap'"
+  );
+  if (startupResult.rows.length) {
+    console.log(`Reconnecting accounts for ${startupResult.rows.length} user(s) on startup`);
+    const MAX_CONCURRENT = 3;
+    const queue = [...startupResult.rows];
+    function connectNext() {
+      if (!queue.length) return;
+      const { user_id } = queue.shift();
+      imapManager.connectAllForUser(user_id)
+        .catch(err => console.error(`Startup connect failed for user ${user_id}:`, err.message))
+        .finally(connectNext);
+    }
+    for (let i = 0; i < Math.min(MAX_CONCURRENT, queue.length); i++) connectNext();
+  }
+} catch (err) {
+  console.error('Startup account connection error:', err.message);
+}
+
+const PORT = process.env.PORT || 3000;
+httpServer.listen(PORT, () => {
+  console.log(`MailFlow backend running on port ${PORT}`);
+});
+
+function exitAfterClose(code) {
+  // A send held for its undo window lives only in this process: deliver it now rather than
+  // lose it with the restart (services/sendHold.js). Bounded to leave room for the rest.
+  const heldSendsFlushed = flushHeldSends(8000)
+    .catch(err => console.error('Flushing held sends failed:', err.message));
+  httpServer.close(async () => {
+    await heldSendsFlushed;
+    try { await redisClient.quit(); } catch { /* ignore */ }
+    process.exit(code);
+  });
+  // Force exit if graceful shutdown takes more than 10 s
+  setTimeout(() => process.exit(code || 1), 10_000).unref();
+}
+
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received — shutting down gracefully');
+  exitAfterClose(0);
+});
+
+// A restore has replaced the rows every IMAP connection, scheduler and cache was built from,
+// so the process starts over. The exit code is non-zero because systemd's Restart=on-failure
+// (contrib/mailflow.service) leaves a clean exit down; Docker's unless-stopped and pm2 restart
+// either way.
+export function restartAfterRestore() {
+  console.log('Restore complete — restarting so every connection and cache starts from the restored data');
+  wss.clients.forEach(ws => ws.close(1012, 'Restarting'));
+  exitAfterClose(3);
+}
+
+process.on('unhandledRejection', (reason) => {
+  console.error('Unhandled promise rejection:', reason);
+});
