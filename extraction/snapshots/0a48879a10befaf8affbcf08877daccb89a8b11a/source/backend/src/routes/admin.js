@@ -1,0 +1,835 @@
+import { Router } from 'express';
+import crypto from 'crypto';
+import bcrypt from 'bcryptjs';
+import { query, withTransaction } from '../services/db.js';
+import { requireAdmin } from '../middleware/auth.js';
+import { logAuthEvent } from '../services/authEvents.js';
+import { decrypt, encrypt } from '../services/encryption.js';
+import { validateHost, resolveForConnection } from '../services/hostValidation.js';
+import { createSmtpTransport } from '../services/smtpTransport.js';
+import { getConnectionPolicy, invalidateConnectionPolicyCache } from '../services/connectionPolicy.js';
+import { reloadAuthSettings } from '../services/authLimiter.js';
+import { imapManager } from '../index.js';
+import { stopCardavUser } from '../services/carddavSync.js';
+import { pluginRegistry } from '../plugins/registry.js';
+import { uuidParam } from '../utils/uuid.js';
+import { destroyUserSessions } from '../services/userSessions.js';
+
+const router = Router();
+router.use(requireAdmin);
+// Reject a malformed :id (user UUID) with a 400 before it reaches a uuid-typed query.
+router.param('id', uuidParam('id'));
+
+// ── Users ──────────────────────────────────────────────────────────────────────
+
+// The profile photo is stored as a data: URL. Only raster image URLs are passed on: the list
+// renders them in an <img>, and anything else a user managed to store (the column takes any text)
+// is dropped rather than handed to an admin's browser.
+const AVATAR_RE = /^data:image\/(?:jpeg|png|webp|gif);base64,[A-Za-z0-9+/=]+$/;
+function safeAvatar(avatar) {
+  return typeof avatar === 'string' && AVATAR_RE.test(avatar) ? avatar : null;
+}
+
+export async function listUsers(req, res) {
+  const limit  = Math.min(parseInt(req.query.limit)  || 100, 200);
+  const offset = Math.max(parseInt(req.query.offset) || 0,   0);
+  const [result, countResult] = await Promise.all([
+    query(
+      `SELECT id, username, is_admin, totp_enabled, created_at, avatar, last_seen_at, recovery_email,
+              ai_enabled, password_hash IS NOT NULL AS has_password
+         FROM users ORDER BY created_at ASC LIMIT $1 OFFSET $2`,
+      [limit, offset],
+    ),
+    query('SELECT COUNT(*) AS total FROM users'),
+  ]);
+  res.json({
+    users: result.rows.map(u => ({
+      id: u.id,
+      username: u.username,
+      created_at: u.created_at,
+      avatar: safeAvatar(u.avatar),
+      isAdmin: u.is_admin,
+      totpEnabled: u.totp_enabled,
+      lastSeenAt: u.last_seen_at,
+      recoveryEmail: u.recovery_email,
+      hasPassword: u.has_password,
+      aiEnabled: u.ai_enabled,
+    })),
+    total: parseInt(countResult.rows[0].total),
+  });
+}
+router.get('/users', listUsers);
+
+// An admin can set any user's password and recovery email, and turn off their 2FA, so between
+// them any admin can sign in as any user. Each of those changes, and deleting a user, goes to the
+// security log with the admin who made it, not only to the server log. The admin's name is read from the database
+// rather than the session, which keeps the name they signed in with.
+async function logAdminChange(req, eventType, target) {
+  const actor = await query('SELECT username FROM users WHERE id = $1', [req.session.userId])
+    .then(r => r.rows[0]?.username, () => null);
+  logAuthEvent(eventType, {
+    username: target.username, userId: target.id,
+    actorUsername: actor || req.session.username || null, ip: req.ip, success: true,
+  });
+}
+
+export async function disableUserTotp(req, res) {
+  const { id } = req.params;
+  if (id === req.session.userId) {
+    return res.status(400).json({ error: 'Use your account settings to manage your own 2FA.' });
+  }
+  const target = await query('SELECT username FROM users WHERE id = $1', [id]);
+  if (!target.rows.length) return res.status(404).json({ error: 'User not found' });
+  await query('UPDATE users SET totp_secret = NULL, totp_enabled = false WHERE id = $1', [id]);
+  console.log(`[admin] ${req.session.username} disabled 2FA for user ${target.rows[0].username} (${id})`);
+  await logAdminChange(req, 'admin_totp_disable', { id, username: target.rows[0].username });
+  res.json({ ok: true });
+}
+router.post('/users/:id/totp/disable', disableUserTotp);
+
+// The same rules registration applies: stored lower-case, 1-120 characters, no control
+// characters. Returns the normalized name or an error message.
+function normalizeUsername(raw) {
+  if (typeof raw !== 'string') return { error: 'Username required' };
+  const username = raw.toLowerCase().trim();
+  if (username.length < 1 || username.length > 120) {
+    return { error: 'Username must be between 1 and 120 characters' };
+  }
+  // eslint-disable-next-line no-control-regex -- intentionally rejecting control characters
+  if (/[\x00-\x1f\x7f]/.test(username)) return { error: 'Username contains invalid characters' };
+  return { username };
+}
+
+// Changes any of isAdmin, aiEnabled, username and recoveryEmail; fields left out are not touched.
+export async function updateUser(req, res) {
+  const { id } = req.params;
+  const { isAdmin, aiEnabled, username, recoveryEmail } = req.body ?? {};
+
+  // Prevent removing your own admin status
+  if (id === req.session.userId && isAdmin === false) {
+    return res.status(400).json({ error: 'Cannot remove your own admin status' });
+  }
+
+  const sets = [];
+  const values = [];
+  const changes = [];
+  if (isAdmin !== undefined) {
+    if (typeof isAdmin !== 'boolean') return res.status(400).json({ error: 'isAdmin must be true or false' });
+    values.push(isAdmin);
+    sets.push(`is_admin = $${values.length}`);
+    changes.push(`is_admin=${isAdmin}`);
+  }
+  // Whether the user may use the instance's AI provider (#644). Takes effect on their next AI
+  // request: the AI routes read it from the database each time.
+  if (aiEnabled !== undefined) {
+    if (typeof aiEnabled !== 'boolean') return res.status(400).json({ error: 'aiEnabled must be true or false' });
+    values.push(aiEnabled);
+    sets.push(`ai_enabled = $${values.length}`);
+    changes.push(`ai_enabled=${aiEnabled}`);
+  }
+  let newUsername;
+  if (username !== undefined) {
+    const normalized = normalizeUsername(username);
+    if (normalized.error) return res.status(400).json({ error: normalized.error });
+    newUsername = normalized.username;
+    values.push(normalized.username);
+    sets.push(`username = $${values.length}`);
+    changes.push(`username=${normalized.username}`);
+  }
+  let email;
+  if (recoveryEmail !== undefined) {
+    email = recoveryEmail ? String(recoveryEmail).trim().toLowerCase() : null;
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return res.status(400).json({ error: 'Invalid email address' });
+    }
+    values.push(email);
+    sets.push(`recovery_email = $${values.length}`);
+    changes.push('recovery_email');
+  }
+  if (!sets.length) return res.status(400).json({ error: 'Nothing to change' });
+
+  const target = await query('SELECT username, recovery_email FROM users WHERE id = $1', [id]);
+  if (!target.rows.length) return res.status(404).json({ error: 'User not found' });
+  const emailChanged = email !== undefined && email !== (target.rows[0].recovery_email ?? null);
+
+  values.push(id);
+  try {
+    await withTransaction(async client => {
+      await client.query(`UPDATE users SET ${sets.join(', ')} WHERE id = $${values.length}`, values);
+      // A reset link or login code already sent to the old address must stop working: the
+      // address may be changing because someone else has it.
+      if (emailChanged) {
+        await client.query('DELETE FROM password_reset_tokens WHERE user_id = $1', [id]);
+        await client.query('DELETE FROM email_otp_tokens WHERE user_id = $1', [id]);
+      }
+    });
+  } catch (err) {
+    if (err.code === '23505') return res.status(409).json({ error: 'Username already taken' });
+    throw err;
+  }
+  console.log(`[admin] ${req.session.username} changed ${changes.join(', ')} for user ${target.rows[0].username} (${id})`);
+  const finalUsername = newUsername ?? target.rows[0].username;
+  // An admin renaming themselves: the session keeps the name for the server log lines.
+  if (id === req.session.userId) req.session.username = finalUsername;
+  await logAdminChange(req, 'admin_user_update', { id, username: finalUsername });
+
+  // If user is currently logged in, their session isAdmin will be refreshed on next /me call
+  res.json({ ok: true });
+}
+router.patch('/users/:id', updateUser);
+
+// Sets a user's password, for someone who has lost theirs and has no recovery email. It takes
+// away what a self-service reset does, and more: every session (an admin setting their own keeps
+// the session they are using), trusted devices, which skip the second factor, and any reset link
+// or login code already sent, which would otherwise still set a different password or sign in.
+export async function setUserPassword(req, res) {
+  const { id } = req.params;
+  const { password } = req.body ?? {};
+  if (typeof password !== 'string' || password.length < 8) {
+    return res.status(400).json({ error: 'Password must be at least 8 characters' });
+  }
+  if (Buffer.byteLength(password, 'utf8') > 72) {
+    // bcrypt ignores everything past 72 bytes, so a longer password would not mean what it says.
+    return res.status(400).json({ error: 'Password must be at most 72 bytes' });
+  }
+  const target = await query('SELECT username FROM users WHERE id = $1', [id]);
+  if (!target.rows.length) return res.status(404).json({ error: 'User not found' });
+
+  const hash = await bcrypt.hash(password, 12);
+  await withTransaction(async client => {
+    await client.query('UPDATE users SET password_hash = $1 WHERE id = $2', [hash, id]);
+    await client.query('DELETE FROM trusted_devices WHERE user_id = $1', [id]);
+    await client.query('DELETE FROM password_reset_tokens WHERE user_id = $1', [id]);
+    await client.query('DELETE FROM email_otp_tokens WHERE user_id = $1', [id]);
+  });
+  await destroyUserSessions(id, { exceptSessionId: id === req.session.userId ? req.sessionID : undefined });
+  console.log(`[admin] ${req.session.username} set a new password for user ${target.rows[0].username} (${id})`);
+  await logAdminChange(req, 'admin_password_set', { id, username: target.rows[0].username });
+  res.json({ ok: true });
+}
+router.post('/users/:id/password', setUserPassword);
+
+export async function deleteUser(req, res) {
+  const { id } = req.params;
+  if (id === req.session.userId) {
+    return res.status(400).json({ error: 'Cannot delete your own account' });
+  }
+  const target = await query('SELECT username FROM users WHERE id = $1', [id]);
+  if (!target.rows.length) return res.status(404).json({ error: 'User not found' });
+  // Stop live per-user workers BEFORE the delete — disconnectUser looks up the
+  // user's accounts, which the cascade delete would remove.
+  await imapManager.disconnectUser(id).catch(err => console.warn('disconnectUser on delete:', err.message));
+  stopCardavUser(id);
+  await query('DELETE FROM users WHERE id = $1', [id]);
+  // Let plugins clean up any user-scoped data the FK cascade can't reach (GTD removes the
+  // imported pet, stored under a slug derived from the user id rather than an FK). Best-effort
+  // and after the delete: the user row is already gone, so a hook failure must not misreport a
+  // completed delete as a 500. The hook swallows per-plugin errors.
+  await pluginRegistry.runHook('onUserDelete', { userId: id });
+  console.log(`[admin] ${req.session.username} deleted user ${target.rows[0].username} (${id})`);
+  // Logged once the delete has happened, and by name only: the event's user_id references
+  // users, and the row it would point at is gone.
+  await logAdminChange(req, 'admin_user_delete', { id: null, username: target.rows[0].username });
+  res.json({ ok: true });
+}
+router.delete('/users/:id', deleteUser);
+
+// ── System settings ────────────────────────────────────────────────────────────
+
+router.get('/settings', async (req, res) => {
+  const result = await query('SELECT key, value FROM system_settings');
+  const settings = {};
+  for (const row of result.rows) settings[row.key] = row.value;
+  res.json({ settings });
+});
+
+router.get('/auth-events', async (req, res) => {
+  const limit = Math.min(parseInt(req.query.limit) || 100, 500);
+  const offset = Math.max(parseInt(req.query.offset) || 0, 0);
+  const [eventsResult, countResult] = await Promise.all([
+    query(
+      `SELECT id, event_type, username, user_id, actor_username, ip, success, created_at
+       FROM auth_events ORDER BY created_at DESC LIMIT $1 OFFSET $2`,
+      [limit, offset]
+    ),
+    query('SELECT COUNT(*) AS total FROM auth_events'),
+  ]);
+  res.json({ events: eventsResult.rows, total: parseInt(countResult.rows[0].total) });
+});
+
+router.patch('/settings', async (req, res) => {
+  const { registration_open, internal_auth_disabled, auth_max_attempts, auth_window_minutes,
+    allow_private_hosts, allow_insecure_tls, allow_nonstandard_ports,
+    mfa_enforcement, mfa_device_trust, custom_css, backup_include_mail } = req.body;
+  if (typeof registration_open === 'boolean') {
+    await query(
+      `INSERT INTO system_settings (key, value, updated_at)
+       VALUES ('registration_open', $1, NOW())
+       ON CONFLICT (key) DO UPDATE SET value = $1, updated_at = NOW()`,
+      [registration_open ? 'true' : 'false']
+    );
+  }
+  if (typeof internal_auth_disabled === 'boolean') {
+    if (internal_auth_disabled) {
+      // Safety: at least one enabled OIDC provider must exist so users have a
+      // way to sign in after password login is blocked.
+      const provCheck = await query(
+        'SELECT COUNT(*) AS count FROM oidc_providers WHERE enabled = true'
+      );
+      if (parseInt(provCheck.rows[0].count) === 0) {
+        return res.status(400).json({
+          error: 'Cannot disable password login: no enabled SSO providers are configured.',
+        });
+      }
+      // Safety: the requesting admin must have a linked SSO identity so they
+      // can still sign in after their current session expires.
+      const idCheck = await query(
+        'SELECT COUNT(*) AS count FROM user_identities WHERE user_id = $1',
+        [req.session.userId]
+      );
+      if (parseInt(idCheck.rows[0].count) === 0) {
+        return res.status(400).json({
+          error: 'Cannot disable password login: link your account to an SSO provider first so you can still sign in.',
+        });
+      }
+    }
+    await query(
+      `INSERT INTO system_settings (key, value, updated_at)
+       VALUES ('internal_auth_disabled', $1, NOW())
+       ON CONFLICT (key) DO UPDATE SET value = $1, updated_at = NOW()`,
+      [internal_auth_disabled ? 'true' : 'false']
+    );
+    console.log(`[admin] ${req.session.username} set internal_auth_disabled=${internal_auth_disabled}`);
+  }
+  if (auth_max_attempts != null) {
+    const val = parseInt(auth_max_attempts);
+    if (!Number.isInteger(val) || val < 1 || val > 100)
+      return res.status(400).json({ error: 'auth_max_attempts must be between 1 and 100' });
+    await query(
+      `INSERT INTO system_settings (key, value, updated_at) VALUES ('auth_max_attempts', $1, NOW())
+       ON CONFLICT (key) DO UPDATE SET value = $1, updated_at = NOW()`,
+      [String(val)]
+    );
+  }
+  if (auth_window_minutes != null) {
+    const val = parseInt(auth_window_minutes);
+    if (!Number.isInteger(val) || val < 1 || val > 1440)
+      return res.status(400).json({ error: 'auth_window_minutes must be between 1 and 1440' });
+    await query(
+      `INSERT INTO system_settings (key, value, updated_at) VALUES ('auth_window_minutes', $1, NOW())
+       ON CONFLICT (key) DO UPDATE SET value = $1, updated_at = NOW()`,
+      [String(val)]
+    );
+  }
+  if (auth_max_attempts != null || auth_window_minutes != null) {
+    await reloadAuthSettings();
+  }
+  for (const [key, val] of [
+    ['allow_private_hosts', allow_private_hosts],
+    ['allow_insecure_tls', allow_insecure_tls],
+    ['allow_nonstandard_ports', allow_nonstandard_ports],
+    ['backup_include_mail', backup_include_mail],
+  ]) {
+    if (typeof val === 'boolean') {
+      await query(
+        `INSERT INTO system_settings (key, value, updated_at) VALUES ($1, $2, NOW())
+         ON CONFLICT (key) DO UPDATE SET value = $2, updated_at = NOW()`,
+        [key, val ? 'true' : 'false']
+      );
+      console.log(`[admin] ${req.session.username} set ${key}=${val}`);
+    }
+  }
+  if (mfa_enforcement != null) {
+    if (!['off', 'required'].includes(mfa_enforcement)) {
+      return res.status(400).json({ error: 'mfa_enforcement must be "off" or "required"' });
+    }
+    await query(
+      `INSERT INTO system_settings (key, value, updated_at) VALUES ('mfa_enforcement', $1, NOW())
+       ON CONFLICT (key) DO UPDATE SET value = $1, updated_at = NOW()`,
+      [mfa_enforcement]
+    );
+    console.log(`[admin] ${req.session.username} set mfa_enforcement=${mfa_enforcement}`);
+  }
+  if (mfa_device_trust != null) {
+    if (!['never', '7d', '30d', 'permanent'].includes(mfa_device_trust)) {
+      return res.status(400).json({ error: 'mfa_device_trust must be "never", "7d", "30d", or "permanent"' });
+    }
+    await query(
+      `INSERT INTO system_settings (key, value, updated_at) VALUES ('mfa_device_trust', $1, NOW())
+       ON CONFLICT (key) DO UPDATE SET value = $1, updated_at = NOW()`,
+      [mfa_device_trust]
+    );
+    console.log(`[admin] ${req.session.username} set mfa_device_trust=${mfa_device_trust}`);
+  }
+  if (custom_css !== undefined) {
+    if (typeof custom_css !== 'string') return res.status(400).json({ error: 'custom_css must be a string' });
+    if (custom_css.length > 50000) return res.status(400).json({ error: 'custom_css must not exceed 50,000 characters' });
+    const sanitized = custom_css.replace(/\0/g, '');
+    await query(
+      `INSERT INTO system_settings (key, value, updated_at) VALUES ('custom_css', $1, NOW())
+       ON CONFLICT (key) DO UPDATE SET value = $1, updated_at = NOW()`,
+      [sanitized]
+    );
+    console.log(`[admin] ${req.session.username} updated custom_css (${sanitized.length} chars)`);
+  }
+  invalidateConnectionPolicyCache();
+  res.json({ ok: true });
+});
+
+// ── Invites ────────────────────────────────────────────────────────────────────
+
+router.get('/invites', async (req, res) => {
+  const limit  = Math.min(parseInt(req.query.limit)  || 100, 200);
+  const offset = Math.max(parseInt(req.query.offset) || 0,   0);
+  const [result, countResult] = await Promise.all([
+    query(
+      `SELECT i.id, i.email, i.token, i.created_at, i.expires_at, i.used_at,
+              u.username as used_by_username
+       FROM invites i
+       LEFT JOIN users u ON i.used_by = u.id
+       ORDER BY i.created_at DESC
+       LIMIT $1 OFFSET $2`,
+      [limit, offset],
+    ),
+    query('SELECT COUNT(*) AS total FROM invites'),
+  ]);
+  res.json({ invites: result.rows, total: parseInt(countResult.rows[0].total) });
+});
+
+router.post('/invites', async (req, res) => {
+  const { email } = req.body;
+  if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.trim())) {
+    return res.status(400).json({ error: 'Valid email address required' });
+  }
+
+  // Generate a 32-byte hex token
+  const token = crypto.randomBytes(32).toString('hex');
+  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+
+  await query(
+    `INSERT INTO invites (email, token, created_by, expires_at)
+     VALUES ($1, $2, $3, $4)`,
+    [email.trim().toLowerCase(), token, req.session.userId, expiresAt]
+  );
+
+  const appUrl = process.env.APP_URL;
+  if (!appUrl) {
+    return res.status(500).json({ error: 'APP_URL is not configured — set it in .env before sending invites.' });
+  }
+  const inviteUrl = `${appUrl}/register?invite=${token}`;
+
+  // Try to send an invite email — prefer system SMTP, fall back to admin's first SMTP account
+  let emailSent = false;
+  let emailError = null;
+  try {
+    let transport = null;
+    let fromHeader = null;
+
+    // 1. System SMTP (configured in Admin → Users → System Email)
+    const sysResult = await query(
+      "SELECT value FROM system_settings WHERE key = 'system_email_config'"
+    );
+    if (sysResult.rows.length) {
+      try {
+        const cfg = JSON.parse(sysResult.rows[0].value);
+        const pass = cfg.pass ? decrypt(cfg.pass) : null;
+        if (cfg.host && cfg.user && pass) {
+          const policy = await getConnectionPolicy();
+          const sysResolved = await resolveForConnection(cfg.host, { allowPrivate: policy.allowPrivateHosts });
+          const sysTls = { rejectUnauthorized: true };
+          if (sysResolved.servername) sysTls.servername = sysResolved.servername;
+          transport = createSmtpTransport(sysResolved, {
+            port: cfg.port || 587,
+            secure: (cfg.port || 587) === 465,
+            auth: { user: cfg.user, pass },
+            tls: sysTls,
+          });
+          fromHeader = `${cfg.fromName || 'MailFlow'} <${cfg.fromEmail || cfg.user}>`;
+        }
+      } catch { /* fall through to personal account */ }
+    }
+
+    // 2. Fall back to admin's first SMTP-enabled personal account
+    if (!transport) {
+      const accountResult = await query(
+        `SELECT * FROM email_accounts
+         WHERE user_id = $1 AND enabled = true AND smtp_host IS NOT NULL
+         ORDER BY created_at LIMIT 1`,
+        [req.session.userId]
+      );
+      if (accountResult.rows.length) {
+        const account = accountResult.rows[0];
+        let smtpAuth;
+        if ((account.oauth_provider === 'microsoft' || account.oauth_provider === 'google')
+            && account.oauth_access_token) {
+          smtpAuth = {
+            type: 'OAuth2',
+            user: account.auth_user || account.email_address,
+            accessToken: decrypt(account.oauth_access_token),
+          };
+        } else {
+          smtpAuth = { user: account.auth_user, pass: decrypt(account.auth_pass) };
+        }
+        const policy = await getConnectionPolicy();
+        const acctResolved = await resolveForConnection(account.smtp_host, { allowPrivate: policy.allowPrivateHosts });
+        const acctTls = { rejectUnauthorized: policy.allowInsecureTls ? !account.imap_skip_tls_verify : true };
+        if (acctResolved.servername) acctTls.servername = acctResolved.servername;
+        transport = createSmtpTransport(acctResolved, {
+          port: account.smtp_port,
+          secure: account.smtp_port === 465,
+          requireTLS: account.smtp_port !== 465 && !policy.allowInsecureTls,
+          auth: smtpAuth,
+          tls: acctTls,
+        });
+        fromHeader = `${account.name} <${account.email_address}>`;
+      }
+    }
+
+    if (transport) {
+      await transport.sendMail({
+        from: fromHeader,
+        to: email,
+        subject: 'You\'ve been invited to MailFlow',
+        text: [
+          `You've been invited to join MailFlow.`,
+          ``,
+          `Click the link below to create your account:`,
+          `${inviteUrl}`,
+          ``,
+          `This invite expires in 7 days and can only be used once.`,
+        ].join('\n'),
+        html: `
+          <div style="font-family: -apple-system, Arial, sans-serif; max-width: 480px; margin: 0 auto; padding: 32px; color: #1a1a1a;">
+            <div style="margin-bottom: 24px;">
+              <span style="font-size: 22px; font-weight: 700; color: #1a1a1a;">Mail</span><span style="font-size: 22px; font-weight: 600; color: #7c6af7;">Flow</span>
+            </div>
+            <h2 style="margin: 0 0 12px; font-size: 18px; font-weight: 600;">You've been invited</h2>
+            <p style="color: #555; line-height: 1.6; margin: 0 0 24px;">
+              You've been invited to join MailFlow. Click the button below to create your account.
+            </p>
+            <a href="${inviteUrl}" style="display: inline-block; padding: 12px 24px; background: #7c6af7; color: white; text-decoration: none; border-radius: 8px; font-weight: 500; font-size: 14px;">
+              Accept Invite
+            </a>
+            <p style="color: #999; font-size: 12px; margin: 24px 0 0;">
+              This invite expires in 7 days and can only be used once.<br>
+              If you weren't expecting this, you can ignore this email.
+            </p>
+          </div>
+        `,
+      });
+      emailSent = true;
+    }
+  } catch (err) {
+    console.error('Invite email failed:', err.message);
+    emailError = /ECONNREFUSED|ENOTFOUND|ETIMEDOUT|authentication|535|reject/i.test(err.message)
+      ? 'Mail server error. Check your SMTP account settings.'
+      : 'Failed to send invite email.';
+  }
+
+  res.json({ ok: true, inviteUrl, emailSent, emailError });
+});
+
+router.delete('/invites/:id', async (req, res) => {
+  await query('DELETE FROM invites WHERE id = $1', [req.params.id]);
+  res.json({ ok: true });
+});
+
+// ── System email (SMTP for sending invites & system messages) ──────────────────
+
+router.get('/system-email', async (req, res) => {
+  const result = await query(
+    "SELECT value FROM system_settings WHERE key = 'system_email_config'"
+  );
+  if (!result.rows.length) return res.json({ config: null });
+  try {
+    const cfg = JSON.parse(result.rows[0].value);
+    // Never expose the raw password — return a sentinel so the UI can show a placeholder
+    res.json({ config: { ...cfg, pass: cfg.pass ? '••••••••' : '' } });
+  } catch {
+    res.json({ config: null });
+  }
+});
+
+router.post('/system-email', async (req, res) => {
+  const { host, port, tls, user, pass, fromName, fromEmail } = req.body;
+  if (!host || !user) {
+    return res.status(400).json({ error: 'SMTP host and username are required' });
+  }
+
+  // Honor the admin's "Allow private / local hosts" policy, exactly as the personal
+  // account routes do — a self-hosted System Email relay on a private IP must be
+  // accepted when the toggle is on (#358). With it off, the private/reserved check stands.
+  const policy = await getConnectionPolicy();
+  const hostErr = await validateHost(host, { allowPrivate: policy.allowPrivateHosts });
+  if (hostErr) return res.status(400).json({ error: hostErr });
+
+  // Load existing config so we can keep the encrypted password if the field wasn't changed
+  let existingPass = null;
+  const existing = await query(
+    "SELECT value FROM system_settings WHERE key = 'system_email_config'"
+  );
+  if (existing.rows.length) {
+    try { existingPass = JSON.parse(existing.rows[0].value).pass; } catch { /* keep existingPass null */ }
+  }
+
+  const encryptedPass = pass && pass !== '••••••••'
+    ? encrypt(pass)
+    : (existingPass || null);
+
+  const cfg = {
+    host: host.trim(),
+    port: parseInt(port) || 587,
+    tls: tls || 'STARTTLS',
+    user: user.trim(),
+    pass: encryptedPass,
+    fromName: (fromName || '').trim() || 'MailFlow',
+    fromEmail: (fromEmail || '').trim() || user.trim(),
+  };
+
+  await query(
+    `INSERT INTO system_settings (key, value, updated_at) VALUES ('system_email_config', $1, NOW())
+     ON CONFLICT (key) DO UPDATE SET value = $1, updated_at = NOW()`,
+    [JSON.stringify(cfg)]
+  );
+  res.json({ ok: true });
+});
+
+router.post('/system-email/test', async (req, res) => {
+  const result = await query(
+    "SELECT value FROM system_settings WHERE key = 'system_email_config'"
+  );
+  if (!result.rows.length) {
+    return res.status(400).json({ error: 'No system email configured' });
+  }
+  let cfg;
+  try { cfg = JSON.parse(result.rows[0].value); } catch {
+    return res.status(500).json({ error: 'Corrupted system email config' });
+  }
+  const pass = cfg.pass ? decrypt(cfg.pass) : null;
+  if (!pass) {
+    return res.status(400).json({ error: 'No password stored — save the configuration first' });
+  }
+  try {
+    const policy = await getConnectionPolicy();
+    const testResolved = await resolveForConnection(cfg.host, { allowPrivate: policy.allowPrivateHosts });
+    const testTls = { rejectUnauthorized: true };
+    if (testResolved.servername) testTls.servername = testResolved.servername;
+    const transport = createSmtpTransport(testResolved, {
+      port: cfg.port,
+      secure: cfg.port === 465,
+      auth: { user: cfg.user, pass },
+      tls: testTls,
+    });
+    await transport.verify();
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+router.delete('/system-email', async (req, res) => {
+  await query("DELETE FROM system_settings WHERE key = 'system_email_config'");
+  res.json({ ok: true });
+});
+
+// ── OIDC providers ─────────────────────────────────────────────────────────────
+
+// login_match_claim is the OIDC claim name (from the verified id_token) used to match an SSO
+// login to an existing MailFlow account (matched against users.username). Restrict to a safe
+// claim-name charset. Returns the trimmed value, or null if it is not a valid claim name.
+function validateMatchClaim(v) {
+  const c = String(v).trim();
+  if (!/^[a-zA-Z0-9_.:-]{1,64}$/.test(c)) return null;
+  // Reject object-prototype key names: as a claim they can't name a real IdP claim, and
+  // `payload["__proto__"]` from JSON.parse is a string own-property that would otherwise slip
+  // past resolveLoginMatchValue's type guard. Defense-in-depth (also guarded at the sink).
+  if (c === '__proto__' || c === 'constructor' || c === 'prototype') return null;
+  return c;
+}
+
+router.get('/oidc', async (req, res) => {
+  const result = await query(
+    `SELECT id, name, slug, issuer_url, client_id, scopes, provisioning_mode,
+            allowed_domains, enabled, require_email_verified, allow_insecure,
+            admin_group_claim, admin_group_value, rp_initiated_logout, login_match_claim,
+            created_at, updated_at
+     FROM oidc_providers ORDER BY name ASC`
+  );
+  res.json({ providers: result.rows });
+});
+
+router.post('/oidc', async (req, res) => {
+  const { name, slug, issuer_url, client_id, client_secret, scopes, provisioning_mode, allowed_domains, enabled, require_email_verified, allow_insecure, admin_group_claim, admin_group_value, rp_initiated_logout, login_match_claim } = req.body;
+  if (!name || !slug || !issuer_url || !client_id || !client_secret) {
+    return res.status(400).json({ error: 'name, slug, issuer_url, client_id and client_secret are required' });
+  }
+  if (!/^[a-z0-9-]+$/.test(slug)) {
+    return res.status(400).json({ error: 'Slug must contain only lowercase letters, numbers and hyphens' });
+  }
+  let loginMatchClaim = 'email';
+  if (login_match_claim !== undefined && login_match_claim !== null && String(login_match_claim).trim() !== '') {
+    const c = validateMatchClaim(login_match_claim);
+    if (!c) return res.status(400).json({ error: 'login_match_claim must be a valid claim name (letters, digits, . _ : -)' });
+    loginMatchClaim = c;
+  }
+  try {
+    const parsed = new URL(issuer_url.trim());
+    if (!allow_insecure && parsed.protocol !== 'https:') {
+      return res.status(400).json({ error: 'Issuer URL must use HTTPS' });
+    }
+    if (!allow_insecure) {
+      // Honor the admin's "Allow private / local hosts" policy like every other
+      // validateHost call in this file (#494: a LAN issuer with a valid public cert was
+      // rejected even with the policy on, and the only escape hatch also disabled TLS
+      // verification — the opposite of what a security-conscious self-hoster wants).
+      const policy = await getConnectionPolicy();
+      const hostErr = await validateHost(parsed.hostname, { allowPrivate: policy.allowPrivateHosts });
+      if (hostErr) return res.status(400).json({ error: `Issuer URL: ${hostErr}` });
+    }
+  } catch {
+    return res.status(400).json({ error: 'Issuer URL is not a valid URL' });
+  }
+  try {
+    const result = await query(
+      `INSERT INTO oidc_providers (name, slug, issuer_url, client_id, client_secret, scopes, provisioning_mode, allowed_domains, enabled, require_email_verified, allow_insecure, admin_group_claim, admin_group_value, rp_initiated_logout, login_match_claim)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+       RETURNING id, name, slug, issuer_url, client_id, scopes, provisioning_mode, allowed_domains, enabled, require_email_verified, allow_insecure, admin_group_claim, admin_group_value, rp_initiated_logout, login_match_claim`,
+      [
+        name.trim(), slug.trim(), issuer_url.trim(), client_id.trim(),
+        encrypt(client_secret),
+        (scopes || 'openid email profile').trim(),
+        provisioning_mode || 'login_existing_only',
+        allowed_domains?.trim() || null,
+        enabled !== false,
+        require_email_verified !== false,
+        allow_insecure === true,
+        admin_group_claim?.trim() || null,
+        admin_group_value?.trim() || null,
+        rp_initiated_logout === true,
+        loginMatchClaim,
+      ]
+    );
+    res.json({ provider: result.rows[0] });
+  } catch (err) {
+    if (err.code === '23505') return res.status(409).json({ error: 'A provider with this slug already exists' });
+    throw err;
+  }
+});
+
+// Guard against locking everyone out: if password login is disabled, refuse to
+// disable/delete the last enabled OIDC provider. Returns an error string or null.
+async function wouldLockOut(providerId) {
+  const s = await query("SELECT value FROM system_settings WHERE key = 'internal_auth_disabled'");
+  if (s.rows[0]?.value !== 'true') return null; // password login still available
+  const others = await query(
+    'SELECT COUNT(*) AS count FROM oidc_providers WHERE enabled = true AND id <> $1',
+    [providerId]
+  );
+  if (parseInt(others.rows[0].count) === 0) {
+    return 'Cannot disable or delete the last enabled SSO provider while password login is off. Re-enable password login first.';
+  }
+  return null;
+}
+
+router.patch('/oidc/:id', async (req, res) => {
+  const { id } = req.params;
+  const { name, slug, issuer_url, client_id, client_secret, scopes, provisioning_mode, allowed_domains, enabled, require_email_verified, allow_insecure, admin_group_claim, admin_group_value, rp_initiated_logout, login_match_claim } = req.body;
+
+  const existingResult = await query('SELECT allow_insecure FROM oidc_providers WHERE id = $1', [id]);
+  if (!existingResult.rows.length) return res.status(404).json({ error: 'Provider not found' });
+  const existing = existingResult.rows[0];
+
+  // null = keep existing (column is NOT NULL, so we COALESCE rather than allow a blank reset).
+  let loginMatchClaimParam = null;
+  if (login_match_claim !== undefined && login_match_claim !== null && String(login_match_claim).trim() !== '') {
+    const c = validateMatchClaim(login_match_claim);
+    if (!c) return res.status(400).json({ error: 'login_match_claim must be a valid claim name (letters, digits, . _ : -)' });
+    loginMatchClaimParam = c;
+  }
+
+  // Block disabling the last usable auth method.
+  if (enabled === false) {
+    const lockout = await wouldLockOut(id);
+    if (lockout) return res.status(400).json({ error: lockout });
+  }
+
+  if (slug && !/^[a-z0-9-]+$/.test(slug)) {
+    return res.status(400).json({ error: 'Slug must contain only lowercase letters, numbers and hyphens' });
+  }
+  if (issuer_url) {
+    try {
+      const parsed = new URL(issuer_url.trim());
+      const effectiveAllowInsecure = allow_insecure !== undefined ? allow_insecure : existing.allow_insecure;
+      if (!effectiveAllowInsecure && parsed.protocol !== 'https:') {
+        return res.status(400).json({ error: 'Issuer URL must use HTTPS' });
+      }
+      if (!effectiveAllowInsecure) {
+        // Same policy pass-through as the create route (#494).
+        const policy = await getConnectionPolicy();
+        const hostErr = await validateHost(parsed.hostname, { allowPrivate: policy.allowPrivateHosts });
+        if (hostErr) return res.status(400).json({ error: `Issuer URL: ${hostErr}` });
+      }
+    } catch {
+      return res.status(400).json({ error: 'Issuer URL is not a valid URL' });
+    }
+  }
+  // Only encrypt a new secret if one was provided (non-placeholder)
+  const secretUpdate = client_secret && client_secret !== '••••••••'
+    ? encrypt(client_secret)
+    : undefined;
+  try {
+    const result = await query(
+      `UPDATE oidc_providers SET
+        name = COALESCE($2, name),
+        slug = COALESCE($3, slug),
+        issuer_url = COALESCE($4, issuer_url),
+        client_id = COALESCE($5, client_id),
+        client_secret = COALESCE($6, client_secret),
+        scopes = COALESCE($7, scopes),
+        provisioning_mode = COALESCE($8, provisioning_mode),
+        allowed_domains = CASE WHEN $9::text IS DISTINCT FROM '__keep__' THEN $9::text ELSE allowed_domains END,
+        enabled = COALESCE($10, enabled),
+        require_email_verified = COALESCE($11, require_email_verified),
+        allow_insecure = COALESCE($12, allow_insecure),
+        admin_group_claim = CASE WHEN $13::text IS DISTINCT FROM '__keep__' THEN $13::text ELSE admin_group_claim END,
+        admin_group_value = CASE WHEN $14::text IS DISTINCT FROM '__keep__' THEN $14::text ELSE admin_group_value END,
+        rp_initiated_logout = COALESCE($15, rp_initiated_logout),
+        login_match_claim = COALESCE($16, login_match_claim),
+        updated_at = NOW()
+       WHERE id = $1
+       RETURNING id, name, slug, issuer_url, client_id, scopes, provisioning_mode, allowed_domains, enabled, require_email_verified, allow_insecure, admin_group_claim, admin_group_value, rp_initiated_logout, login_match_claim`,
+      [
+        id,
+        name?.trim() || null,
+        slug?.trim() || null,
+        issuer_url?.trim() || null,
+        client_id?.trim() || null,
+        secretUpdate || null,
+        scopes?.trim() || null,
+        provisioning_mode || null,
+        allowed_domains !== undefined ? (allowed_domains?.trim() || null) : '__keep__',
+        enabled !== undefined ? enabled : null,
+        require_email_verified !== undefined ? require_email_verified : null,
+        allow_insecure !== undefined ? allow_insecure : null,
+        admin_group_claim !== undefined ? (admin_group_claim?.trim() || null) : '__keep__',
+        admin_group_value !== undefined ? (admin_group_value?.trim() || null) : '__keep__',
+        rp_initiated_logout !== undefined ? rp_initiated_logout : null,
+        loginMatchClaimParam,
+      ]
+    );
+    if (!result.rows.length) return res.status(404).json({ error: 'Provider not found' });
+    res.json({ provider: result.rows[0] });
+  } catch (err) {
+    if (err.code === '23505') return res.status(409).json({ error: 'A provider with this slug already exists' });
+    throw err;
+  }
+});
+
+router.delete('/oidc/:id', async (req, res) => {
+  const lockout = await wouldLockOut(req.params.id);
+  if (lockout) return res.status(400).json({ error: lockout });
+  await query('DELETE FROM oidc_providers WHERE id = $1', [req.params.id]);
+  res.json({ ok: true });
+});
+
+export default router;

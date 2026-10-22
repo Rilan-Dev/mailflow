@@ -1,0 +1,550 @@
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+
+const mocks = vi.hoisted(() => ({
+  query: vi.fn(),
+  getAdminAiConfig: vi.fn(),
+  getAiNewUsersEnabled: vi.fn(),
+  saveAiConfig: vi.fn(),
+  deleteAiConfig: vi.fn(),
+  getAiStatus: vi.fn(),
+  testAiProvider: vi.fn(),
+  streamChat: vi.fn(),
+  startDeviceFlow: vi.fn(),
+  pollDeviceFlow: vi.fn(),
+  cancelDeviceFlow: vi.fn(),
+  getCodexStatus: vi.fn(),
+  disconnectCodex: vi.fn(),
+}));
+
+vi.mock('../services/db.js', () => ({ query: mocks.query }));
+vi.mock('../services/aiProvider.js', () => ({
+  getAdminAiConfig: mocks.getAdminAiConfig,
+  getAiNewUsersEnabled: mocks.getAiNewUsersEnabled,
+  saveAiConfig: mocks.saveAiConfig,
+  deleteAiConfig: mocks.deleteAiConfig,
+  getAiStatus: mocks.getAiStatus,
+  testAiProvider: mocks.testAiProvider,
+  streamChat: mocks.streamChat,
+}));
+vi.mock('../services/openaiCodexAuth.js', () => ({
+  startDeviceFlow: mocks.startDeviceFlow,
+  pollDeviceFlow: mocks.pollDeviceFlow,
+  cancelDeviceFlow: mocks.cancelDeviceFlow,
+  getCodexStatus: mocks.getCodexStatus,
+  disconnectCodex: mocks.disconnectCodex,
+}));
+
+import express from 'express';
+import aiRoutes, { aiLanguageInstruction } from './ai.js';
+
+const ADMIN = 'admin-user';
+const MEMBER = 'ordinary-user';
+// Users whose ai_enabled is false, and users whose row cannot be read.
+const aiDisabledUsers = new Set();
+let aiUserReadError = null;
+const FLOW_ID = '11111111-1111-4111-8111-111111111111';
+
+function buildApp() {
+  const app = express();
+  app.use(express.json());
+  app.use((req, _res, next) => {
+    const userId = req.get('x-test-user');
+    if (userId) {
+      req.session = { userId, username: userId, destroy: vi.fn() };
+      req.sessionID = `session-${userId}`;
+    }
+    next();
+  });
+  app.use('/api', aiRoutes);
+  // Mirrors index.js without exposing internal exception messages.
+  // eslint-disable-next-line no-unused-vars
+  app.use((error, _req, res, _next) => {
+    res.status(error.status || 500).json({ error: error.status ? error.message : 'Internal server error' });
+  });
+  return app;
+}
+
+function request(path, { method = 'GET', user = ADMIN, body } = {}) {
+  const headers = {};
+  if (user) headers['x-test-user'] = user;
+  if (body !== undefined) headers['content-type'] = 'application/json';
+  return fetch(`${base}${path}`, {
+    method,
+    headers,
+    ...(body !== undefined ? { body: JSON.stringify(body) } : {}),
+  });
+}
+
+function chat(body, options = {}) {
+  return request('/api/ai/chat', { method: 'POST', user: MEMBER, body: { purpose: 'compose', ...body }, ...options });
+}
+
+async function* deltas(...values) {
+  yield* values;
+}
+
+let server;
+let base;
+
+beforeAll(async () => {
+  await new Promise((resolve) => { server = buildApp().listen(0, resolve); });
+  base = `http://127.0.0.1:${server.address().port}`;
+});
+
+afterAll(async () => {
+  await new Promise((resolve) => server.close(resolve));
+});
+
+beforeEach(() => {
+  Object.values(mocks).forEach((mock) => mock.mockReset());
+  aiDisabledUsers.clear();
+  aiUserReadError = null;
+  mocks.query.mockImplementation(async (sql, params = []) => {
+    if (/SELECT ai_enabled, is_admin FROM users/i.test(sql)) {
+      if (aiUserReadError) throw aiUserReadError;
+      if (params[0] === 'deleted-user') return { rows: [] };
+      return { rows: [{ ai_enabled: !aiDisabledUsers.has(params[0]), is_admin: params[0] === ADMIN }] };
+    }
+    if (/SELECT is_admin FROM users/i.test(sql)) {
+      return { rows: params[0] === ADMIN ? [{ is_admin: true }] : [{ is_admin: false }] };
+    }
+    if (/SELECT id FROM users/i.test(sql)) return { rows: params[0] ? [{ id: params[0] }] : [] };
+    if (/system_settings/i.test(sql)) return { rows: [] };
+    if (/SELECT preferences FROM users/i.test(sql)) return { rows: [{ preferences: {} }] };
+    throw new Error(`Unexpected SQL: ${sql}`);
+  });
+  mocks.getAdminAiConfig.mockResolvedValue(null);
+  mocks.getAiNewUsersEnabled.mockResolvedValue(true);
+  mocks.saveAiConfig.mockImplementation(async (config) => config);
+  mocks.deleteAiConfig.mockResolvedValue(undefined);
+  mocks.getAiStatus.mockResolvedValue({ enabled: true, provider: 'api-key', features: { compose: true, summarize: true } });
+  mocks.testAiProvider.mockResolvedValue({ ok: true });
+  mocks.streamChat.mockImplementation(() => deltas('Hello'));
+  mocks.startDeviceFlow.mockResolvedValue({
+    flowId: FLOW_ID,
+    userCode: 'ABCD-EFGH',
+    verificationUrl: 'https://auth.openai.com/codex/device',
+    expiresAt: 2_000_000_000_000,
+    intervalMs: 5000,
+  });
+  mocks.pollDeviceFlow.mockResolvedValue({ status: 'pending', retryAfterMs: 5000 });
+  mocks.cancelDeviceFlow.mockResolvedValue({ status: 'cancelled' });
+  mocks.getCodexStatus.mockResolvedValue({ connected: false, state: 'disconnected', reconnectRequired: false });
+  mocks.disconnectCodex.mockResolvedValue({ status: 'disconnected' });
+});
+
+describe('admin authorization and configuration', () => {
+  it.each([
+    [null, 401],
+    [MEMBER, 403],
+    [ADMIN, 200],
+  ])('guards device start for user %s with status %i', async (user, status) => {
+    const response = await request('/api/admin/ai/codex/device', { method: 'POST', user });
+    expect(response.status).toBe(status);
+  });
+
+  it('returns the adapter-normalized masked configuration', async () => {
+    const config = {
+      enabled: true,
+      provider: 'chatgpt',
+      apiKeyConfig: { baseUrl: 'https://api.example/v1', apiKey: '••••••••', model: 'fallback' },
+      chatgptConfig: { model: 'gpt-5.4-mini' },
+      features: { compose: true, summarize: false },
+    };
+    mocks.getAdminAiConfig.mockResolvedValue(config);
+    const response = await request('/api/admin/ai');
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({ config, newUsersEnabled: true });
+  });
+
+  // #644: kept when no provider is configured, so the admin form can still show it.
+  it('returns "Allow AI for new users" also when no provider is configured', async () => {
+    mocks.getAiNewUsersEnabled.mockResolvedValue(false);
+    const response = await request('/api/admin/ai');
+    expect(await response.json()).toEqual({ config: null, newUsersEnabled: false });
+  });
+
+  it('saves provider selection through the adapter without returning secrets', async () => {
+    const input = {
+      enabled: true,
+      provider: 'chatgpt',
+      apiKeyConfig: { baseUrl: 'https://api.example/v1', apiKey: '••••••••', model: 'fallback' },
+      chatgptConfig: { model: 'gpt-5.4-mini' },
+      features: { compose: true, summarize: true },
+    };
+    mocks.saveAiConfig.mockResolvedValue(input);
+    const response = await request('/api/admin/ai', { method: 'PATCH', body: input });
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({ ok: true, config: input });
+    expect(mocks.saveAiConfig).toHaveBeenCalledWith(input);
+  });
+
+  it('deletes only the provider configuration through the adapter', async () => {
+    const response = await request('/api/admin/ai', { method: 'DELETE' });
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({ ok: true });
+    expect(mocks.deleteAiConfig).toHaveBeenCalledTimes(1);
+    expect(mocks.disconnectCodex).not.toHaveBeenCalled();
+  });
+
+  it('tests the selected provider through the adapter', async () => {
+    const response = await request('/api/admin/ai/test', { method: 'POST' });
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({ ok: true });
+    expect(mocks.testAiProvider).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not expose upstream diagnostics when a provider test fails', async () => {
+    mocks.testAiProvider.mockRejectedValue(Object.assign(
+      new Error('access-token-secret and mailbox content'),
+      { status: 502 },
+    ));
+    const response = await request('/api/admin/ai/test', { method: 'POST' });
+    expect(response.status).toBe(502);
+    expect(await response.json()).toEqual({ error: 'AI provider test failed' });
+  });
+
+  it('surfaces the real reason when the provider error is marked safe to expose', async () => {
+    mocks.testAiProvider.mockRejectedValue(Object.assign(
+      new Error('AI provider returned an empty completion (finish_reason: length)'),
+      { status: 502, expose: true },
+    ));
+    const response = await request('/api/admin/ai/test', { method: 'POST' });
+    expect(response.status).toBe(502);
+    expect(await response.json()).toEqual({
+      error: 'AI provider returned an empty completion (finish_reason: length)',
+    });
+  });
+
+  it('answers 409, not 401, when the ChatGPT authorization requires reconnection', async () => {
+    mocks.testAiProvider.mockRejectedValue(Object.assign(
+      new Error('ChatGPT authorization requires reconnection'),
+      { status: 401 },
+    ));
+    const response = await request('/api/admin/ai/test', { method: 'POST' });
+    expect(response.status).toBe(409);
+    expect(await response.json()).toEqual({ error: 'ChatGPT authorization requires reconnection' });
+  });
+});
+
+describe('admin ChatGPT device lifecycle', () => {
+  it('binds device start to the initiating admin session', async () => {
+    const response = await request('/api/admin/ai/codex/device', { method: 'POST' });
+    expect(response.status).toBe(200);
+    expect(await response.json()).toMatchObject({ flowId: FLOW_ID, userCode: 'ABCD-EFGH' });
+    expect(mocks.startDeviceFlow).toHaveBeenCalledWith({
+      userId: ADMIN,
+      sessionId: `session-${ADMIN}`,
+    });
+  });
+
+  it('polls and cancels only through the initiating admin session', async () => {
+    const pollResponse = await request('/api/admin/ai/codex/device/poll', {
+      method: 'POST', body: { flowId: FLOW_ID },
+    });
+    expect(pollResponse.status).toBe(200);
+    expect(await pollResponse.json()).toEqual({ status: 'pending', retryAfterMs: 5000 });
+    expect(mocks.pollDeviceFlow).toHaveBeenCalledWith({
+      flowId: FLOW_ID, userId: ADMIN, sessionId: `session-${ADMIN}`,
+    });
+
+    const cancelResponse = await request('/api/admin/ai/codex/device', {
+      method: 'DELETE', body: { flowId: FLOW_ID },
+    });
+    expect(cancelResponse.status).toBe(200);
+    expect(await cancelResponse.json()).toEqual({ status: 'cancelled' });
+    expect(mocks.cancelDeviceFlow).toHaveBeenCalledWith({
+      flowId: FLOW_ID, userId: ADMIN, sessionId: `session-${ADMIN}`,
+    });
+  });
+
+  it('returns masked status and disconnects credentials plus pending flows', async () => {
+    mocks.getCodexStatus.mockResolvedValue({
+      connected: true, state: 'connected', expiresAt: 2_000_000_000_000, accountLabel: 'v•••@example.com',
+    });
+    const statusResponse = await request('/api/admin/ai/codex/status');
+    expect(statusResponse.status).toBe(200);
+    expect(await statusResponse.json()).toEqual({
+      connected: true, state: 'connected', expiresAt: 2_000_000_000_000, accountLabel: 'v•••@example.com',
+    });
+    expect(mocks.getCodexStatus).toHaveBeenCalledWith({
+      userId: ADMIN, sessionId: `session-${ADMIN}`,
+    });
+
+    const disconnectResponse = await request('/api/admin/ai/codex', { method: 'DELETE' });
+    expect(disconnectResponse.status).toBe(200);
+    expect(await disconnectResponse.json()).toEqual({ status: 'disconnected' });
+    expect(mocks.disconnectCodex).toHaveBeenCalledTimes(1);
+  });
+
+  it.each([
+    ['POST', '/api/admin/ai/codex/device/poll', mocks.pollDeviceFlow],
+    ['DELETE', '/api/admin/ai/codex/device', mocks.cancelDeviceFlow],
+  ])('rejects malformed flow IDs before %s dispatch', async (method, path, service) => {
+    const response = await request(path, { method, body: { flowId: 'not-a-uuid' } });
+    expect(response.status).toBe(400);
+    expect(await response.json()).toEqual({ error: 'Invalid flowId' });
+    expect(service).not.toHaveBeenCalled();
+  });
+
+  it('preserves sanitized service status codes for missing or wrong-session flows', async () => {
+    mocks.pollDeviceFlow.mockRejectedValue(Object.assign(new Error('Device authorization not found'), { status: 404 }));
+    const response = await request('/api/admin/ai/codex/device/poll', {
+      method: 'POST', body: { flowId: FLOW_ID },
+    });
+    expect(response.status).toBe(404);
+    expect(await response.json()).toEqual({ error: 'Device authorization not found' });
+  });
+});
+
+describe('authenticated AI status and streaming', () => {
+  it('requires authentication for status and returns provider-aware state', async () => {
+    const unauthenticated = await request('/api/ai/status', { user: null });
+    expect(unauthenticated.status).toBe(401);
+
+    const authenticated = await request('/api/ai/status', { user: MEMBER });
+    expect(authenticated.status).toBe(200);
+    expect(await authenticated.json()).toEqual({
+      enabled: true, provider: 'api-key', features: { compose: true, summarize: true },
+    });
+  });
+
+  it.each([
+    [{}, /messages array is required/i],
+    [{ messages: [{ role: 'tool', content: 'x' }] }, /invalid message role/i],
+    [{ messages: [{ role: 'user', content: 42 }] }, /role and content/i],
+    [{ messages: [{ role: 'user', content: 'x'.repeat(32_001) }] }, /maximum length/i],
+  ])('rejects invalid chat input %# before calling a provider', async (body, errorPattern) => {
+    const response = await chat(body);
+    expect(response.status).toBe(400);
+    expect((await response.json()).error).toMatch(errorPattern);
+    expect(mocks.streamChat).not.toHaveBeenCalled();
+  });
+
+  it('preserves the Chat Completions SSE contract for normalized provider deltas', async () => {
+    mocks.streamChat.mockImplementation(() => deltas('Hel', 'lo'));
+    const messages = [{ role: 'system', content: 'Be brief' }, { role: 'user', content: 'Hi' }];
+    const response = await chat({ messages });
+    expect(response.status).toBe(200);
+    expect(response.headers.get('content-type')).toMatch(/text\/event-stream/);
+    expect(await response.text()).toBe(
+      'data: {"choices":[{"delta":{"content":"Hel"}}]}\n\n'
+      + 'data: {"choices":[{"delta":{"content":"lo"}}]}\n\n'
+      + 'data: [DONE]\n\n',
+    );
+    expect(mocks.streamChat).toHaveBeenCalledWith(
+      [{ role: 'system', content: aiLanguageInstruction('en') }, ...messages],
+      { signal: expect.any(AbortSignal) },
+    );
+  });
+
+  it('returns 503 before streaming when the selected provider is unavailable', async () => {
+    mocks.getAiStatus.mockResolvedValue({
+      enabled: false,
+      provider: 'chatgpt',
+      reconnectRequired: true,
+      features: { compose: true },
+    });
+    const response = await chat({ messages: [{ role: 'user', content: 'Hi' }] });
+    expect(response.status).toBe(503);
+    expect(await response.json()).toEqual({ error: 'AI provider requires reconnection' });
+    expect(mocks.streamChat).not.toHaveBeenCalled();
+  });
+
+  it('aborts the provider stream when the HTTP client disconnects', async () => {
+    let providerSignal;
+    let resolveAbort;
+    const aborted = new Promise((resolve) => { resolveAbort = resolve; });
+    mocks.streamChat.mockImplementation(async function* stream(_messages, { signal }) {
+      providerSignal = signal;
+      yield 'first';
+      await new Promise((resolve) => {
+        signal.addEventListener('abort', () => {
+          resolveAbort();
+          resolve();
+        }, { once: true });
+      });
+    });
+
+    const controller = new AbortController();
+    const response = await fetch(`${base}/api/ai/chat`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json', 'x-test-user': MEMBER },
+      body: JSON.stringify({ purpose: 'summarize', messages: [{ role: 'user', content: 'Hi' }] }),
+      signal: controller.signal,
+    });
+    const reader = response.body.getReader();
+    await reader.read();
+    controller.abort();
+    await aborted;
+    expect(providerSignal.aborted).toBe(true);
+  });
+
+  it('emits a generic SSE error after headers without exposing upstream credentials', async () => {
+    mocks.streamChat.mockImplementation(async function* stream() {
+      yield 'first';
+      throw new Error('access-token-secret');
+    });
+    const response = await chat({ messages: [{ role: 'user', content: 'Hi' }] });
+    expect(response.status).toBe(200);
+    const text = await response.text();
+    expect(text).toContain('data: {"error":"AI request failed"}\n\n');
+    expect(text).toContain('data: [DONE]\n\n');
+    expect(text).not.toContain('access-token-secret');
+  });
+});
+
+// #644: the provider is shared by the whole instance, so each user carries an AI switch, and the
+// instance's feature switches are enforced here rather than only by hiding buttons.
+describe('per-user AI access and feature gates', () => {
+  const chatgptStatus = {
+    enabled: true,
+    provider: 'chatgpt',
+    features: { compose: true, summarize: true },
+    reconnectRequired: false,
+    connection: { connected: true, state: 'connected', expiresAt: 2_000_000_000_000, accountLabel: 'v•••@example.com' },
+  };
+  const hi = [{ role: 'user', content: 'Hi' }];
+
+  it('shows the ChatGPT connection to admins only', async () => {
+    mocks.getAiStatus.mockResolvedValue(chatgptStatus);
+    const member = await (await request('/api/ai/status', { user: MEMBER })).json();
+    expect(member).toEqual({
+      enabled: true, provider: 'chatgpt', features: { compose: true, summarize: true }, reconnectRequired: false,
+    });
+    expect(JSON.stringify(member)).not.toContain('example.com');
+
+    const admin = await (await request('/api/ai/status', { user: ADMIN })).json();
+    expect(admin).toEqual(chatgptStatus);
+  });
+
+  it.each([MEMBER, ADMIN])('reports AI as off to %s when their AI access is off', async (user) => {
+    mocks.getAiStatus.mockResolvedValue(chatgptStatus);
+    aiDisabledUsers.add(user);
+    const response = await request('/api/ai/status', { user });
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({
+      enabled: false, provider: 'chatgpt', features: { compose: false, summarize: false }, reconnectRequired: false,
+    });
+  });
+
+  it('fails closed when the user row is missing or cannot be read', async () => {
+    const missing = await (await request('/api/ai/status', { user: 'deleted-user' })).json();
+    expect(missing).toMatchObject({ enabled: false, features: { compose: false, summarize: false } });
+    const refused = await chat({ messages: hi }, { user: 'deleted-user' });
+    expect(refused.status).toBe(403);
+
+    aiUserReadError = new Error('connection terminated');
+    const logged = vi.spyOn(console, 'error').mockImplementation(() => {});
+    expect((await request('/api/ai/status', { user: MEMBER })).status).toBe(500);
+    const failed = await chat({ messages: hi });
+    expect(failed.status).toBe(500);
+    expect(mocks.streamChat).not.toHaveBeenCalled();
+    logged.mockRestore();
+  });
+
+  it.each([
+    [{ messages: hi, purpose: null }],
+    [{ messages: hi, purpose: 'translate' }],
+    [{ messages: hi, purpose: 'constructor' }],
+    [{ messages: hi, purpose: ['compose'] }],
+  ])('refuses a chat whose purpose is present but unknown %#', async (body) => {
+    const response = await request('/api/ai/chat', { method: 'POST', user: MEMBER, body });
+    expect(response.status).toBe(400);
+    expect((await response.json()).error).toMatch(/purpose/);
+    expect(mocks.streamChat).not.toHaveBeenCalled();
+  });
+
+  it.each([MEMBER, ADMIN])('refuses chat for %s when their AI access is off', async (user) => {
+    aiDisabledUsers.add(user);
+    for (const purpose of ['compose', 'summarize']) {
+      const response = await chat({ messages: hi, purpose }, { user });
+      expect(response.status).toBe(403);
+      expect(await response.json()).toMatchObject({ code: 'ai_user_disabled', error: expect.stringMatching(/not enabled for your account/) });
+    }
+    expect(mocks.streamChat).not.toHaveBeenCalled();
+  });
+
+  it('enforces the writing assistant and summaries switches separately', async () => {
+    mocks.getAiStatus.mockResolvedValue({ enabled: true, provider: 'api-key', features: { compose: false, summarize: true } });
+    const compose = await chat({ messages: hi, purpose: 'compose' });
+    expect(compose.status).toBe(403);
+    expect(await compose.json()).toMatchObject({ code: 'ai_feature_disabled', feature: 'compose', error: expect.stringMatching(/writing assistant/) });
+    expect(mocks.streamChat).not.toHaveBeenCalled();
+    expect((await chat({ messages: hi, purpose: 'summarize' })).status).toBe(200);
+
+    mocks.streamChat.mockClear();
+    mocks.getAiStatus.mockResolvedValue({ enabled: true, provider: 'api-key', features: { compose: true, summarize: false } });
+    const summarize = await chat({ messages: hi, purpose: 'summarize' });
+    expect(summarize.status).toBe(403);
+    expect(await summarize.json()).toMatchObject({ code: 'ai_feature_disabled', feature: 'summarize', error: expect.stringMatching(/summaries/) });
+    expect(mocks.streamChat).not.toHaveBeenCalled();
+    expect((await chat({ messages: hi, purpose: 'compose' })).status).toBe(200);
+  });
+
+  // A tab opened before the update sends no purpose. It could be either feature, so it is served
+  // only while both are on, and still only for a user with AI access.
+  describe('a chat without a purpose (a tab from before the update)', () => {
+    const legacy = (user = MEMBER) => request('/api/ai/chat', { method: 'POST', user, body: { messages: hi } });
+
+    it('is served while both switches are on', async () => {
+      const response = await legacy();
+      expect(response.status).toBe(200);
+      expect(await response.text()).toContain('data: [DONE]');
+    });
+
+    it.each([
+      [{ compose: false, summarize: true }, 'compose'],
+      [{ compose: true, summarize: false }, 'summarize'],
+    ])('is refused when one switch is off: %o', async (features, off) => {
+      mocks.getAiStatus.mockResolvedValue({ enabled: true, provider: 'api-key', features });
+      const response = await legacy();
+      expect(response.status).toBe(403);
+      expect(await response.json()).toMatchObject({ code: 'ai_feature_disabled', feature: off });
+      expect(mocks.streamChat).not.toHaveBeenCalled();
+    });
+
+    it('is refused for a user whose AI access is off', async () => {
+      aiDisabledUsers.add(MEMBER);
+      const response = await legacy();
+      expect(response.status).toBe(403);
+      expect(await response.json()).toMatchObject({ code: 'ai_user_disabled' });
+      expect(mocks.streamChat).not.toHaveBeenCalled();
+    });
+  });
+
+  it('applies a change to the user flag on the next request', async () => {
+    expect((await chat({ messages: hi })).status).toBe(200);
+    aiDisabledUsers.add(MEMBER);
+    expect((await chat({ messages: hi })).status).toBe(403);
+  });
+});
+
+describe('aiLanguageInstruction', () => {
+  it.each([
+    ['en', 'English'],
+    ['ru', 'Russian'],
+    ['de', 'German'],
+    ['es', 'Spanish'],
+    ['fr', 'French'],
+    ['it', 'Italian'],
+    ['zhCN', 'Simplified Chinese'],
+    ['pl', 'Polish'],
+    ['cs', 'Czech'],
+    ['ptBR', 'Brazilian Portuguese'],
+    ['ko', 'Korean'],
+  ])('maps %s to %s', (language, name) => {
+    expect(aiLanguageInstruction(language)).toBe(
+      `Always respond in ${name}, unless the user explicitly asks for another language. For email drafting and rewriting, preserve the original email language when it differs from ${name}.`,
+    );
+  });
+
+  it.each([undefined, null, '', 'pt', 'constructor', 'toString'])(
+    'uses a non-interpolating fallback for unsupported value %s',
+    (language) => {
+      expect(aiLanguageInstruction(language)).toBe(
+        'Always respond in the user interface language, unless the user explicitly asks for another language. For email drafting and rewriting, preserve the original email language when it differs from the user interface language.',
+      );
+    },
+  );
+});
