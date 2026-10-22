@@ -4,15 +4,15 @@
     "repository": "https://github.com/maathimself/mailflow",
     "repository_full_name": "maathimself/mailflow",
     "branch": "main",
-    "commit": "c1c446914dc031feb331993c9da339cc524809d5",
-    "tree": "c3c54d9440f25c204368a0bafbbee836e05deb5f",
-    "commit_url": "https://github.com/maathimself/mailflow/commit/c1c446914dc031feb331993c9da339cc524809d5",
-    "tree_url": "https://github.com/maathimself/mailflow/tree/c1c446914dc031feb331993c9da339cc524809d5",
-    "captured_at": "2026-10-19T06:00:12.220Z",
+    "commit": "0a48879a10befaf8affbcf08877daccb89a8b11a",
+    "tree": "c3b9e6e05d5ef66c2dd402c3a5a1173d6672c063",
+    "commit_url": "https://github.com/maathimself/mailflow/commit/0a48879a10befaf8affbcf08877daccb89a8b11a",
+    "tree_url": "https://github.com/maathimself/mailflow/tree/0a48879a10befaf8affbcf08877daccb89a8b11a",
+    "captured_at": "2026-10-22T21:43:27.292Z",
     "capture_method": "Git object database; recursive ls-tree and exact blob extraction",
     "tree_truncated": false,
-    "entry_count": 1501,
-    "blob_count": 1354,
+    "entry_count": 1542,
+    "blob_count": 1395,
     "directory_count": 147,
     "gitlink_count": 0
   },
@@ -30,14 +30,14 @@
   "state": {
     "phase": "PHASE 2 - IMMUTABLE SOURCE SNAPSHOT AND VERIFICATION",
     "source_copy_authorized": true,
-    "verification_status": "CURRENT c1c4469 SNAPSHOT EXACT PATH/MODE/BLOB/TREE MATCH PASS VIA GITHUB GIT OBJECT API; LOCAL NODE VERIFIER NOT RUN (EXECUTION ENVIRONMENT CANNOT RESOLVE GITHUB); HISTORICAL 35067FC SNAPSHOT HAS A CONFIRMED BLOB/MANIFEST MISMATCH",
+    "verification_status": "EXACT BLOB SHA CHECKS PASSED DURING SNAPSHOT CAPTURE; CAPABILITY CLOSURE AND PER-PATH LICENSE CLASSIFICATION REMAIN OPEN",
     "baseline_type": "IMMUTABLE_UPSTREAM_SNAPSHOT",
-    "status": "WORKSPACE_RECOVERY_PR_OPEN; CURRENT SNAPSHOT c1c4469 CAPTURED; FULL VERIFICATION AND CAPABILITY/LICENSE CLOSURE OPEN"
+    "status": "SNAPSHOT_CAPTURED; EXTRACTION CLOSURE AND LICENSE REVIEW PENDING"
   },
   "manifest_paths": {
-    "tree": "extraction/manifests/source-tree-2026-10-19-c1c4469.json",
-    "dispositions": "extraction/manifests/path-dispositions-2026-10-19-c1c4469.json",
-    "snapshot": "extraction/snapshots/c1c446914dc031feb331993c9da339cc524809d5/source"
+    "tree": "extraction/manifests/source-tree-2026-10-22-0a48879.json",
+    "dispositions": "extraction/manifests/path-dispositions-2026-10-22-0a48879.json",
+    "snapshot": "extraction/snapshots/0a48879a10befaf8affbcf08877daccb89a8b11a/source"
   },
   "verification": {
     "workflow_url": "https://github.com/Rilan-Dev/mailflow/actions/runs/39207353893",
