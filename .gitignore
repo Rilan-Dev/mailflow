@@ -1,5 +1,4 @@
 # Environment — never commit real secrets
-.env
 *.env.local
 
 # Local docker compose overrides (e.g. temporary LOG_LEVEL=debug for a soak) — never committed
@@ -25,10 +24,10 @@ npm-debug.log*
 Thumbs.db
 
 # Editor
-.vscode/
 .idea/
 *.swp
 *.swo
 
 .superpowers/
 output/
+config.bat
