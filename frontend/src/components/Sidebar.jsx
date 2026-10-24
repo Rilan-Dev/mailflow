@@ -7,7 +7,7 @@ import { api } from '../utils/api.js';
 import { signOut } from '../utils/signOut.js';
 import { resolveThreadMessages } from '../utils/threadActions.js';
 import { keepDraftsApart } from '../utils/conversationActions.js';
-import { folderDisplayName } from '../utils/folderDisplay.js';
+import { folderDisplayName, folderDisplayNameForPath } from '../utils/folderDisplay.js';
 import {
   activateOnKey,
   buildFolderTree,
@@ -23,6 +23,7 @@ import LogoMark from './LogoMark.jsx';
 import ProfileModal from './ProfileModal.jsx';
 import { useUiScale, descale } from '../hooks/useUiScale.js';
 import { SNOOZED_FOLDER } from '../utils/snoozeActions.js';
+import { describeAccountError, needsSignIn } from '../utils/accountErrors.js';
 
 const ICONS = {
   snoozed: (
@@ -264,7 +265,7 @@ export default function Sidebar() {
   const uiScale = useUiScale();
   const {
     accounts, unreadCounts, selectedAccountId, selectedFolder,
-    setSelectedAccount, setShowAdmin, setAdminTab, openCompose,
+    setSelectedAccount, setShowAdmin, setAdminTab, setAccountsIntent, openCompose,
     folders, setFolders, setAccounts, user, setUser, lockScreen, sidebarCollapsed: sidebarCollapsedPref, toggleSidebar,
     blockRemoteImages, setBlockRemoteImages, setMobileSidebarOpen, addNotification,
     searchAllFolders, setSearchAllFolders,
@@ -595,9 +596,7 @@ export default function Sidebar() {
 
   const handleDeleteFolder = (accountId, folderPath) => {
     const account = accounts.find(a => a.id === accountId);
-    const accountFolders = folders[accountId] || [];
-    const delimiter = accountFolders.find(f => f.delimiter)?.delimiter || '/';
-    const name = folderPath.split(delimiter).pop();
+    const name = folderDisplayNameForPath(folderPath, t, account?.folder_mappings, folders[accountId]);
     const accountLabel = account?.name || account?.email_address || '';
     setConfirmDialog({
       message: t('sidebar.confirmDelete', { name }),
@@ -619,9 +618,9 @@ export default function Sidebar() {
 
   const handleEmptyFolder = (accountId, folderPath) => {
     const account = accounts.find(a => a.id === accountId);
-    const accountFolders = folders[accountId] || [];
-    const delimiter = accountFolders.find(f => f.delimiter)?.delimiter || '/';
-    const name = folderPath.split(delimiter).pop();
+    // The name the folder has in the sidebar, so emptying the "Deleted Items" it labels Trash
+    // asks about and reports Trash (#623).
+    const name = folderDisplayNameForPath(folderPath, t, account?.folder_mappings, folders[accountId]);
     const accountLabel = account?.name || account?.email_address || '';
     setConfirmDialog({
       message: t('sidebar.confirmEmpty', { name }),
@@ -767,6 +766,15 @@ export default function Sidebar() {
     ];
   };
 
+  // Settings > Accounts at this account's row, where its error is explained, optionally
+  // starting "Sign in again" there.
+  const openAccountRow = (account, action = 'focus') => {
+    setAccountsIntent({ accountId: account.id, action });
+    setAdminTab('accounts');
+    setShowAdmin(true);
+    setMobileSidebarOpen(false);
+  };
+
   // ── Account context menu items ─────────────────────────────────────────────
   const buildAccountMenuItems = (account) => {
     const idx = accounts.findIndex(a => a.id === account.id);
@@ -818,8 +826,13 @@ export default function Sidebar() {
         icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>,
         action: () => { setAdminTab('accounts'); setShowAdmin(true); },
       },
-      {
-        label: t('sidebar.accountMenu.reconnect'),
+      // An account whose sign-in stopped working is fixed by signing in, not by retrying.
+      needsSignIn(account) ? {
+        label: t('sidebar.accountMenu.signInAgain'),
+        icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>,
+        action: () => openAccountRow(account, 'signIn'),
+      } : {
+        label: t('sidebar.accountMenu.tryAgain'),
         icon: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>,
         action: () => api.reconnectAccount(account.id).catch(console.error),
       },
@@ -1248,9 +1261,18 @@ export default function Sidebar() {
                         </div>
                       )}
                       {account.sync_error && (
-                        <div style={{ fontSize: 11, color: 'var(--red)' }}>
-                          {t('sidebar.connectionError')}
-                        </div>
+                        <button
+                          type="button"
+                          onClick={e => { e.stopPropagation(); openAccountRow(account); }}
+                          title={t('accountErrors.label.openRow')}
+                          style={{
+                            display: 'block', padding: 0, border: 'none', background: 'none', cursor: 'pointer',
+                            fontSize: 11, color: 'var(--red)', textAlign: 'left', textDecoration: 'underline',
+                            textDecorationStyle: 'dotted', textUnderlineOffset: 2,
+                          }}
+                        >
+                          {t(describeAccountError(account).labelKey)}
+                        </button>
                       )}
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
