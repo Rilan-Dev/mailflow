@@ -192,6 +192,30 @@ describe('no light flash before the dark pass', () => {
     assert.equal(iframe.style.visibility, '');
   });
 
+  // #639: the wrapper opens the body, so it is there from the first slice of a long email the
+  // browser parses in several. Set up then, the dark pass ran before the frame's own styles (which
+  // close the document) existed, and the page around a dark block turned white once they did.
+  test('a document still being parsed is not set up until parsing is done', async () => {
+    const { iframe, seen } = await show({ dark: true, messageId: 'flash-6' });
+    const doc = iframe.contentDocument;
+    let readyState = 'loading';
+    Object.defineProperty(doc, 'readyState', { configurable: true, get: () => readyState });
+    try {
+      parse(iframe); // the wrapper is in, the rest of the email and the frame's styles are not yet
+      doc.getElementById('mf-scale-wrapper').innerHTML =
+        '<table width="600" align="center"><tr><td bgcolor="#101010" style="color:#fff">A dark block on a light page</td></tr></table>';
+      for (let i = 0; i < 5; i += 1) await tick();
+      assert.deepEqual(seen, [], 'no dark pass on a half-parsed document');
+      assert.equal(iframe.style.visibility, 'hidden', 'still hidden while it parses');
+      readyState = 'interactive';
+      for (let i = 0; i < 5 && iframe.style.visibility; i += 1) await tick();
+      assert.deepEqual(seen, ['hidden'], 'the dark pass ran once parsing was done, while hidden');
+      assert.equal(iframe.style.visibility, '');
+    } finally {
+      delete doc.readyState;
+    }
+  });
+
   test('a light reader\'s frame is never hidden', async () => {
     const { iframe } = await show({ dark: false, messageId: 'flash-2' });
     assert.equal(iframe.style.visibility, '');
@@ -279,5 +303,40 @@ describe('fitting a wide email to the frame', () => {
       globalThis.ResizeObserver = RealRO;
       dom.window.ResizeObserver = RealRO;
     }
+  });
+});
+
+// The reading pane's menu opens on a right-click on the email, except on a target its check leaves
+// to the browser. A conversation card has no menu of its own (ConversationPane.render.test.js).
+describe('a right-click on the email', () => {
+  const tick = () => new Promise(r => setTimeout(r, 0));
+  test("opens the pane's menu where it was made, and the browser's on a target the pane leaves to it", async () => {
+    const iframeRef = React.createRef();
+    const opened = [];
+    await React.act(async () => root.render(null));
+    await React.act(async () => {
+      root.render(React.createElement(MessageBodyView, {
+        body: { html: '<p>x</p>', darkCss: '' }, messageId: 'menu-1', emailScaleRef: { current: 1 }, iframeRef,
+        onContextMenu: (x, y, options) => opened.push({ x, y, ...options }),
+        hasNativeContextTarget: ev => Boolean(ev.target.closest('a[href]')),
+      }));
+    });
+    const iframe = iframeRef.current;
+    const doc = iframe.contentDocument;
+    const wrapper = doc.createElement('div');
+    wrapper.id = 'mf-scale-wrapper';
+    wrapper.setAttribute('data-mf-doc', /data-mf-doc="(\d+)"/.exec(iframe.getAttribute('srcdoc'))[1]);
+    wrapper.innerHTML = '<p>Hi</p><a href="https://example.invalid/">a link</a>';
+    doc.body.appendChild(wrapper);
+    for (let i = 0; i < 5; i += 1) await tick();
+    const rightClick = (el) => {
+      const ev = new doc.defaultView.MouseEvent('contextmenu', { bubbles: true, cancelable: true, clientX: 30, clientY: 40 });
+      el.dispatchEvent(ev);
+      return ev.defaultPrevented;
+    };
+    assert.equal(rightClick(wrapper.querySelector('p')), true, "the browser's menu is held back");
+    assert.deepEqual(opened, [{ x: 30, y: 40, source: 'iframe', selectedText: '' }], "the pane's opens where the right-click was");
+    assert.equal(rightClick(wrapper.querySelector('a')), false, "a link keeps the browser's");
+    assert.equal(opened.length, 1);
   });
 });

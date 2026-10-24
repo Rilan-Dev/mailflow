@@ -22,6 +22,9 @@ const UPSTREAM_ABOUT = {
   support: [
     ['kofi', 'https://ko-fi.com/mailflow'],
     ['githubSponsors', 'https://github.com/sponsors/maathimself'],
+    // NEXAHUB: upstream 4.0.5 added the business-license row to AdminPanel's About tab;
+    // surfaced through the same seam so the unconfigured default matches upstream.
+    ['businessLicense', 'https://mailflow.sh/#pricing'],
   ],
 };
 let hostAbout = null;
@@ -108,17 +111,21 @@ async function request(method, path, body, extraHeaders) {
   return res.json();
 }
 
-export async function streamAiChat(messages, { signal, onDelta } = {}) {
+// purpose is 'compose' (writing assistant) or 'summarize' (summaries and AI actions): the server
+// checks it against the admin's switch for that feature (#644).
+export async function streamAiChat(messages, { purpose, signal, onDelta } = {}) {
   const response = await fetch(`${apiBase()}/ai/chat`, {  // NEXAHUB
     method: 'POST',
     credentials: 'include',
     headers: { 'Content-Type': 'application/json', [CSRF_HEADER]: CSRF_VALUE, ...hostHeaders() },
-    body: JSON.stringify({ messages }),
+    body: JSON.stringify({ messages, purpose }),
     signal,
   });
   if (!response.ok) {
     const error = await response.json().catch(() => ({ error: 'AI request failed' }));
-    throw new Error(error.error || 'AI request failed');
+    // The status and code ride along so a caller can tell a refusal from a failure, and which
+    // refusal it is: 'ai_user_disabled' or 'ai_feature_disabled'.
+    throw Object.assign(new Error(error.error || 'AI request failed'), { status: response.status, code: error.code });
   }
   if (!response.body) throw new Error('AI response body is unavailable');
 
@@ -375,7 +382,8 @@ export const api = {
   addAccount: (data) => request('POST', '/accounts', data),
   updateAccount: (id, data) => request('PUT', `/accounts/${id}`, data),
   deleteAccount: (id) => request('DELETE', `/accounts/${id}`),
-  reconnectAccount: (id) => request('POST', `/accounts/${id}/reconnect`),
+  // { wait: true } answers with how the attempt went: { connection, code, error }.
+  reconnectAccount: (id, { wait = false } = {}) => request('POST', `/accounts/${id}/reconnect${wait ? '?wait=1' : ''}`),
   reindexAccount: (id) => request('POST', `/accounts/${id}/reindex`),
   getFolders: (accountId) => request('GET', `/accounts/${accountId}/folders`),
   getAliases: (accountId) => request('GET', `/accounts/${accountId}/aliases`),
@@ -440,11 +448,24 @@ export const api = {
 
   // Integrations
   getIntegrations: () => request('GET', '/integrations'),
+  // How the last redirect sign-in ended (kept in the session, not the URL), read once.
+  oauthResult: async () => {
+    const res = await fetch('/oauth/result', { credentials: 'include' });
+    return res.ok ? (await res.json()).result : null;
+  },
   getIntegrationsStatus: () => request('GET', '/integrations/status'),
   saveIntegration: (provider, config) => request('POST', `/integrations/${provider}`, config),
   deleteIntegration: (provider) => request('DELETE', `/integrations/${provider}`),
-  startMsDeviceFlow: async () => {
-    const res = await fetch('/oauth/microsoft/device', { method: 'POST', credentials: 'include' });
+  setMsBuiltinApp: (enabled) => request('PUT', '/integrations/microsoft/builtin-app', { enabled }),
+  // accountId signs in again to repair that account: the server then refuses a different
+  // address instead of adding a second account (poll status 'wrong_account').
+  // kind ('personal' | 'work') picks the app a new account signs in through.
+  startMsDeviceFlow: async (accountId, kind) => {
+    const res = await fetch('/oauth/microsoft/device', {
+      method: 'POST', credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...(accountId ? { accountId } : {}), ...(kind ? { kind } : {}) }),
+    });
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Failed to start device code flow');
     return data;
@@ -585,6 +606,7 @@ export const api = {
     const qs = p.toString();
     return request('GET', `/gtd/sections${qs ? '?' + qs : ''}`);
   },
+  gtdMetadata: (accountId, messageIds) => request('POST', '/gtd/metadata', { accountId, messageIds }),
   gtdClassify: (messageId, state) => request('POST', '/gtd/classify', { messageId, state }),
   gtdUndoClassify: (undoToken) => request('POST', '/gtd/classify/undo', undoToken),
   gtdUnclassify: (messageId, state) => request('DELETE', '/gtd/classify', { messageId, state }),

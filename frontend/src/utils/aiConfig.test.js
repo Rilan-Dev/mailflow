@@ -151,6 +151,7 @@ describe('normalizeAiForm', () => {
       chatgptConfig: { model: 'gpt-5.6-luna' },
       ...EMPTY_DIRECT_SECTIONS, // NEXAHUB
       features: { compose: true, summarize: true },
+      newUsersEnabled: true,
     });
   });
 
@@ -169,6 +170,7 @@ describe('normalizeAiForm', () => {
       chatgptConfig: { model: 'gpt-5.6-luna' },
       ...EMPTY_DIRECT_SECTIONS, // NEXAHUB
       features: { compose: false, summarize: true },
+      newUsersEnabled: true,
     });
   });
 
@@ -186,6 +188,7 @@ describe('normalizeAiForm', () => {
       chatgptConfig: { model: 'gpt-5.4' },
       ...EMPTY_DIRECT_SECTIONS, // NEXAHUB
       features: { compose: true, summarize: true },
+      newUsersEnabled: true,
     });
   });
 
@@ -301,6 +304,7 @@ describe('buildAiSavePayload', () => {
       chatgptConfig: { model: 'gpt-5.4-mini' },
       ...EMPTY_DIRECT_SECTIONS, // NEXAHUB
       features: { compose: true, summarize: true },
+      newUsersEnabled: true,
     });
     assert.equal('connectionMethod' in payload, false);
     assert.equal('accountProvider' in payload, false);
@@ -322,9 +326,24 @@ describe('buildAiSavePayload', () => {
       chatgptConfig: { model: 'gpt-5.4-mini' },
       ...EMPTY_DIRECT_SECTIONS, // NEXAHUB
       features: { compose: true, summarize: true },
+      newUsersEnabled: true,
     });
     assert.equal('connectionMethod' in buildAiSavePayload(accountForm), false);
     assert.equal('accountProvider' in buildAiSavePayload(accountForm), false);
+  });
+
+  // #644: "Allow AI for new users" is saved with the rest of the AI configuration, and stays off
+  // once an admin turns it off.
+  it('carries "Allow AI for new users" through the form and the save', () => {
+    const form = normalizeAiForm({
+      provider: 'api-key',
+      apiKeyConfig: { baseUrl: 'https://api.example/v1', model: 'fallback' },
+      newUsersEnabled: false,
+    });
+    assert.equal(form.newUsersEnabled, false);
+    assert.equal(buildAiSavePayload(form).newUsersEnabled, false);
+    assert.equal(buildAiSavePayload({ ...form, newUsersEnabled: true }).newUsersEnabled, true);
+    assert.equal(normalizeAiForm({ provider: 'api-key' }).newUsersEnabled, true);
   });
 });
 

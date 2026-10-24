@@ -124,6 +124,11 @@ const SAME_VALUE_ALLOWED = {
   'admin.accounts.presetGmail':             'any', // Gmail
   'admin.accounts.presetIcloud':            'any', // iCloud
   'admin.accounts.presetYahoo':             'any', // Yahoo Mail
+  'addAccount.tile.outlook':                'any', // Outlook.com, Hotmail, Live, MSN
+  'addAccount.tile.gmail':                  'any', // Gmail
+  'addAccount.tile.yahoo':                  'any', // Yahoo Mail
+  'addAccount.tile.icloud':                 'any', // iCloud Mail
+  'mailSignIn.ms.title':                    'any', // Microsoft
   'admin.accounts.smtpHostPh':              'any', // smtp.gmail.com
   'admin.ai.baseUrlPh':                      'any', // http://localhost:11434/v1
   'admin.ai.chatgptModelPh':                 'any', // gpt-5.6-luna
@@ -135,7 +140,6 @@ const SAME_VALUE_ALLOWED = {
   'admin.ai.geminiModelPh':                  'any', // gemini-2.5-flash
   'admin.appearance.customCssPlaceholder':   'any', // CSS code snippet, same in all locales
   'admin.integrations.microsoft.clientIdPh':'any', // xxxxxxxx-xxxx-…
-  'admin.integrations.microsoft.title':     'any', // Microsoft 365 / Outlook.com
   'admin.integrations.google.title':        'any', // Gmail / Google Workspace — brand names
   'admin.integrations.google.clientIdPh':   'any', // xxxxxxxx.apps.googleusercontent.com
   'admin.integrations.google.clientSecretPh':'any', // GOCSPX-…
@@ -234,8 +238,6 @@ const SAME_VALUE_ALLOWED = {
   // "QR code" — same in en and es; de "QR-Code", fr "code QR", it "codice QR", ru "QR-код", zhCN "QR码"
   'admin.security.qrCodeAlt': [['en', 'es', 'ptBR']],
 
-  // "Visita:" — "Visit:" translates identically in es and it (Romance languages)
-  'admin.integrations.microsoft.deviceCodeVisit': [['es', 'it']],
 
   // "Notifications" — same spelling in en and fr
   'admin.notifications.title':  [['en', 'fr']],
@@ -279,6 +281,10 @@ const SAME_VALUE_ALLOWED = {
 
   // "Backup" — loanword used as-is in it and ptBR; "Restaurar…" is the same verb in es and ptBR
   'admin.tabs.backup':    [['en', 'it', 'ptBR']],
+  // "Continuar", "Copiar código", "Copiado": the same words in Spanish and Portuguese
+  'addAccount.continue': [['es', 'ptBR']],
+  'msSignIn.copy':       [['es', 'ptBR']],
+  'msSignIn.copied':     [['es', 'ptBR']],
   'admin.backup.restore': [['es', 'ptBR']],
 
   // "Telefon" / "Projekt" — established Polish/German technical loanwords
@@ -419,9 +425,6 @@ const SAME_VALUE_ALLOWED = {
   'admin.integrations.carddav.disconnect':           [['es', 'ptBR']], // "Desconectar"
   'admin.integrations.carddav.syncing':              [['es', 'ptBR']], // "Sincronizando…"
   'admin.integrations.google.configured':            [['es', 'ptBR']], // "Configurado"
-  'admin.integrations.microsoft.configured':         [['es', 'ptBR']], // "Configurado"
-  'admin.integrations.microsoft.deviceCodeCancel':   [['es', 'ptBR']], // "Cancelar"
-  'admin.integrations.tabApps':                      [['en', 'ptBR']], // "Apps"
   'admin.integrations.todoist.connect':              [['es', 'ptBR']], // "Conectar"
   'admin.integrations.todoist.connected':            [['es', 'ptBR']], // "Conectado"
   'admin.integrations.todoist.connecting':           [['es', 'ptBR']], // "Conectando..."
