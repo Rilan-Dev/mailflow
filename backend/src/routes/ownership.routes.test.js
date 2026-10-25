@@ -21,6 +21,12 @@ vi.mock('../middleware/auth.js', () => {
   return { requireAuth: signIn, requireAdmin: signIn };
 });
 vi.mock('../index.js', () => ({ imapManager: imap.manager }));
+// NEXAHUB: the integration seam routes the same imapManager through
+// services/imapManagerRef.js (a lazy proxy) so importing a route does not boot the
+// standalone server. Mock the ref the same way; upstream's mock of ../index.js stays
+// so the file diffs cleanly against the upstream original.
+vi.mock('../services/imapManagerRef.js', () => ({ imapManager: imap.manager }));
+
 vi.mock('../services/aiAccess.js', () => ({ getUserAiAccess: vi.fn(async () => ({ allowed: true })) }));
 vi.mock('../services/categorizer.js', () => ({
   invalidateSocialDomainCache: vi.fn(), backfillCategories: vi.fn(async () => {}),

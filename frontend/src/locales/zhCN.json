@@ -1675,7 +1675,6 @@
       "frontendBuild": "前端构建",
       "license": "许可证",
       "sponsor": "支持开发",
-      "businessLicense": "企业许可证",
       "sponsorBlurb": "MailFlow 由一人开发和维护。赞助用于支付修复问题、审查代码和发布新版本所需的时间。"
     },
     "search": {
