@@ -1675,7 +1675,6 @@
       "frontendBuild": "Versione del frontend",
       "license": "Licenza",
       "sponsor": "Supporta lo sviluppo",
-      "businessLicense": "Licenza aziendale",
       "sponsorBlurb": "MailFlow è sviluppato e mantenuto da una sola persona. Le sponsorizzazioni finanziano il tempo dedicato a correzioni, revisioni e nuove release."
     },
     "search": {
