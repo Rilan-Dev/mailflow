@@ -7,6 +7,16 @@ vi.mock('../services/db.js', () => ({ query: vi.fn() }));
 vi.mock('../middleware/auth.js', () => ({ requireAuth: (req, _res, next) => { req.session = { userId: 'reader' }; next(); } }));
 vi.mock('../plugins/registry.js', () => ({ pluginRegistry: { hasActiveAsync: vi.fn(), collectHook: vi.fn(), runHook: vi.fn() } }));
 vi.mock('../index.js', () => ({ imapManager: {} }));
+// NEXAHUB: the integration seam routes the same imapManager through
+// services/imapManagerRef.js (a lazy proxy) so importing a route does not boot the
+// standalone server. Re-exports the mocked index.js's imapManager below so the test's
+// setPrototypeOf/Object.assign graft (which targets the index.js object) reaches the
+// routes too; upstream's mock of ../index.js stays so the file diffs cleanly.
+vi.mock('../services/imapManagerRef.js', async () => {
+  const { imapManager } = await import('../index.js');
+  return { imapManager };
+});
+
 vi.mock('../services/aiProvider.js', () => ({ getAiStatus: vi.fn(), completeText: vi.fn() }));
 vi.mock('../services/encryption.js', () => ({ decrypt: () => 'test-password', encrypt: () => 'enc' }));
 vi.mock('../services/hostValidation.js', () => ({ resolveForConnection: vi.fn(async () => ({ host: '127.0.0.1', servername: null })), createPinnedLookup: vi.fn() }));

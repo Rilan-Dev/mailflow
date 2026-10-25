@@ -453,7 +453,7 @@ describe('NEXAHUB direct providers (Anthropic + Gemini)', () => {
       // The other providers' sections still ride along so switching back does not wipe them.
       assert.deepEqual(Object.keys(payload).sort(), [
         'anthropicConfig', 'apiKeyConfig', 'chatgptConfig', 'enabled',
-        'features', 'geminiConfig', 'provider',
+        'features', 'geminiConfig', 'newUsersEnabled', 'provider',
       ]);
     });
 
