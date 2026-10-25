@@ -17,6 +17,16 @@ vi.mock('../index.js', () => ({
     pluginFacade: {},
   },
 }));
+// NEXAHUB: the integration seam routes the same imapManager through
+// services/imapManagerRef.js (a lazy proxy) so importing a route does not boot the
+// standalone server. Re-exports the mocked index.js's imapManager so the routes and the
+// test's assertions share one mock object; upstream's mock of ../index.js stays so the
+// file diffs cleanly against the upstream original.
+vi.mock('../services/imapManagerRef.js', async () => {
+  const { imapManager } = await import('../index.js');
+  return { imapManager };
+});
+
 vi.mock('../services/smtpTransport.js', () => ({ createAccountSmtpTransport: vi.fn() }));
 vi.mock('../utils/mailUtils.js', () => ({ resolveSentFolder: vi.fn(async () => 'Sent') }));
 vi.mock('../services/ownership.js', async (importOriginal) => {

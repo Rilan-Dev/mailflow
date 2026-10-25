@@ -1675,7 +1675,6 @@
       "frontendBuild": "Build del frontend",
       "license": "Licencia",
       "sponsor": "Apoyar el desarrollo",
-      "businessLicense": "Licencia para empresas",
       "sponsorBlurb": "MailFlow lo desarrolla y mantiene una sola persona. Los patrocinios pagan el tiempo dedicado a correcciones, revisiones y nuevas versiones."
     },
     "search": {

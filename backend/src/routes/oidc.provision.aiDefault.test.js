@@ -5,6 +5,12 @@ import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vites
 vi.mock('../services/db.js', () => ({ query: vi.fn(), pool: { connect: vi.fn() } }));
 vi.mock('../services/encryption.js', () => ({ decrypt: (v) => v, isEncrypted: () => false }));
 vi.mock('../index.js', () => ({ imapManager: { connectAllForUser: vi.fn() } }));
+// NEXAHUB: the integration seam routes the same imapManager through
+// services/imapManagerRef.js (a lazy proxy) so importing a route does not boot the
+// standalone server. Mock the ref the same way; upstream's mock of ../index.js stays
+// so the file diffs cleanly against the upstream original.
+vi.mock('../services/imapManagerRef.js', () => ({ imapManager: { connectAllForUser: vi.fn() } }));
+
 vi.mock('../middleware/auth.js', () => ({ requireAuth: (_req, _res, next) => next() }));
 vi.mock('../services/authEvents.js', () => ({ logAuthEvent: vi.fn() }));
 vi.mock('../services/hostValidation.js', () => ({ validateHost: vi.fn(async () => null) }));

@@ -1675,7 +1675,6 @@
       "frontendBuild": "Frontend build",
       "license": "License",
       "sponsor": "Support development",
-      "businessLicense": "Business license",
       "sponsorBlurb": "MailFlow is built and maintained by one person. Sponsorships pay for the time that goes into fixes, reviews and releases."
     },
     "search": {

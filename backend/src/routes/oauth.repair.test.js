@@ -8,6 +8,12 @@ const mocks = vi.hoisted(() => ({
 }));
 
 vi.mock('../index.js', () => ({ imapManager: mocks.imapManager }));
+// NEXAHUB: the integration seam routes the same imapManager through
+// services/imapManagerRef.js (a lazy proxy) so importing a route does not boot the
+// standalone server. Mock the ref the same way; upstream's mock of ../index.js stays
+// so the file diffs cleanly against the upstream original.
+vi.mock('../services/imapManagerRef.js', () => ({ imapManager: mocks.imapManager }));
+
 vi.mock('../services/db.js', () => ({ query: mocks.query, withTransaction: mocks.withTransaction }));
 vi.mock('../services/encryption.js', () => ({ encrypt: (v) => v, decrypt: (v) => v }));
 vi.mock('jose', () => ({ createRemoteJWKSet: vi.fn(() => ({})), jwtVerify: mocks.jwtVerify }));
