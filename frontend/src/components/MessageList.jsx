@@ -13,6 +13,7 @@ import { keepDraftsApart } from '../utils/conversationActions.js';
 import { unreadDeltaByAccount } from '../utils/countSnapshots.js';
 import { splitDraftSignature } from '../utils/draftSignature.js';
 import { useSwipeRow } from '../hooks/useSwipeRow.js';
+import { useHoverPrefetch } from '../hooks/useHoverPrefetch.js';
 import ContextMenu from './ContextMenu.jsx';
 import RowHoverActions from './RowHoverActions.jsx';
 import UndoBar from './UndoBar.jsx';
@@ -26,7 +27,7 @@ import {
 import { formatDate, formatDateTime, formatSnoozeUntil } from '../utils/formatDate.js';
 import { SNOOZED_FOLDER, unsnooze, changeSnooze, refreshCounts } from '../utils/snoozeActions.js';
 import { advanceSelectionAfterRemoval, registerRowOpener } from '../utils/listSelection.js';
-import { openReplyFromMessage, openForwardFromMessage, openForwardAsAttachmentFromMessage } from '../utils/composeFromMessage.js';
+import { pickMessageReplyAlias, resolveReplyRecipients, openReplyFromMessage, openForwardFromMessage, openForwardAsAttachmentFromMessage } from '../utils/composeFromMessage.js';
 import { selectedMessage, markMessageUnread } from '../utils/messageHotkeys.js';
 import { cancelScheduledMarkRead, cancelScheduledMarkReadFor, scheduleMarkReadTimer } from '../utils/markRead.js';
 import { saveSenderCategory } from '../utils/senderCategory.js';
@@ -44,7 +45,7 @@ import SpamExplainModal from './SpamExplainModal.jsx';
 import { shortcutBus } from '../utils/shortcutBus.js';
 import { createLatestRequest } from '../utils/latestRequest.js';
 import { refreshListWindow, createTrailingRefresh } from '../utils/listRefresh.js';
-import { pendingMarkReadMap, completedMarkReadMap, setPending } from '../utils/pendingReads.js';
+import { applyReadGuard as guardReads, clearReadGuard, failMarkRead, setPending, settleMarkRead } from '../utils/pendingReads.js';
 import { applyDeleteGuard, clearDeleteGuard, clearPendingDelete, setCompletedDelete, setPendingDelete, threadDeleteGuardKey } from '../utils/pendingDeletes.js';
 import {
   archiveInChunks,
@@ -191,20 +192,11 @@ function MailboxList() {
   const isColumn = currentLayout.direction === 'column';
   const isNarrow = !isColumn && currentLayout.listWidth <= 260;
 
-  // Apply optimistic read guard to a batch of messages from the server.
-  // Prevents a concurrent sync refresh from reverting a pending or recently-completed
-  // mark-read before the IMAP flag has propagated back to the DB.
+  // Apply the optimistic delete and read guards to a batch of messages from the server
+  // (utils/pendingDeletes.js, utils/pendingReads.js), against the rows shown now.
   const applyReadGuard = useCallback((msgs) => {
-    msgs = applyDeleteGuard(msgs);
-    if (pendingMarkReadMap.size === 0 && completedMarkReadMap.size === 0) return msgs;
-    return msgs.map(m => {
-      const inFlight = pendingMarkReadMap.has(m.id);
-      const inGrace  = completedMarkReadMap.has(m.id);
-      if (!inFlight && !inGrace) return m;
-      if (!m.is_read) return { ...m, is_read: true };
-      if (inGrace) completedMarkReadMap.delete(m.id);
-      return m;
-    });
+    const { messages: listed, searchResults } = useStore.getState();
+    return guardReads(applyDeleteGuard(msgs), [...listed, ...searchResults]);
   }, []);
 
   const [unreadOnly, setUnreadOnly] = useState(false);
@@ -963,26 +955,20 @@ function MailboxList() {
       adjustCategoryCount(message.category, read ? -diff : diff);
     }
 
+    let tokens = [];
     if (read) {
-      actionMessages.forEach(msg => setPending(msg.id, msg.account_id));
+      tokens = actionMessages.map(msg => setPending(msg.id, msg.account_id));
     } else {
-      actionMessages.forEach(msg => {
-        pendingMarkReadMap.delete(msg.id);
-        completedMarkReadMap.delete(msg.id);
-      });
+      actionMessages.forEach(msg => clearReadGuard(msg.id));
     }
 
     try {
       await api.bulkRead(actionMessages.map(msg => msg.id), read);
-      if (read) {
-        actionMessages.forEach(msg => {
-          pendingMarkReadMap.delete(msg.id);
-          completedMarkReadMap.set(msg.id, msg.account_id);
-          setTimeout(() => completedMarkReadMap.delete(msg.id), 10000);
-        });
-      }
+      if (read) actionMessages.forEach((msg, i) => settleMarkRead(msg.id, msg.account_id, tokens[i]));
     } catch (err) {
       console.error('markRead failed:', err);
+      // A read the user has since undone by hand is theirs now: nothing to roll back.
+      if (read && !actionMessages.map((msg, i) => failMarkRead(msg.id, tokens[i])).some(Boolean)) return;
       if (isThreadRow) {
         updateMessage(message.id, { is_read: !read, unread_count: read ? actualDelta : 0 });
         setCachedThreadRead(message, !read);
@@ -994,7 +980,6 @@ function MailboxList() {
         if (read) incrementUnread(accountId, n); else decrementUnread(accountId, n);
       }
       if (actualDelta > 0) adjustCategoryCount(message.category, read ? actualDelta : -actualDelta);
-      if (read) actionMessages.forEach(msg => pendingMarkReadMap.delete(msg.id));
     }
   }, [
     resolveMessagesForThreadAction, isThreadListRow, updateMessage, setCachedThreadRead,
@@ -1064,7 +1049,7 @@ function MailboxList() {
     const unreadDelta = Number.isFinite(unreadCount)
       ? unreadCount
       : deleteMessages.filter(msg => !msg.is_read).length;
-    if (unreadDelta > 0) decrementUnread(message.account_id, unreadDelta);
+    if (unreadDelta > 0) decrementUnread(message.account_id, unreadDelta, { undoable: true });
 
     const timer = setTimeout(async () => {
       pendingDeleteTimers.current.delete(key);
@@ -1143,7 +1128,7 @@ function MailboxList() {
     const unreadCount = messages.reduce((sum, m) => sum + (m.is_read ? 0 : 1), 0);
     const accountId = messages[0].account_id;
     messages.forEach(m => removeMessage(m.id));
-    if (unreadCount > 0) decrementUnread(accountId, unreadCount);
+    if (unreadCount > 0) decrementUnread(accountId, unreadCount, { undoable: true });
 
     // Sidebar folder badges are not adjusted here. They render the counts the IMAP server
     // reported for each folder, so a local guess would be overwritten by the next observation
@@ -1298,7 +1283,7 @@ function MailboxList() {
     const optimisticUnread = threadRow && Number.isFinite(aggregateUnread)
       ? aggregateUnread
       : (message.is_read ? 0 : 1);
-    if (optimisticUnread > 0) decrementUnread(message.account_id, optimisticUnread);
+    if (optimisticUnread > 0) decrementUnread(message.account_id, optimisticUnread, { undoable: true });
     const archiveAction = createUndoableCommit({
       delayMs: UNDO_COMMIT_DELAY_MS,
       commit: async () => {
@@ -1327,54 +1312,9 @@ function MailboxList() {
   }, [setMessagesStarredState]);
 
   const handleSwipeReply = useCallback((message, replyAll = false) => {
-    const replyToArr = Array.isArray(message.reply_to)
-      ? message.reply_to
-      : (() => { try { return JSON.parse(message.reply_to || '[]'); } catch { return []; } })();
-    const replyTarget = (replyToArr.length && replyToArr[0].email)
-      ? replyToArr[0]
-      : { name: message.from_name || '', email: message.from_email || '' };
-    const sender = replyTarget.email ? [replyTarget] : [];
-
     const myAccount = accounts.find(a => a.id === message.account_id);
-    const myEmail = myAccount?.email_address || '';
-    const myAddresses = new Set([
-      myEmail.toLowerCase(),
-      ...(myAccount?.aliases || []).map(al => al.email.toLowerCase()),
-    ]);
-
-    const replyAliasId = (() => {
-      const aliases = myAccount?.aliases || [];
-      if (!aliases.length) return null;
-      try {
-        const toArr = Array.isArray(message.to_addresses)
-          ? message.to_addresses
-          : JSON.parse(message.to_addresses || '[]');
-        const ccArr = Array.isArray(message.cc_addresses)
-          ? message.cc_addresses
-          : JSON.parse(message.cc_addresses || '[]');
-        const allEmails = [...toArr, ...ccArr].map(t => t.email?.toLowerCase()).filter(Boolean);
-        const fromEmail = (message.from_email || '').toLowerCase();
-        const match = aliases.find(al => {
-          const aliasEmail = al.email.toLowerCase();
-          return allEmails.includes(aliasEmail) || fromEmail === aliasEmail;
-        });
-        return match ? match.id : null;
-      } catch { return null; }
-    })();
-
-    const allRecipients = (() => {
-      try {
-        const toArr = Array.isArray(message.to_addresses)
-          ? message.to_addresses
-          : JSON.parse(message.to_addresses || '[]');
-        const ccArr = Array.isArray(message.cc_addresses)
-          ? message.cc_addresses
-          : JSON.parse(message.cc_addresses || '[]');
-        return [...toArr, ...ccArr].filter(
-          t => t.email && !myAddresses.has(t.email.toLowerCase()) && t.email !== replyTarget.email
-        );
-      } catch { return []; }
-    })();
+    const { to: sender, allRecipients } = resolveReplyRecipients(message, myAccount);
+    const replyAliasId = pickMessageReplyAlias(message, myAccount);
 
     const referencesChain = [message.in_reply_to, message.message_id]
       .filter(Boolean).join(' ').trim() || null;
@@ -1394,6 +1334,7 @@ function MailboxList() {
       isReplyAll: replyAll,
       originalFrom: sender,
       allRecipients,
+      threadId: message.thread_id,
     });
   }, [accounts, openCompose]);
   
@@ -1565,7 +1506,7 @@ function MailboxList() {
     }
     msgs.forEach(msg => {
       const delta = parseInt(msg.unread_count) || (msg.is_read ? 0 : 1);
-      if (delta > 0) decrementUnread(msg.account_id, delta);
+      if (delta > 0) decrementUnread(msg.account_id, delta, { undoable: true });
     });
     setSelectedIds(new Set());
     setSelectionModeActive(false);
@@ -1634,7 +1575,7 @@ function MailboxList() {
       console.error('Failed to load thread for bulk move:', err.message);
     }
     ids.forEach(id => removeMessage(id));
-    msgs.forEach(msg => { if (!msg.is_read) decrementUnread(msg.account_id); });
+    msgs.forEach(msg => { if (!msg.is_read) decrementUnread(msg.account_id, 1, { undoable: true }); });
     setSelectedIds(new Set());
     setSelectionModeActive(false);
     setShowFolderPicker(false);
@@ -1720,7 +1661,7 @@ function MailboxList() {
         ? aggregateUnread
         : (message.is_read ? 0 : 1);
       if (count <= 0) return;
-      decrementUnread(message.account_id, count);
+      decrementUnread(message.account_id, count, { undoable: true });
       unreadByAccount.set(message.account_id, (unreadByAccount.get(message.account_id) || 0) + count);
     });
     setSelectedIds(new Set());
@@ -1909,6 +1850,9 @@ function MailboxList() {
   const handleBulkMarkRead = useCallback(async (ids, msgs) => {
     ids.forEach(id => cancelScheduledMarkReadFor(id));
     const markAsRead = msgs.some(m => !m.is_read);
+    // A manual read state either way: a read still in flight from opening one of these no longer
+    // speaks for it, so its failure cannot roll this back.
+    ids.forEach(id => clearReadGuard(id));
     // Compute per-account and per-category unread deltas before mutating state
     const deltaByAccount = {};
     const deltaByCategory = {};
@@ -1989,19 +1933,15 @@ function MailboxList() {
         updateMessage(msg.id, { is_read: true });
         decrementUnread(msg.account_id);
         adjustCategoryCount(msg.category, -1);
-        setPending(msg.id, msg.account_id);
+        const token = setPending(msg.id, msg.account_id);
         api.bulkRead([msg.id], true)
-          .then(() => {
-            pendingMarkReadMap.delete(msg.id);
-            completedMarkReadMap.set(msg.id, msg.account_id);
-            setTimeout(() => completedMarkReadMap.delete(msg.id), 10000);
-          })
+          .then(() => settleMarkRead(msg.id, msg.account_id, token))
           .catch(e => {
             console.error('markRead failed:', e.message);
+            if (!failMarkRead(msg.id, token)) return;
             updateMessage(msg.id, { is_read: false });
             incrementUnread(msg.account_id);
             adjustCategoryCount(msg.category, 1);
-            pendingMarkReadMap.delete(msg.id);
           });
       };
       if (markReadBehavior === 'delay') {
@@ -2103,22 +2043,17 @@ function MailboxList() {
       if (newRead) {
         decrementUnread(msg.account_id);
         adjustCategoryCount(msg.category, -1);
-        setPending(selectedMessageId, msg.account_id);
+        const token = setPending(selectedMessageId, msg.account_id);
         api.bulkRead([selectedMessageId], true)
-          .then(() => {
-            pendingMarkReadMap.delete(selectedMessageId);
-            completedMarkReadMap.set(selectedMessageId, msg.account_id);
-            setTimeout(() => completedMarkReadMap.delete(selectedMessageId), 10000);
-          })
+          .then(() => settleMarkRead(selectedMessageId, msg.account_id, token))
           .catch(err => {
             console.error('markRead failed:', err);
-            pendingMarkReadMap.delete(selectedMessageId);
+            failMarkRead(selectedMessageId, token);
           });
       } else {
         incrementUnread(msg.account_id);
         adjustCategoryCount(msg.category, 1);
-        pendingMarkReadMap.delete(selectedMessageId);
-        completedMarkReadMap.delete(selectedMessageId);
+        clearReadGuard(selectedMessageId);
         api.bulkRead([selectedMessageId], false).catch(console.error);
       }
     };
@@ -2130,8 +2065,7 @@ function MailboxList() {
         cancel: () => {
           if (message) {
             cancelScheduledMarkReadFor(message.id);
-            pendingMarkReadMap.delete(message.id);
-            completedMarkReadMap.delete(message.id);
+            clearReadGuard(message.id);
           }
           cancelScheduledMarkRead(autoMarkReadTimerRef.current);
           autoMarkReadTimerRef.current = null;
@@ -2322,7 +2256,7 @@ function MailboxList() {
         const optimisticUnread = threadRow && Number.isFinite(aggregateUnread)
           ? aggregateUnread
           : (archived.is_read ? 0 : 1);
-        if (optimisticUnread > 0) decrementUnread(archived.account_id, optimisticUnread);
+        if (optimisticUnread > 0) decrementUnread(archived.account_id, optimisticUnread, { undoable: true });
         const archiveAction = createUndoableCommit({
           delayMs: UNDO_COMMIT_DELAY_MS,
           commit: async () => {
@@ -2370,7 +2304,7 @@ function MailboxList() {
         const moveIds = [...new Set(moveMessages.map(msg => msg.id).filter(Boolean))];
         if (!moveIds.length) moveIds.push(moved.id);
         removeMessage(moved.id);
-        if (!moved.is_read) decrementUnread(moved.account_id);
+        if (!moved.is_read) decrementUnread(moved.account_id, 1, { undoable: true });
         // Remove the moved message from the selection so the action bar doesn't
         // stay around claiming "X selected" for messages that are no longer here.
         if (selectedIds.has(moved.id)) {
@@ -2648,20 +2582,16 @@ function MailboxList() {
       updateMessage(message.id, { is_read: true, unread_count: 0 });
       decrementUnread(message.account_id);
       adjustCategoryCount(message.category, -1);
-      setPending(message.id, message.account_id);
+      const token = setPending(message.id, message.account_id);
       api.bulkRead([message.id], true)
         .catch(() => api.bulkRead([message.id], true))
-        .then(() => {
-          pendingMarkReadMap.delete(message.id);
-          completedMarkReadMap.set(message.id, message.account_id);
-          setTimeout(() => completedMarkReadMap.delete(message.id), 10000);
-        })
+        .then(() => settleMarkRead(message.id, message.account_id, token))
         .catch(e => {
           console.error('markRead failed:', e.message);
+          if (!failMarkRead(message.id, token)) return;
           updateMessage(message.id, { is_read: false, unread_count: prevUnread });
           incrementUnread(message.account_id);
           adjustCategoryCount(message.category, 1);
-          pendingMarkReadMap.delete(message.id);
         });
     };
     if (markReadBehavior === 'delay') {
@@ -2747,6 +2677,8 @@ function MailboxList() {
 
   // Derived bulk-selection values (computed fresh each render, no stale closure risk)
   const selectionMode = selectedIds.size > 0 || selectionModeActive;
+  // A row's body loads while the mouse rests on it, so the click shows it at once (#677).
+  const hoverPrefetch = useHoverPrefetch({ enabled: !isMobile && !selectionMode });
   const selectedMsgs = displayMessages.filter(m => selectedIds.has(m.id));
   const selectedCount = selectedIds.size;
   const allSelected = displayMessages.length > 0 && selectedIds.size === displayMessages.length;
@@ -3552,8 +3484,10 @@ function MailboxList() {
       <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
         <div
           ref={listRef}
-          onScroll={handleScroll}
+          onScroll={(e) => { hoverPrefetch.onScroll(); handleScroll(e); }}
           onKeyDown={handleListKeyDown}
+          onPointerMove={hoverPrefetch.onPointerMove}
+          onPointerLeave={hoverPrefetch.onPointerLeave}
           tabIndex={0}
           style={{ height: '100%', overflowY: 'auto', overflowX: 'hidden', outline: 'none', overscrollBehavior: 'contain' }}
         >
