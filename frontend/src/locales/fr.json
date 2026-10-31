@@ -130,6 +130,7 @@
       "keepEditing": "Continuer à éditer"
     },
     "draftHasAttachments": "Les pièces jointes ne sont pas sauvegardées avec les brouillons. Vous devrez les rattacher à la réouverture.",
+    "dropToAttach": "Déposez les fichiers pour les joindre",
     "emptySubject": {
       "title": "Envoyer sans objet ?",
       "sendAnyway": "Envoyer quand même",
@@ -190,6 +191,13 @@
       "aiDismiss": "Ignorer",
       "aiGenerating": "Génération en cours…",
       "aiError": "Erreur IA : {{message}}",
+      "aiReply": "Répondre avec l'IA",
+      "aiReplyPlaceholder": "Que doit dire la réponse ? Ex. : approuver la maquette",
+      "aiReplyInstruction": "Instruction pour la réponse de l'IA",
+      "aiReplyGenerate": "Générer",
+      "aiReplyReading": "Lecture de la conversation…",
+      "aiReplyPartial": "Basée sur la partie la plus récente de la conversation : le reste était trop long pour être envoyé à l'IA.",
+      "aiReplyLeftOut": "Basée sur les {{count}} messages les plus récents de la conversation : les plus anciens ont été laissés de côté.",
       "aiTooLong": "ce brouillon contient {{count}} caractères, plus que les {{max}} que l'IA peut traiter. Raccourcissez-le ou supprimez le texte cité, puis réessayez.",
       "aiNotAllowed": "votre administrateur a désactivé l'IA pour votre compte.",
       "aiFeatureOff": "votre administrateur a désactivé l'aide à la rédaction par IA."
@@ -226,10 +234,16 @@
         "clockBehind": "L'horloge de cet appareil retarde de {{minutes}} min sur celle du serveur, pour qui il est {{time}}.",
         "clockAhead": "L'horloge de cet appareil avance de {{minutes}} min sur celle du serveur, pour qui il est {{time}}.",
         "holdLost": "Ce message a été ouvert dans une autre fenêtre et ne peut plus être enregistré ici. Votre texte reste ici pour être copié.",
+        "deletedElsewhere": "Ce message a été supprimé ailleurs et ne peut plus être enregistré ici. Votre texte reste ici pour être copié.",
+        "sentElsewhere": "Ce message a été envoyé depuis une autre fenêtre et ne peut plus être enregistré ici. Votre texte reste ici pour être copié.",
         "versionConflict": "Ce message a été modifié ailleurs. Fermez-le et rouvrez-le depuis Programmés pour voir la dernière version.",
         "notHeld": "Ce message n'est pas ouvert en modification ici. Fermez-le et rouvrez-le depuis Programmés.",
         "pickNewTime": "L'heure prévue est passée. Choisissez-en une nouvelle.",
         "failed": "Le message n'a pas pu être programmé.",
+        "tooMany": "Vous avez déjà le nombre maximal de messages programmés. Envoyez-en ou supprimez-en d'abord.",
+        "tooMuchStorage": "Vos messages programmés occupent déjà tout l'espace disponible. Envoyez-en ou supprimez-en d'abord.",
+        "rateLimited": "Trop de messages programmés en peu de temps. Réessayez dans une minute.",
+        "payloadTooLarge": "Ce message est trop volumineux pour être programmé : son texte et ses images intégrées prennent trop de place.",
         "heldElsewhere": "Ce message est ouvert dans une autre fenêtre."
       },
       "edit": {
@@ -268,7 +282,8 @@
       "scheduleAnyway": "Programmer malgré tout",
       "undoFailedOpen": "L'annulation a échoué. Ouvrez-le depuis Programmés."
     },
-    "selectAccount": "Choisissez un compte d'envoi"
+    "selectAccount": "Choisissez un compte d'envoi",
+    "smtpAuthDisabled": "Microsoft a désactivé l'envoi depuis les applications de messagerie (SMTP) pour ce compte. Vous pouvez toujours envoyer depuis Outlook sur le web. Pour un compte professionnel ou scolaire, votre administrateur peut le réactiver."
   },
   "message": {
     "find": {
@@ -318,6 +333,7 @@
     "showOriginal": "Afficher les couleurs d'origine",
     "cannotShowDark": "Cet e-mail ne peut pas être affiché en sombre sans rendre le texte difficile à lire",
     "printConversation": "Imprimer la conversation",
+    "conversationActions": "Actions sur la conversation",
     "preparingPrint": "Préparation de l'impression…",
     "more": "Plus",
     "summarize": "Résumer",
@@ -530,6 +546,7 @@
       "failed": "Impossible d’enregistrer la catégorie pour cet expéditeur"
     },
     "changeLayout": "Changer la disposition",
+    "layout": "Disposition",
     "layouts": {
       "focused": {
         "label": "Concentré",
@@ -554,7 +571,8 @@
     },
     "snoozedUntil": "En attente jusqu'à {{when}}",
     "snoozedEmpty": "Rien en attente",
-    "snoozedEmptyDesc": "Les messages mis en attente patientent ici jusqu'à leur retour."
+    "snoozedEmptyDesc": "Les messages mis en attente patientent ici jusqu'à leur retour.",
+    "menu": "Menu"
   },
   "lockScreen": {
     "subtitle": "Saisissez votre PIN pour déverrouiller",
@@ -584,6 +602,8 @@
       "markAllRead": "Tout marquer comme lu",
       "syncFolder": "Synchroniser le dossier",
       "renameFavorite": "Renommer le favori",
+      "favorite": "Ajouter aux favoris",
+      "unfavorite": "Retirer des favoris",
       "rename": "Renommer",
       "createSubfolder": "Créer un sous-dossier",
       "hide": "Masquer le dossier",
@@ -616,7 +636,9 @@
     "snoozed": "En attente",
     "scheduled": "Programmés",
     "scheduledPending": "En attente d'envoi : {{n}}",
-    "scheduledAttention": "À vérifier : {{n}}"
+    "scheduledAttention": "À vérifier : {{n}}",
+    "favorites": "Favoris",
+    "reorderFolder": "Faites glisser pour réorganiser le dossier"
   },
   "scheduled": {
     "refresh": "Actualiser",
@@ -736,6 +758,7 @@
       "undoExpired": "Trop tard pour annuler : le message est en train de partir.",
       "notFound": "Ce message programmé n'existe plus.",
       "sending": "Il est en train d'être envoyé.",
+      "aboutToSend": "Il est sur le point d'être envoyé.",
       "sent": "Il a déjà été envoyé.",
       "cancelled": "Il a été supprimé.",
       "editing": "Il est ouvert en modification dans une autre fenêtre.",
@@ -1878,6 +1901,14 @@
       "businessLicense": "Licence entreprise",
       "sponsorBlurb": "MailFlow est développé et maintenu par une seule personne. Les parrainages financent le temps consacré aux correctifs, aux revues de code et aux nouvelles versions."
     },
+    "businessNotice": {
+      "title": "Vous utilisez MailFlow en entreprise ?",
+      "body": "MailFlow est gratuit sous licence AGPL et développé par une seule personne. Nous demandons aux entreprises qui en dépendent d'acheter une licence entreprise, à 100 $ par instance et par an, hors taxes. C'est facultatif, et MailFlow ne vérifie rien.",
+      "learnMore": "Voir la licence entreprise",
+      "haveOne": "Nous en avons une",
+      "notBusiness": "Pas une entreprise",
+      "later": "Me le rappeler plus tard"
+    },
     "search": {
       "placeholder": "Rechercher dans les paramètres…",
       "noResults": "Aucun résultat pour « {{query}} »",
@@ -2101,6 +2132,7 @@
     "removed": "Étiquette retirée",
     "removeFailed": "Impossible de retirer l'étiquette",
     "onlyCopy": "C'est la seule copie du message : retirer le libellé la supprimerait. Archivez-le ou déplacez-le plutôt.",
+    "labelChanged": "Ce libellé a changé sur le serveur et n'a pas été retiré. Actualisez et réessayez.",
     "done": "Marquer comme terminé",
     "doneFailed": "Impossible de marquer comme terminé",
     "doneArchiveFailed": "Marqué comme terminé, mais l'archivage a échoué — toujours dans la boîte de réception",
@@ -2254,6 +2286,7 @@
     "title": "Fournisseurs de messagerie",
     "description": "Comment MailFlow se connecte aux boîtes Microsoft et Google. C'est distinct de l'authentification unique (SSO), qui permet de se connecter à MailFlow lui-même. Chacun ajoute ses propres comptes dans Comptes > Ajouter un compte.",
     "required": "Remplissez d'abord les champs obligatoires.",
+    "redirectRequired": "Google a besoin d'un URI de redirection : celui enregistré sur le client OAuth, qui se termine par /oauth/google/callback.",
     "saved": "Enregistré.",
     "ms": {
       "title": "Microsoft",
