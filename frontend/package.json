@@ -2,7 +2,7 @@
   "name": "mailflow-frontend",
   "productName": "MailFlow",
   "desktopName": "MailFlow",
-  "version": "4.0.5",
+  "version": "4.1.1",
   "description": "A self-hosted, unified webmail client.",
   "homepage": "https://mailflow.sh",
   "author": {
@@ -27,8 +27,8 @@
     "url": "https://github.com/maathimself/mailflow/issues"
   },
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "dev": "node init && vite",
+    "build": "node init && vite build",
     "preview": "vite preview",
     "test": "node --test",
     "lint": "eslint src --max-warnings 0",
